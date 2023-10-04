@@ -18,8 +18,9 @@ public class MauSacServiceImpl implements MauSacService {
     MauSacRepository mauSacRepository;
 
     @Override
-    public void add(MauSac mauSac) {
+    public MauSac add(MauSac mauSac) {
         mauSacRepository.save(mauSac);
+        return mauSac;
     }
 
     @Override
@@ -28,13 +29,13 @@ public class MauSacServiceImpl implements MauSacService {
     }
 
     @Override
-    public void update(MauSac mauSac) {
+    public MauSac update(Long idud, MauSac mauSac) {
         MauSac mauSac1 = mauSacRepository.findById(mauSac.getId()).get();
         mauSac1.setGiaTri(mauSac.getGiaTri());
         mauSac1.setTen(mauSac.getTen());
         mauSac1.setTrangThai(mauSac.getTrangThai());
         this.mauSacRepository.save(mauSac1);
-
+        return mauSac1;
     }
 
     @Override

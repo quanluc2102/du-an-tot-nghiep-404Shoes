@@ -1,7 +1,8 @@
 package com.example.datn404shoes.helper;
 
 
-import com.poly.duanbangiay.entity.SanPham;
+import com.example.datn404shoes.entity.SanPham;
+//import com.poly.duanbangiay.entity.SanPham;
 import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.poi.ss.usermodel.Cell;

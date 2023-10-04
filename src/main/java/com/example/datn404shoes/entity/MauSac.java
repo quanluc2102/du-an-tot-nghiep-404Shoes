@@ -1,10 +1,7 @@
 package com.example.datn404shoes.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
 
@@ -13,6 +10,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
+@Builder
 public class MauSac {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -2,9 +2,14 @@ package com.example.datn404shoes.service.serviceimpl;
 
 
 //import com.example.datn404shoes.entity.KichThuocMauSac;
+
+import com.example.datn404shoes.entity.KichThuoc;
 import com.example.datn404shoes.entity.KichThuocMauSac;
+import com.example.datn404shoes.entity.MauSac;
+import com.example.datn404shoes.entity.SanPham;
 import com.example.datn404shoes.helper.KichThuocMauSacExcelSave;
 import com.example.datn404shoes.repository.KichThuocMauSacRepository;
+import com.example.datn404shoes.request.KichThuocMauSacReQuest;
 import com.example.datn404shoes.service.KichThuocMauSacService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,8 +28,9 @@ public class KichThuocMauSacServiceImpl implements KichThuocMauSacService {
     private KichThuocMauSacExcelSave excelSave;
 
     @Override
-    public void add(KichThuocMauSac kichThuoc) {
-        kichThuocMauSacRepository.save(kichThuoc);
+    public KichThuocMauSac add(KichThuocMauSac kichThuocMauSac) {
+        kichThuocMauSacRepository.save(kichThuocMauSac);
+        return kichThuocMauSac;
     }
 
     @Override
@@ -33,14 +39,15 @@ public class KichThuocMauSacServiceImpl implements KichThuocMauSacService {
     }
 
     @Override
-    public void update(KichThuocMauSac kichThuocMauSac) {
-        KichThuocMauSac kichThuocMauSac1 = kichThuocMauSacRepository.findById(kichThuocMauSac.getId()).get();
-        kichThuocMauSac1.setTrangThai(kichThuocMauSac.getTrangThai());
-        kichThuocMauSac1.setSoLuong(kichThuocMauSac.getSoLuong());
-        kichThuocMauSac1.setMauSac(kichThuocMauSac.getMauSac());
-        kichThuocMauSac1.setSanPham(kichThuocMauSac.getSanPham());
-        kichThuocMauSac1.setKichThuoc(kichThuocMauSac.getKichThuoc());
+    public KichThuocMauSac update(Long idud, KichThuocMauSacReQuest kichThuocMauSacReQuest) {
+        KichThuocMauSac kichThuocMauSac1 = kichThuocMauSacRepository.findById(idud).get();
+        kichThuocMauSac1.setTrangThai(kichThuocMauSacReQuest.getTrangThai());
+        kichThuocMauSac1.setSoLuong(kichThuocMauSacReQuest.getSoLuong());
+        kichThuocMauSac1.setMauSac(MauSac.builder().id(kichThuocMauSacReQuest.getMauSacId()).build());
+        kichThuocMauSac1.setSanPham(SanPham.builder().id(kichThuocMauSacReQuest.getSanPhamId()).build());
+        kichThuocMauSac1.setKichThuoc(KichThuoc.builder().id(kichThuocMauSacReQuest.getKichThuocId()).build());
         this.kichThuocMauSacRepository.save(kichThuocMauSac1);
+        return kichThuocMauSac1;
     }
 
     @Override

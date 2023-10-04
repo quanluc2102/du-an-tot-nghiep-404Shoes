@@ -1,11 +1,13 @@
 package com.example.datn404shoes.entity;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 
 import java.util.Objects;
 
 @Entity
 @Table(name = "doc_nhat", schema = "dbo", catalog = "ShopShoe")
+@Builder
 public class DocNhat {
     private long id;
     private Long sanPhamId;

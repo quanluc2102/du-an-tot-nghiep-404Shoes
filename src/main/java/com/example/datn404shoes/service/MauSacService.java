@@ -9,11 +9,11 @@ import java.util.List;
 
 @Service
 public interface MauSacService {
-    void add(MauSac mauSac);
+    MauSac add(MauSac mauSac);
 
     void delete(Long id);
 
-    void update(MauSac mauSac);
+    MauSac update(Long idud, MauSac mauSac);
 
     MauSac detail(Long id);
 

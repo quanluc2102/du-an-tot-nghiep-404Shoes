@@ -1,10 +1,7 @@
 package com.example.datn404shoes.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.sql.Date;
 
@@ -14,6 +11,7 @@ import java.sql.Date;
 @NoArgsConstructor
 @Getter
 @Setter
+@Builder
 public class KhuyenMai {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)

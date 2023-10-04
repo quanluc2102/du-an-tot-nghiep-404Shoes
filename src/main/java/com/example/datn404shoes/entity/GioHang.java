@@ -1,12 +1,14 @@
 package com.example.datn404shoes.entity;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 
 import java.sql.Date;
 import java.util.Objects;
 
 @Entity
 @Table(name = "gio_hang", schema = "dbo", catalog = "ShopShoe")
+@Builder
 public class GioHang {
     private long id;
     private Date ngayTao;

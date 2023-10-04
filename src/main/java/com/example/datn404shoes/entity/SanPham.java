@@ -2,6 +2,7 @@ package com.example.datn404shoes.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -12,6 +13,7 @@ import java.sql.Date;
 @AllArgsConstructor
 @Entity
 @Table(name = "san_pham")
+@Builder
 public class SanPham {
     @Id
     @Column(name = "id")

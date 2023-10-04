@@ -11,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class KichThuocServiceImpl implements KichThuocService {
@@ -19,8 +20,9 @@ public class KichThuocServiceImpl implements KichThuocService {
     KichThuocRepository kichThuocRepository;
 
     @Override
-    public void add(KichThuoc kichThuoc) {
+    public KichThuoc add(KichThuoc kichThuoc) {
         kichThuocRepository.save(kichThuoc);
+        return kichThuoc;
     }
 
     @Override
@@ -29,12 +31,12 @@ public class KichThuocServiceImpl implements KichThuocService {
     }
 
     @Override
-    public void update(KichThuoc kichThuoc) {
-        KichThuoc kichThuoc1 = kichThuocRepository.findById(kichThuoc.getId()).get();
+    public KichThuoc update(KichThuoc kichThuoc, Long idKichThuoc) {
+        KichThuoc kichThuoc1 = kichThuocRepository.findById(idKichThuoc).get();
         kichThuoc1.setGiaTri(kichThuoc.getGiaTri());
         kichThuoc1.setTrangThai(kichThuoc.getTrangThai());
         this.kichThuocRepository.save(kichThuoc1);
-
+        return kichThuoc1;
     }
 
     @Override

@@ -6,14 +6,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public interface KichThuocService {
-    void add(KichThuoc kichThuoc);
+    KichThuoc add(KichThuoc kichThuoc);
 
     void delete(Long id);
 
-    void update(KichThuoc kichThuoc);
+    KichThuoc update(KichThuoc kichThuoc, Long idKichThuoc);
 
     KichThuoc detail(Long id);
 

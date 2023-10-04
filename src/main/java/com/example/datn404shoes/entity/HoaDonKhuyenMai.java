@@ -1,10 +1,7 @@
 package com.example.datn404shoes.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
 @Table(name = "hoa_don_khuyen_mai")
@@ -12,6 +9,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
+@Builder
 public class HoaDonKhuyenMai {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
