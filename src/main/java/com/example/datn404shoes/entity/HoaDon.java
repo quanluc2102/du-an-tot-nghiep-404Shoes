@@ -31,10 +31,44 @@ public class HoaDon {
     private String ghiChu;
 
     @ManyToOne
-    @JoinColumn(name = "tai_khoan_id",referencedColumnName = "id",nullable = true)
+    @JoinColumn(name = "tai_khoan_id", referencedColumnName = "id", nullable = true)
     private TaiKhoan taiKhoan;
 
     @ManyToOne
-    @JoinColumn(name = "thanh_toan_id",referencedColumnName = "id",nullable = true)
+    @JoinColumn(name = "thanh_toan_id", referencedColumnName = "id", nullable = true)
     private ThanhToan thanhToan;
+
+    @Column(name = "kieu_hoa_don")
+    private Integer kieuHoaDon;
+
+    @Column(name = "tong_tien")
+    private Float tongTien;
+
+    @Column(name = "phi_ship")
+    private Float phiShip;
+
+    @Column(name = "tien_giam")
+    private Float tienGiam;
+
+    @Column(name = "tong_tien_sau_giam")
+    private Float tongTienSauGiam;
+
+    @Column(name = "ten")
+    private String ten;
+
+    @Column(name = "sdt")
+    private String sdt;
+
+    @Column(name = "email")
+    private String email;
+
+    @Column(name = "thanh_pho")
+    private String thanhPho;
+
+    @Column(name = "quan_huyen")
+    private String quanHuyen;
+
+    @Column(name = "phuong_xa")
+    private String phuongXa;
+
 }

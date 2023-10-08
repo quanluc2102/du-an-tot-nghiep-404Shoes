@@ -22,7 +22,7 @@ public class HoaDonChiTietController {
         double tongTien=0.0;
         for (HoaDonChiTiet listTT : listHDCT
              ) {
-            tongTien +=(double) listTT.getSoLuong() * listTT.getSp().getGiaBan();
+//            tongTien +=(double) listTT.getSoLuong() * listTT.getSp().getGiaBan();
         }
         model.addAttribute("listHDById",listHDCT);
         model.addAttribute("tongTien",tongTien);

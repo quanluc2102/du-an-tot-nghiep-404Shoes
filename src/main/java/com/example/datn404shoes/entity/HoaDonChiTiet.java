@@ -27,8 +27,8 @@ public class HoaDonChiTiet {
     nullable = false)
     private HoaDon hd;
     @ManyToOne
-    @JoinColumn(name = "san_pham_id",
+    @JoinColumn(name = "san_pham_chi_tiet_id",
     referencedColumnName = "id",
     nullable = false)
-    private SanPham sp;
+    private SanPhamChiTiet sanPhamChiTiet;
 }

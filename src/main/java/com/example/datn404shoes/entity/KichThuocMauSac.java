@@ -16,8 +16,6 @@ public class KichThuocMauSac {
     @Id
     @Column(name = "id")
     private long id;
-    @Column(name = "so_luong")
-    private int soLuong;
     @Column(name = "trang_thai")
     private int trangThai;
 
@@ -28,15 +26,6 @@ public class KichThuocMauSac {
             nullable = true
     )
     private MauSac mauSac;
-
-
-    @ManyToOne()
-    @JoinColumn(
-            name = "san_pham_id",
-            referencedColumnName = "id",
-            nullable = true
-    )
-    private SanPham sanPham;
 
 
     @ManyToOne()
@@ -52,10 +41,7 @@ public class KichThuocMauSac {
     }
 
 
-    public void setSanPhamex(long numericCellValue) {
-        sanPham.setId(numericCellValue);
 
-    }
 
     public void setKichThuocex(long numericCellValue) {
         kichThuoc.setId(numericCellValue);

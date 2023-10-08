@@ -42,7 +42,6 @@ public class SanPhamServiceimpl implements SanPhamService {
         a.setGiaBan(sp.getGiaBan());
         a.setGiaNhap(sp.getGiaNhap());
         a.setMoTa(sp.getMoTa());
-        a.setSoLuong(sp.getSoLuong());
         a.setNgayCapNhat(Date.valueOf(LocalDate.now()));
         sanPhamRespository.flush();
     }
@@ -59,10 +58,10 @@ public class SanPhamServiceimpl implements SanPhamService {
 
     @Override
     public void chuyenSoLuong(SanPham sp) {
-        if(sp.getSoLuong()<0){
-            sp.setSoLuong(0);
-        }
-        sanPhamRespository.flush();
+//        if(sp.getSoLuong()<0){
+//            sp.setSoLuong(0);
+//        }
+//        sanPhamRespository.flush();
     }
 
     @Override

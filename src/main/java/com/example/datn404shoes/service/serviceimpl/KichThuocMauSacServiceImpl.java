@@ -42,9 +42,9 @@ public class KichThuocMauSacServiceImpl implements KichThuocMauSacService {
     public KichThuocMauSac update(Long idud, KichThuocMauSacReQuest kichThuocMauSacReQuest) {
         KichThuocMauSac kichThuocMauSac1 = kichThuocMauSacRepository.findById(idud).get();
         kichThuocMauSac1.setTrangThai(kichThuocMauSacReQuest.getTrangThai());
-        kichThuocMauSac1.setSoLuong(kichThuocMauSacReQuest.getSoLuong());
+//        kichThuocMauSac1.setSoLuong(kichThuocMauSacReQuest.getSoLuong());
         kichThuocMauSac1.setMauSac(MauSac.builder().id(kichThuocMauSacReQuest.getMauSacId()).build());
-        kichThuocMauSac1.setSanPham(SanPham.builder().id(kichThuocMauSacReQuest.getSanPhamId()).build());
+//        kichThuocMauSac1.setSanPham(SanPham.builder().id(kichThuocMauSacReQuest.getSanPhamId()).build());
         kichThuocMauSac1.setKichThuoc(KichThuoc.builder().id(kichThuocMauSacReQuest.getKichThuocId()).build());
         this.kichThuocMauSacRepository.save(kichThuocMauSac1);
         return kichThuocMauSac1;

@@ -70,7 +70,7 @@ public class KichThuocMauSacExcelSave {
                     Cell currentCell = cellsInRow.next();
                     switch (cellIdx) {
                         case 0:
-                            kichThuocMauSac.setSoLuong((int) currentCell.getNumericCellValue());
+//                            kichThuocMauSac.setSoLuong((int) currentCell.getNumericCellValue());
                             break;
                         case 1:
                             kichThuocMauSac.setTrangThai((int) currentCell.getNumericCellValue());
@@ -81,7 +81,7 @@ public class KichThuocMauSacExcelSave {
                             break;
                         case 3:
                             SanPham sanPham = sanPhamService.getOne((long) currentCell.getNumericCellValue());
-                            kichThuocMauSac.setSanPham(sanPham);
+//                            kichThuocMauSac.setSanPham(sanPham);
                             break;
                         case 4:
                             KichThuoc kichThuoc = kichThuocService.findOne((long) currentCell.getNumericCellValue());

@@ -27,22 +27,16 @@ public class SanPham {
     private String ten;
     @Column(name = "gia_ban")
     private double giaBan;
-    @Column(name = "so_luong")
-    private int soLuong;
     @Column(name = "trang_thai")
     private int trangThai;
     @Column(name = "ngay_cap_nhat")
     private Date ngayCapNhat;
     @Column(name = "mo_ta")
     private String moTa;
+    @Column(name = "giam_gia")
+    private Float giamGia;
 
-    public String laySoLuong(){
-        if(soLuong>=1){
-            return "Còn hàng";
-        }else{
-            return "Hết hàng";
-        }
-    }
+
     public String layTrangThai(){
         if(trangThai==1){
             return "Active";
@@ -55,7 +49,6 @@ public class SanPham {
         this.giaNhap = giaNhap;
         this.ten = ten;
         this.giaBan = giaBan;
-        this.soLuong = soLuong;
         this.trangThai = trangThai;
         this.ngayCapNhat = ngayCapNhat;
         this.moTa = moTa;
@@ -65,7 +58,6 @@ public class SanPham {
         this.giaNhap = giaNhap;
         this.ten = ten;
         this.giaBan = giaBan;
-        this.soLuong = soLuong;
         this.trangThai = trangThai;
         this.moTa = moTa;
     }

@@ -28,8 +28,8 @@ public class GioHangChiTietServiceImpl implements GioHangChiTietService {
     public void update(GioHangChiTiet ghct) {
         GioHangChiTiet giohangCT = giohangchitietRepository.findById(ghct.getId()).get();
         giohangCT.setSoLuong(ghct.getSoLuong());
-        giohangCT.setSp(ghct.getSp());
-        giohangCT.setGh(ghct.getGh());
+        giohangCT.setSanPhamChiTietId(ghct.getSanPhamChiTietId());
+        giohangCT.setGioHangId(ghct.getGioHangId());
         this.giohangchitietRepository.save(giohangCT);
     }
 

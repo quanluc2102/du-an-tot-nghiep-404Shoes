@@ -21,12 +21,12 @@ public class GioHangChiTiet {
     @JoinColumn(name = "gio_hang_id",
     referencedColumnName = "id",
     nullable = false)
-    private GioHang gh;
+    private GioHang gioHangId;
     @ManyToOne
-    @JoinColumn(name = "san_pham_id",
+    @JoinColumn(name = "san_pham_chi_tiet_id",
     referencedColumnName = "id",
     nullable = true)
-    private SanPham sp;
+    private SanPhamChiTiet sanPhamChiTietId;
     @Column(name = "so_luong")
     private int soLuong;
 }

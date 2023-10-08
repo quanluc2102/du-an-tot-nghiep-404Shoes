@@ -67,7 +67,7 @@ public class SanPhamExcelSave {
                             break;
 
                         case 1:
-                            tutorial.setSoLuong((int) currentCell.getNumericCellValue());
+//                            tutorial.setSoLuong((int) currentCell.getNumericCellValue());
                             break;
 
                         case 2:
