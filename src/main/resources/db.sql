@@ -237,18 +237,18 @@ CREATE TABLE hoa_don_khuyen_mai (
                                     FOREIGN KEY (khuyen_mai_id) REFERENCES khuyen_mai(id)
 );
 
-CREATE Table xuat_su(
+CREATE Table xuat_xu(
                         id BIGINT PRIMARY Key IDENTITY(1,1),
                         ten NVARCHAR(255),
                         trang_thai INT
 );
 
-CREATE TABLE san_pham_xuat_su(
+CREATE TABLE san_pham_xuat_xu(
                                  id BIGINT PRIMARY KEY IDENTITY(1,1),
                                  san_pham_id BIGINT,
-                                 xuat_su_id BIGINT,
+                                 xuat_xu_id BIGINT,
                                  FOREIGN KEY (san_pham_id) REFERENCES san_pham(id),
-                                 FOREIGN KEY (xuat_su_id) REFERENCES xuat_su(id)
+                                 FOREIGN KEY (xuat_xu_id) REFERENCES xuat_xu(id)
 );
 
 CREATE TABLE tich_diem(
@@ -281,7 +281,7 @@ use ShopShoe
 
 
 
-INSERT INTO [dbo].[xuat_su]
+INSERT INTO [dbo].[xuat_xu]
            ([ten],[trang_thai])
      VALUES
            ('Trung quốc',1),
@@ -465,8 +465,8 @@ VALUES
 
 
 
-INSERT INTO [dbo].[san_pham_xuat_su]
-([san_pham_id] ,[xuat_su_id])
+INSERT INTO [dbo].[san_pham_xuat_xu]
+([san_pham_id] ,[xuat_xu_id])
 VALUES
     (1,2),
     (2,1),
@@ -515,11 +515,11 @@ select * from san_pham_anh
 select * from san_pham_danh_muc
 select * from san_pham_khuyen_mai
 select * from san_pham_thuong_hieu
-select * from san_pham_xuat_su
+select * from san_pham_xuat_xu
 select * from tai_khoan
 select * from thanh_toan
 select * from thong_tin_nguoi_dung
 select * from thuong_hieu
 select * from tich_diem
-select * from xuat_su
+select * from xuat_xu
 
