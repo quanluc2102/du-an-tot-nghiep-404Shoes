@@ -6,7 +6,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 public interface SanPhamService {
-    void add(SanPham sp);
+    SanPham add(SanPham sp);
     void delete(Long id);
     void update(Long id,SanPham sp);
     List<SanPham> getAll();

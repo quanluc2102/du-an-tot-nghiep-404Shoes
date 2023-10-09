@@ -18,10 +18,10 @@ public class SanPhamServiceimpl implements SanPhamService {
     @Autowired
     SanPhamRespository sanPhamRespository;
     @Override
-    public void add(SanPham sp) {
+    public SanPham add(SanPham sp) {
         sp.setNgayTao(Date.valueOf(LocalDate.now()));
         sp.setNgayCapNhat(Date.valueOf(LocalDate.now()));
-        sanPhamRespository.saveAndFlush(sp);
+        return sanPhamRespository.save(sp);
     }
 
     @Override
