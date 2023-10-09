@@ -30,20 +30,18 @@ public class GioHangServiceImpl implements GiohangService {
         giohang.setTrangThai(gioHang.getTrangThai());
         giohang.setGhiChu(gioHang.getGhiChu());
         giohang.setNgayTao(gioHang.getNgayTao());
-        gioHang.setTaiKhoanId(gioHang.getTaiKhoanId());
+        giohang.setTaiKhoan(gioHang.getTaiKhoan());
         this.giohangRepository.save(gioHang);
-
     }
 
     @Override
     public List<GioHang> getAll() {
-
         return giohangRepository.findAll();
     }
 
     @Override
     public GioHang getOne(Long id) {
-
         return giohangRepository.findById(id).get();
     }
+
 }
