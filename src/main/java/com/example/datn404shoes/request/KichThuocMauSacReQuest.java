@@ -8,14 +8,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 @Data
 public class KichThuocMauSacReQuest {
-    private Integer soLuong;
-
-    private Long sanPhamId;
 
     private Long mauSacId;
 
     private Long kichThuocId;
 
-    private int trangThai;
+    private Integer trangThai;
 
 }

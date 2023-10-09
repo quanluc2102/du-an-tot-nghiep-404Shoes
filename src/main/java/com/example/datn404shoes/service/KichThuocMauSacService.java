@@ -10,7 +10,7 @@ import java.util.List;
 @Service
 public interface KichThuocMauSacService {
 
-    KichThuocMauSac add(KichThuocMauSac kichThuocMauSac);
+    KichThuocMauSac add(KichThuocMauSacReQuest kichThuocMauSac);
 
     void delete(Long id);
 

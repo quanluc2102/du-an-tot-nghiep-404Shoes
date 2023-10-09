@@ -28,9 +28,17 @@ public class KichThuocMauSacServiceImpl implements KichThuocMauSacService {
     private KichThuocMauSacExcelSave excelSave;
 
     @Override
-    public KichThuocMauSac add(KichThuocMauSac kichThuocMauSac) {
-        kichThuocMauSacRepository.save(kichThuocMauSac);
-        return kichThuocMauSac;
+    public KichThuocMauSac add(KichThuocMauSacReQuest kichThuocMauSac) {
+        KichThuocMauSac kichThuocMauSac1 = new KichThuocMauSac();
+        kichThuocMauSac1.setTrangThai(kichThuocMauSac.getTrangThai());
+//        kichThuocMauSac1.setSoLuong(kichThuocMauSacReQuest.getSoLuong());
+        kichThuocMauSac1.setMauSac(MauSac.builder().id(kichThuocMauSac.getMauSacId()).build());
+//        kichThuocMauSac1.setSanPham(SanPham.builder().id(kichThuocMauSacReQuest.getSanPhamId()).build());
+        kichThuocMauSac1.setKichThuoc(KichThuoc.builder().id(kichThuocMauSac.getKichThuocId()).build());
+
+        kichThuocMauSacRepository.save(kichThuocMauSac1);
+
+        return kichThuocMauSac1;
     }
 
     @Override

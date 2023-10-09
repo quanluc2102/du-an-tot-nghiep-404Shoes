@@ -5,9 +5,13 @@ import com.example.datn404shoes.entity.DanhMuc;
 import java.util.List;
 
 public interface DanhMucService {
-    void add(DanhMuc dm);
+    DanhMuc add(DanhMuc danhMuc);
+
     void delete(Long id);
-    void update(Long id,DanhMuc dm);
+
+    DanhMuc update(Long id, DanhMuc danhMuc);
+
     List<DanhMuc> getAll();
+
     DanhMuc getOne(Long id);
 }

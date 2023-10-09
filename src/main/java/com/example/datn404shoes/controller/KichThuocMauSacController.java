@@ -41,7 +41,7 @@ public class KichThuocMauSacController {
 
     @PostMapping("add")
     public ResponseEntity<?> themMoi(Model model,
-                          @RequestBody KichThuocMauSac kichThuocMauSac
+                          @RequestBody KichThuocMauSacReQuest kichThuocMauSac
     ) {
 
 

@@ -1,8 +1,10 @@
 package com.example.datn404shoes.controller;
 
 import com.example.datn404shoes.entity.SanPhamDanhMuc;
+import com.example.datn404shoes.request.SanPhamDanhMucRequest;
 import com.example.datn404shoes.service.serviceimpl.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -17,14 +19,9 @@ public class SanPhamDanhMucController {
     @Autowired
     DanhMucServiceimpl danhMucServiceimpl;
 
-    @GetMapping("index")
-    public String index(Model model){
-        model.addAttribute("listSPDM",sanPhamDanhMucServiceimpl.getAll());
-        model.addAttribute("SanPhamDanhMuc",new SanPhamDanhMuc());
-        model.addAttribute("listSP",sanPhamServiceimpl.getAll());
-        model.addAttribute("listDM",danhMucServiceimpl.getAll());
-        model.addAttribute("view", "/san_pham_danh_muc/index.jsp");
-        return "admin/index";
+    @GetMapping("hien_thi")
+    public ResponseEntity<?> index(Model model){
+        return ResponseEntity.ok(sanPhamDanhMucServiceimpl.getAll());
     }
 
     @GetMapping("create")
@@ -46,51 +43,42 @@ public class SanPhamDanhMucController {
     }
 
     @PostMapping("add")
-    public String add(Model model,
-                      @ModelAttribute("SanPhamDanhMuc") SanPhamDanhMuc sanPhamDanhMuc){
-        sanPhamDanhMucServiceimpl.add(sanPhamDanhMuc);
-        return "redirect:/san_pham_danh_muc/index";
+    public ResponseEntity<SanPhamDanhMuc> add(Model model,
+                                              @RequestBody SanPhamDanhMucRequest sanPhamDanhMucRequest){
+        return ResponseEntity.ok(sanPhamDanhMucServiceimpl.add(sanPhamDanhMucRequest));
     }
 
     @PostMapping("add_multi")
     public String addMulti(Model model,
-                      @ModelAttribute("SanPhamDanhMuc") SanPhamDanhMuc sanPhamDanhMuc,
+                           @RequestBody SanPhamDanhMucRequest sanPhamDanhMucRequest,
                            @RequestParam("sanPham") String sanPham){
         String[] sp = sanPham.split(",");
         for(String a:sp){
-            SanPhamDanhMuc b = new SanPhamDanhMuc();
-            b.setSanPham(sanPhamServiceimpl.getOne(Long.valueOf(a)));
-            b.setDanhMuc(sanPhamDanhMuc.getDanhMuc());
+            SanPhamDanhMucRequest b = new SanPhamDanhMucRequest();
+//            b.setDanhMucId(sanPhamServiceimpl.getOne(Long.valueOf(a)));
+//            b.setSanPhamId(sanPhamDanhMuc.getDanhMuc());
             sanPhamDanhMucServiceimpl.add(b);
         }
         return "redirect:/san_pham_danh_muc/index";
     }
 
-    @GetMapping("delete")
+    @DeleteMapping("delete/{idx}")
     public String delete(Model model,
                          @RequestParam("id") Long id){
         sanPhamDanhMucServiceimpl.delete(id);
         return "redirect:/san_pham_danh_muc/index";
     }
 
-    @GetMapping("detail")
-    public String detail(Model model,
-                         @RequestParam("id") Long id){
-        model.addAttribute("listSP",sanPhamServiceimpl.getAll());
-        model.addAttribute("listDM",danhMucServiceimpl.getAll());
-        model.addAttribute("SanPhamDanhMuc",sanPhamDanhMucServiceimpl.getOne(id));
-        model.addAttribute("spdm",sanPhamDanhMucServiceimpl.getOne(id));
-        System.out.println(sanPhamDanhMucServiceimpl.getOne(id).getSanPham().getTen());
-        model.addAttribute("listSPDM",sanPhamDanhMucServiceimpl.getAll());
-        model.addAttribute("view", "/san_pham_danh_muc/index.jsp");
-        return "admin/index";
+    @GetMapping("hien_thi/{id}")
+    public ResponseEntity<?> detail(Model model,
+                         @PathVariable("id") Long id){
+        return ResponseEntity.ok(sanPhamDanhMucServiceimpl.detail(id));
     }
 
-    @PostMapping("update/{id}")
-    public String update(Model model,
+    @PutMapping("update/{id}")
+    public ResponseEntity<?> update(Model model,
                          @PathVariable("id") Long id,
-                         @ModelAttribute("SanPhamDanhMuc") SanPhamDanhMuc sanPhamDanhMuc){
-        sanPhamDanhMucServiceimpl.detail(id,sanPhamDanhMuc);
-        return "redirect:/san_pham_danh_muc/index";
+                         @RequestBody SanPhamDanhMucRequest sanPhamDanhMucRequest){
+        return ResponseEntity.ok(sanPhamDanhMucServiceimpl.update(id,sanPhamDanhMucRequest));
     }
 }

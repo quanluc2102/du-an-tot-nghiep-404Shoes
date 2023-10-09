@@ -1,7 +1,10 @@
 package com.example.datn404shoes.service.serviceimpl;
 
+import com.example.datn404shoes.entity.SanPham;
 import com.example.datn404shoes.entity.SanPhamThuongHieu;
+import com.example.datn404shoes.entity.ThuongHieu;
 import com.example.datn404shoes.repository.SanPhamThuongHieuRepository;
+import com.example.datn404shoes.request.SanPhamThuongHieuRequest;
 import com.example.datn404shoes.service.SanPhamThuongHieuService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,9 +15,13 @@ import java.util.List;
 public class SanPhamThuongHieuServiceimpl implements SanPhamThuongHieuService {
     @Autowired
     SanPhamThuongHieuRepository repo;
+
     @Override
-    public void add(SanPhamThuongHieu sanPhamThuongHieu) {
-        repo.saveAndFlush(sanPhamThuongHieu);
+    public SanPhamThuongHieu add(SanPhamThuongHieuRequest sanPhamThuongHieuRequest) {
+        SanPhamThuongHieu sanPhamThuongHieu = new SanPhamThuongHieu();
+        sanPhamThuongHieu.setThuongHieuId(ThuongHieu.builder().id(sanPhamThuongHieuRequest.getThuongHieuId()).build());
+        sanPhamThuongHieu.setSanPhamId(SanPham.builder().id(sanPhamThuongHieuRequest.getSanPhamId()).build());
+        return sanPhamThuongHieu;
     }
 
     @Override
@@ -23,11 +30,16 @@ public class SanPhamThuongHieuServiceimpl implements SanPhamThuongHieuService {
     }
 
     @Override
-    public void detail(Long id, SanPhamThuongHieu sanPhamThuongHieu) {
-        SanPhamThuongHieu a = getOne(id);
-        a.setThuongHieuId(sanPhamThuongHieu.getThuongHieuId());
-        a.setSanPhamId(sanPhamThuongHieu.getSanPhamId());
-        repo.flush();
+    public SanPhamThuongHieu detail(Long id) {
+        return repo.findById(id).get();
+    }
+
+    @Override
+    public SanPhamThuongHieu update(Long id,SanPhamThuongHieuRequest sanPhamThuongHieuRequest) {
+        SanPhamThuongHieu sanPhamThuongHieu1 = repo.findById(id).get();
+        sanPhamThuongHieu1.setThuongHieuId(ThuongHieu.builder().id(sanPhamThuongHieuRequest.getThuongHieuId()).build());
+        sanPhamThuongHieu1.setSanPhamId(SanPham.builder().id(sanPhamThuongHieuRequest.getSanPhamId()).build());
+        return sanPhamThuongHieu1;
     }
 
     @Override

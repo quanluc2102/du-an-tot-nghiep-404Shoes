@@ -12,9 +12,11 @@ import java.util.List;
 public class DanhMucServiceimpl implements DanhMucService {
     @Autowired
     DanhMucRepository repository;
+
     @Override
-    public void add(DanhMuc dm) {
-        repository.saveAndFlush(dm);
+    public DanhMuc add(DanhMuc danhMuc) {
+        repository.save(danhMuc);
+        return danhMuc;
     }
 
     @Override
@@ -23,11 +25,12 @@ public class DanhMucServiceimpl implements DanhMucService {
     }
 
     @Override
-    public void update(Long id, DanhMuc dm) {
-        DanhMuc a = getOne(id);
-        a.setTen(dm.getTen());
-        a.setTrangThai(dm.getTrangThai());
-        repository.flush();
+    public DanhMuc update(Long id, DanhMuc danhMuc) {
+        DanhMuc danhMuc1 = getOne(id);
+        danhMuc1.setTen(danhMuc.getTen());
+        danhMuc1.setTrangThai(danhMuc.getTrangThai());
+        repository.save(danhMuc1);
+        return danhMuc1;
     }
 
     @Override

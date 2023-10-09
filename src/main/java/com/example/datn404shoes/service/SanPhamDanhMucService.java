@@ -1,13 +1,15 @@
 package com.example.datn404shoes.service;
 
 import com.example.datn404shoes.entity.SanPhamDanhMuc;
+import com.example.datn404shoes.request.SanPhamDanhMucRequest;
 
 import java.util.List;
 
 public interface SanPhamDanhMucService {
-    void add(SanPhamDanhMuc sanPhamDanhMuc);
+    SanPhamDanhMuc add(SanPhamDanhMucRequest sanPhamDanhMucRequest);
+    SanPhamDanhMuc update(Long idud,SanPhamDanhMucRequest sanPhamDanhMucRequest);
     void delete(Long id);
-    void detail(Long id,SanPhamDanhMuc sanPhamDanhMuc);
+    SanPhamDanhMuc detail(Long id);
     List<SanPhamDanhMuc> getAll();
     SanPhamDanhMuc getOne(Long id);
 }

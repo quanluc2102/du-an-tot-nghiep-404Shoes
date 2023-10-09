@@ -12,9 +12,11 @@ import java.util.List;
 public class ThuongHieuServiceimpl implements ThuongHieuService {
     @Autowired
     ThuongHieuRepository repository;
+
     @Override
-    public void add(ThuongHieu th) {
-        repository.saveAndFlush(th);
+    public ThuongHieu add(ThuongHieu th) {
+        repository.save(th);
+        return th;
     }
 
     @Override
@@ -23,11 +25,12 @@ public class ThuongHieuServiceimpl implements ThuongHieuService {
     }
 
     @Override
-    public void update(Long id, ThuongHieu th) {
+    public ThuongHieu update(Long id, ThuongHieu th) {
         ThuongHieu a = getOne(id);
         a.setTen(th.getTen());
         a.setTrangThai(th.getTrangThai());
-        repository.flush();
+        repository.save(a);
+        return a;
     }
 
     @Override
