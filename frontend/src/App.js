@@ -7,6 +7,9 @@ import SanPhamComponent from "./components/sanphamComponent/SanPhamComponent";
 import ListDanhMucComponent from './components/danhmuccomponent/ListDanhMucComponent';
 import { ToastContainer, toast } from 'react-toastify';
 import MauSacComponent from './components/mausaccomponent/MauSacComponent';
+import KichThuocComponent from './components/kichthuoccomponent/KichThuocComponent';
+import ThuongHieuComponent from './components/thuonghieucomponent/ThuongHieuComponent';
+import XuatXuComponent from './components/xuatxucomponent/XuatXuComponent';
 
 function App() {
   return (
@@ -26,6 +29,13 @@ function App() {
                     <Route path='/danhmucdetail/:id' component={ListDanhMucComponent}/>
                     <Route path='/mausac' component={MauSacComponent}/>
                     <Route path='/mausacdetail/:id' component={MauSacComponent}/>
+                    <Route path='/kichthuoc' component={KichThuocComponent}/>
+                    <Route path='/kichthuocdetail/:id' component={KichThuocComponent}/>
+                    <Route path='/thuonghieu' component={ThuongHieuComponent}/>
+                    <Route path='/thuonghieudetail/:id' component={ThuongHieuComponent}/>
+                    <Route path='/xuatxu' component={XuatXuComponent}/>
+                    <Route path='/xuatxudetail/:id' component={XuatXuComponent}/>
+
                 </Switch>
 
 

@@ -23,12 +23,12 @@ function Sidebar() {
             </a>
           </li>
           <li>
-            <a href="components-accordion.html">
+            <a href="/mausac">
               <i className="bi bi-circle"></i><span>Màu sắc</span>
             </a>
           </li>
           <li>
-            <a href="components-badges.html">
+            <a href="/kichthuoc">
               <i className="bi bi-circle"></i><span>Kích thước</span>
             </a>
           </li>
@@ -38,17 +38,17 @@ function Sidebar() {
             </a>
           </li>
           <li>
-            <a href="components-buttons.html">
+            <a href="/thuonghieu">
               <i className="bi bi-circle"></i><span>Thương hiệu</span>
             </a>
           </li>
           <li>
-            <a href="components-cards.html">
+            <a href="/xuatxu">
               <i className="bi bi-circle"></i><span>Xuất xứ</span>
             </a>
           </li>
           <li>
-            <a href="components-carousel.html">
+            <a href="/danhmuc">
               <i className="bi bi-circle"></i><span>Danh mục</span>
             </a>
           </li>

@@ -9,7 +9,7 @@ function Header() {
         {/* <img src="%PUBLIC_URL%/niceadmin/img/logo.png" alt=""/> */}
         <span className="d-none d-lg-block">404Shoes</span>
       </a>
-      <i className="bi bi-list toggle-sidebar-btn"></i>
+      {/* <i className="bi bi-list toggle-sidebar-btn"></i> */}
     </div>
 
     <div className="search-bar">
