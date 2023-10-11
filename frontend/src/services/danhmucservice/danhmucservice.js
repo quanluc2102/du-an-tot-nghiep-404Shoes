@@ -1,27 +1,30 @@
-
 import axios from 'axios';
-
 const DANHMUC_API_BASE_URL = "http://localhost:8080/danh_muc/hien_thi";
-
-// const NSX_API_SAVE_URL = "http://localhost:8080/api/nsx/add";
-// const NSX_API_UPDATE_URL = "http://localhost:8080/api/nsx/update";
+const DANHMUC_API_SAVE_URL = "http://localhost:8080/danh_muc/add";
+const DANHMUC_API_DELETE_URL = "http://localhost:8080/danh_muc/delete";
+const DANHMUC_API_UPDATE_URL = "http://localhost:8080/danh_muc/update";
 
 class danhmucservice {
     getDanhMuc() {
         return axios.get(DANHMUC_API_BASE_URL);
     }
 
-    // createNSX(nsx) {
-    //     return axios.post(NSX_API_SAVE_URL, nsx)
-    // }
+    createDanhMuc(danhMuc) {
+        return axios.post(DANHMUC_API_SAVE_URL, danhMuc)
+    }
 
-    // getNSXById(NSXId) {
-    //     return axios.get(NSX_API_BASE_URL + "/" + NSXId);
-    // }
+    deleteDanhMuc(danhMucId) {
+        return axios.delete(DANHMUC_API_DELETE_URL + '/' + danhMucId)
+    }
 
-    // updateNSX(nsx, nsxId) {
-    //     return axios.put(NSX_API_UPDATE_URL + "/" + nsxId, nsx)
-    // }
+    getDanhMucById(danhMucId) {
+        return axios.get(DANHMUC_API_BASE_URL + "/" + danhMucId);
+    }
+
+    updateDanhMuc(danhMuc, danhMucId) {
+        console.log(danhMucId)
+        return axios.put(DANHMUC_API_UPDATE_URL + "/" + danhMucId, danhMuc)
+    }
 
 }
 

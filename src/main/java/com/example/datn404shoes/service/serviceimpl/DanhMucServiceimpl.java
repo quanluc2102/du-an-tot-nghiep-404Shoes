@@ -26,7 +26,7 @@ public class DanhMucServiceimpl implements DanhMucService {
 
     @Override
     public DanhMuc update(Long id, DanhMuc danhMuc) {
-        DanhMuc danhMuc1 = getOne(id);
+        DanhMuc danhMuc1 = repository.findById(id).get();
         danhMuc1.setTen(danhMuc.getTen());
         danhMuc1.setTrangThai(danhMuc.getTrangThai());
         repository.save(danhMuc1);

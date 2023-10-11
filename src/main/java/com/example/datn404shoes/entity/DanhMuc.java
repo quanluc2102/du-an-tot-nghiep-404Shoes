@@ -1,6 +1,8 @@
 package com.example.datn404shoes.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,9 +19,13 @@ public class DanhMuc {
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
+
     @Column(name = "ten")
+    @NotBlank(message = "Tên không được để trống")
     private String ten;
+
     @Column(name = "trang_thai")
+//    @NotBlank(message = "Tên không được để trống")
     private Integer trangThai;
 
     public DanhMuc(String ten, Integer trangThai) {
