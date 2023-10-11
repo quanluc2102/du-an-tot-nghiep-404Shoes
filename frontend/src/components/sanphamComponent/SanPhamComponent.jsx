@@ -1,5 +1,8 @@
 import React, {Component} from 'react';
+import { useState } from 'react';
 import SanPhamService from "../../services/sanphamservice/SanPhamService";
+import { toast } from 'react-toastify';
+import SanPhamService1 from "../../services/sanphamservice/SanPhamService1";
 
 class SanPhamComponent extends Component {
     constructor(props) {
@@ -23,9 +26,10 @@ class SanPhamComponent extends Component {
                 trangThai:''
             }
         }
+
         this.add=this.add.bind(this);
         this.delete=this.delete.bind(this);
-        this.update=this.delete.bind(this);
+        this.update=this.update.bind(this);
         this.detail=this.detail.bind(this);
         this.thayDoiTenAdd=this.thayDoiTenAdd.bind(this);
         this.thayDoiGiaNhapAdd=this.thayDoiGiaNhapAdd.bind(this);
@@ -40,76 +44,175 @@ class SanPhamComponent extends Component {
         this.thayDoiMoTaUpdate=this.thayDoiMoTaUpdate.bind(this);
         this.thayDoiTrangThaiUpdate=this.thayDoiTrangThaiUpdate.bind(this);
     }
+
     componentDidMount(){
         SanPhamService.getSanPham().then((res)=>{
             this.setState({sanPham:res.data});
         });
-        SanPhamService.getSanPhamById(this.state.sanPhamUpdate.id).then((res)=>{
-            // this.setState(this.state.sanPhamUpdate.ten=sanPham1.ten,
-            //     this.state.sanPhamUpdate.giaNhap=sanPham1.giaNhap,
-            //     this.state.sanPhamUpdate.giaBan=sanPham1.giaBan,
-            //     this.state.sanPhamUpdate.giamGia=sanPham1.giamGia,
-            //     this.state.sanPhamUpdate.trangThai=sanPham1.trangThai,
-            //     this.state.sanPhamUpdate.moTa=sanPham1.moTa)
-            this.setState({sanPhamUpdate:res.data});
-        })
+        const id = this.props.match.params.id;
+        if (id) {
+            SanPhamService.getSanPhamById(this.state.sanPhamUpdate.id).then((res)=>{
+                // this.setState(this.state.sanPhamUpdate.ten=sanPham1.ten,
+                //     this.state.sanPhamUpdate.giaNhap=sanPham1.giaNhap,
+                //     this.state.sanPhamUpdate.giaBan=sanPham1.giaBan,
+                //     this.state.sanPhamUpdate.giamGia=sanPham1.giamGia,
+                //     this.state.sanPhamUpdate.trangThai=sanPham1.trangThai,
+                //     this.state.sanPhamUpdate.moTa=sanPham1.moTa)
+                this.setState({sanPhamUpdate:res.data});
+            })
+        }
+
 
     }
     delete(id){
         SanPhamService.deleteSanPham(id).then((res)=>{
-            this.setState({sanPham:this.state.sanPham.filter(sanPham=>sanPham.id!=id)});
         });
+        window.location.href = (`/index`);
     }
     add = (e)=>{
         e.preventDefault();
+
         SanPhamService.addSanPham(this.state.sanPhamAdd).then((res)=>{
-            this.props.history.push('/san_pham/index');
+            window.location.href = (`/index`);
         })
+
     }
     update=(e)=>{
         e.preventDefault();
-        SanPhamService.updateSanPham(this.state.sanPhamUpdate.id,this.state.sanPhamUpdate).then((res)=>{
-            this.props.history.push('/index');
+        var sanPham = {ten: this.state.sanPhamUpdate.ten,
+            trangThai: this.state.sanPhamUpdate.trangThai,
+            giamGia:this.state.sanPhamUpdate.giamGia,
+            giaBan:this.state.sanPhamUpdate.giaBan,
+            giaNhap:this.state.sanPhamUpdate.giaNhap,
+            moTa:this.state.sanPhamUpdate.moTa }
+        console.log('nsx' + JSON.stringify(sanPham));
+        let id = this.state.sanPhamUpdate.id;
+        SanPhamService.updateSanPham(id,sanPham).then((res)=>{
+            window.location.href = (`/index`);
         })
     }
     detail(id){
-        this.props.history.push(`/detail/${id}`);
+        window.location.href = (`/detail/${id}`);
     }
     thayDoiTenAdd=(event)=>{
-        this.setState(this.state.sanPhamAdd.ten=event.target.value);
+        this.setState(
+            prevState=>({
+                sanPhamAdd:{
+                    ...prevState.sanPhamAdd,
+                    ten:event.target.value
+                }
+            })
+        );
     }
     thayDoiGiaNhapAdd=(event)=>{
-        this.setState(this.state.sanPhamAdd.giaNhap=event.target.value);
+        this.setState(
+            prevState=>({
+                sanPhamAdd:{
+                    ...prevState.sanPhamAdd,
+                    giaNhap:event.target.value
+                }
+            })
+        );
     }
     thayDoiGiaBanAdd=(event)=>{
-        this.setState(this.state.sanPhamAdd.giaBan=event.target.value);
+        this.setState(
+            prevState=>({
+                sanPhamAdd:{
+                    ...prevState.sanPhamAdd,
+                    giaBan:event.target.value
+                }
+            })
+        );
     }
     thayDoiGiamGiaAdd=(event)=>{
-        this.setState(this.state.sanPhamAdd.giamGia=event.target.value);
+        this.setState(
+            prevState=>({
+                sanPhamAdd:{
+                    ...prevState.sanPhamAdd,
+                    giamGia:event.target.value
+                }
+            })
+        );
     }
     thayDoiMoTaAdd=(event)=>{
-        this.setState(this.state.sanPhamAdd.moTa=event.target.value);
+        this.setState(
+            prevState=>({
+                sanPhamAdd:{
+                    ...prevState.sanPhamAdd,
+                    moTa:event.target.value
+                }
+            })
+        );
     }
     thayDoiTrangThaiAdd=(event)=>{
-        this.setState(this.state.sanPhamAdd.trangThai=event.target.value);
+        this.setState(
+            prevState=>({
+                sanPhamAdd:{
+                    ...prevState.sanPhamAdd,
+                    trangThai:event.target.value
+                }
+            })
+        );
     }
     thayDoiTenUpdate=(event)=>{
-        this.setState({sanPhamUpdate:event.target.value});
+        this.setState(
+            prevState=>({
+                sanPhamUpdate:{
+                    ...prevState.sanPhamUpdate,
+                    ten:event.target.value
+                }
+            })
+        );
     }
     thayDoiGiaNhapUpdate=(event)=>{
-        this.setState(this.state.sanPhamUpdate.giaNhap=event.target.value);
+        this.setState(
+            prevState=>({
+                sanPhamUpdate:{
+                    ...prevState.sanPhamUpdate,
+                    giaNhap:event.target.value
+                }
+            })
+        );
     }
     thayDoiGiaBanUpdate=(event)=>{
-        this.setState(this.state.sanPhamUpdate.giaBan=event.target.value);
+        this.setState(
+            prevState=>({
+                sanPhamUpdate:{
+                    ...prevState.sanPhamUpdate,
+                    giaBan:event.target.value
+                }
+            })
+        );
     }
     thayDoiGiamGiaUpdate=(event)=>{
-        this.setState(this.state.sanPhamUpdate.giamGia=event.target.value);
+        this.setState(
+            prevState=>({
+                sanPhamUpdate:{
+                    ...prevState.sanPhamUpdate,
+                    giamGia:event.target.value
+                }
+            })
+        );
     }
     thayDoiMoTaUpdate=(event)=>{
-        this.setState(this.state.sanPhamUpdate.moTa=event.target.value);
+        this.setState(
+            prevState=>({
+                sanPhamUpdate:{
+                    ...prevState.sanPhamUpdate,
+                    moTa:event.target.value
+                }
+            })
+        );
     }
     thayDoiTrangThaiUpdate=(event)=>{
-        this.setState(this.state.sanPhamUpdate.trangThai=event.target.value);
+        this.setState(
+            prevState=>({
+                sanPhamUpdate:{
+                    ...prevState.sanPhamUpdate,
+                    trangThai:event.target.value
+                }
+            })
+        );
     }
     render() {
         return (
@@ -160,7 +263,7 @@ class SanPhamComponent extends Component {
                                                             <a href="/color/detail/${mau.id}" className="btn btn-success" style="text-decoration: none;color: white; margin-top: 5px" ><i className='bi bi-arrow-repeat'></i></a>
                                                         </td>
                                                     </tr> */}
-                                                 <tbody>
+                                                <tbody>
                                                 {
                                                     this.state.sanPham.map(
                                                         sp =>
@@ -261,12 +364,35 @@ class SanPhamComponent extends Component {
                                         </div>
 
                                         <div className="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-                                            <form method="post" action="/color/add">
+                                            <form>
                                                 <div>
-                                                    Name :
-                                                    <input className="form-control" name="name" />
+                                                    Tên :
+                                                    <input className="form-control" name="ten" onChange={this.thayDoiTenAdd}/>
                                                 </div>
-                                                <input type="submit" className="btn btn-primary" value="Update" style={{marginTop: '10px'}} />
+                                                <div>
+                                                    Giá nhập :
+                                                    <input className="form-control" name="giaNhap" onChange={this.thayDoiGiaNhapAdd}/>
+                                                </div>
+                                                <div>
+                                                    Giá bán :
+                                                    <input className="form-control" name="giaBan"  onChange={this.thayDoiGiaBanAdd}/>
+                                                </div>
+                                                <div>
+                                                    Giảm giá :
+                                                    <input className="form-control" name="giamGia" onChange={this.thayDoiGiamGiaAdd}/>
+                                                </div>
+                                                <div>
+                                                    Mô tả :
+                                                    <input className="form-control" name="moTa"  onChange={this.thayDoiMoTaAdd}/>
+                                                </div>
+                                                <div className='form-group'>
+                                                    <label>Trạng thái</label>
+                                                    <select name="trangThai" id="trangThai" className="form-control" onChange={this.thayDoiTrangThaiAdd}>
+                                                        <option value="true">Còn</option>
+                                                        <option value="false">Ko còn</option>
+                                                    </select>
+                                                </div>
+                                                <input type="submit" className="btn btn-primary" value="Update" style={{marginTop: '10px'}} onClick={this.add}/>
                                             </form>
                                         </div>
 
