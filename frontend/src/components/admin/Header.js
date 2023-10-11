@@ -6,7 +6,7 @@ function Header() {
 
     <div className="d-flex align-items-center justify-content-between">
       <a href="index.html" className="logo d-flex align-items-center">
-        <img src="%PUBLIC_URL%/niceadmin/img/logo.png" alt=""/>
+        {/* <img src="%PUBLIC_URL%/niceadmin/img/logo.png" alt=""/> */}
         <span className="d-none d-lg-block">404Shoes</span>
       </a>
       <i className="bi bi-list toggle-sidebar-btn"></i>
@@ -121,7 +121,7 @@ function Header() {
 
             <li className="message-item">
               <a >
-                <img src="%PUBLIC_URL%/niceadmin/img/messages-1.jpg" alt="" className="rounded-circle"/>
+                {/* <img src="%PUBLIC_URL%/niceadmin/img/messages-1.jpg" alt="" className="rounded-circle"/> */}
                 <div>
                   <h4>Maria Hudson</h4>
                   <p>Velit asperiores et ducimus soluta repudiandae labore officia est ut...</p>
@@ -135,7 +135,7 @@ function Header() {
 
             <li className="message-item">
               <a >
-                <img src="%PUBLIC_URL%/niceadmin/img/messages-2.jpg" alt="" className="rounded-circle"/>
+                {/* <img src="%PUBLIC_URL%/niceadmin/img/messages-2.jpg" alt="" className="rounded-circle"/> */}
                 <div>
                   <h4>Anna Nelson</h4>
                   <p>Velit asperiores et ducimus soluta repudiandae labore officia est ut...</p>
@@ -149,7 +149,7 @@ function Header() {
 
             <li className="message-item">
               <a >
-                <img src="%PUBLIC_URL%/niceadmin/img/messages-3.jpg" alt="" className="rounded-circle"/>
+                {/* <img src="%PUBLIC_URL%/niceadmin/img/messages-3.jpg" alt="" className="rounded-circle"/> */}
                 <div>
                   <h4>David Muldon</h4>
                   <p>Velit asperiores et ducimus soluta repudiandae labore officia est ut...</p>
@@ -172,7 +172,7 @@ function Header() {
         <li className="nav-item dropdown pe-3">
 
           <a className="nav-link nav-profile d-flex align-items-center pe-0"  data-bs-toggle="dropdown">
-            <img src="%PUBLIC_URL%/niceadmin/img/profile-img.jpg" alt="Profile" className="rounded-circle"/>
+            {/* <img src="%PUBLIC_URL%/niceadmin/img/profile-img.jpg" alt="Profile" className="rounded-circle"/> */}
             <span className="d-none d-md-block dropdown-toggle ps-2">K. Anderson</span>
           </a>
 

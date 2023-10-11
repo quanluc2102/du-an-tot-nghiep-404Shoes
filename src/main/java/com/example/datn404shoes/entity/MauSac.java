@@ -1,6 +1,7 @@
 package com.example.datn404shoes.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 @Entity
@@ -18,9 +19,11 @@ public class MauSac {
     @Column(name = "id")
     private long id;
 
+//    @NotBlank(message = "Giá trị không được để trống")
     @Column(name = "gia_tri")
     private int giaTri;
 
+    @NotBlank(message = "Tên không được để trống")
     @Column(name = "ten")
     private String ten;
 
