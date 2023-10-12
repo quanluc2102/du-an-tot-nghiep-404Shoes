@@ -19,8 +19,9 @@ public class SanPhamThuongHieuServiceimpl implements SanPhamThuongHieuService {
     @Override
     public SanPhamThuongHieu add(SanPhamThuongHieuRequest sanPhamThuongHieuRequest) {
         SanPhamThuongHieu sanPhamThuongHieu = new SanPhamThuongHieu();
-        sanPhamThuongHieu.setThuongHieuId(ThuongHieu.builder().id(sanPhamThuongHieuRequest.getThuongHieuId()).build());
-        sanPhamThuongHieu.setSanPhamId(SanPham.builder().id(sanPhamThuongHieuRequest.getSanPhamId()).build());
+        sanPhamThuongHieu.setThuongHieu(ThuongHieu.builder().id(sanPhamThuongHieuRequest.getThuongHieuId()).build());
+        sanPhamThuongHieu.setSanPham(SanPham.builder().id(sanPhamThuongHieuRequest.getSanPhamId()).build());
+        repo.save(sanPhamThuongHieu);
         return sanPhamThuongHieu;
     }
 
@@ -35,10 +36,11 @@ public class SanPhamThuongHieuServiceimpl implements SanPhamThuongHieuService {
     }
 
     @Override
-    public SanPhamThuongHieu update(Long id,SanPhamThuongHieuRequest sanPhamThuongHieuRequest) {
+    public SanPhamThuongHieu update(Long id, SanPhamThuongHieuRequest sanPhamThuongHieuRequest) {
         SanPhamThuongHieu sanPhamThuongHieu1 = repo.findById(id).get();
-        sanPhamThuongHieu1.setThuongHieuId(ThuongHieu.builder().id(sanPhamThuongHieuRequest.getThuongHieuId()).build());
-        sanPhamThuongHieu1.setSanPhamId(SanPham.builder().id(sanPhamThuongHieuRequest.getSanPhamId()).build());
+        sanPhamThuongHieu1.setThuongHieu(ThuongHieu.builder().id(sanPhamThuongHieuRequest.getThuongHieuId()).build());
+        sanPhamThuongHieu1.setSanPham(SanPham.builder().id(sanPhamThuongHieuRequest.getSanPhamId()).build());
+        repo.save(sanPhamThuongHieu1);
         return sanPhamThuongHieu1;
     }
 

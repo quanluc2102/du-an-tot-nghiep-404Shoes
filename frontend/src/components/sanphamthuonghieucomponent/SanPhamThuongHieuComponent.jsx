@@ -1,24 +1,25 @@
 import React, { Component } from 'react';
-import danhmucservice from '../../services/sanphamdanhmucservice/sanphamdanhmucservice';
 import { toast } from 'react-toastify';
-import sanphamdanhmucservice from '../../services/sanphamdanhmucservice/sanphamdanhmucservice';
+import sanphamthuonghieuservice from '../../services/sanphamthuonghieuservice/sanphamthuonghieuservice';
+import SanPhamService1 from '../../services/sanphamservice/SanPhamService1';
+import thuonghieuservice from '../../services/thuonghieuservice/thuonghieuservice';
 
-class SanPhamDanhMucComponent extends Component {
+class SanPhamThuongHieuComponent extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            sanPhamDanhMuc: [],
-            sanPhamDanhMucAdd: {
-                sanPhamId: '', // Sử dụng 'sanPhamId' và 'danhMucId' thay vì 'sanPhamId' hai lần
-                danhMucId: '',
+            sanPhamThuongHieu: [],
+            sanPhamThuongHieuAdd: {
+                sanPhamId: '', // Sử dụng 'sanPhamId' và 'thuongHieuId' thay vì 'sanPhamId' hai lần
+                thuongHieuId: '',
             },
-            sanPhamDanhMucUpdate: {
+            sanPhamThuongHieuUpdate: {
                 id: this.props.match.params.id,
-                sanPhamId: '', // Sử dụng 'sanPhamId' và 'danhMucId' thay vì 'sanPhamId' hai lần
-                danhMucId: '',
+                sanPhamId: '', // Sử dụng 'sanPhamId' và 'thuongHieuId' thay vì 'sanPhamId' hai lần
+                thuongHieuId: '',
             },
             sanPhams: [],  // Thêm danh sách Sản phẩm vào state
-            danhMucs: [],  // Thêm danh sách Danh mục vào state
+            thuongHieus: [],  // Thêm danh sách Thương Hiệu vào state
         }
 
         this.add = this.add.bind(this);
@@ -26,14 +27,14 @@ class SanPhamDanhMucComponent extends Component {
         this.update = this.update.bind(this);
         this.detail = this.detail.bind(this);
         this.thayDoiSanPhamIdAdd = this.thayDoiSanPhamIdAdd.bind(this);
-        this.thayDoiDanhMucIdAdd = this.thayDoiDanhMucIdAdd.bind(this);
+        this.thayDoiThuongHieuIdAdd = this.thayDoiThuongHieuIdAdd.bind(this);
         this.thayDoiSanPhamIdUpdate = this.thayDoiSanPhamIdUpdate.bind(this);
-        this.thayDoiDanhMucIdUpdate = this.thayDoiDanhMucIdUpdate.bind(this);
+        this.thayDoiThuongHieuIdUpdate = this.thayDoiThuongHieuIdUpdate.bind(this);
     }
 
     componentDidMount() {
-        this.loadSanPhamDanhMucData();
-        this.loadDanhMucData();
+        this.loadSanPhamThuongHieuData();
+        this.loadThuongHieuData();
         this.loadSanPhamData(); // Thêm dòng này để tải danh sách Sản phẩm
     }
 
@@ -41,46 +42,46 @@ class SanPhamDanhMucComponent extends Component {
     loadSanPhamData() {
         // Gọi API hoặc lấy danh sách Sản phẩm từ dữ liệu và lưu vào state
         // Ví dụ:
-        sanphamdanhmucservice.getSanPham().then((res) => {
+        SanPhamService1.getSanPham().then((res) => {
             this.setState({ sanPhams: res.data });
         });
     }
 
-    loadDanhMucData() {
-        // Gọi API hoặc lấy danh sách Danh mục từ dữ liệu và lưu vào state
+    loadThuongHieuData() {
+        // Gọi API hoặc lấy danh sách Thương Hiệu từ dữ liệu và lưu vào state
         // Ví dụ:
-        sanphamdanhmucservice.getDanhMuc().then((res) => {
-            this.setState({ danhMucs: res.data });
+        thuonghieuservice.getThuongHieu().then((res) => {
+            this.setState({ thuongHieus: res.data });
         });
     }
 
     componentDidUpdate(prevProps) {
         if (this.props.match.params.id !== prevProps.match.params.id) {
-            this.loadSanPhamDanhMucData();
+            this.loadSanPhamThuongHieuData();
         }
     }
 
-    loadSanPhamDanhMucData() {
-        sanphamdanhmucservice.getSanPhamDanhMuc().then((res) => {
+    loadSanPhamThuongHieuData() {
+        sanphamthuonghieuservice.getSanPhamThuongHieu().then((res) => {
             console.log(res.data);
-            this.setState({ sanPhamDanhMuc: res.data });
+            this.setState({ sanPhamThuongHieu: res.data });
         });
 
         const id = this.props.match.params.id;
         if (id) {
-            danhmucservice.getSanPhamDanhMucById(id).then((res) => {
-                this.setState({ sanPhamDanhMucUpdate: res.data });
+            sanphamthuonghieuservice.getSanPhamThuongHieuById(id).then((res) => {
+                this.setState({ sanPhamThuongHieuUpdate: res.data });
             });
         }
     }
 
 
     delete(id) {
-        danhmucservice.deleteSanPhamDanhMuc(id).then((res) => {
+        sanphamthuonghieuservice.deleteSanPhamThuongHieu(id).then((res) => {
             console.log(res); // Xem phản hồi từ API
             if (res.status === 200) { // Kiểm tra nếu phản hồi là thành công
                 this.setState({
-                    sanPhamDanhMuc: this.state.sanPhamDanhMuc.filter(sanPhamDanhMuc => sanPhamDanhMuc.id !== id)
+                    sanPhamThuongHieu: this.state.sanPhamThuongHieu.filter(sanPhamThuongHieu => sanPhamThuongHieu.id !== id)
                 });
             } else {
                 // Xử lý khi có lỗi
@@ -94,17 +95,17 @@ class SanPhamDanhMucComponent extends Component {
 
     add = (e) => {
         e.preventDefault();
-        let sanPhamDanhMuc = {
-            sanPhamId: this.state.sanPhamDanhMucAdd.sanPhamId,
-            danhMucId: this.state.sanPhamDanhMucAdd.danhMucId
+        let sanPhamThuongHieu = {
+            sanPhamId: this.state.sanPhamThuongHieuAdd.sanPhamId,
+            thuongHieuId: this.state.sanPhamThuongHieuAdd.thuongHieuId
         };
 
-        danhmucservice.createSanPhamDanhMuc(sanPhamDanhMuc).then((res) => {
+        sanphamthuonghieuservice.createSanPhamThuongHieu(sanPhamThuongHieu).then((res) => {
             if (res.status === 200) {
                 // Xử lý khi thêm thành công
-                let sanPhamDanhMucMoi = res.data;
+                let sanPhamThuongHieuMoi = res.data;
                 this.setState(prevState => ({
-                    sanPhamDanhMuc: [...prevState.sanPhamDanhMuc, sanPhamDanhMucMoi]
+                    sanPhamThuongHieu: [...prevState.sanPhamThuongHieu, sanPhamThuongHieuMoi]
                 }));
             } else {
                 // Xử lý khi có lỗi
@@ -117,31 +118,31 @@ class SanPhamDanhMucComponent extends Component {
     }
     update = (e) => {
         e.preventDefault();
-        let sanPhamDanhMuc = {
-            sanPhamId: this.state.sanPhamDanhMucUpdate.sanPhamId,
-            danhMucId: this.state.sanPhamDanhMucUpdate.danhMucId
+        let sanPhamThuongHieu = {
+            sanPhamId: this.state.sanPhamThuongHieuUpdate.sanPhamId,
+            thuongHieuId: this.state.sanPhamThuongHieuUpdate.thuongHieuId
         };
-        console.log('nsx' + JSON.stringify(sanPhamDanhMuc));
-        // let id = this.state.sanPhamDanhMucUpdate.id;
-        danhmucservice.updateSanPhamDanhMuc(sanPhamDanhMuc, this.state.sanPhamDanhMucUpdate.id).then((res) => {
-            let sanPhamDanhMucCapNhat = res.data; // Giả sử API trả về đối tượng vừa được cập nhật
+        console.log('nsx' + JSON.stringify(sanPhamThuongHieu));
+        // let id = this.state.sanPhamThuongHieuUpdate.id;
+        sanphamthuonghieuservice.updateSanPhamThuongHieu(sanPhamThuongHieu, this.state.sanPhamThuongHieuUpdate.id).then((res) => {
+            let sanPhamThuongHieuCapNhat = res.data; // Giả sử API trả về đối tượng vừa được cập nhật
             this.setState(prevState => ({
-                sanPhamDanhMuc: prevState.sanPhamDanhMuc.map(dm =>
-                    dm.id === sanPhamDanhMucCapNhat.id ? sanPhamDanhMucCapNhat : dm
+                sanPhamThuongHieu: prevState.sanPhamThuongHieu.map(dm =>
+                    dm.id === sanPhamThuongHieuCapNhat.id ? sanPhamThuongHieuCapNhat : dm
                 )
             }));
         })
 
     }
     detail(id) {
-        const dmspSelected = this.state.sanPhamDanhMuc.find(dmsp => dmsp.id === id);
-        console.log(dmspSelected); // Thêm dòng này
-        if (dmspSelected) {
+        const spthSelected = this.state.sanPhamThuongHieu.find(thsp => thsp.id === id);
+        console.log(spthSelected); // Thêm dòng này
+        if (spthSelected) {
             this.setState({
-                sanPhamDanhMucUpdate: {
-                    id: dmspSelected.id,
-                    sanPhamId: dmspSelected.sanPham.id,
-                    danhMucId: dmspSelected.danhMuc.id
+                sanPhamThuongHieuUpdate: {
+                    id: spthSelected.id,
+                    sanPhamId: spthSelected.sanPham.id,
+                    thuongHieuId: spthSelected.thuongHieu.id
                 }
             });
         }
@@ -149,34 +150,34 @@ class SanPhamDanhMucComponent extends Component {
 
     thayDoiSanPhamIdAdd = (event) => {
         this.setState(prevState => ({
-            sanPhamDanhMucAdd: {
-                ...prevState.sanPhamDanhMucAdd,
+            sanPhamThuongHieuAdd: {
+                ...prevState.sanPhamThuongHieuAdd,
                 sanPhamId: event.target.value
             }
         }));
     }
 
-    thayDoiDanhMucIdAdd = (event) => {
+    thayDoiThuongHieuIdAdd = (event) => {
         this.setState(prevState => ({
-            sanPhamDanhMucAdd: {
-                ...prevState.sanPhamDanhMucAdd,
-                danhMucId: event.target.value // Sửa ở đây
+            sanPhamThuongHieuAdd: {
+                ...prevState.sanPhamThuongHieuAdd,
+                thuongHieuId: event.target.value // Sửa ở đây
             }
         }));
     }
     thayDoiSanPhamIdUpdate = (event) => {
         this.setState(prevState => ({
-            sanPhamDanhMucUpdate: {
-                ...prevState.sanPhamDanhMucUpdate,
+            sanPhamThuongHieuUpdate: {
+                ...prevState.sanPhamThuongHieuUpdate,
                 sanPhamId: event.target.value
             }
         }));
     }
-    thayDoiDanhMucIdUpdate = (event) => {
+    thayDoiThuongHieuIdUpdate = (event) => {
         this.setState(prevState => ({
-            sanPhamDanhMucUpdate: {
-                ...prevState.sanPhamDanhMucUpdate,
-                danhMucId: event.target.value // Sửa ở đây
+            sanPhamThuongHieuUpdate: {
+                ...prevState.sanPhamThuongHieuUpdate,
+                thuongHieuId: event.target.value // Sửa ở đây
             }
         }));
     }
@@ -185,7 +186,7 @@ class SanPhamDanhMucComponent extends Component {
 
 
     render() {
-        console.log(this.state.sanPhamDanhMucUpdate);
+        console.log(this.state.sanPhamThuongHieuUpdate);
         return (
             <div>
                 <div className="pagetitle">
@@ -216,24 +217,24 @@ class SanPhamDanhMucComponent extends Component {
                                                 <thead>
                                                     <tr>
                                                         <th>Tên</th>
-                                                        <th>Ngày tạo</th>
+                                                        {/* <th>Ngày tạo</th> */}
                                                         <th>Giá nhập</th>
                                                         <th>Giá bán </th>
-                                                        <th>Danh mục </th>
+                                                        <th>Thương hiệu </th>
                                                         <th>Action</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    {this.state.sanPhamDanhMuc.map((dmsp) => (
-                                                        <tr key={dmsp.id}>
-                                                            <td>{dmsp.sanPham.ten}</td>
-                                                            <td>{dmsp.sanPham.ngayTao}</td>
-                                                            <td>{dmsp.sanPham.giaNhap}</td>
-                                                            <td>{dmsp.sanPham.giaBan}</td>
-                                                            <td>{dmsp.danhMuc.ten}</td>
+                                                    {this.state.sanPhamThuongHieu.map((thsp) => (
+                                                        <tr key={thsp.id}>
+                                                            <td>{thsp.sanPham.ten}</td>
+                                                            {/* <td>{thsp.sanPham.ngayTao}</td> */}
+                                                            <td>{thsp.sanPham.giaNhap}</td>
+                                                            <td>{thsp.sanPham.giaBan}</td>
+                                                            <td>{thsp.thuongHieu.ten}</td>
                                                             <td>
-                                                                <button onClick={() => this.delete(dmsp.id)} className='btn btn-danger'>Xóa</button>
-                                                                <button onClick={() => this.detail(dmsp.id)} className='btn btn-primary'>Chi tiết</button>
+                                                                <button onClick={() => this.delete(thsp.id)} className='btn btn-danger'>Xóa</button>
+                                                                <button onClick={() => this.detail(thsp.id)} className='btn btn-primary'>Chi tiết</button>
                                                             </td>
                                                         </tr>
                                                     ))}
@@ -283,8 +284,8 @@ class SanPhamDanhMucComponent extends Component {
                                             <form>
                                                 <div className='form-group'>
                                                     <label>Sản phẩm</label>
-                                                    <select name="sanPhamId" value={this.state.sanPhamDanhMucUpdate.sanPhamId} className="form-control" onChange={this.thayDoiSanPhamIdUpdate}>
-                                                        <option value="">Chọn Danh mục</option>
+                                                    <select name="sanPhamId" value={this.state.sanPhamThuongHieuUpdate.sanPhamId} className="form-control" onChange={this.thayDoiSanPhamIdUpdate}>
+                                                        <option value="">Chọn Sản Phẩm</option>
                                                         {this.state.sanPhams.map((sanPham) => (
                                                             <option key={sanPham.id} value={sanPham.id}>
                                                                 {sanPham.ten}
@@ -293,12 +294,12 @@ class SanPhamDanhMucComponent extends Component {
                                                     </select>
                                                 </div>
                                                 <div className='form-group'>
-                                                    <label>Danh mục</label>
-                                                    <select name="danhMucId" value={this.state.sanPhamDanhMucUpdate.danhMucId} className="form-control" onChange={this.thayDoiDanhMucIdUpdate}>
-                                                        <option value="">Chọn Danh mục</option>
-                                                        {this.state.danhMucs.map((danhMuc) => (
-                                                            <option key={danhMuc.id} value={danhMuc.id}>
-                                                                {danhMuc.ten}
+                                                    <label>Thương Hiệu</label>
+                                                    <select name="thuongHieuId" value={this.state.sanPhamThuongHieuUpdate.thuongHieuId} className="form-control" onChange={this.thayDoiThuongHieuIdUpdate}>
+                                                        <option value="">Chọn Thương Hiệu</option>
+                                                        {this.state.thuongHieus.map((thuongHieu) => (
+                                                            <option key={thuongHieu.id} value={thuongHieu.id}>
+                                                                {thuongHieu.ten}
                                                             </option>
                                                         ))}
                                                     </select>
@@ -323,12 +324,12 @@ class SanPhamDanhMucComponent extends Component {
                                                 </div>
 
                                                 <div className='form-group'>
-                                                    <label>Danh mục</label>
-                                                    <select name="danhMucId" className="form-control" onChange={this.thayDoiDanhMucIdAdd}>
-                                                        <option value="">Chọn danh mục</option>
-                                                        {this.state.danhMucs.map((danhMuc) => (
-                                                            <option key={danhMuc.id} value={danhMuc.id}>
-                                                                {danhMuc.ten}
+                                                    <label>Thương Hiệu</label>
+                                                    <select name="thuongHieuId" className="form-control" onChange={this.thayDoiThuongHieuIdAdd}>
+                                                        <option value="">Chọn thương hiệu</option>
+                                                        {this.state.thuongHieus.map((thuongHieu) => (
+                                                            <option key={thuongHieu.id} value={thuongHieu.id}>
+                                                                {thuongHieu.ten}
                                                             </option>
                                                         ))}
                                                     </select>
@@ -354,4 +355,4 @@ class SanPhamDanhMucComponent extends Component {
     }
 
 }
-export default SanPhamDanhMucComponent
+export default SanPhamThuongHieuComponent

@@ -12,6 +12,7 @@ import KichThuocComponent from './components/kichthuoccomponent/KichThuocCompone
 import ThuongHieuComponent from './components/thuonghieucomponent/ThuongHieuComponent';
 import XuatXuComponent from './components/xuatxucomponent/XuatXuComponent';
 import SanPhamDanhMucComponent from './components/sanphamdanhmuccomponent/SanPhamDanhMucComponent';
+import SanPhamThuongHieuComponent from './components/sanphamthuonghieucomponent/SanPhamThuongHieuComponent';
 
 function App() {
   return (
@@ -40,6 +41,9 @@ function App() {
             <Route path='/xuatxu' component={XuatXuComponent} />
             <Route path='/xuatxudetail/:id' component={XuatXuComponent} />
             <Route path='/sanphamdanhmuc' component={SanPhamDanhMucComponent} />
+            <Route path='/sanphamdanhmuc/:id' component={SanPhamDanhMucComponent} />
+            <Route path='/sanphamthuonghieu' component={SanPhamThuongHieuComponent} />
+            <Route path='/sanphamthuonghieu/:id' component={SanPhamThuongHieuComponent} />
             
 
           </Switch>
