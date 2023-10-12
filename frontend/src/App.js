@@ -6,6 +6,7 @@ import Footer from './components/admin/Footer';
 import SanPhamComponent from "./components/sanphamComponent/SanPhamComponent";
 import ListDanhMucComponent from './components/danhmuccomponent/ListDanhMucComponent';
 import { ToastContainer, toast } from 'react-toastify';
+import SanPhamCTComponent from "./components/spctcomponent/SanPhamCTComponent";
 
 function App() {
   return (
@@ -23,6 +24,8 @@ function App() {
                     <Route path='/detail/:id' component={SanPhamComponent}/>
                     <Route path='/danhmuc' component={ListDanhMucComponent}/>
                     <Route path='/danhmucdetail/:id' component={ListDanhMucComponent}/>
+                    <Route path='/san_pham_chi_tiet' component={SanPhamCTComponent}/>
+                    <Route path='/san_pham_chi_tiet_detail/:id' component={SanPhamCTComponent}/>
                 </Switch>
 
 

@@ -9,6 +9,7 @@ import java.sql.Date;
 @Table(name = "san_pham_chi_tiet")
 @AllArgsConstructor
 @NoArgsConstructor
+@Data
 @Getter
 @Setter
 @Builder
@@ -39,4 +40,10 @@ public class SanPhamChiTiet {
     @JoinColumn(name = "san_pham_id", referencedColumnName = "id")
     private SanPham sanPhamId;
 
+    public SanPhamChiTiet(Integer trangThai, Integer soLuong, KichThuocMauSac kichThuocMauSacId, SanPham sanPhamId) {
+        this.trangThai = trangThai;
+        this.soLuong = soLuong;
+        this.kichThuocMauSacId = kichThuocMauSacId;
+        this.sanPhamId = sanPhamId;
+    }
 }
