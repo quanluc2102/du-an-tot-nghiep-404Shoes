@@ -50,8 +50,6 @@ function App() {
             <Route path='/sanphamxuatxu/:id' component={SanPhamXuatXuComponent} />
             <Route path='/kichthuocmausac' component={KichThuocMauSacComponent} />
             <Route path='/kichthuocmausacdetail/:id' component={KichThuocMauSacComponent} />
-            
-
           </Switch>
 
 
