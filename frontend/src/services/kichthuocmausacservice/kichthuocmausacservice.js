@@ -1,6 +1,6 @@
 import axios from 'axios';
 const KICHTHUOC_API_BASE_URL = "http://localhost:8080/kich_thuoc/hien_thi";
-const MAUSAC_API = 'http://localhost:8080/mau_sac/index';
+const MAUSAC_API = 'http://localhost:8080/mau_sac/hien_thi';
 const API_BASE_URL = "http://localhost:8080/kich_thuoc_mau_sac/hien_thi";
 const API_SAVE_URL = "http://localhost:8080/kich_thuoc_mau_sac/add";
 const API_DELETE_URL = "http://localhost:8080/kich_thuoc_mau_sac/delete";

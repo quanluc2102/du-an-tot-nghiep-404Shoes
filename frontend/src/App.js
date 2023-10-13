@@ -14,6 +14,7 @@ import XuatXuComponent from './components/xuatxucomponent/XuatXuComponent';
 import SanPhamDanhMucComponent from './components/sanphamdanhmuccomponent/SanPhamDanhMucComponent';
 import SanPhamThuongHieuComponent from './components/sanphamthuonghieucomponent/SanPhamThuongHieuComponent';
 import SanPhamXuatXuComponent from './components/sanphamxuatxucomponent/SanPhamXuatXuComponent';
+import KichThuocMauSacComponent from './components/kichthuocmausaccomponent/KichThuocMauSacComponent';
 
 function App() {
   return (
@@ -47,6 +48,8 @@ function App() {
             <Route path='/sanphamthuonghieu/:id' component={SanPhamThuongHieuComponent} />
             <Route path='/sanphamxuatxu' component={SanPhamXuatXuComponent} />
             <Route path='/sanphamxuatxu/:id' component={SanPhamXuatXuComponent} />
+            <Route path='/kichthuocmausac' component={KichThuocMauSacComponent} />
+            <Route path='/kichthuocmausacdetail/:id' component={KichThuocMauSacComponent} />
             
 
           </Switch>

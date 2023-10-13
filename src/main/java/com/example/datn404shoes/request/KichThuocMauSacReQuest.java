@@ -13,6 +13,6 @@ public class KichThuocMauSacReQuest {
 
     private Long kichThuocId;
 
-    private Integer trangThai;
+    private int trangThai;
 
 }

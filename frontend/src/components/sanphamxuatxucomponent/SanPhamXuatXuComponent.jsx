@@ -334,6 +334,8 @@ class SanPhamXuatXuComponent extends Component {
                                                         ))}
                                                     </select>
                                                 </div>
+
+                                                
                                                 <input type="submit" className="btn btn-primary" value="Add" style={{ marginTop: '10px' }} onClick={this.add} />
                                             </form>
                                         </div>
