@@ -55,13 +55,13 @@ class SanPhamCTComponent extends Component {
     delete(id){
         SanPhamChiTietService.deleteSanPhamChiTiet(id).then((res)=>{
         });
-        window.location.href = (`/san_pham_chi_tiet`);
+        window.location.href = (`/sanphamchitiet`);
     }
     add = (e)=>{
         e.preventDefault();
 
         SanPhamChiTietService.addSanPhamChiTiet(this.state.sanPhamChiTietAdd).then((res)=>{
-            window.location.href = (`/san_pham_chi_tiet`);
+            window.location.href = (`/sanphamchitiet`);
         })
 
     }
@@ -75,11 +75,11 @@ class SanPhamCTComponent extends Component {
         console.log('nsx' + JSON.stringify(spct));
         let id = this.state.sanPhamChiTietUpdate.id;
         SanPhamChiTietService.updateSanPhamChiTiet(id,spct).then((res)=>{
-            window.location.href = (`/san_pham_chi_tiet`);
+            window.location.href = (`/sanphamchitiet`);
         })
     }
     detail(id){
-        window.location.href = (`/san_pham_chi_tiet_detail/${id}`);
+        window.location.href = (`/sanphamchitietdetail/${id}`);
     }
     thayDoiSoLuongAdd=(event)=>{
         this.setState(
