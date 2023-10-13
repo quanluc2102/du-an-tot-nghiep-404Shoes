@@ -77,7 +77,7 @@
   onscroll(document, navbarlinksActive)
 
   /**
-   * Toggle .header-scrolled class to #header when page is scrolled
+   * Toggle .header-scrolled className to #header when page is scrolled
    */
   let selectHeader = select('#header')
   if (selectHeader) {
@@ -222,8 +222,8 @@
         value: ''
       },
       {
-        title: 'Some class',
-        value: 'class-name'
+        title: 'Some className',
+        value: 'className-name'
       }
     ],
     importcss_append: true,
@@ -253,7 +253,7 @@
     templates: [{
         title: 'New Table',
         description: 'creates a new table',
-        content: '<div class="mceTmpl"><table width="98%%"  border="0" cellspacing="0" cellpadding="0"><tr><th scope="col"> </th><th scope="col"> </th></tr><tr><td> </td><td> </td></tr></table></div>'
+        content: '<div className="mceTmpl"><table width="98%%"  border="0" cellspacing="0" cellpadding="0"><tr><th scope="col"> </th><th scope="col"> </th></tr><tr><td> </td><td> </td></tr></table></div>'
       },
       {
         title: 'Starting my story',
@@ -263,7 +263,7 @@
       {
         title: 'New list with dates',
         description: 'New List with dates',
-        content: '<div class="mceTmpl"><span class="cdate">cdate</span><br><span class="mdate">mdate</span><h2>My List</h2><ul><li></li><li></li></ul></div>'
+        content: '<div className="mceTmpl"><span className="cdate">cdate</span><br><span className="mdate">mdate</span><h2>My List</h2><ul><li></li><li></li></ul></div>'
       }
     ],
     template_cdate_format: '[Date Created (CDATE): %m/%d/%Y : %H:%M:%S]',

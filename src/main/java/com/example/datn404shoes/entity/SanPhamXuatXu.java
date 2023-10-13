@@ -19,11 +19,11 @@ public class SanPhamXuatXu {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "san_pham_id", referencedColumnName = "id")
-    private SanPham sanPhamId;
+    private SanPham sanPham;
 
     @ManyToOne(fetch = FetchType.EAGER) // chua ro lam
     @JoinColumn(name = "xuat_xu_id", referencedColumnName = "id")
-    private XuatXu xuatXuId;
+    private XuatXu xuatXu;
 
 
 }

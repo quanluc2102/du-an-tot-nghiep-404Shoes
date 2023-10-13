@@ -15,6 +15,14 @@ class XuatXuComponent extends Component {
                 id: this.props.match.params.id,
                 ten: '',
                 trangThai: '',
+            },
+            errorsAdd: {
+                ten: '',
+                trangThai: ''
+            },
+            errorsUpdate: {
+                ten: '',
+                trangThai: ''
             }
         }
         this.add = this.add.bind(this);
@@ -58,6 +66,22 @@ class XuatXuComponent extends Component {
     }
     add = (e) => {
         e.preventDefault();
+
+        if (!this.state.xuatXuAdd.ten.trim()) {
+            this.setState({ errorsAdd: { ...this.state.errorsAdd, ten: "Tên không được bỏ trống!" } });
+            return;
+        } else {
+            this.setState({ errorsAdd: { ...this.state.errorsAdd, ten: "" } });
+        }
+    
+        if (!this.state.xuatXuAdd.trangThai.trim()) {
+            this.setState({ errorsAdd: { ...this.state.errorsAdd, trangThai: "Trạng thái không được bỏ trống!" } });
+            return;
+        } else {
+            this.setState({ errorsAdd: { ...this.state.errorsAdd, trangThai: "" } });
+        }
+
+
         let xuatXu = { ten: this.state.xuatXuAdd.ten, trangThai: this.state.xuatXuAdd.trangThai }
         xuatxuservice.createXuatXu(xuatXu).then((res) => {
             if (res.status === 200) {
@@ -66,23 +90,43 @@ class XuatXuComponent extends Component {
                 this.setState(prevState => ({
                     xuatXu: [...prevState.xuatXu, xuatXuMoi]
                 }));
+
+                toast.success("Thêm thành công!"); // Thông báo thành công
+
             } else {
                 // Xử lý khi có lỗi
                 const errorMessage = res.data || "Có lỗi xảy ra khi thêm danh mục.";
-                alert("lỗi" + errorMessage) // Hiển thị lỗi bằng Toast
+                toast.error("Lỗi: " + errorMessage); // Hiển thị lỗi bằng Toast
                 console.log(errorMessage);
             }
         }).catch(error => {
             // Log the error or handle it as needed
             console.error("Update request error:", error);
+            toast.error("Lỗi: " + error.message); // Hiển thị lỗi bằng Toast
         });
-
     }
+
     update = (e) => {
         e.preventDefault();
         let xuatXu = { giaTri: this.state.xuatXuUpdate.giaTri, ten: this.state.xuatXuUpdate.ten, trangThai: this.state.xuatXuUpdate.trangThai }
         console.log('nsx' + JSON.stringify(xuatXu));
         let id = this.state.xuatXuUpdate.id;
+
+        if (!this.state.xuatXuUpdate.ten.trim()) {
+            this.setState({ errorsUpdate: { ...this.state.errorsUpdate, ten: "Tên không được bỏ trống!" } });
+            return;
+        } else {
+            this.setState({ errorsUpdate: { ...this.state.errorsUpdate, ten: "" } });
+        }
+
+
+        if (!this.state.xuatXuUpdate.trangThai.trim()) {
+            this.setState({ errorsUpdate: { ...this.state.errorsUpdate, trangThai: "Trạng thái không được bỏ trống!" } });
+            return;
+        } else {
+            this.setState({ errorsUpdate: { ...this.state.errorsUpdate, trangThai: "" } });
+        }
+
         xuatxuservice.updateXuatXu(xuatXu, this.state.xuatXuUpdate.id).then((res) => {
             let xuatXuCapNhat = res.data; // Giả sử API trả về đối tượng vừa được cập nhật
             this.setState(prevState => ({
@@ -159,12 +203,9 @@ class XuatXuComponent extends Component {
                             <div className="row">
                                 <div className="col-12">
                                     <div className="card recent-sales overflow-auto">
-
-
                                         <div className="card-body">
                                             <h5 className="card-title">Color <span>| </span></h5>
-
-                                            <table className="table table-borderless datatable">
+                                            <table className="table datatable table-borderless ">
                                                 <thead>
                                                     <tr>
                                                         <th>Thương hiệu</th>
@@ -249,15 +290,28 @@ class XuatXuComponent extends Component {
                                             <form>
                                                 <div>
                                                     Tên :
-                                                    <input className="form-control" name="ten" value={this.state.xuatXuUpdate.ten} onChange={this.thayDoiTenUpdate} />
+                                                    <input
+                                                        className={`form-control ${this.state.errorsUpdate.ten ? 'is-invalid' : ''}`}
+                                                        name="ten"
+                                                        onChange={this.thayDoiTenAdd}
+                                                    />
+                                                    {this.state.errorsUpdate.ten && <div className="text-danger">{this.state.errorsUpdate.ten}</div>}
                                                 </div>
                                                 <div className='form-group'>
                                                     <label>Trạng thái</label>
-                                                    <select name="trangThai" id="trangThai" value={this.state.xuatXuUpdate.trangThai} className="form-control" onChange={this.thayDoiTrangThaiUpdate}>
+                                                    <select
+                                                        name="trangThai"
+                                                        id="trangThai"
+                                                        value={this.state.xuatXuUpdate.trangThai}
+                                                        className={`form-control ${this.state.errorsUpdate.trangThai ? 'is-invalid' : ''}`}
+                                                        onChange={this.thayDoiTrangThaiUpdate}
+                                                    >
                                                         <option value='0'>Còn</option>
                                                         <option value="1">Ko còn</option>
                                                     </select>
+                                                    {this.state.errorsUpdate.trangThai && <div className="text-danger">{this.state.errorsUpdate.trangThai}</div>}
                                                 </div>
+
                                                 <input type="submit" className="btn btn-primary" value="Update" style={{ marginTop: '10px' }} onClick={this.update} />
                                             </form>
                                         </div>
@@ -266,14 +320,27 @@ class XuatXuComponent extends Component {
                                             <form>
                                                 <div>
                                                     Tên :
-                                                    <input className="form-control" name="ten" onChange={this.thayDoiTenAdd} />
+                                                    <input
+                                                        className={`form-control ${this.state.errorsAdd.ten ? 'is-invalid' : ''}`}
+                                                        name="ten"
+                                                        // value={this.state.xuatXuUpdate.ten}
+                                                        onChange={this.thayDoiTenAdd}
+                                                    />
+                                                    {this.state.errorsAdd.ten && <div className="text-danger">{this.state.errorsAdd.ten}</div>}
                                                 </div>
                                                 <div className='form-group'>
                                                     <label>Trạng thái</label>
-                                                    <select name="trangThai" id="trangThai" className="form-control" onChange={this.thayDoiTrangThaiAdd}>
+                                                    <select
+                                                        name="trangThai"
+                                                        id="trangThai"
+                                                        // value={this.state.xuatXuUpdate.trangThai}
+                                                        className={`form-control ${this.state.errorsAdd.trangThai ? 'is-invalid' : ''}`}
+                                                        onChange={this.thayDoiTrangThaiAdd}
+                                                    >
                                                         <option value='0'>Còn</option>
                                                         <option value="1">Ko còn</option>
                                                     </select>
+                                                    {this.state.errorsAdd.trangThai && <div className="text-danger">{this.state.errorsAdd.trangThai}</div>}
                                                 </div>
                                                 <input type="submit" className="btn btn-primary" value="Add" style={{ marginTop: '10px' }} onClick={this.add} />
                                             </form>
