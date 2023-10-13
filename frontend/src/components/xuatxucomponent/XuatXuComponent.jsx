@@ -203,12 +203,9 @@ class XuatXuComponent extends Component {
                             <div className="row">
                                 <div className="col-12">
                                     <div className="card recent-sales overflow-auto">
-
-
                                         <div className="card-body">
                                             <h5 className="card-title">Color <span>| </span></h5>
-
-                                            <table className="table table-borderless datatable">
+                                            <table className="table datatable table-borderless ">
                                                 <thead>
                                                     <tr>
                                                         <th>Thương hiệu</th>
