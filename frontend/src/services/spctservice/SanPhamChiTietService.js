@@ -25,17 +25,17 @@ class SanPhamChiTietService{
         return axios.get(BASE_URL_DETAIL+"/"+id);
     }
 
-    addSanPhamChiTiet(spct,ktmsId,spId){
-        return axios.post(BASE_URL_ADD+"/"+ktmsId+"/"+spId,spct);
+    addSanPhamChiTiet(spct){
+        return axios.post(BASE_URL_ADD,spct);
     }
 
     deleteSanPhamChiTiet(id){
         return axios.delete(BASE_URL_DELETE+"/"+id);
     }
 
-    updateSanPhamChiTiet(id,ktmsId,spId,spct){
+    updateSanPhamChiTiet(id,spct){
         console.log(id);
-        return axios.put(BASE_URL_UPDATE+"/"+id+"/"+ktmsId+"/"+spId,spct);
+        return axios.put(BASE_URL_UPDATE+"/"+id,spct);
     }
 }
 export default new SanPhamChiTietService();

@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import SanPhamService from "../../services/sanphamservice/SanPhamService";
+import SanPhamChiTietService from "../../services/spctservice/SanPhamChiTietService";
 
 class SanPhamComponent extends Component {
     constructor(props) {
@@ -44,16 +45,18 @@ class SanPhamComponent extends Component {
         SanPhamService.getSanPham().then((res)=>{
             this.setState({sanPham:res.data});
         });
-        SanPhamService.getSanPhamById(this.state.sanPhamUpdate.id).then((res)=>{
-            // this.setState(this.state.sanPhamUpdate.ten=sanPham1.ten,
-            //     this.state.sanPhamUpdate.giaNhap=sanPham1.giaNhap,
-            //     this.state.sanPhamUpdate.giaBan=sanPham1.giaBan,
-            //     this.state.sanPhamUpdate.giamGia=sanPham1.giamGia,
-            //     this.state.sanPhamUpdate.trangThai=sanPham1.trangThai,
-            //     this.state.sanPhamUpdate.moTa=sanPham1.moTa)
-            this.setState({sanPhamUpdate:res.data});
-        })
-
+        const id = this.props.match.params.id;
+        if (id) {
+            SanPhamService.getSanPhamById(this.state.sanPhamUpdate.id).then((res)=>{
+                // this.setState(this.state.sanPhamUpdate.ten=sanPham1.ten,
+                //     this.state.sanPhamUpdate.giaNhap=sanPham1.giaNhap,
+                //     this.state.sanPhamUpdate.giaBan=sanPham1.giaBan,
+                //     this.state.sanPhamUpdate.giamGia=sanPham1.giamGia,
+                //     this.state.sanPhamUpdate.trangThai=sanPham1.trangThai,
+                //     this.state.sanPhamUpdate.moTa=sanPham1.moTa)
+                this.setState({sanPhamUpdate:res.data});
+            })
+        }
     }
     delete(id){
         SanPhamService.deleteSanPham(id).then((res)=>{

@@ -4,6 +4,7 @@ import com.example.datn404shoes.entity.KichThuocMauSac;
 import com.example.datn404shoes.entity.SanPham;
 import com.example.datn404shoes.entity.SanPhamChiTiet;
 import com.example.datn404shoes.repository.SanPhamChiTietRepository;
+import com.example.datn404shoes.request.SanPhamChiTietRequest;
 import com.example.datn404shoes.service.SanPhamChiTietService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,11 +27,14 @@ public class SanPhamChiTietServiceimpl implements SanPhamChiTietService {
     }
 
     @Override
-    public SanPhamChiTiet add(SanPhamChiTiet spct,Long ktmsId,Long spId) {
+    public SanPhamChiTiet add(SanPhamChiTietRequest spct1) {
+        SanPhamChiTiet spct = new SanPhamChiTiet();
         spct.setNgayTao(Date.valueOf(LocalDate.now()));
         spct.setNgayCapNhat(Date.valueOf(LocalDate.now()));
-        spct.setKichThuocMauSacId(KichThuocMauSac.builder().id(ktmsId).build());
-        spct.setSanPhamId(SanPham.builder().id(spId).build());
+        spct.setSoLuong(spct1.getSoLuong());
+        spct.setTrangThai(spct1.getTrangThai());
+        spct.setKichThuocMauSacId(KichThuocMauSac.builder().id(spct1.getKichThuocMauSacId()).build());
+        spct.setSanPhamId(SanPham.builder().id(spct1.getSanPhamId()).build());
         return repo.save(spct);
     }
 
@@ -46,13 +50,13 @@ public class SanPhamChiTietServiceimpl implements SanPhamChiTietService {
     }
 
     @Override
-    public SanPhamChiTiet update(Long id,Long ktmsId,Long spId, SanPhamChiTiet spct) {
+    public SanPhamChiTiet update(Long id, SanPhamChiTietRequest spct) {
         SanPhamChiTiet a = repo.findById(id).orElse(null);
         a.setTrangThai(spct.getTrangThai());
         a.setNgayCapNhat(Date.valueOf(LocalDate.now()));
-        a.setSanPhamId(SanPham.builder().id(spId).build());
+        a.setSanPhamId(SanPham.builder().id(spct.getSanPhamId()).build());
         a.setSoLuong(spct.getSoLuong());
-        a.setKichThuocMauSacId(KichThuocMauSac.builder().id(ktmsId).build());
+        a.setKichThuocMauSacId(KichThuocMauSac.builder().id(spct.getKichThuocMauSacId()).build());
         repo.save(a);
         return a;
     }

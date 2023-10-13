@@ -6,18 +6,20 @@ class SanPhamCTComponent extends Component {
         super(props);
         this.state = {
             id: this.props.match.params.id,
-            sanPhamId: '',
-            kichThuocMauSacId: '',
             sanPhamChiTiet: [],
             sanPham:[],
             kichThuocMS:[],
             sanPhamChiTietAdd: {
                 soLuong: '',
-                trangThai: ''
+                trangThai: '',
+                sanPhamId: '',
+                kichThuocMauSacId: ''
             },
             sanPhamChiTietUpdate: {
                 soLuong: '',
-                trangThai: ''
+                trangThai: '',
+                sanPhamId: '',
+                kichThuocMauSacId: ''
             }
         }
         this.add=this.add.bind(this);
@@ -58,7 +60,7 @@ class SanPhamCTComponent extends Component {
     add = (e)=>{
         e.preventDefault();
 
-        SanPhamChiTietService.addSanPhamChiTiet(this.state.sanPhamChiTietAdd,this.state.kichThuocMauSacId,this.state.sanPhamId).then((res)=>{
+        SanPhamChiTietService.addSanPhamChiTiet(this.state.sanPhamChiTietAdd).then((res)=>{
             window.location.href = (`/san_pham_chi_tiet`);
         })
 
@@ -66,10 +68,13 @@ class SanPhamCTComponent extends Component {
     update=(e)=>{
         e.preventDefault();
         var spct = {soLuong: this.state.sanPhamChiTietUpdate.soLuong,
-            trangThai: this.state.sanPhamChiTietUpdate.trangThai}
+            trangThai: this.state.sanPhamChiTietUpdate.trangThai,
+            sanPhamId : this.state.sanPhamChiTietUpdate.sanPhamId,
+            kichThuocMauSacId:this.state.sanPhamChiTietUpdate.kichThuocMauSacId
+        }
         console.log('nsx' + JSON.stringify(spct));
         let id = this.state.sanPhamChiTietUpdate.id;
-        SanPhamChiTietService.updateSanPhamChiTiet(id,this.state.kichThuocMauSacId,this.state.sanPhamId,spct).then((res)=>{
+        SanPhamChiTietService.updateSanPhamChiTiet(id,spct).then((res)=>{
             window.location.href = (`/san_pham_chi_tiet`);
         })
     }
@@ -87,10 +92,24 @@ class SanPhamCTComponent extends Component {
         );
     }
     thayDoiSanPhamAdd=(event)=>{
-        this.setState({sanPhamId:event.target.value});
+        this.setState(
+            prevState=>({
+                sanPhamChiTietAdd:{
+                    ...prevState.sanPhamChiTietAdd,
+                    sanPhamId:event.target.value
+                }
+            })
+        );
     }
     thayDoiKichThuocMauSacAdd=(event)=>{
-        this.setState({kichThuocMauSacId:event.target.value});
+        this.setState(
+            prevState=>({
+                sanPhamChiTietAdd:{
+                    ...prevState.sanPhamChiTietAdd,
+                    kichThuocMauSacId:event.target.value
+                }
+            })
+        );
     }
     thayDoiTrangThaiAdd=(event)=>{
         this.setState(
@@ -113,11 +132,24 @@ class SanPhamCTComponent extends Component {
         );
     }
     thayDoiSanPhamUpdate=(event)=>{
-        this.setState({sanPhamId:event.target.value});
+        this.setState(
+            prevState=>({
+                sanPhamChiTietUpdate:{
+                    ...prevState.sanPhamChiTietUpdate,
+                    sanPhamId:event.target.value
+                }
+            })
+        );
     }
     thayDoiKichThuocMauSacUpdate=(event)=>{
-        this.setState({kichThuocMauSacId:event.target.value});
-    }
+        this.setState(
+            prevState=>({
+                sanPhamChiTietUpdate:{
+                    ...prevState.sanPhamChiTietUpdate,
+                    kichThuocMauSacId:event.target.value
+                }
+            })
+        );    }
     thayDoiTrangThaiUpdate=(event)=>{
         this.setState(
             prevState=>({
@@ -264,7 +296,7 @@ class SanPhamCTComponent extends Component {
                                                     </div>
                                                     <div>
                                                         Số lượng :
-                                                        <input className="form-control" id="soLuongAdd" value={this.state.sanPhamChiTietUpdate.soLuong} onChange={this.thayDoiSoLuongUpdate}/>
+                                                        <input className="form-control" id="soLuongAdd" style={{}} value={this.state.sanPhamChiTietUpdate.soLuong} onChange={this.thayDoiSoLuongUpdate}/>
                                                     </div>
                                                     <div className='form-group'>
                                                         <label>Trạng thái</label>

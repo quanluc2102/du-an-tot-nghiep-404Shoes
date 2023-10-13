@@ -2,6 +2,7 @@ package com.example.datn404shoes.controller;
 
 import com.example.datn404shoes.entity.SanPham;
 import com.example.datn404shoes.entity.SanPhamChiTiet;
+import com.example.datn404shoes.request.SanPhamChiTietRequest;
 import com.example.datn404shoes.service.serviceimpl.SanPhamChiTietServiceimpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -23,10 +24,10 @@ public class SanPhamChiTietController {
     public List<SanPhamChiTiet> index(){
         return serviceimpl.getAll();
     }
-    @PostMapping("add/{ktmsId}/{spId}")
-    public SanPhamChiTiet add(@RequestBody SanPhamChiTiet spct,@PathVariable(name = "ktmsId") Long ktmsId,@PathVariable(name = "spId") Long spId){
+    @PostMapping("add")
+    public SanPhamChiTiet add(@RequestBody SanPhamChiTietRequest spct){
 
-        return serviceimpl.add(spct,ktmsId,spId);
+        return serviceimpl.add(spct);
     }
     @DeleteMapping("delete/{id}")
     public ResponseEntity<?> delete(@PathVariable("id") Long id){
@@ -40,13 +41,11 @@ public class SanPhamChiTietController {
 
         return ResponseEntity.ok(serviceimpl.getOne(id));
     }
-    @PutMapping("update/{id}/{ktmsId}/{spId}")
+    @PutMapping("update/{id}")
     public ResponseEntity<?> update(Model model,
                                     @PathVariable("id") Long id,
-                                    @PathVariable(name = "ktmsId") Long ktmsId,
-                                    @PathVariable(name = "spId") Long spId,
-                                    @RequestBody SanPhamChiTiet spct){
+                                    @RequestBody SanPhamChiTietRequest spct){
 
-        return ResponseEntity.ok(serviceimpl.update(id,ktmsId,spId,spct));
+        return ResponseEntity.ok(serviceimpl.update(id,spct));
     }
 }
