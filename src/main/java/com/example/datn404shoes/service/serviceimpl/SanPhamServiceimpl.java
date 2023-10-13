@@ -36,14 +36,16 @@ public class SanPhamServiceimpl implements SanPhamService {
     }
 
     @Override
-    public void update(Long id, SanPham sp) {
-        SanPham a = sanPhamRespository.findById(id).get();
+    public SanPham update(Long id, SanPham sp) {
+        SanPham a = sanPhamRespository.findById(id).orElse(null);
         a.setTen(sp.getTen());
         a.setGiaBan(sp.getGiaBan());
         a.setGiaNhap(sp.getGiaNhap());
+        a.setGiamGia(sp.getGiamGia());
         a.setMoTa(sp.getMoTa());
         a.setNgayCapNhat(Date.valueOf(LocalDate.now()));
-        sanPhamRespository.flush();
+        sanPhamRespository.save(a);
+        return a;
     }
 
     @Override
@@ -53,7 +55,7 @@ public class SanPhamServiceimpl implements SanPhamService {
 
     @Override
     public SanPham getOne(Long id) {
-        return sanPhamRespository.findById(id).get();
+        return sanPhamRespository.findById(id).orElse(null);
     }
 
     @Override

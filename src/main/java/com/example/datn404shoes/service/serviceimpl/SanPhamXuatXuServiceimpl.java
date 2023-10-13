@@ -22,8 +22,8 @@ public class SanPhamXuatXuServiceimpl implements SanPhamXuatXuService {
     @Override
     public SanPhamXuatXu add(SanPhamXuatXuRequest sanphamXuatXuRequest) {
         SanPhamXuatXu sanphamXuatXu = new SanPhamXuatXu();
-        sanphamXuatXu.setXuatXuId(XuatXu.builder().id(sanphamXuatXuRequest.getXuatXuId()).build());
-        sanphamXuatXu.setSanPhamId(SanPham.builder().id(sanphamXuatXuRequest.getSanPhamId()).build());
+        sanphamXuatXu.setXuatXu(XuatXu.builder().id(sanphamXuatXuRequest.getXuatXuId()).build());
+        sanphamXuatXu.setSanPham(SanPham.builder().id(sanphamXuatXuRequest.getSanPhamId()).build());
         return sanphamXuatXu;
     }
 
@@ -40,8 +40,8 @@ public class SanPhamXuatXuServiceimpl implements SanPhamXuatXuService {
     @Override
     public SanPhamXuatXu update(Long id, SanPhamXuatXuRequest sanphamXuatXuRequest) {
         SanPhamXuatXu sanphamXuatXu1 = repo.findById(id).get();
-        sanphamXuatXu1.setXuatXuId(XuatXu.builder().id(sanphamXuatXuRequest.getXuatXuId()).build());
-        sanphamXuatXu1.setSanPhamId(SanPham.builder().id(sanphamXuatXuRequest.getSanPhamId()).build());
+        sanphamXuatXu1.setXuatXu(XuatXu.builder().id(sanphamXuatXuRequest.getXuatXuId()).build());
+        sanphamXuatXu1.setSanPham(SanPham.builder().id(sanphamXuatXuRequest.getSanPhamId()).build());
         return sanphamXuatXu1;
     }
 

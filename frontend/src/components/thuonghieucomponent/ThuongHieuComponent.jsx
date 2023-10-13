@@ -1,17 +1,17 @@
 import React, { Component } from 'react';
-import danhmucservice from '../../services/danhmucservice/danhmucservice';
+import thuonghieuservice from '../../services/thuonghieuservice/thuonghieuservice';
 import { toast } from 'react-toastify';
 
-class ListDanhMucComponent extends Component {
+class ThuongHieuComponent extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            danhMuc: [],
-            danhMucAdd: {
+            thuongHieu: [],
+            thuongHieuAdd: {
                 ten: '',
                 trangThai: '',
             },
-            danhMucUpdate: {
+            thuongHieuUpdate: {
                 id: this.props.match.params.id,
                 ten: '',
                 trangThai: '',
@@ -28,76 +28,82 @@ class ListDanhMucComponent extends Component {
     }
 
     componentDidMount() {
-        this.loadDanhMucData();
+        this.loadThuongHieuData();
     }
 
     componentDidUpdate(prevProps) {
         if (this.props.match.params.id !== prevProps.match.params.id) {
-            this.loadDanhMucData();
+            this.loadThuongHieuData();
         }
     }
 
-    loadDanhMucData() {
-        danhmucservice.getDanhMuc().then((res) => {
-            this.setState({ danhMuc: res.data });
+    loadThuongHieuData() {
+        thuonghieuservice.getThuongHieu().then((res) => {
+            this.setState({ thuongHieu: res.data });
         });
 
         const id = this.props.match.params.id;
         if (id) {
-            danhmucservice.getDanhMucById(id).then((res) => {
-                this.setState({ danhMucUpdate: res.data });
+            thuonghieuservice.getThuongHieuById(id).then((res) => {
+                this.setState({ thuongHieuUpdate: res.data });
             });
         }
     }
 
 
     delete(id) {
-        danhmucservice.deleteDanhMuc(id).then((res) => {
-            this.setState({ danhMuc: this.state.danhMuc.filter(danhMuc => danhMuc.id != id) });
+        thuonghieuservice.deleteThuongHieu(id).then((res) => {
+            this.setState({ thuongHieu: this.state.thuongHieu.filter(thuongHieu => thuongHieu.id != id) });
         });
     }
     add = (e) => {
         e.preventDefault();
-        let danhMuc = { ten: this.state.danhMucAdd.ten, trangThai: this.state.danhMucAdd.trangThai }
-        danhmucservice.createDanhMuc(danhMuc).then((res) => {
+        let thuongHieu = { ten: this.state.thuongHieuAdd.ten, trangThai: this.state.thuongHieuAdd.trangThai }
+        thuonghieuservice.createThuongHieu(thuongHieu).then((res) => {
             if (res.status === 200) {
                 // Xử lý khi thêm thành công
-                let danhMucMoi = res.data;
+                let thuongHieuMoi = res.data;
                 this.setState(prevState => ({
-                    danhMuc: [...prevState.danhMuc, danhMucMoi]
+                    thuongHieu: [...prevState.thuongHieu, thuongHieuMoi]
                 }));
             } else {
                 // Xử lý khi có lỗi
                 const errorMessage = res.data || "Có lỗi xảy ra khi thêm danh mục.";
-                toast.error("Lỗi: " + errorMessage); // Hiển thị lỗi bằng Toast
+                alert("lỗi" + errorMessage) // Hiển thị lỗi bằng Toast
                 console.log(errorMessage);
             }
+        }).catch(error => {
+            // Log the error or handle it as needed
+            console.error("Update request error:", error);
         });
 
     }
     update = (e) => {
         e.preventDefault();
-        let danhMuc = { ten: this.state.danhMucUpdate.ten, trangThai: this.state.danhMucUpdate.trangThai }
-        console.log('nsx' + JSON.stringify(danhMuc));
-        let id = this.state.danhMucUpdate.id;
-        danhmucservice.updateDanhMuc(danhMuc, this.state.danhMucUpdate.id).then((res) => {
-            let danhMucCapNhat = res.data; // Giả sử API trả về đối tượng vừa được cập nhật
+        let thuongHieu = { giaTri: this.state.thuongHieuUpdate.giaTri, ten: this.state.thuongHieuUpdate.ten, trangThai: this.state.thuongHieuUpdate.trangThai }
+        console.log('nsx' + JSON.stringify(thuongHieu));
+        let id = this.state.thuongHieuUpdate.id;
+        thuonghieuservice.updateThuongHieu(thuongHieu, this.state.thuongHieuUpdate.id).then((res) => {
+            let thuongHieuCapNhat = res.data; // Giả sử API trả về đối tượng vừa được cập nhật
             this.setState(prevState => ({
-                danhMuc: prevState.danhMuc.map(dm =>
-                    dm.id === danhMucCapNhat.id ? danhMucCapNhat : dm
+                thuongHieu: prevState.thuongHieu.map(th =>
+                    th.id === thuongHieuCapNhat.id ? thuongHieuCapNhat : th
                 )
             }));
-        })
+        }).catch(error => {
+            // Log the error or handle it as needed
+            console.error("Update request error:", error);
+        });
 
     }
     detail(id) {
-        window.location.href = (`/danhmucdetail/${id}`);
+        window.location.href = (`/thuongHieudetail/${id}`);
     }
 
     thayDoiTenAdd = (event) => {
         this.setState(prevState => ({
-            danhMucAdd: {
-                ...prevState.danhMucAdd,
+            thuongHieuAdd: {
+                ...prevState.thuongHieuAdd,
                 ten: event.target.value
             }
         }));
@@ -105,24 +111,24 @@ class ListDanhMucComponent extends Component {
 
     thayDoiTrangThaiAdd = (event) => {
         this.setState(prevState => ({
-            danhMucAdd: {
-                ...prevState.danhMucAdd,
+            thuongHieuAdd: {
+                ...prevState.thuongHieuAdd,
                 trangThai: event.target.value
             }
         }));
     }
     thayDoiTenUpdate = (event) => {
         this.setState(prevState => ({
-            danhMucUpdate: {
-                ...prevState.danhMucUpdate,
+            thuongHieuUpdate: {
+                ...prevState.thuongHieuUpdate,
                 ten: event.target.value
             }
         }));
     }
     thayDoiTrangThaiUpdate = (event) => {
         this.setState(prevState => ({
-            danhMucUpdate: {
-                ...prevState.danhMucUpdate,
+            thuongHieuUpdate: {
+                ...prevState.thuongHieuUpdate,
                 trangThai: event.target.value
             }
         }));
@@ -161,7 +167,7 @@ class ListDanhMucComponent extends Component {
                                             <table className="table table-borderless datatable">
                                                 <thead>
                                                     <tr>
-                                                        <th>Tên</th>
+                                                        <th>Thương hiệu</th>
                                                         <th>Trạng thái</th>
                                                         <th>Action</th>
                                                     </tr>
@@ -178,14 +184,14 @@ class ListDanhMucComponent extends Component {
                                                     </tr> */}
                                                 <tbody>
                                                     {
-                                                        this.state.danhMuc.map(
-                                                            dm =>
-                                                                <tr key={dm.id}>
-                                                                    <td>{dm.ten}</td>
-                                                                    <td>{dm.trangThai == 1 ? "HD" : "Ko HD"}</td>
+                                                        this.state.thuongHieu.map(
+                                                            th =>
+                                                                <tr key={th.id}>
+                                                                        <td>{th.ten}</td>
+                                                                    <td>{th.trangThai == 1 ? "HD" : "Ko HD"}</td>
                                                                     <td>
-                                                                        <button onClick={() => this.delete(dm.id)} className='btn btn-danger'>Xóa</button>
-                                                                        <button onClick={() => this.detail(dm.id)} className='btn btn-primary'>Chi tiết</button>
+                                                                        <button onClick={() => this.delete(th.id)} className='btn btn-danger'>Xóa</button>
+                                                                        <button onClick={() => this.detail(th.id)} className='btn btn-primary'>Chi tiết</button>
                                                                     </td>
                                                                 </tr>
                                                         )
@@ -243,13 +249,13 @@ class ListDanhMucComponent extends Component {
                                             <form>
                                                 <div>
                                                     Tên :
-                                                    <input className="form-control" name="ten" value={this.state.danhMucUpdate.ten} onChange={this.thayDoiTenUpdate} />
+                                                    <input className="form-control" name="ten" value={this.state.thuongHieuUpdate.ten} onChange={this.thayDoiTenUpdate} />
                                                 </div>
                                                 <div className='form-group'>
                                                     <label>Trạng thái</label>
-                                                    <select name="trangThai" id="trangThai" value={this.state.danhMucUpdate.trangThai} className="form-control" onChange={this.thayDoiTrangThaiUpdate}>
-                                                        <option value="1">Còn</option>
-                                                        <option value="0">Ko còn</option>
+                                                    <select name="trangThai" id="trangThai" value={this.state.thuongHieuUpdate.trangThai} className="form-control" onChange={this.thayDoiTrangThaiUpdate}>
+                                                        <option value='true'>Còn</option>
+                                                        <option value="false">Ko còn</option>
                                                     </select>
                                                 </div>
                                                 <input type="submit" className="btn btn-primary" value="Update" style={{ marginTop: '10px' }} onClick={this.update} />
@@ -265,8 +271,8 @@ class ListDanhMucComponent extends Component {
                                                 <div className='form-group'>
                                                     <label>Trạng thái</label>
                                                     <select name="trangThai" id="trangThai" className="form-control" onChange={this.thayDoiTrangThaiAdd}>
-                                                        <option value="1">Còn</option>
-                                                        <option value="0">Ko còn</option>
+                                                        <option value='true'>Còn</option>
+                                                        <option value="false">Ko còn</option>
                                                     </select>
                                                 </div>
                                                 <input type="submit" className="btn btn-primary" value="Add" style={{ marginTop: '10px' }} onClick={this.add} />
@@ -302,4 +308,4 @@ class ListDanhMucComponent extends Component {
     }
 
 }
-export default ListDanhMucComponent
+export default ThuongHieuComponent

@@ -50,11 +50,10 @@ public class SanPhamController {
     }
     @PutMapping("update/{id}")
     public ResponseEntity<?> update(Model model,
-                         @PathVariable("id") Long id,
+                         @PathVariable("id") long id,
                          @RequestBody SanPham sanPham){
-        sanPhamServiceimpl.update(id,sanPham);
-        SanPham sp = sanPhamServiceimpl.getOne(id);
-        return ResponseEntity.ok(sp);
+
+        return ResponseEntity.ok(sanPhamServiceimpl.update(id,sanPham));
     }
 
     @PostMapping( value = "import", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)

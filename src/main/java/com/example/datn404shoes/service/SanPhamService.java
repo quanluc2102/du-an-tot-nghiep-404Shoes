@@ -8,7 +8,7 @@ import java.util.List;
 public interface SanPhamService {
     SanPham add(SanPham sp);
     void delete(Long id);
-    void update(Long id,SanPham sp);
+    SanPham update(Long id,SanPham sp);
     List<SanPham> getAll();
     SanPham getOne(Long id);
     void chuyenSoLuong(SanPham sp);

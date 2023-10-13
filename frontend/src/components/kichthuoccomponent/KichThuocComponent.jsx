@@ -1,19 +1,19 @@
 import React, { Component } from 'react';
-import danhmucservice from '../../services/danhmucservice/danhmucservice';
+import kichthuocservice from '../../services/kichthuocservice/kichthuocservice';
 import { toast } from 'react-toastify';
 
-class ListDanhMucComponent extends Component {
+class KichThuocComponent extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            danhMuc: [],
-            danhMucAdd: {
-                ten: '',
+            kichThuoc: [],
+            kichThuocAdd: {
+                giaTri: '',
                 trangThai: '',
             },
-            danhMucUpdate: {
+            kichThuocUpdate: {
                 id: this.props.match.params.id,
-                ten: '',
+                giaTri: '',
                 trangThai: '',
             }
         }
@@ -21,108 +21,116 @@ class ListDanhMucComponent extends Component {
         this.delete = this.delete.bind(this);
         this.update = this.update.bind(this);
         this.detail = this.detail.bind(this);
-        this.thayDoiTenAdd = this.thayDoiTenAdd.bind(this);
         this.thayDoiTrangThaiAdd = this.thayDoiTrangThaiAdd.bind(this);
-        this.thayDoiTenUpdate = this.thayDoiTenUpdate.bind(this);
         this.thayDoiTrangThaiUpdate = this.thayDoiTrangThaiUpdate.bind(this);
+        this.thayDoiGiaTriUpdate = this.thayDoiGiaTriUpdate.bind(this);
+        this.thayDoiGiaTriAdd = this.thayDoiGiaTriAdd.bind(this);
     }
 
     componentDidMount() {
-        this.loadDanhMucData();
+        this.loadKichThuocData();
     }
 
     componentDidUpdate(prevProps) {
         if (this.props.match.params.id !== prevProps.match.params.id) {
-            this.loadDanhMucData();
+            this.loadKichThuocData();
         }
     }
 
-    loadDanhMucData() {
-        danhmucservice.getDanhMuc().then((res) => {
-            this.setState({ danhMuc: res.data });
+    loadKichThuocData() {
+        kichthuocservice.getKichThuoc().then((res) => {
+            this.setState({ kichThuoc: res.data });
         });
 
         const id = this.props.match.params.id;
         if (id) {
-            danhmucservice.getDanhMucById(id).then((res) => {
-                this.setState({ danhMucUpdate: res.data });
+            kichthuocservice.getKichThuocById(id).then((res) => {
+                this.setState({ kichThuocUpdate: res.data });
             });
         }
     }
 
 
     delete(id) {
-        danhmucservice.deleteDanhMuc(id).then((res) => {
-            this.setState({ danhMuc: this.state.danhMuc.filter(danhMuc => danhMuc.id != id) });
+        kichthuocservice.deleteKichThuoc(id).then((res) => {
+            this.setState({ kichThuoc: this.state.kichThuoc.filter(kichThuoc => kichThuoc.id != id) });
         });
     }
     add = (e) => {
         e.preventDefault();
-        let danhMuc = { ten: this.state.danhMucAdd.ten, trangThai: this.state.danhMucAdd.trangThai }
-        danhmucservice.createDanhMuc(danhMuc).then((res) => {
+        let kichThuoc = { giaTri: this.state.kichThuocAdd.giaTri, trangThai: this.state.kichThuocAdd.trangThai }
+        kichthuocservice.createKichThuoc(kichThuoc).then((res) => {
             if (res.status === 200) {
                 // Xử lý khi thêm thành công
-                let danhMucMoi = res.data;
+                let kichThuocMoi = res.data;
                 this.setState(prevState => ({
-                    danhMuc: [...prevState.danhMuc, danhMucMoi]
+                    kichThuoc: [...prevState.kichThuoc, kichThuocMoi]
                 }));
             } else {
                 // Xử lý khi có lỗi
                 const errorMessage = res.data || "Có lỗi xảy ra khi thêm danh mục.";
-                toast.error("Lỗi: " + errorMessage); // Hiển thị lỗi bằng Toast
+                alert("lỗi" + errorMessage) // Hiển thị lỗi bằng Toast
                 console.log(errorMessage);
             }
+        }).catch(error => {
+            // Log the error or handle it as needed
+            console.error("Update request error:", error);
         });
 
     }
     update = (e) => {
         e.preventDefault();
-        let danhMuc = { ten: this.state.danhMucUpdate.ten, trangThai: this.state.danhMucUpdate.trangThai }
-        console.log('nsx' + JSON.stringify(danhMuc));
-        let id = this.state.danhMucUpdate.id;
-        danhmucservice.updateDanhMuc(danhMuc, this.state.danhMucUpdate.id).then((res) => {
-            let danhMucCapNhat = res.data; // Giả sử API trả về đối tượng vừa được cập nhật
+        let kichThuoc = { giaTri: this.state.kichThuocUpdate.giaTri, trangThai: this.state.kichThuocUpdate.trangThai }
+        console.log('nsx' + JSON.stringify(kichThuoc));
+        let id = this.state.kichThuocUpdate.id;
+        kichthuocservice.updateKichThuoc(kichThuoc, this.state.kichThuocUpdate.id).then((res) => {
+            let kichThuocCapNhat = res.data; // Giả sử API trả về đối tượng vừa được cập nhật
             this.setState(prevState => ({
-                danhMuc: prevState.danhMuc.map(dm =>
-                    dm.id === danhMucCapNhat.id ? danhMucCapNhat : dm
+                kichThuoc: prevState.kichThuoc.map(kt =>
+                    kt.id === kichThuocCapNhat.id ? kichThuocCapNhat : kt
                 )
             }));
-        })
+        }).catch(error => {
+            // Log the error or handle it as needed
+            console.error("Update request error:", error);
+        });
 
     }
     detail(id) {
-        window.location.href = (`/danhmucdetail/${id}`);
+        window.location.href = (`/kichthuocdetail/${id}`);
     }
 
-    thayDoiTenAdd = (event) => {
-        this.setState(prevState => ({
-            danhMucAdd: {
-                ...prevState.danhMucAdd,
-                ten: event.target.value
-            }
-        }));
-    }
+    
 
     thayDoiTrangThaiAdd = (event) => {
         this.setState(prevState => ({
-            danhMucAdd: {
-                ...prevState.danhMucAdd,
+            kichThuocAdd: {
+                ...prevState.kichThuocAdd,
                 trangThai: event.target.value
             }
         }));
     }
-    thayDoiTenUpdate = (event) => {
+    thayDoiGiaTriAdd = (event) => {
         this.setState(prevState => ({
-            danhMucUpdate: {
-                ...prevState.danhMucUpdate,
-                ten: event.target.value
+            kichThuocAdd: {
+                ...prevState.kichThuocAdd,
+                giaTri: event.target.value
+            }
+        }));
+    }
+    
+    thayDoiGiaTriUpdate = (event) => {
+        this.setState(prevState => ({
+            kichThuocUpdate: {
+                ...prevState.kichThuocUpdate,
+                giaTri: event.target.value
             }
         }));
     }
     thayDoiTrangThaiUpdate = (event) => {
         this.setState(prevState => ({
-            danhMucUpdate: {
-                ...prevState.danhMucUpdate,
+            kichThuocUpdate: {
+                ...prevState.kichThuocUpdate,
                 trangThai: event.target.value
             }
         }));
@@ -161,7 +169,7 @@ class ListDanhMucComponent extends Component {
                                             <table className="table table-borderless datatable">
                                                 <thead>
                                                     <tr>
-                                                        <th>Tên</th>
+                                                        <th>Giá trị</th>
                                                         <th>Trạng thái</th>
                                                         <th>Action</th>
                                                     </tr>
@@ -178,14 +186,14 @@ class ListDanhMucComponent extends Component {
                                                     </tr> */}
                                                 <tbody>
                                                     {
-                                                        this.state.danhMuc.map(
-                                                            dm =>
-                                                                <tr key={dm.id}>
-                                                                    <td>{dm.ten}</td>
-                                                                    <td>{dm.trangThai == 1 ? "HD" : "Ko HD"}</td>
+                                                        this.state.kichThuoc.map(
+                                                            kt =>
+                                                                <tr key={kt.id}>
+                                                                    <td>{kt.giaTri}</td>
+                                                                    <td>{kt.trangThai == 1 ? "HD" : "Ko HD"}</td>
                                                                     <td>
-                                                                        <button onClick={() => this.delete(dm.id)} className='btn btn-danger'>Xóa</button>
-                                                                        <button onClick={() => this.detail(dm.id)} className='btn btn-primary'>Chi tiết</button>
+                                                                        <button onClick={() => this.delete(kt.id)} className='btn btn-danger'>Xóa</button>
+                                                                        <button onClick={() => this.detail(kt.id)} className='btn btn-primary'>Chi tiết</button>
                                                                     </td>
                                                                 </tr>
                                                         )
@@ -242,14 +250,15 @@ class ListDanhMucComponent extends Component {
                                             aria-labelledby="home-tab">
                                             <form>
                                                 <div>
-                                                    Tên :
-                                                    <input className="form-control" name="ten" value={this.state.danhMucUpdate.ten} onChange={this.thayDoiTenUpdate} />
+                                                    Giá trị :
+                                                    <input className="form-control" name="giaTri" value={this.state.kichThuocUpdate.giaTri} onChange={this.thayDoiGiaTriUpdate} />
                                                 </div>
+                                                
                                                 <div className='form-group'>
                                                     <label>Trạng thái</label>
-                                                    <select name="trangThai" id="trangThai" value={this.state.danhMucUpdate.trangThai} className="form-control" onChange={this.thayDoiTrangThaiUpdate}>
-                                                        <option value="1">Còn</option>
-                                                        <option value="0">Ko còn</option>
+                                                    <select name="trangThai" id="trangThai" value={this.state.kichThuocUpdate.trangThai} className="form-control" onChange={this.thayDoiTrangThaiUpdate}>
+                                                        <option value='true'>Còn</option>
+                                                        <option value="false">Ko còn</option>
                                                     </select>
                                                 </div>
                                                 <input type="submit" className="btn btn-primary" value="Update" style={{ marginTop: '10px' }} onClick={this.update} />
@@ -259,14 +268,15 @@ class ListDanhMucComponent extends Component {
                                         <div className="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
                                             <form>
                                                 <div>
-                                                    Tên :
-                                                    <input className="form-control" name="ten" onChange={this.thayDoiTenAdd} />
+                                                    Giá trị :
+                                                    <input className="form-control" name="giaTri" onChange={this.thayDoiGiaTriAdd} />
                                                 </div>
+                                        
                                                 <div className='form-group'>
                                                     <label>Trạng thái</label>
                                                     <select name="trangThai" id="trangThai" className="form-control" onChange={this.thayDoiTrangThaiAdd}>
-                                                        <option value="1">Còn</option>
-                                                        <option value="0">Ko còn</option>
+                                                        <option value='true'>Còn</option>
+                                                        <option value="false">Ko còn</option>
                                                     </select>
                                                 </div>
                                                 <input type="submit" className="btn btn-primary" value="Add" style={{ marginTop: '10px' }} onClick={this.add} />
@@ -302,4 +312,4 @@ class ListDanhMucComponent extends Component {
     }
 
 }
-export default ListDanhMucComponent
+export default KichThuocComponent

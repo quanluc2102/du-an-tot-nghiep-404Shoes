@@ -12,7 +12,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-@Controller
+@RestController
+@CrossOrigin(origins = "http://localhost:3000")
 @RequestMapping("san_pham_thuong_hieu")
 public class SanPhamThuongHieuController {
     @Autowired
@@ -25,7 +26,7 @@ public class SanPhamThuongHieuController {
     @GetMapping("hien_thi")
     public ResponseEntity<?> hienThi(Model model) {
 
-        return ResponseEntity.ok(sanPhamServiceimpl.getAll());
+        return ResponseEntity.ok(sanPhamThuongHieuServiceimpl.getAll());
     }
 
     @GetMapping("create")
@@ -45,7 +46,7 @@ public class SanPhamThuongHieuController {
 
     @DeleteMapping("delete/{idx}")
     public String delete(Model model,
-                         @RequestParam("idx") Long id) {
+                         @PathVariable("idx") Long id) {
         sanPhamThuongHieuServiceimpl.delete(id);
         return "thanh cong";
     }

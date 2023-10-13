@@ -1,20 +1,28 @@
 import React, { Component } from 'react';
-import danhmucservice from '../../services/danhmucservice/danhmucservice';
+import xuatxuservice from '../../services/xuatxuservice/xuatxuservice';
 import { toast } from 'react-toastify';
 
-class ListDanhMucComponent extends Component {
+class XuatXuComponent extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            danhMuc: [],
-            danhMucAdd: {
+            xuatXu: [],
+            xuatXuAdd: {
                 ten: '',
                 trangThai: '',
             },
-            danhMucUpdate: {
+            xuatXuUpdate: {
                 id: this.props.match.params.id,
                 ten: '',
                 trangThai: '',
+            },
+            errorsAdd: {
+                ten: '',
+                trangThai: ''
+            },
+            errorsUpdate: {
+                ten: '',
+                trangThai: ''
             }
         }
         this.add = this.add.bind(this);
@@ -28,76 +36,118 @@ class ListDanhMucComponent extends Component {
     }
 
     componentDidMount() {
-        this.loadDanhMucData();
+        this.loadXuatXuData();
     }
 
     componentDidUpdate(prevProps) {
         if (this.props.match.params.id !== prevProps.match.params.id) {
-            this.loadDanhMucData();
+            this.loadXuatXuData();
         }
     }
 
-    loadDanhMucData() {
-        danhmucservice.getDanhMuc().then((res) => {
-            this.setState({ danhMuc: res.data });
+    loadXuatXuData() {
+        xuatxuservice.getXuatXu().then((res) => {
+            this.setState({ xuatXu: res.data });
         });
 
         const id = this.props.match.params.id;
         if (id) {
-            danhmucservice.getDanhMucById(id).then((res) => {
-                this.setState({ danhMucUpdate: res.data });
+            xuatxuservice.getXuatXuById(id).then((res) => {
+                this.setState({ xuatXuUpdate: res.data });
             });
         }
     }
 
 
     delete(id) {
-        danhmucservice.deleteDanhMuc(id).then((res) => {
-            this.setState({ danhMuc: this.state.danhMuc.filter(danhMuc => danhMuc.id != id) });
+        xuatxuservice.deleteXuatXu(id).then((res) => {
+            this.setState({ xuatXu: this.state.xuatXu.filter(xuatXu => xuatXu.id != id) });
         });
     }
     add = (e) => {
         e.preventDefault();
-        let danhMuc = { ten: this.state.danhMucAdd.ten, trangThai: this.state.danhMucAdd.trangThai }
-        danhmucservice.createDanhMuc(danhMuc).then((res) => {
+
+        if (!this.state.xuatXuAdd.ten.trim()) {
+            this.setState({ errorsAdd: { ...this.state.errorsAdd, ten: "Tên không được bỏ trống!" } });
+            return;
+        } else {
+            this.setState({ errorsAdd: { ...this.state.errorsAdd, ten: "" } });
+        }
+    
+        if (!this.state.xuatXuAdd.trangThai.trim()) {
+            this.setState({ errorsAdd: { ...this.state.errorsAdd, trangThai: "Trạng thái không được bỏ trống!" } });
+            return;
+        } else {
+            this.setState({ errorsAdd: { ...this.state.errorsAdd, trangThai: "" } });
+        }
+
+
+        let xuatXu = { ten: this.state.xuatXuAdd.ten, trangThai: this.state.xuatXuAdd.trangThai }
+        xuatxuservice.createXuatXu(xuatXu).then((res) => {
             if (res.status === 200) {
                 // Xử lý khi thêm thành công
-                let danhMucMoi = res.data;
+                let xuatXuMoi = res.data;
                 this.setState(prevState => ({
-                    danhMuc: [...prevState.danhMuc, danhMucMoi]
+                    xuatXu: [...prevState.xuatXu, xuatXuMoi]
                 }));
+
+                toast.success("Thêm thành công!"); // Thông báo thành công
+
             } else {
                 // Xử lý khi có lỗi
                 const errorMessage = res.data || "Có lỗi xảy ra khi thêm danh mục.";
                 toast.error("Lỗi: " + errorMessage); // Hiển thị lỗi bằng Toast
                 console.log(errorMessage);
             }
+        }).catch(error => {
+            // Log the error or handle it as needed
+            console.error("Update request error:", error);
+            toast.error("Lỗi: " + error.message); // Hiển thị lỗi bằng Toast
+        });
+    }
+
+    update = (e) => {
+        e.preventDefault();
+        let xuatXu = { giaTri: this.state.xuatXuUpdate.giaTri, ten: this.state.xuatXuUpdate.ten, trangThai: this.state.xuatXuUpdate.trangThai }
+        console.log('nsx' + JSON.stringify(xuatXu));
+        let id = this.state.xuatXuUpdate.id;
+
+        if (!this.state.xuatXuUpdate.ten.trim()) {
+            this.setState({ errorsUpdate: { ...this.state.errorsUpdate, ten: "Tên không được bỏ trống!" } });
+            return;
+        } else {
+            this.setState({ errorsUpdate: { ...this.state.errorsUpdate, ten: "" } });
+        }
+
+
+        if (!this.state.xuatXuUpdate.trangThai.trim()) {
+            this.setState({ errorsUpdate: { ...this.state.errorsUpdate, trangThai: "Trạng thái không được bỏ trống!" } });
+            return;
+        } else {
+            this.setState({ errorsUpdate: { ...this.state.errorsUpdate, trangThai: "" } });
+        }
+
+        xuatxuservice.updateXuatXu(xuatXu, this.state.xuatXuUpdate.id).then((res) => {
+            let xuatXuCapNhat = res.data; // Giả sử API trả về đối tượng vừa được cập nhật
+            this.setState(prevState => ({
+                xuatXu: prevState.xuatXu.map(th =>
+                    th.id === xuatXuCapNhat.id ? xuatXuCapNhat : th
+                )
+            }));
+        }).catch(error => {
+            // Log the error or handle it as needed
+            console.error("Update request error:", error);
         });
 
     }
-    update = (e) => {
-        e.preventDefault();
-        let danhMuc = { ten: this.state.danhMucUpdate.ten, trangThai: this.state.danhMucUpdate.trangThai }
-        console.log('nsx' + JSON.stringify(danhMuc));
-        let id = this.state.danhMucUpdate.id;
-        danhmucservice.updateDanhMuc(danhMuc, this.state.danhMucUpdate.id).then((res) => {
-            let danhMucCapNhat = res.data; // Giả sử API trả về đối tượng vừa được cập nhật
-            this.setState(prevState => ({
-                danhMuc: prevState.danhMuc.map(dm =>
-                    dm.id === danhMucCapNhat.id ? danhMucCapNhat : dm
-                )
-            }));
-        })
-
-    }
     detail(id) {
-        window.location.href = (`/danhmucdetail/${id}`);
+        window.location.href = (`/xuatXudetail/${id}`);
     }
 
     thayDoiTenAdd = (event) => {
         this.setState(prevState => ({
-            danhMucAdd: {
-                ...prevState.danhMucAdd,
+            xuatXuAdd: {
+                ...prevState.xuatXuAdd,
                 ten: event.target.value
             }
         }));
@@ -105,24 +155,24 @@ class ListDanhMucComponent extends Component {
 
     thayDoiTrangThaiAdd = (event) => {
         this.setState(prevState => ({
-            danhMucAdd: {
-                ...prevState.danhMucAdd,
+            xuatXuAdd: {
+                ...prevState.xuatXuAdd,
                 trangThai: event.target.value
             }
         }));
     }
     thayDoiTenUpdate = (event) => {
         this.setState(prevState => ({
-            danhMucUpdate: {
-                ...prevState.danhMucUpdate,
+            xuatXuUpdate: {
+                ...prevState.xuatXuUpdate,
                 ten: event.target.value
             }
         }));
     }
     thayDoiTrangThaiUpdate = (event) => {
         this.setState(prevState => ({
-            danhMucUpdate: {
-                ...prevState.danhMucUpdate,
+            xuatXuUpdate: {
+                ...prevState.xuatXuUpdate,
                 trangThai: event.target.value
             }
         }));
@@ -153,15 +203,12 @@ class ListDanhMucComponent extends Component {
                             <div className="row">
                                 <div className="col-12">
                                     <div className="card recent-sales overflow-auto">
-
-
                                         <div className="card-body">
                                             <h5 className="card-title">Color <span>| </span></h5>
-
-                                            <table className="table table-borderless datatable">
+                                            <table className="table datatable table-borderless ">
                                                 <thead>
                                                     <tr>
-                                                        <th>Tên</th>
+                                                        <th>Thương hiệu</th>
                                                         <th>Trạng thái</th>
                                                         <th>Action</th>
                                                     </tr>
@@ -178,14 +225,14 @@ class ListDanhMucComponent extends Component {
                                                     </tr> */}
                                                 <tbody>
                                                     {
-                                                        this.state.danhMuc.map(
-                                                            dm =>
-                                                                <tr key={dm.id}>
-                                                                    <td>{dm.ten}</td>
-                                                                    <td>{dm.trangThai == 1 ? "HD" : "Ko HD"}</td>
+                                                        this.state.xuatXu.map(
+                                                            xx =>
+                                                                <tr key={xx.id}>
+                                                                    <td>{xx.ten}</td>
+                                                                    <td>{xx.trangThai == 1 ? "HD" : "Ko HD"}</td>
                                                                     <td>
-                                                                        <button onClick={() => this.delete(dm.id)} className='btn btn-danger'>Xóa</button>
-                                                                        <button onClick={() => this.detail(dm.id)} className='btn btn-primary'>Chi tiết</button>
+                                                                        <button onClick={() => this.delete(xx.id)} className='btn btn-danger'>Xóa</button>
+                                                                        <button onClick={() => this.detail(xx.id)} className='btn btn-primary'>Chi tiết</button>
                                                                     </td>
                                                                 </tr>
                                                         )
@@ -243,15 +290,28 @@ class ListDanhMucComponent extends Component {
                                             <form>
                                                 <div>
                                                     Tên :
-                                                    <input className="form-control" name="ten" value={this.state.danhMucUpdate.ten} onChange={this.thayDoiTenUpdate} />
+                                                    <input
+                                                        className={`form-control ${this.state.errorsUpdate.ten ? 'is-invalid' : ''}`}
+                                                        name="ten"
+                                                        onChange={this.thayDoiTenAdd}
+                                                    />
+                                                    {this.state.errorsUpdate.ten && <div className="text-danger">{this.state.errorsUpdate.ten}</div>}
                                                 </div>
                                                 <div className='form-group'>
                                                     <label>Trạng thái</label>
-                                                    <select name="trangThai" id="trangThai" value={this.state.danhMucUpdate.trangThai} className="form-control" onChange={this.thayDoiTrangThaiUpdate}>
-                                                        <option value="1">Còn</option>
-                                                        <option value="0">Ko còn</option>
+                                                    <select
+                                                        name="trangThai"
+                                                        id="trangThai"
+                                                        value={this.state.xuatXuUpdate.trangThai}
+                                                        className={`form-control ${this.state.errorsUpdate.trangThai ? 'is-invalid' : ''}`}
+                                                        onChange={this.thayDoiTrangThaiUpdate}
+                                                    >
+                                                        <option value='0'>Còn</option>
+                                                        <option value="1">Ko còn</option>
                                                     </select>
+                                                    {this.state.errorsUpdate.trangThai && <div className="text-danger">{this.state.errorsUpdate.trangThai}</div>}
                                                 </div>
+
                                                 <input type="submit" className="btn btn-primary" value="Update" style={{ marginTop: '10px' }} onClick={this.update} />
                                             </form>
                                         </div>
@@ -260,14 +320,27 @@ class ListDanhMucComponent extends Component {
                                             <form>
                                                 <div>
                                                     Tên :
-                                                    <input className="form-control" name="ten" onChange={this.thayDoiTenAdd} />
+                                                    <input
+                                                        className={`form-control ${this.state.errorsAdd.ten ? 'is-invalid' : ''}`}
+                                                        name="ten"
+                                                        // value={this.state.xuatXuUpdate.ten}
+                                                        onChange={this.thayDoiTenAdd}
+                                                    />
+                                                    {this.state.errorsAdd.ten && <div className="text-danger">{this.state.errorsAdd.ten}</div>}
                                                 </div>
                                                 <div className='form-group'>
                                                     <label>Trạng thái</label>
-                                                    <select name="trangThai" id="trangThai" className="form-control" onChange={this.thayDoiTrangThaiAdd}>
-                                                        <option value="1">Còn</option>
-                                                        <option value="0">Ko còn</option>
+                                                    <select
+                                                        name="trangThai"
+                                                        id="trangThai"
+                                                        // value={this.state.xuatXuUpdate.trangThai}
+                                                        className={`form-control ${this.state.errorsAdd.trangThai ? 'is-invalid' : ''}`}
+                                                        onChange={this.thayDoiTrangThaiAdd}
+                                                    >
+                                                        <option value='0'>Còn</option>
+                                                        <option value="1">Ko còn</option>
                                                     </select>
+                                                    {this.state.errorsAdd.trangThai && <div className="text-danger">{this.state.errorsAdd.trangThai}</div>}
                                                 </div>
                                                 <input type="submit" className="btn btn-primary" value="Add" style={{ marginTop: '10px' }} onClick={this.add} />
                                             </form>
@@ -302,4 +375,4 @@ class ListDanhMucComponent extends Component {
     }
 
 }
-export default ListDanhMucComponent
+export default XuatXuComponent
