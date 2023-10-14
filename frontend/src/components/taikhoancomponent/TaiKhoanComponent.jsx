@@ -123,19 +123,19 @@ class TaiKhoanComponent extends Component {
     update = (e) => {
         e.preventDefault();
         let taiKhoan = {
-            username: this.state.taiKhoanAdd.username,
-            email: this.state.taiKhoanAdd.email,
-            ten: this.state.taiKhoanAdd.ten,
-            diaChi: this.state.taiKhoanAdd.diaChi,
-            ngayTao: this.state.taiKhoanAdd.ngayTao,
-            ngayCapNhat: this.state.taiKhoanAdd.ngayCapNhat,
-            password: this.state.taiKhoanAdd.password,
-            anh: this.state.taiKhoanAdd.anh,
-            sdt: this.state.taiKhoanAdd.sdt,
-            trangThai: this.state.taiKhoanAdd.trangThai }
+            username: this.state.taiKhoanUpdate.username,
+            email: this.state.taiKhoanUpdate.email,
+            ten: this.state.taiKhoanUpdate.ten,
+            diaChi: this.state.taiKhoanUpdate.diaChi,
+            ngayTao: this.state.taiKhoanUpdate.ngayTao,
+            ngayCapNhat: this.state.taiKhoanUpdate.ngayCapNhat,
+            password: this.state.taiKhoanUpdate.password,
+            anh: this.state.taiKhoanUpdate.anh,
+            sdt: this.state.taiKhoanUpdate.sdt,
+            trangThai: this.state.taiKhoanUpdate.trangThai }
         console.log('nsx' + JSON.stringify(taiKhoan));
         let id = this.state.taiKhoanUpdate.id;
-        taikhoanservice.updateTaiKhoan(taiKhoan, this.state.taiKhoanUpdate.id).then((res) => {
+        taikhoanservice.updateTaiKhoan( this.state.taiKhoanUpdate.id).then((res) => {
             let taiKhoanCapNhat = res.data; // Giả sử API trả về đối tượng vừa được cập nhật
             this.setState(prevState => ({
                 taiKhoan: prevState.taiKhoan.map(tk =>
@@ -442,16 +442,12 @@ class TaiKhoanComponent extends Component {
                                                     <input className="form-control" name="diaChi" value={this.state.taiKhoanUpdate.diaChi} onChange={this.thayDoiDiaChiUpdate} />
                                                 </div>
                                                 <div>
-                                                    Ngày tạo :
-                                                    <input className="form-control" name="ngayTao" type="date" value={this.state.taiKhoanUpdate.ngayTao} onChange={this.thayDoiNgayTaoUpdate} />
-                                                </div>
-                                                <div>
                                                     Ngày cập nhật :
-                                                    <input className="form-control" name="ngayCapNhat" value={this.state.taiKhoanUpdate.ngayCapNhat} onChange={this.thayDoiNgayCapNhatUpdate} />
+                                                    <input className="form-control" name="ngayCapNhat" type="date"  value={this.state.taiKhoanUpdate.ngayCapNhat} onChange={this.thayDoiNgayCapNhatUpdate} />
                                                 </div>
                                                 <div>
                                                     Password :
-                                                    <input className="form-control" name="password" type="date" value={this.state.taiKhoanUpdate.password} onChange={this.thayDoiPasswordUpdate} />
+                                                    <input className="form-control" name="password" value={this.state.taiKhoanUpdate.password} onChange={this.thayDoiPasswordUpdate} />
                                                 </div>
                                                 <div>
                                                     Ảnh :
@@ -494,10 +490,7 @@ class TaiKhoanComponent extends Component {
                                                     Ngày tạo :
                                                     <input className="form-control" name="ngayTao" type="date" onChange={this.thayDoiNgayTaoAdd} />
                                                 </div>
-                                                <div>
-                                                    Ngày cập nhật :
-                                                    <input className="form-control" name="ngayCapNhat" type="date" onChange={this.thayDoiNgayCapNhatAdd} />
-                                                </div>
+
                                                 <div>
                                                     Password :
                                                     <input className="form-control" name="password" onChange={this.thayDoiPasswordAdd} />

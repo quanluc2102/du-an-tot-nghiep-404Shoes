@@ -58,8 +58,8 @@ public class TaiKhoanServiceimpl implements TaiKhoanService {
         tk.setAnh(taiKhoan.getAnh());
         tk.setSdt(taiKhoan.getSdt());
         tk.setTrangThai(taiKhoan.isTrangThai());
-      responsitory.save(taiKhoan);
-        return taiKhoan;
+       responsitory.save(taiKhoan);
+        return tk;
     }
 
     @Override
