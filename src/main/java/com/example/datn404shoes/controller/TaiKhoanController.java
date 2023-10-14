@@ -2,12 +2,14 @@ package com.example.datn404shoes.controller;
 
 
 import com.example.datn404shoes.entity.TaiKhoan;
+import com.example.datn404shoes.entity.ThuongHieu;
 import com.example.datn404shoes.helper.SanPhamExcelSave;
 import com.example.datn404shoes.helper.TaiKhoanExport;
 import com.example.datn404shoes.service.serviceimpl.TaiKhoanServiceimpl;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -21,101 +23,61 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@Controller
-@RequestMapping("/tai-khoan")
+@RestController
+@CrossOrigin(origins = "http://localhost:3000")
+@RequestMapping("tai_khoan")
 public class TaiKhoanController {
     @Autowired
-    private TaiKhoanServiceimpl taiKhoanServiceimpl;
-    @GetMapping("/index")
-    public String hienThi(Model model){
-        ArrayList<TaiKhoan> list = taiKhoanServiceimpl.getAll();
-        model.addAttribute("listTK",list);
-        System.out.println(list.toString());
-        model.addAttribute("view", "/tai_khoan/index.jsp");
-        return "admin/index";
+    private TaiKhoanServiceimpl serviceimpl;
+
+    @GetMapping("index")
+    public ResponseEntity<?> index(Model model) {
+        return ResponseEntity.ok(serviceimpl.getAll());
     }
-    @GetMapping("/create")
-    public String create(Model model){
-        model.addAttribute("view", "/tai_khoan/viewAdd.jsp");
-        return "admin/index";
-    }
-    @GetMapping("/danhsach")
-    public String hienThi1(Model model){
-        ArrayList<TaiKhoan> list = taiKhoanServiceimpl.getAll();
-        model.addAttribute("listTK",list);
-        model.addAttribute("view", "/tai_khoan/thong_tin_tai_khoan.jsp");
-        return "admin/index";
-    }
+
     @PostMapping("add")
-    public String add(Model model,
-                      @RequestParam("username") String username,
-                      @RequestParam("email") String email,
-                      @RequestParam("ten") String ten,
-                      @RequestParam("diaChi") String diaChi,
-                      @RequestParam("ngayTao")Date ngayTao,
-                      @RequestParam("ngayCapNhat") Date ngayCapNhat,
-                      @RequestParam("password") String password,
-                      @RequestParam("anh") String anh,
-                      @RequestParam("sdt") String sdt,
-                      @RequestParam("trangThai") Boolean trangThai
-                      ){
-        taiKhoanServiceimpl.add(new TaiKhoan(username,email,ten,diaChi,ngayTao,ngayCapNhat,password,anh,sdt,trangThai));
-        return "redirect:/tai-khoan/index";
-    }
-    @GetMapping("/delete/{id}")
-    public String delete (Model model,
-                          @PathVariable("id") String id){
-        taiKhoanServiceimpl.delete(Long.valueOf(id));
-        return "redirect:/tai-khoan/index";
-    }
-    @GetMapping("/detail/{id}")
-    public String detail(Model model,
-                         @PathVariable("id") String id
-                         ){
-        Optional<TaiKhoan> khoan = taiKhoanServiceimpl.detail(Long.valueOf(id));
-        ArrayList<TaiKhoan> list = taiKhoanServiceimpl.getAll();
-        model.addAttribute("listTK",list);
-        model.addAttribute("tk",khoan.get());
-        model.addAttribute("view", "/tai_khoan/index.jsp");
-        return "admin/index";
-    }
-    @PostMapping("/update/{id}")
-    public String update(Model model,
-                         @PathVariable("id") String id,
-                         @ModelAttribute("TaiKhoan") TaiKhoan taiKhoan){
-        taiKhoanServiceimpl.update(Long.valueOf(id),taiKhoan);
-        return "redirect:/tai-khoan/index";
-    }
-    @PostMapping( value = "import", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public String importExcel(@RequestParam("file") MultipartFile file) throws IOException {
-        String message = "";
-        if (SanPhamExcelSave.hasExcelFormat(file)) {
-            try {
-                taiKhoanServiceimpl.importExcel(file);
-            } catch (Exception e) {
+    public ResponseEntity<?> add(Model model,
+                                 @RequestBody TaiKhoan taiKhoan) {
 
-            }
-        }
-
-        message = "Please upload an excel file!";
-
-        return "redirect:/tai-khoan/index";
+        return ResponseEntity.ok(serviceimpl.add(taiKhoan));
     }
 
-    @GetMapping("export")
-    public void exportToExcel(HttpServletResponse response) throws IOException {
-        response.setContentType("application/octet-stream");
-        DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
-        String currentDateTime = dateFormatter.format(new java.util.Date());
-
-        String headerKey = "Content-Disposition";
-        String headerValue = "attachment; filename=users_" + currentDateTime + ".xlsx";
-        response.setHeader(headerKey, headerValue);
-
-        List listTK = taiKhoanServiceimpl.getAll();
-
-        TaiKhoanExport excelExporter = new TaiKhoanExport(listTK);
-
-        excelExporter.export(response);
+    @DeleteMapping("delete/{id}")
+    public String delete(Model model,
+                         @PathVariable("id") Long id) {
+        serviceimpl.delete(id);
+        return "OK";
     }
+
+    @GetMapping("index/{id}")
+    public ResponseEntity<?> detail(Model model,
+                                    @PathVariable("id") Long id) {
+
+        return ResponseEntity.ok(serviceimpl.getOne(id));
+    }
+
+    @PutMapping("update/{id}")
+    public ResponseEntity<?> update(Model model,
+                                    @PathVariable("id") Long id,
+                                    @RequestBody TaiKhoan taiKhoan) {
+
+      return ResponseEntity.ok(serviceimpl.update(id,taiKhoan));
+    }
+
+//    @GetMapping("export")
+//    public void exportToExcel(HttpServletResponse response) throws IOException {
+//        response.setContentType("application/octet-stream");
+//        DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
+//        String currentDateTime = dateFormatter.format(new java.util.Date());
+//
+//        String headerKey = "Content-Disposition";
+//        String headerValue = "attachment; filename=users_" + currentDateTime + ".xlsx";
+//        response.setHeader(headerKey, headerValue);
+//
+//        List listTK = taiKhoanServiceimpl.getAll();
+//
+//        TaiKhoanExport excelExporter = new TaiKhoanExport(listTK);
+//
+//        excelExporter.export(response);
+//    }
 }
