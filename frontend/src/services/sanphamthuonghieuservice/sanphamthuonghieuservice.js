@@ -1,41 +1,41 @@
 import axios from 'axios';
-const KICHTHUOC_API_BASE_URL = "http://localhost:8080/kich_thuoc/hien_thi";
-const MAUSAC_API = 'http://localhost:8080/mau_sac/index';
-const API_BASE_URL = "http://localhost:8080/kich_thuoc_mau_sac/hien_thi";
-const API_SAVE_URL = "http://localhost:8080/kich_thuoc_mau_sac/add";
-const API_DELETE_URL = "http://localhost:8080/kich_thuoc_mau_sac/delete";
-const API_UPDATE_URL = "http://localhost:8080/kich_thuoc_mau_sac/update";
+const SANPHAM_API_BASE_URL = "http://localhost:8080/san_pham/hien_thi";
+const THUONGHIEU_API = 'http://localhost:8080/thuong_hieu/index';
+const API_BASE_URL = "http://localhost:8080/san_pham_thuong_hieu/hien_thi";
+const API_SAVE_URL = "http://localhost:8080/san_pham_thuong_hieu/add";
+const API_DELETE_URL = "http://localhost:8080/san_pham_thuong_hieu/delete";
+const API_UPDATE_URL = "http://localhost:8080/san_pham_thuong_hieu/update";
 
-class kichthuocmausacservice {
+class sanphamthuonghieuservice {
 
 
-    getKichThuoc() {
-        return axios.get(KICHTHUOC_API_BASE_URL);
+    getSanPham() {
+        return axios.get(SANPHAM_API_BASE_URL);
     }
-    getMauSac() {
-        return axios.get(MAUSAC_API);
+    getThuongHieu() {
+        return axios.get(THUONGHIEU_API);
     }
-    getKichThuocMauSac() {
+    getSanPhamThuongHieu() {
         return axios.get(API_BASE_URL);
     }
 
-    createKichThuocMauSac(kichThuocMauSac) {
-        return axios.post(API_SAVE_URL, kichThuocMauSac)
+    createSanPhamThuongHieu(sanPhamThuongHieu) {
+        return axios.post(API_SAVE_URL, sanPhamThuongHieu)
     }
 
-    deleteKichThuocMauSac(kichThuocMauSacId) {
-        return axios.delete(API_DELETE_URL + '/' + kichThuocMauSacId)
+    deleteSanPhamThuongHieu(sanPhamThuongHieuId) {
+        return axios.delete(API_DELETE_URL + '/' + sanPhamThuongHieuId)
     }
 
-    getKichThuocMauSacById(kichThuocMauSacId) {
-        return axios.get(API_BASE_URL + "/" + kichThuocMauSacId);
+    getSanPhamThuongHieuById(sanPhamThuongHieuId) {
+        return axios.get(API_BASE_URL + "/" + sanPhamThuongHieuId);
     }
 
-    updateKichThuocMauSac(kichThuocMauSac, kichThuocMauSacId) {
-        console.log(kichThuocMauSacId)
-        return axios.put(API_UPDATE_URL + "/" + kichThuocMauSacId, kichThuocMauSac)
+    updateSanPhamThuongHieu(sanPhamThuongHieu, sanPhamThuongHieuId) {
+        console.log(sanPhamThuongHieuId)
+        return axios.put(API_UPDATE_URL + "/" + sanPhamThuongHieuId, sanPhamThuongHieu)
     }
 
 }
 
-export default new kichthuocmausacservice();
+export default new sanphamthuonghieuservice();

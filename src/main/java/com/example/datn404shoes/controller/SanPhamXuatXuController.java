@@ -16,20 +16,20 @@ import org.springframework.web.bind.annotation.*;
 public class SanPhamXuatXuController {
 
     @Autowired
-    SanPhamXuatXuServiceimpl xuatXuServiceimpl;
+    SanPhamXuatXuServiceimpl sanphamXuatXuService;
 
 
 
     @GetMapping("hien_thi")
     public ResponseEntity<?> hienThi(Model model) {
 
-        return ResponseEntity.ok(xuatXuServiceimpl.getAll());
+        return ResponseEntity.ok(sanphamXuatXuService.getAll());
     }
 
     @GetMapping("create")
     public String create(Model model) {
 //        model.addAttribute("SanPhamThuongHieu", new SanPhamThuongHieu());
-//        model.addAttribute("listSP", xuatXuServiceimpl.getAll());
+//        model.addAttribute("listSP", sanphamXuatXuService.getAll());
 //        model.addAttribute("listTH", thuongHieuServiceimpl.getAll());
 //        model.addAttribute("view", "/san_pham_thuong_hieu/addNew.jsp");
         return "admin/index";
@@ -37,27 +37,27 @@ public class SanPhamXuatXuController {
 
     @PostMapping("add")
     public ResponseEntity<?> add(Model model,
-                                 @RequestBody SanPhamXuatXuRequest sanPhamThuongHieuRequest) {
-        return ResponseEntity.ok(xuatXuServiceimpl.add(sanPhamThuongHieuRequest));
+                                 @RequestBody SanPhamXuatXuRequest sanPhamXuatXuRequest) {
+        return ResponseEntity.ok(sanphamXuatXuService.add(sanPhamXuatXuRequest));
     }
 
     @DeleteMapping("delete/{idx}")
     public String delete(Model model,
-                         @RequestParam("idx") Long id) {
-        xuatXuServiceimpl.delete(id);
+                         @PathVariable("idx") Long id) {
+        sanphamXuatXuService.delete(id);
         return "thanh cong";
     }
 
     @GetMapping("detail/{id}")
     public ResponseEntity<?> detail(Model model,
                          @PathVariable("id") Long id) {
-        return ResponseEntity.ok(xuatXuServiceimpl.detail(id));
+        return ResponseEntity.ok(sanphamXuatXuService.detail(id));
     }
 
     @PutMapping("update/{id}")
     public ResponseEntity<?> update(Model model,
                      @PathVariable("id") Long id,
                      @RequestBody SanPhamXuatXuRequest sanPhamThuongHieuRequest) {
-        return ResponseEntity.ok(xuatXuServiceimpl.update(id, sanPhamThuongHieuRequest));
+        return ResponseEntity.ok(sanphamXuatXuService.update(id, sanPhamThuongHieuRequest));
     }
 }

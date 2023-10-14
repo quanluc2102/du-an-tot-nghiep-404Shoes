@@ -10,12 +10,20 @@ class SanPhamXuatXuComponent extends Component {
         this.state = {
             sanPhamXuatXu: [],
             sanPhamXuatXuAdd: {
-                sanPhamId: '', // Sử dụng 'sanPhamId' và 'xuatXuId' thay vì 'sanPhamId' hai lần
+                sanPhamId: '',
                 xuatXuId: '',
             },
             sanPhamXuatXuUpdate: {
                 id: this.props.match.params.id,
-                sanPhamId: '', // Sử dụng 'sanPhamId' và 'xuatXuId' thay vì 'sanPhamId' hai lần
+                sanPhamId: '',
+                xuatXuId: '',
+            },
+            errorsAdd: {
+                sanPhamId: '',
+                xuatXuId: '',
+            },
+            errorsUpdate: {
+                sanPhamId: '',
                 xuatXuId: '',
             },
             sanPhams: [],  // Thêm danh sách Sản phẩm vào state
@@ -100,6 +108,20 @@ class SanPhamXuatXuComponent extends Component {
             xuatXuId: this.state.sanPhamXuatXuAdd.xuatXuId
         };
 
+        if (!this.state.sanPhamXuatXuAdd.sanPhamId) {
+            this.setState({ errorsAdd: { ...this.state.errorsAdd, sanPhamId: "Sản phẩm không được bỏ trống!" } });
+            return;
+        } else {
+            this.setState({ errorsAdd: { ...this.state.errorsAdd, sanPhamId: "" } });
+        }
+
+        if (!this.state.sanPhamXuatXuAdd.xuatXuId) {
+            this.setState({ errorsAdd: { ...this.state.errorsAdd, xuatXuId: "Xuất xứ không được bỏ trống!" } });
+            return;
+        } else {
+            this.setState({ errorsAdd: { ...this.state.errorsAdd, xuatXuId: "" } });
+        }
+
         sanphamxuatxuservice.createSanPhamXuatXu(sanPhamXuatXu).then((res) => {
             if (res.status === 200) {
                 // Xử lý khi thêm thành công
@@ -124,6 +146,21 @@ class SanPhamXuatXuComponent extends Component {
         };
         console.log('nsx' + JSON.stringify(sanPhamXuatXu));
         // let id = this.state.sanPhamXuatXuUpdate.id;
+
+        if (!this.state.sanPhamXuatXuUpdate.sanPhamId) {
+            this.setState({ errorsUpdate: { ...this.state.errorsUpdate, sanPhamId: "Sản phẩm không được bỏ trống!" } });
+            return;
+        } else {
+            this.setState({ errorsUpdate: { ...this.state.errorsUpdate, sanPhamId: "" } });
+        }
+
+        if (!this.state.sanPhamXuatXuUpdate.xuatXuId) {
+            this.setState({ errorsUpdate: { ...this.state.errorsUpdate, xuatXuId: "Xuất xứ không được bỏ trống!" } });
+            return;
+        } else {
+            this.setState({ errorsUpdate: { ...this.state.errorsUpdate, xuatXuId: "" } });
+        }
+
         sanphamxuatxuservice.updateSanPhamXuatXu(sanPhamXuatXu, this.state.sanPhamXuatXuUpdate.id).then((res) => {
             let sanPhamXuatXuCapNhat = res.data; // Giả sử API trả về đối tượng vừa được cập nhật
             this.setState(prevState => ({
@@ -155,6 +192,8 @@ class SanPhamXuatXuComponent extends Component {
                 sanPhamId: event.target.value
             }
         }));
+        let errorsAdd = { ...this.state.errorsAdd, sanPhamId: "" };
+        this.setState({ errorsAdd: errorsAdd });
     }
 
     thayDoiXuatXuIdAdd = (event) => {
@@ -164,6 +203,8 @@ class SanPhamXuatXuComponent extends Component {
                 xuatXuId: event.target.value // Sửa ở đây
             }
         }));
+        let errorsAdd = { ...this.state.errorsAdd, xuatXuId: "" };
+        this.setState({ errorsAdd: errorsAdd });
     }
     thayDoiSanPhamIdUpdate = (event) => {
         this.setState(prevState => ({
@@ -172,6 +213,8 @@ class SanPhamXuatXuComponent extends Component {
                 sanPhamId: event.target.value
             }
         }));
+        let errorsUpdate = { ...this.state.errorsUpdate, sanPhamId: "" };
+        this.setState({ errorsUpdate: errorsUpdate });
     }
     thayDoiXuatXuIdUpdate = (event) => {
         this.setState(prevState => ({
@@ -180,6 +223,8 @@ class SanPhamXuatXuComponent extends Component {
                 xuatXuId: event.target.value // Sửa ở đây
             }
         }));
+        let errorsUpdate = { ...this.state.errorsUpdate, xuatXuId: "" };
+        this.setState({ errorsUpdate: errorsUpdate });
     }
 
 
@@ -284,7 +329,7 @@ class SanPhamXuatXuComponent extends Component {
                                             <form>
                                                 <div className='form-group'>
                                                     <label>Sản phẩm</label>
-                                                    <select name="sanPhamId" value={this.state.sanPhamXuatXuUpdate.sanPhamId} className="form-control" onChange={this.thayDoiSanPhamIdUpdate}>
+                                                    <select name="sanPhamId" value={this.state.sanPhamXuatXuUpdate.sanPhamId} className={`form-control ${this.state.errorsUpdate.sanPhamId ? 'is-invalid' : ''}`} onChange={this.thayDoiSanPhamIdUpdate}>
                                                         <option value="">Chọn Sản Phẩm</option>
                                                         {this.state.sanPhams.map((sanPham) => (
                                                             <option key={sanPham.id} value={sanPham.id}>
@@ -292,10 +337,12 @@ class SanPhamXuatXuComponent extends Component {
                                                             </option>
                                                         ))}
                                                     </select>
+                                                    {this.state.errorsUpdate.sanPhamId && <div className="text-danger">{this.state.errorsUpdate.sanPhamId}</div>}
+
                                                 </div>
                                                 <div className='form-group'>
                                                     <label>Xuất xứ</label>
-                                                    <select name="xuatXuId" value={this.state.sanPhamXuatXuUpdate.xuatXuId} className="form-control" onChange={this.thayDoiXuatXuIdUpdate}>
+                                                    <select name="xuatXuId" value={this.state.sanPhamXuatXuUpdate.xuatXuId} className={`form-control ${this.state.errorsUpdate.xuatXuId ? 'is-invalid' : ''}`} onChange={this.thayDoiXuatXuIdUpdate}>
                                                         <option value="">Chọn Xuất xứ</option>
                                                         {this.state.xuatXus.map((xuatXu) => (
                                                             <option key={xuatXu.id} value={xuatXu.id}>
@@ -303,6 +350,8 @@ class SanPhamXuatXuComponent extends Component {
                                                             </option>
                                                         ))}
                                                     </select>
+                                                    {this.state.errorsUpdate.xuatXuId && <div className="text-danger">{this.state.errorsUpdate.xuatXuId}</div>}
+
                                                 </div>
                                                 <input type="submit" className="btn btn-primary" value="Update" style={{ marginTop: '10px' }} onClick={this.update} />
                                             </form>
@@ -312,7 +361,7 @@ class SanPhamXuatXuComponent extends Component {
                                             <form>
                                                 <div className='form-group'>
                                                     <label>Sản phẩm</label>
-                                                    <select name="sanPhamId" className="form-control" onChange={this.thayDoiSanPhamIdAdd}>
+                                                    <select name="sanPhamId" className={`form-control ${this.state.errorsAdd.sanPhamId ? 'is-invalid' : ''}`} onChange={this.thayDoiSanPhamIdAdd}>
                                                         <option value="">Chọn Sản phẩm</option>
                                                         {this.state.sanPhams.map((sanPham) => (
                                                             <option key={sanPham.id} value={sanPham.id}>
@@ -320,12 +369,13 @@ class SanPhamXuatXuComponent extends Component {
                                                             </option>
                                                         ))}
                                                     </select>
+                                                    {this.state.errorsAdd.sanPhamId && <div className="text-danger">{this.state.errorsAdd.sanPhamId}</div>}
 
                                                 </div>
 
                                                 <div className='form-group'>
                                                     <label>Xuất xứ</label>
-                                                    <select name="xuatXuId" className="form-control" onChange={this.thayDoiXuatXuIdAdd}>
+                                                    <select name="xuatXuId" className={`form-control ${this.state.errorsAdd.xuatXuId ? 'is-invalid' : ''}`} onChange={this.thayDoiXuatXuIdAdd}>
                                                         <option value="">Chọn Xuất xứ</option>
                                                         {this.state.xuatXus.map((xuatXu) => (
                                                             <option key={xuatXu.id} value={xuatXu.id}>
@@ -333,6 +383,8 @@ class SanPhamXuatXuComponent extends Component {
                                                             </option>
                                                         ))}
                                                     </select>
+                                                    {this.state.errorsAdd.xuatXuId && <div className="text-danger">{this.state.errorsAdd.xuatXuId}</div>}
+
                                                 </div>
 
                                                 

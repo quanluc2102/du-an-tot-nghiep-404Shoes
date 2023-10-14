@@ -24,6 +24,7 @@ public class SanPhamXuatXuServiceimpl implements SanPhamXuatXuService {
         SanPhamXuatXu sanphamXuatXu = new SanPhamXuatXu();
         sanphamXuatXu.setXuatXu(XuatXu.builder().id(sanphamXuatXuRequest.getXuatXuId()).build());
         sanphamXuatXu.setSanPham(SanPham.builder().id(sanphamXuatXuRequest.getSanPhamId()).build());
+        repo.save(sanphamXuatXu);
         return sanphamXuatXu;
     }
 
@@ -42,6 +43,7 @@ public class SanPhamXuatXuServiceimpl implements SanPhamXuatXuService {
         SanPhamXuatXu sanphamXuatXu1 = repo.findById(id).get();
         sanphamXuatXu1.setXuatXu(XuatXu.builder().id(sanphamXuatXuRequest.getXuatXuId()).build());
         sanphamXuatXu1.setSanPham(SanPham.builder().id(sanphamXuatXuRequest.getSanPhamId()).build());
+        repo.save(sanphamXuatXu1);
         return sanphamXuatXu1;
     }
 

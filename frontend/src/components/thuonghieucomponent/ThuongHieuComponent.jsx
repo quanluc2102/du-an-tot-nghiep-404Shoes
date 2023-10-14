@@ -15,7 +15,15 @@ class ThuongHieuComponent extends Component {
                 id: this.props.match.params.id,
                 ten: '',
                 trangThai: '',
-            }
+            },
+            errorsAdd: {
+                ten: '',
+                trangThai: '',
+            },
+            errorsUpdate: {
+                ten: '',
+                trangThai: '',
+            },
         }
         this.add = this.add.bind(this);
         this.delete = this.delete.bind(this);
@@ -59,6 +67,26 @@ class ThuongHieuComponent extends Component {
     add = (e) => {
         e.preventDefault();
         let thuongHieu = { ten: this.state.thuongHieuAdd.ten, trangThai: this.state.thuongHieuAdd.trangThai }
+
+        if (!this.state.thuongHieuAdd.ten) {
+            this.setState({ errorsAdd: { ...this.state.errorsAdd, ten: "Tên màu không được bỏ trống!" } });
+            return;
+        }else if (!isNaN(this.state.thuongHieuAdd.ten)) {
+            this.setState({ errorsAdd: { ...this.state.errorsAdd, ten: "Tên phải là chữ!" } });
+            return;
+        }
+         else {
+            this.setState({ errorsAdd: { ...this.state.errorsAdd, ten: "" } });
+        }
+
+
+        if (!this.state.thuongHieuAdd.trangThai) {
+            this.setState({ errorsAdd: { ...this.state.errorsAdd, trangThai: "Trạng thái không được bỏ trống!" } });
+            return;
+        } else {
+            this.setState({ errorsAdd: { ...this.state.errorsAdd, trangThai: "" } });
+        }
+
         thuonghieuservice.createThuongHieu(thuongHieu).then((res) => {
             if (res.status === 200) {
                 // Xử lý khi thêm thành công
@@ -83,7 +111,27 @@ class ThuongHieuComponent extends Component {
         let thuongHieu = { giaTri: this.state.thuongHieuUpdate.giaTri, ten: this.state.thuongHieuUpdate.ten, trangThai: this.state.thuongHieuUpdate.trangThai }
         console.log('nsx' + JSON.stringify(thuongHieu));
         let id = this.state.thuongHieuUpdate.id;
-        thuonghieuservice.updateThuongHieu(thuongHieu, this.state.thuongHieuUpdate.id).then((res) => {
+
+        if (!this.state.thuongHieuUpdate.ten) {
+            this.setState({ errorsUpdate: { ...this.state.errorsUpdate, ten: "Tên thương hiệu không được bỏ trống!" } });
+            return;
+        }else if (!isNaN(this.state.thuongHieuUpdate.ten)) {
+            this.setState({ errorsUpdate: { ...this.state.errorsUpdate, ten: "Tên phải là chữ!" } });
+            return;
+        }
+         else {
+            this.setState({ errorsUpdate: { ...this.state.errorsUpdate, ten: "" } });
+        }
+
+
+        if (!this.state.thuongHieuUpdate.trangThai) {
+            this.setState({ errorsUpdate: { ...this.state.errorsUpdate, trangThai: "Trạng thái không được bỏ trống!" } });
+            return;
+        } else {
+            this.setState({ errorsUpdate: { ...this.state.errorsUpdate, trangThai: "" } });
+        }
+
+        thuonghieuservice.updatethuongHieu(thuongHieu, this.state.thuongHieuUpdate.id).then((res) => {
             let thuongHieuCapNhat = res.data; // Giả sử API trả về đối tượng vừa được cập nhật
             this.setState(prevState => ({
                 thuongHieu: prevState.thuongHieu.map(th =>
@@ -107,6 +155,8 @@ class ThuongHieuComponent extends Component {
                 ten: event.target.value
             }
         }));
+        let errorsAdd = { ...this.state.errorsAdd, ten: "" };
+        this.setState({ errorsAdd: errorsAdd });
     }
 
     thayDoiTrangThaiAdd = (event) => {
@@ -116,6 +166,8 @@ class ThuongHieuComponent extends Component {
                 trangThai: event.target.value
             }
         }));
+        let errorsAdd = { ...this.state.errorsAdd, trangThai: "" };
+        this.setState({ errorsAdd: errorsAdd });
     }
     thayDoiTenUpdate = (event) => {
         this.setState(prevState => ({
@@ -124,6 +176,8 @@ class ThuongHieuComponent extends Component {
                 ten: event.target.value
             }
         }));
+        let errorsUpdate = { ...this.state.errorsUpdate, ten: "" };
+        this.setState({ errorsUpdate: errorsUpdate });
     }
     thayDoiTrangThaiUpdate = (event) => {
         this.setState(prevState => ({
@@ -132,6 +186,8 @@ class ThuongHieuComponent extends Component {
                 trangThai: event.target.value
             }
         }));
+        let errorsUpdate = { ...this.state.errorsUpdate, trangThai: "" };
+        this.setState({ errorsUpdate: errorsUpdate });
     }
 
 
@@ -249,14 +305,16 @@ class ThuongHieuComponent extends Component {
                                             <form>
                                                 <div>
                                                     Tên :
-                                                    <input className="form-control" name="ten" value={this.state.thuongHieuUpdate.ten} onChange={this.thayDoiTenUpdate} />
+                                                    <input className={`form-control ${this.state.errorsUpdate.ten ? 'is-invalid' : ''}`} name="ten" value={this.state.thuongHieuUpdate.ten} onChange={this.thayDoiTenUpdate} />
+                                                    {this.state.errorsUpdate.ten && <div className="text-danger">{this.state.errorsUpdate.ten}</div>}
                                                 </div>
                                                 <div className='form-group'>
                                                     <label>Trạng thái</label>
-                                                    <select name="trangThai" id="trangThai" value={this.state.thuongHieuUpdate.trangThai} className="form-control" onChange={this.thayDoiTrangThaiUpdate}>
+                                                    <select name="trangThai" id="trangThai" value={this.state.thuongHieuUpdate.trangThai} className={`form-control ${this.state.errorsUpdate.trangThai ? 'is-invalid' : ''}`} onChange={this.thayDoiTrangThaiUpdate}>
                                                         <option value='true'>Còn</option>
                                                         <option value="false">Ko còn</option>
                                                     </select>
+                                                    {this.state.errorsUpdate.trangThai && <div className="text-danger">{this.state.errorsUpdate.trangThai}</div>}
                                                 </div>
                                                 <input type="submit" className="btn btn-primary" value="Update" style={{ marginTop: '10px' }} onClick={this.update} />
                                             </form>
@@ -266,14 +324,16 @@ class ThuongHieuComponent extends Component {
                                             <form>
                                                 <div>
                                                     Tên :
-                                                    <input className="form-control" name="ten" onChange={this.thayDoiTenAdd} />
+                                                    <input className={`form-control ${this.state.errorsAdd.ten ? 'is-invalid' : ''}`} name="ten" onChange={this.thayDoiTenAdd} />
+                                                    {this.state.errorsAdd.ten && <div className="text-danger">{this.state.errorsAdd.ten}</div>}
                                                 </div>
                                                 <div className='form-group'>
                                                     <label>Trạng thái</label>
-                                                    <select name="trangThai" id="trangThai" className="form-control" onChange={this.thayDoiTrangThaiAdd}>
+                                                    <select name="trangThai" id="trangThai" className={`form-control ${this.state.errorsAdd.trangThai ? 'is-invalid' : ''}`} onChange={this.thayDoiTrangThaiAdd}>
                                                         <option value='true'>Còn</option>
                                                         <option value="false">Ko còn</option>
                                                     </select>
+                                                    {this.state.errorsAdd.trangThai && <div className="text-danger">{this.state.errorsAdd.trangThai}</div>}
                                                 </div>
                                                 <input type="submit" className="btn btn-primary" value="Add" style={{ marginTop: '10px' }} onClick={this.add} />
                                             </form>

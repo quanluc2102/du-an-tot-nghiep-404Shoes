@@ -27,16 +27,16 @@ public class ThongTinNguoiDungController {
     @GetMapping("/index")
     public String index (Model model){
         ArrayList<ThongTinNguoiDung> list = thongTinNguoiDungServiceimpl.getAll();
-        ArrayList<TaiKhoan> listtk = taiKhoanServiceimpl.getAll();
+//        ArrayList<TaiKhoan> listtk = taiKhoanServiceimpl.getAll();
         model.addAttribute("listND",list);
-        model.addAttribute("listTK",listtk);
+//        model.addAttribute("listTK",listtk);
         model.addAttribute("view", "/tai_khoan/danh_sach.jsp");
         return "admin/index";
     }
     @GetMapping("/create")
     public String create(Model model){
-        ArrayList<TaiKhoan> listtk = taiKhoanServiceimpl.getAll();
-        model.addAttribute("listTK",listtk);
+//        ArrayList<TaiKhoan> listtk = taiKhoanServiceimpl.getAll();
+//        model.addAttribute("listTK",listtk);
         model.addAttribute("view", "/tai_khoan/viewThem.jsp");
         return "admin/index";
     }
@@ -65,9 +65,9 @@ public class ThongTinNguoiDungController {
     ){
         Optional<ThongTinNguoiDung> dung = thongTinNguoiDungServiceimpl.detail(Long.valueOf(id));
         ArrayList<ThongTinNguoiDung> list = thongTinNguoiDungServiceimpl.getAll();
-        ArrayList<TaiKhoan> listtk = taiKhoanServiceimpl.getAll();
+//        ArrayList<TaiKhoan> listtk = taiKhoanServiceimpl.getAll();
         model.addAttribute("listND",list);
-        model.addAttribute("listTK",listtk);
+//        model.addAttribute("listTK",listtk);
         model.addAttribute("nd",dung.get());
         model.addAttribute("listTK",taiKhoanServiceimpl.getAll());
         model.addAttribute("view", "/tai_khoan/danh_sach.jsp");
