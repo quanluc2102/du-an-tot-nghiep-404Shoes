@@ -24,9 +24,9 @@ class taikhoanservice {
         return axios.get(API_BASE_URL + "/" + id);
     }
 
-    updateTaiKhoan(taiKhoan, id) {
+    updateTaiKhoan(id,taiKhoan) {
         console.log(id)
-        return axios.put(API_UPDATE_URL + "/" + taiKhoan, id)
+        return axios.put(API_UPDATE_URL + "/" + id,taiKhoan)
     }
 
 }
