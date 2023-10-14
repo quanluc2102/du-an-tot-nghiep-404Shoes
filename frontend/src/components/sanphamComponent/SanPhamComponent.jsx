@@ -1,8 +1,5 @@
 import React, {Component} from 'react';
-import { useState } from 'react';
 import SanPhamService from "../../services/sanphamservice/SanPhamService";
-import { toast } from 'react-toastify';
-import SanPhamService1 from "../../services/sanphamservice/SanPhamService1";
 
 class SanPhamComponent extends Component {
     constructor(props) {
@@ -18,6 +15,21 @@ class SanPhamComponent extends Component {
                 trangThai:''},
             sanPhamUpdate:{
                 id:this.props.match.params.id,
+                ten : '',
+                giaNhap : '',
+                giaBan : '',
+                giamGia : '',
+                moTa : '',
+                trangThai:''
+            },errorAdd: {
+                ten : '',
+                giaNhap : '',
+                giaBan : '',
+                giamGia : '',
+                moTa : '',
+                trangThai:''
+            },
+            errorUpdate: {
                 ten : '',
                 giaNhap : '',
                 giaBan : '',
@@ -72,10 +84,65 @@ class SanPhamComponent extends Component {
     add = (e)=>{
         e.preventDefault();
 
+
+        let giaNhap = parseInt(this.state.sanPhamAdd.giaNhap);
+        let giaBan = parseInt(this.state.sanPhamAdd.giaBan);
+        let giamGia = parseInt(this.state.sanPhamAdd.giamGia);
+
+        if (!this.state.sanPhamAdd.ten.trim()) {
+            this.setState({errorAdd: {...this.state.errorAdd, ten: "Tên không được bỏ trống!"}});
+            return;
+        } else {
+            this.setState({ errorAdd: { ...this.state.errorAdd, ten: "" } });
+        }
+
+
+        if (!this.state.sanPhamAdd.giaNhap.trim()) {
+            this.setState({errorAdd: {...this.state.errorAdd, giaNhap: "Giá nhập không được bỏ trống!"}});
+            return;
+        } else if(giaNhap < 0) {
+            this.setState({ errorAdd: { ...this.state.errorAdd, giaNhap: "Giá nhập không được bé hơn 0 !" } });
+            return;
+        } else {
+            this.setState({ errorAdd: { ...this.state.errorAdd, giaNhap: "" } });
+        }
+
+        if (!this.state.sanPhamAdd.giaBan.trim()) {
+            this.setState({errorAdd: {...this.state.errorAdd, giaBan: "Giá bán không được bỏ trống!"}});
+            return;
+        } else if(giaBan < 0) {
+            this.setState({ errorAdd: { ...this.state.errorAdd, giaBan: "Giá bán không được bé hơn 0 !" } });
+            return;
+        } else if(giaBan < giaNhap) {
+            this.setState({ errorAdd: { ...this.state.errorAdd, giaBan: "Giá bán không được bé hơn Giá nhập !" } });
+            return;
+        } else {
+            this.setState({ errorAdd: { ...this.state.errorAdd, giaBan: "" } });
+        }
+
+        if (!this.state.sanPhamAdd.giamGia.trim()) {
+            this.setState({errorAdd: {...this.state.errorAdd, giamGia: "Giá giảm không được bỏ trống!"}});
+            return;
+        } else if(giamGia < 0) {
+            this.setState({ errorAdd: { ...this.state.errorAdd, giamGia: "Giá giảm không được bé hơn 0 !" } });
+            return;
+        } else if(giamGia > giaBan) {
+            this.setState({ errorAdd: { ...this.state.errorAdd, giamGia: "Giá giảm không được lớn hơn Giá bán !" } });
+            return;
+        } else {
+            this.setState({ errorAdd: { ...this.state.errorAdd, giamGia: "" } });
+        }
+
+        if (!this.state.sanPhamAdd.moTa.trim()) {
+            this.setState({errorAdd: {...this.state.errorAdd, moTa: "moTa không được bỏ trống!"}});
+            return;
+        } else {
+            this.setState({ errorAdd: { ...this.state.errorAdd, moTa: "" } });
+        }
+
         SanPhamService.addSanPham(this.state.sanPhamAdd).then((res)=>{
             window.location.href = (`/index`);
         })
-
     }
     update=(e)=>{
         e.preventDefault();
@@ -86,6 +153,61 @@ class SanPhamComponent extends Component {
             giaNhap:this.state.sanPhamUpdate.giaNhap,
             moTa:this.state.sanPhamUpdate.moTa }
         console.log('nsx' + JSON.stringify(sanPham));
+
+        let giaNhap = parseInt(sanPham.giaNhap);
+        let giaBan = parseInt(sanPham.giaBan);
+        let giamGia = parseInt(sanPham.giamGia);
+
+        if (!this.state.sanPhamUpdate.ten.trim()) {
+            this.setState({errorUpdate: {...this.state.errorUpdate, ten: "Tên không được bỏ trống!"}});
+            return;
+        } else {
+            this.setState({ errorUpdate: { ...this.state.errorUpdate, ten: "" } });
+        }
+
+        if (!this.state.sanPhamUpdate.giaNhap.trim()) {
+            this.setState({errorUpdate: {...this.state.errorUpdate, giaNhap: "Giá nhập không được bỏ trống!"}});
+            return;
+        } else if(giaNhap < 0) {
+            this.setState({ errorUpdate: { ...this.state.errorUpdate, giaNhap: "Giá nhập không được bé hơn 0 !" } });
+            return;
+        } else {
+            this.setState({ errorUpdate: { ...this.state.errorUpdate, giaNhap: "" } });
+        }
+
+        if (!this.state.sanPhamUpdate.giaBan.trim()) {
+            this.setState({errorUpdate: {...this.state.errorUpdate, giaBan: "Giá bán không được bỏ trống!"}});
+            return;
+        } else if(giaBan < 0) {
+            this.setState({ errorUpdate: { ...this.state.errorUpdate, giaBan: "Giá bán không được bé hơn 0 !" } });
+            return;
+        } else if(giaBan < giaNhap) {
+            this.setState({ errorUpdate: { ...this.state.errorUpdate, giaBan: "Giá bán không được bé hơn Giá nhập !" } });
+            return;
+        } else {
+            this.setState({ errorUpdate: { ...this.state.errorUpdate, giaBan: "" } });
+        }
+
+        if (!this.state.sanPhamUpdate.giamGia.trim()) {
+            this.setState({errorUpdate: {...this.state.errorUpdate, giamGia: "Giá giảm không được bỏ trống!"}});
+            return;
+        } else if(giamGia < 0) {
+            this.setState({ errorUpdate: { ...this.state.errorUpdate, giamGia: "Giá giảm không được bé hơn 0 !" } });
+            return;
+        } else if(giamGia > giaBan) {
+            this.setState({ errorUpdate: { ...this.state.errorUpdate, giamGia: "Giá giảm không được lớn hơn Giá bán !" } });
+            return;
+        } else {
+            this.setState({ errorUpdate: { ...this.state.errorUpdate, giamGia: "" } });
+        }
+
+        if (!this.state.sanPhamUpdate.moTa.trim()) {
+            this.setState({errorUpdate: {...this.state.errorUpdate, moTa: "Mô tả không được bỏ trống!"}});
+            return;
+        } else {
+            this.setState({ errorUpdate: { ...this.state.errorUpdate, moTa: "" } });
+        }
+
         let id = this.state.sanPhamUpdate.id;
         SanPhamService.updateSanPham(id,sanPham).then((res)=>{
             window.location.href = (`/index`);
@@ -103,6 +225,8 @@ class SanPhamComponent extends Component {
                 }
             })
         );
+        let errorAdd = {...this.state.errorAdd,ten:""};
+        this.setState({errorAdd:errorAdd});
     }
     thayDoiGiaNhapAdd=(event)=>{
         this.setState(
@@ -113,6 +237,8 @@ class SanPhamComponent extends Component {
                 }
             })
         );
+        let errorAdd = {...this.state.errorAdd,giaNhap:""};
+        this.setState({errorAdd:errorAdd});
     }
     thayDoiGiaBanAdd=(event)=>{
         this.setState(
@@ -123,6 +249,8 @@ class SanPhamComponent extends Component {
                 }
             })
         );
+        let errorAdd = {...this.state.errorAdd,giaBan:""};
+        this.setState({errorAdd:errorAdd});
     }
     thayDoiGiamGiaAdd=(event)=>{
         this.setState(
@@ -133,6 +261,8 @@ class SanPhamComponent extends Component {
                 }
             })
         );
+        let errorAdd = {...this.state.errorAdd,giamGia:""};
+        this.setState({errorAdd:errorAdd});
     }
     thayDoiMoTaAdd=(event)=>{
         this.setState(
@@ -143,6 +273,8 @@ class SanPhamComponent extends Component {
                 }
             })
         );
+        let errorAdd = {...this.state.errorAdd,moTa:""};
+        this.setState({errorAdd:errorAdd});
     }
     thayDoiTrangThaiAdd=(event)=>{
         this.setState(
@@ -163,6 +295,8 @@ class SanPhamComponent extends Component {
                 }
             })
         );
+        let errorUpdate = {...this.state.errorUpdate,ten:""};
+        this.setState({errorUpdate:errorUpdate});
     }
     thayDoiGiaNhapUpdate=(event)=>{
         this.setState(
@@ -173,6 +307,8 @@ class SanPhamComponent extends Component {
                 }
             })
         );
+        let errorUpdate = {...this.state.errorUpdate,giaNhap:""};
+        this.setState({errorUpdate:errorUpdate});
     }
     thayDoiGiaBanUpdate=(event)=>{
         this.setState(
@@ -183,6 +319,8 @@ class SanPhamComponent extends Component {
                 }
             })
         );
+        let errorUpdate = {...this.state.errorUpdate,giaBan:""};
+        this.setState({errorUpdate:errorUpdate});
     }
     thayDoiGiamGiaUpdate=(event)=>{
         this.setState(
@@ -193,6 +331,8 @@ class SanPhamComponent extends Component {
                 }
             })
         );
+        let errorUpdate = {...this.state.errorUpdate,giamGia:""};
+        this.setState({errorUpdate:errorUpdate});
     }
     thayDoiMoTaUpdate=(event)=>{
         this.setState(
@@ -203,6 +343,8 @@ class SanPhamComponent extends Component {
                 }
             })
         );
+        let errorUpdate = {...this.state.errorUpdate,moTa:""};
+        this.setState({errorUpdate:errorUpdate});
     }
     thayDoiTrangThaiUpdate=(event)=>{
         this.setState(
@@ -273,7 +415,7 @@ class SanPhamComponent extends Component {
                                                                 <td>{sp.giaBan}</td>
                                                                 <td>{sp.giamGia}</td>
                                                                 <td>{sp.moTa}</td>
-                                                                <td>{sp.trangThai==1?"HD":"Ko HD"}</td>
+                                                                <td>{sp.trangThai===1?"HD":"Ko HD"}</td>
                                                                 <td>
                                                                     <button onClick={()=>this.delete(sp.id)} className='btn btn-danger'>Xóa</button>
                                                                     <button onClick={()=>this.detail(sp.id)} className='btn btn-primary'>Chi tiết</button>
@@ -334,29 +476,34 @@ class SanPhamComponent extends Component {
                                             <form>
                                                 <div>
                                                     Tên :
-                                                    <input className="form-control" name="ten" value={this.state.sanPhamUpdate.ten} onChange={this.thayDoiTenUpdate}/>
+                                                    <input className={`form-control ${this.state.errorUpdate.ten ? 'is-invalid' : ''}`} name="ten" value={this.state.sanPhamUpdate.ten} onChange={this.thayDoiTenUpdate}/>
+                                                    {this.state.errorUpdate.ten && <div className="text-danger">{this.state.errorUpdate.ten}</div>}
                                                 </div>
                                                 <div>
                                                     Giá nhập :
-                                                    <input className="form-control" name="giaNhap" value={this.state.sanPhamUpdate.giaNhap} onChange={this.thayDoiGiaNhapUpdate}/>
+                                                    <input className={`form-control ${this.state.errorUpdate.giaNhap ? 'is-invalid' : ''}`} name="giaNhap" value={this.state.sanPhamUpdate.giaNhap} onChange={this.thayDoiGiaNhapUpdate}/>
+                                                    {this.state.errorUpdate.giaNhap && <div className="text-danger">{this.state.errorUpdate.giaNhap}</div>}
                                                 </div>
                                                 <div>
                                                     Giá bán :
-                                                    <input className="form-control" name="giaBan" value={this.state.sanPhamUpdate.giaBan} onChange={this.thayDoiGiaBanUpdate}/>
+                                                    <input className={`form-control ${this.state.errorUpdate.giaBan ? 'is-invalid' : ''}`} name="giaBan" value={this.state.sanPhamUpdate.giaBan} onChange={this.thayDoiGiaBanUpdate}/>
+                                                    {this.state.errorUpdate.giaBan && <div className="text-danger">{this.state.errorUpdate.giaBan}</div>}
                                                 </div>
                                                 <div>
                                                     Giảm giá :
-                                                    <input className="form-control" name="giamGia" value={this.state.sanPhamUpdate.giamGia} onChange={this.thayDoiGiamGiaUpdate}/>
+                                                    <input className={`form-control ${this.state.errorUpdate.giamGia ? 'is-invalid' : ''}`} name="giamGia" value={this.state.sanPhamUpdate.giamGia} onChange={this.thayDoiGiamGiaUpdate}/>
+                                                    {this.state.errorUpdate.giamGia && <div className="text-danger">{this.state.errorUpdate.giamGia}</div>}
                                                 </div>
                                                 <div>
                                                     Mô tả :
-                                                    <input className="form-control" name="moTa" value={this.state.sanPhamUpdate.moTa} onChange={this.thayDoiMoTaUpdate}/>
+                                                    <input className={`form-control ${this.state.errorUpdate.moTa ? 'is-invalid' : ''}`} name="moTa" value={this.state.sanPhamUpdate.moTa} onChange={this.thayDoiMoTaUpdate}/>
+                                                    {this.state.errorUpdate.moTa && <div className="text-danger">{this.state.errorUpdate.moTa}</div>}
                                                 </div>
                                                 <div className='form-group'>
                                                     <label>Trạng thái</label>
                                                     <select name="trangThai" id="trangThai" value={this.state.sanPhamUpdate.trangThai} className="form-control" onChange={this.thayDoiTrangThaiUpdate}>
-                                                        <option value="true">Còn</option>
-                                                        <option value="false">Ko còn</option>
+                                                        <option value="1">Còn</option>
+                                                        <option value="0">Ko còn</option>
                                                     </select>
                                                 </div>
                                                 <input type="submit" className="btn btn-primary" value="Update" style={{marginTop: '10px'}} onClick={this.update}/>
@@ -367,29 +514,34 @@ class SanPhamComponent extends Component {
                                             <form>
                                                 <div>
                                                     Tên :
-                                                    <input className="form-control" name="ten" onChange={this.thayDoiTenAdd}/>
+                                                    <input className={`form-control ${this.state.errorAdd.ten ? 'is-invalid' : ''}`} name="ten" onChange={this.thayDoiTenAdd}/>
+                                                    {this.state.errorAdd.ten && <div className="text-danger">{this.state.errorAdd.ten}</div>}
                                                 </div>
                                                 <div>
                                                     Giá nhập :
-                                                    <input className="form-control" name="giaNhap" onChange={this.thayDoiGiaNhapAdd}/>
+                                                    <input className={`form-control ${this.state.errorAdd.giaNhap ? 'is-invalid' : ''}`} name="giaNhap" onChange={this.thayDoiGiaNhapAdd}/>
+                                                    {this.state.errorAdd.giaNhap && <div className="text-danger">{this.state.errorAdd.giaNhap}</div>}
                                                 </div>
                                                 <div>
                                                     Giá bán :
-                                                    <input className="form-control" name="giaBan"  onChange={this.thayDoiGiaBanAdd}/>
+                                                    <input className={`form-control ${this.state.errorAdd.giaBan ? 'is-invalid' : ''}`} name="giaBan"  onChange={this.thayDoiGiaBanAdd}/>
+                                                    {this.state.errorAdd.giaBan && <div className="text-danger">{this.state.errorAdd.giaBan}</div>}
                                                 </div>
                                                 <div>
                                                     Giảm giá :
-                                                    <input className="form-control" name="giamGia" onChange={this.thayDoiGiamGiaAdd}/>
+                                                    <input className={`form-control ${this.state.errorAdd.giamGia ? 'is-invalid' : ''}`} name="giamGia" onChange={this.thayDoiGiamGiaAdd}/>
+                                                    {this.state.errorAdd.giamGia && <div className="text-danger">{this.state.errorAdd.giamGia}</div>}
                                                 </div>
                                                 <div>
                                                     Mô tả :
-                                                    <input className="form-control" name="moTa"  onChange={this.thayDoiMoTaAdd}/>
+                                                    <input className={`form-control ${this.state.errorAdd.moTa ? 'is-invalid' : ''}`} name="moTa"  onChange={this.thayDoiMoTaAdd}/>
+                                                    {this.state.errorAdd.moTa && <div className="text-danger">{this.state.errorAdd.moTa}</div>}
                                                 </div>
                                                 <div className='form-group'>
                                                     <label>Trạng thái</label>
                                                     <select name="trangThai" id="trangThai" className="form-control" onChange={this.thayDoiTrangThaiAdd}>
-                                                        <option value="true">Còn</option>
-                                                        <option value="false">Ko còn</option>
+                                                        <option value="1">Còn</option>
+                                                        <option value="0">Ko còn</option>
                                                     </select>
                                                 </div>
                                                 <input type="submit" className="btn btn-primary" value="Update" style={{marginTop: '10px'}} onClick={this.add}/>

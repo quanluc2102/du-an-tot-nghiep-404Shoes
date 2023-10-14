@@ -20,6 +20,18 @@ class SanPhamCTComponent extends Component {
                 trangThai: '',
                 sanPhamId: '',
                 kichThuocMauSacId: ''
+            },
+            errorAdd: {
+                soLuong: '',
+                trangThai: '',
+                sanPhamId: '',
+                kichThuocMauSacId: ''
+            },
+            errorUpdate: {
+                soLuong: '',
+                trangThai: '',
+                sanPhamId: '',
+                kichThuocMauSacId: ''
             }
         }
         this.add=this.add.bind(this);
@@ -59,7 +71,16 @@ class SanPhamCTComponent extends Component {
     }
     add = (e)=>{
         e.preventDefault();
-
+        let soLuong = parseInt(this.state.sanPhamChiTietAdd.soLuong);
+        if (!this.state.sanPhamChiTietAdd.soLuong.trim()) {
+            this.setState({errorAdd: {...this.state.errorAdd, soLuong: "Số lượng không được bỏ trống!"}});
+            return;
+            } else if(!soLuong >= 0) {
+                this.setState({ errorAdd: { ...this.state.errorAdd, soLuong: "Số lượng không được bé hơn 0 !" } });
+                return;
+            } else {
+            this.setState({ errorAdd: { ...this.state.errorAdd, soLuong: "" } });
+        }
         SanPhamChiTietService.addSanPhamChiTiet(this.state.sanPhamChiTietAdd).then((res)=>{
             window.location.href = (`/sanphamchitiet`);
         })
@@ -71,6 +92,16 @@ class SanPhamCTComponent extends Component {
             trangThai: this.state.sanPhamChiTietUpdate.trangThai,
             sanPhamId : this.state.sanPhamChiTietUpdate.sanPhamId,
             kichThuocMauSacId:this.state.sanPhamChiTietUpdate.kichThuocMauSacId
+        }
+        let soLuong = parseInt(this.state.sanPhamChiTietUpdate.soLuong);
+        if (!this.state.sanPhamChiTietUpdate.soLuong.trim()) {
+            this.setState({errorUpdate: {...this.state.errorUpdate, soLuong: "Số lượng không được bỏ trống!"}});
+            return;
+        } else if(!soLuong >= 0) {
+            this.setState({ errorUpdate: {...this.state.errorUpdate, soLuong: "Số lượng không được bé hơn 0 !" } });
+            return;
+        } else {
+            this.setState({ errorUpdate: {...this.state.errorUpdate, soLuong: "" } });
         }
         console.log('nsx' + JSON.stringify(spct));
         let id = this.state.sanPhamChiTietUpdate.id;
@@ -90,6 +121,8 @@ class SanPhamCTComponent extends Component {
                 }
             })
         );
+        let errorAdd = {...this.state.errorAdd,soLuong:""};
+        this.setState({errorAdd:errorAdd});
     }
     thayDoiSanPhamAdd=(event)=>{
         this.setState(
@@ -120,6 +153,7 @@ class SanPhamCTComponent extends Component {
                 }
             })
         );
+
     }
     thayDoiSoLuongUpdate=(event)=>{
         this.setState(
@@ -130,6 +164,8 @@ class SanPhamCTComponent extends Component {
                 }
             })
         );
+        let errorUpdate = {...this.state.errorUpdate,soLuong:""};
+        this.setState({errorUpdate:errorUpdate});
     }
     thayDoiSanPhamUpdate=(event)=>{
         this.setState(
@@ -217,7 +253,7 @@ class SanPhamCTComponent extends Component {
                                                                     <td>{spct.kichThuocMauSacId.mauSac.ten}</td>
                                                                     <td>{spct.kichThuocMauSacId.kichThuoc.giaTri}</td>
                                                                     <td>{spct.soLuong}</td>
-                                                                    <td>{spct.trangThai==1?"HD":"Ko HD"}</td>
+                                                                    <td>{spct.trangThai===1?"HD":"Ko HD"}</td>
                                                                     <td>
                                                                         <button onClick={()=>this.delete(spct.id)} className='btn btn-danger'>Xóa</button>
                                                                         <button onClick={()=>this.detail(spct.id)} className='btn btn-primary'>Chi tiết</button>
@@ -296,7 +332,9 @@ class SanPhamCTComponent extends Component {
                                                     </div>
                                                     <div>
                                                         Số lượng :
-                                                        <input className="form-control" id="soLuongAdd" style={{}} value={this.state.sanPhamChiTietUpdate.soLuong} onChange={this.thayDoiSoLuongUpdate}/>
+                                                        <input className={`form-control ${this.state.errorUpdate.soLuong ? 'is-invalid' : ''}`} id="soLuongAdd" style={{}} value={this.state.sanPhamChiTietUpdate.soLuong} onChange={this.thayDoiSoLuongUpdate}/>
+                                                        {this.state.errorUpdate.soLuong && <div className="text-danger">{this.state.errorUpdate.soLuong}</div>}
+
                                                     </div>
                                                     <div className='form-group'>
                                                         <label>Trạng thái</label>
@@ -331,7 +369,8 @@ class SanPhamCTComponent extends Component {
                                                     </div>
                                                     <div>
                                                         Số lượng :
-                                                        <input className="form-control" id="soLuongAdd" onChange={this.thayDoiSoLuongAdd}/>
+                                                        <input className={`form-control ${this.state.errorAdd.soLuong ? 'is-invalid' : ''}`} id="soLuongAdd" onChange={this.thayDoiSoLuongAdd}/>
+                                                        {this.state.errorAdd.soLuong && <div className="text-danger">{this.state.errorAdd.soLuong}</div>}
                                                     </div>
                                                     <div className='form-group'>
                                                         <label>Trạng thái</label>
