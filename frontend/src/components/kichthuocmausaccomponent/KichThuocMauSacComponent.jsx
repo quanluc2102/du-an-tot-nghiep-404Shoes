@@ -20,6 +20,16 @@ class KichThuocMauSacComponent extends Component {
                 kichThuocId: '',
                 trangThai: ''
             },
+            errorsAdd: {
+                mauSacId: '', // Sử dụng 'mauSacId' và 'kichThuocId' thay vì 'mauSacId' hai lần
+                kichThuocId: '',
+                trangThai: ''
+            },
+            errorsUpdate: {
+                mauSacId: '', // Sử dụng 'mauSacId' và 'kichThuocId' thay vì 'mauSacId' hai lần
+                kichThuocId: '',
+                trangThai: ''
+            },
             kichThuocs: [],  // Thêm danh sách Kích thước vào state
             mauSacs: [],  // Thêm danh sách Thương Hiệu vào state
         }
@@ -105,6 +115,29 @@ class KichThuocMauSacComponent extends Component {
 
         console.log(kichThuocMauSac)
 
+        if (!this.state.kichThuocMauSacAdd.kichThuocId.trim()) {
+            this.setState({ errorsAdd: { ...this.state.errorsAdd, kichThuocId: "Màu sắc không được bỏ trống!" } });
+            return;
+        } else {
+            this.setState({ errorsAdd: { ...this.state.errorsAdd, kichThuocId: "" } });
+        }
+
+        if (!this.state.kichThuocMauSacAdd.mauSacId.trim()) {
+            this.setState({ errorsAdd: { ...this.state.errorsAdd, mauSacId: "Màu sắc không được bỏ trống!" } });
+            return;
+        } else {
+            this.setState({ errorsAdd: { ...this.state.errorsAdd, mauSacId: "" } });
+        }
+
+        
+
+        if (!this.state.kichThuocMauSac.trangThai) {
+            this.setState({ errorsAdd: { ...this.state.errorsAdd, trangThai: "Trạng thái không được bỏ trống!" } });
+            return;
+        } else {
+            this.setState({ errorsAdd: { ...this.state.errorsAdd, trangThai: "" } });
+        }
+
         kichthuocmausacservice.createKichThuocMauSac(kichThuocMauSac).then((res) => {
             if (res.status === 200) {
                 // Xử lý khi thêm thành công
@@ -130,6 +163,26 @@ class KichThuocMauSacComponent extends Component {
         };
         console.log('nsx' + JSON.stringify(kichThuocMauSac));
         // let id = this.state.kichThuocMauSacUpdate.id;
+
+        if (!this.state.kichThuocMauSacUpdate.kichThuocId) {
+            this.setState({ errorsUpdate: { ...this.state.errorsUpdate, kichThuocId: "Kích thước không được bỏ trống!" } });
+            return;
+        } else {
+            this.setState({ errorsUpdate: { ...this.state.errorsUpdate, kichThuocId: "" } });
+        }
+        if (!this.state.kichThuocMauSacUpdate.mauSacId) {
+            this.setState({ errorsUpdate: { ...this.state.errorsUpdate, mauSacId: "Màu sắc không được bỏ trống!" } });
+            return;
+        } else {
+            this.setState({ errorsUpdate: { ...this.state.errorsUpdate, mauSacId: "" } });
+        }
+        if (!this.state.kichThuocMauSacUpdate.trangThai) {
+            this.setState({ errorsUpdate: { ...this.state.errorsUpdate, trangThai: "Trạng thái không được bỏ trống!" } });
+            return;
+        } else {
+            this.setState({ errorsUpdate: { ...this.state.errorsUpdate, trangThai: "" } });
+        }
+
         kichthuocmausacservice.updateKichThuocMauSac(kichThuocMauSac, this.state.kichThuocMauSacUpdate.id).then((res) => {
             let kichThuocMauSacCapNhat = res.data; // Giả sử API trả về đối tượng vừa được cập nhật
             this.setState(prevState => ({
@@ -153,9 +206,9 @@ class KichThuocMauSacComponent extends Component {
                     trangThai: spthSelected.trangThai,
                 },
             });
-            
+
         }
-        
+
     }
 
     thayDoiKichThuocIdAdd = (event) => {
@@ -165,6 +218,8 @@ class KichThuocMauSacComponent extends Component {
                 kichThuocId: event.target.value
             }
         }));
+        let errorsAdd = { ...this.state.errorsAdd, kichThuocId: "" };
+        this.setState({ errorsAdd: errorsAdd });
     }
 
     thayDoiKichThuocIdUpdate = (event) => {
@@ -174,6 +229,8 @@ class KichThuocMauSacComponent extends Component {
                 kichThuocId: event.target.value
             }
         }));
+        let errorsUpdate = { ...this.state.errorsUpdate, kichThuocId: "" };
+        this.setState({ errorsUpdate: errorsUpdate });
     }
 
     thayDoiTrangThaiAdd = (event) => {
@@ -183,6 +240,8 @@ class KichThuocMauSacComponent extends Component {
                 trangThai: event.target.value // Sửa ở đây
             }
         }));
+        let errorsAdd = { ...this.state.errorsAdd, trangThai: "" };
+        this.setState({ errorsAdd: errorsAdd });
     }
     thayDoiTrangThaiUpdate = (event) => {
         this.setState(prevState => ({
@@ -191,6 +250,8 @@ class KichThuocMauSacComponent extends Component {
                 trangThai: event.target.value // Sửa ở đây
             }
         }));
+        let errorsUpdate = { ...this.state.errorsUpdate, trangThai: "" };
+        this.setState({ errorsUpdate: errorsUpdate });
     }
     thayDoiMauSacIdAdd = (event) => {
         this.setState(prevState => ({
@@ -199,6 +260,8 @@ class KichThuocMauSacComponent extends Component {
                 mauSacId: event.target.value
             }
         }));
+        let errorsAdd = { ...this.state.errorsAdd, mauSacId: "" };
+        this.setState({ errorsAdd: errorsAdd });
     }
     thayDoiMauSacIdUpdate = (event) => {
         this.setState(prevState => ({
@@ -207,6 +270,8 @@ class KichThuocMauSacComponent extends Component {
                 mauSacId: event.target.value // Sửa ở đây
             }
         }));
+        let errorsUpdate = { ...this.state.errorsUpdate, mauSacId: "" };
+        this.setState({ errorsUpdate: errorsUpdate });
     }
 
 
@@ -310,7 +375,7 @@ class KichThuocMauSacComponent extends Component {
                                             <form>
                                                 <div className='form-group'>
                                                     <label>Kích thước</label>
-                                                    <select name="kichThuocId" value={this.state.kichThuocMauSacUpdate.kichThuocId} className="form-control" onChange={this.thayDoiKichThuocIdUpdate}>
+                                                    <select name="kichThuocId" value={this.state.kichThuocMauSacUpdate.kichThuocId} className={`form-control ${this.state.errorsUpdate.kichThuocId ? 'is-invalid' : ''}`} onChange={this.thayDoiKichThuocIdUpdate}>
                                                         <option value="">Chọn kích thước</option>
                                                         {this.state.kichThuocs.map((kt) => (
                                                             <option key={kt.id} value={kt.id}>
@@ -318,10 +383,12 @@ class KichThuocMauSacComponent extends Component {
                                                             </option>
                                                         ))}
                                                     </select>
+                                                    {this.state.errorsUpdate.kichThuocId && <div className="text-danger">{this.state.errorsUpdate.kichThuocId}</div>}
+
                                                 </div>
                                                 <div className='form-group'>
                                                     <label>Màu sắc</label>
-                                                    <select name="mauSacId" value={this.state.kichThuocMauSacUpdate.mauSacId} className="form-control" onChange={this.thayDoiMauSacIdUpdate}>
+                                                    <select name="mauSacId" value={this.state.kichThuocMauSacUpdate.mauSacId} className={`form-control ${this.state.errorsUpdate.mauSacId ? 'is-invalid' : ''}`} onChange={this.thayDoiMauSacIdUpdate}>
                                                         <option value="">Chọn Màu sắc</option>
                                                         {this.state.mauSacs.map((ms) => (
                                                             <option key={ms.id} value={ms.id}>
@@ -329,6 +396,8 @@ class KichThuocMauSacComponent extends Component {
                                                             </option>
                                                         ))}
                                                     </select>
+                                                    {this.state.errorsUpdate.mauSacId && <div className="text-danger">{this.state.errorsUpdate.mauSacId}</div>}
+
                                                 </div>
                                                 <div className='form-group'>
                                                     <label>Trạng thái</label>
@@ -337,11 +406,13 @@ class KichThuocMauSacComponent extends Component {
                                                         id="trangThai"
                                                         // value={this.state.xuatXuUpdate.trangThai}
                                                         onChange={this.thayDoiTrangThaiUpdate}
-                                                        className="form-control"
+                                                        className={`form-control ${this.state.errorsUpdate.trangThai ? 'is-invalid' : ''}`}
                                                     >
                                                         <option value='1'>Còn</option>
                                                         <option value="2">Ko còn</option>
                                                     </select>
+                                                    {this.state.errorsUpdate.trangThai && <div className="text-danger">{this.state.errorsUpdate.trangThai}</div>}
+
                                                 </div>
                                                 <input type="submit" className="btn btn-primary" value="Update" style={{ marginTop: '10px' }} onClick={this.update} />
                                             </form>
@@ -351,7 +422,7 @@ class KichThuocMauSacComponent extends Component {
                                             <form>
                                                 <div className='form-group'>
                                                     <label>Kích thước</label>
-                                                    <select name="kichThuocId" className="form-control" onChange={this.thayDoiKichThuocIdAdd}>
+                                                    <select name="kichThuocId" className={`form-control ${this.state.errorsAdd.kichThuocId ? 'is-invalid' : ''}`} onChange={this.thayDoiKichThuocIdAdd}>
                                                         <option value="">Chọn Kích thước</option>
                                                         {this.state.kichThuocs.map((kt) => (
                                                             <option key={kt.id} value={kt.id}>
@@ -359,12 +430,12 @@ class KichThuocMauSacComponent extends Component {
                                                             </option>
                                                         ))}
                                                     </select>
-
+                                                    {this.state.errorsAdd.kichThuocId && <div className="text-danger">{this.state.errorsAdd.kichThuocId}</div>}
                                                 </div>
 
                                                 <div className='form-group'>
                                                     <label>Màu sắc</label>
-                                                    <select name="mauSacId" className="form-control" onChange={this.thayDoiMauSacIdAdd}>
+                                                    <select name="mauSacId" className={`form-control ${this.state.errorsAdd.mauSacId ? 'is-invalid' : ''}`} onChange={this.thayDoiMauSacIdAdd}>
                                                         <option value="">Chọn Màu sắc</option>
                                                         {this.state.mauSacs.map((ms) => (
                                                             <option key={ms.id} value={ms.id}>
@@ -372,6 +443,7 @@ class KichThuocMauSacComponent extends Component {
                                                             </option>
                                                         ))}
                                                     </select>
+                                                    {this.state.errorsAdd.mauSacId && <div className="text-danger">{this.state.errorsAdd.mauSacId}</div>}
                                                 </div>
 
                                                 <div className='form-group'>
@@ -381,11 +453,12 @@ class KichThuocMauSacComponent extends Component {
                                                         id="trangThai"
                                                         // value={this.state.xuatXuUpdate.trangThai}
                                                         onChange={this.thayDoiTrangThaiAdd}
-                                                        className="form-control"
+                                                        className={`form-control ${this.state.errorsAdd.trangThai ? 'is-invalid' : ''}`}
                                                     >
                                                         <option value='0'>Còn</option>
                                                         <option value="1">Ko còn</option>
                                                     </select>
+                                                    {this.state.errorsAdd.trangThai && <div className="text-danger">{this.state.errorsAdd.trangThai}</div>}
                                                 </div>
 
                                                 <input type="submit" className="btn btn-primary" value="Add" style={{ marginTop: '10px' }} onClick={this.add} />

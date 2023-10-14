@@ -15,6 +15,14 @@ class KichThuocComponent extends Component {
                 id: this.props.match.params.id,
                 giaTri: '',
                 trangThai: '',
+            },
+            errorsAdd: {
+                giaTri: '',
+                trangThai: '',
+            },
+            errorsUpdate: {
+                giaTri: '',
+                trangThai: '',
             }
         }
         this.add = this.add.bind(this);
@@ -59,6 +67,22 @@ class KichThuocComponent extends Component {
     add = (e) => {
         e.preventDefault();
         let kichThuoc = { giaTri: this.state.kichThuocAdd.giaTri, trangThai: this.state.kichThuocAdd.trangThai }
+
+        if (!this.state.kichThuocAdd.giaTri.trim()) {
+            this.setState({ errorsAdd: { ...this.state.errorsAdd, giaTri: "Giá trị không được bỏ trống!" } });
+            return;
+        } else {
+            this.setState({ errorsAdd: { ...this.state.errorsAdd, giaTri: "" } });
+        }
+
+
+        if (!this.state.kichThuocAdd.trangThai.trim()) {
+            this.setState({ errorsAdd: { ...this.state.errorsAdd, trangThai: "Trạng thái không được bỏ trống!" } });
+            return;
+        } else {
+            this.setState({ errorsAdd: { ...this.state.errorsAdd, trangThai: "" } });
+        }
+
         kichthuocservice.createKichThuoc(kichThuoc).then((res) => {
             if (res.status === 200) {
                 // Xử lý khi thêm thành công
@@ -82,7 +106,25 @@ class KichThuocComponent extends Component {
         e.preventDefault();
         let kichThuoc = { giaTri: this.state.kichThuocUpdate.giaTri, trangThai: this.state.kichThuocUpdate.trangThai }
         console.log('nsx' + JSON.stringify(kichThuoc));
-        let id = this.state.kichThuocUpdate.id;
+        // let id = this.state.kichThuocUpdate.id;
+
+        if (!this.state.kichThuocUpdate.giaTri) {
+            this.setState({ errorsUpdate: { ...this.state.errorsUpdate, giaTri: "Giá trị không được bỏ trống!" } });
+            return;
+        } else {
+            this.setState({ errorsUpdate: { ...this.state.errorsUpdate, giaTri: "" } });
+        }
+
+
+
+        if (!this.state.kichThuocUpdate.trangThai) {
+            this.setState({ errorsUpdate: { ...this.state.errorsUpdate, trangThai: "Trạng thái không được bỏ trống!" } });
+            return;
+        } else {
+            this.setState({ errorsUpdate: { ...this.state.errorsUpdate, trangThai: "" } });
+        }
+
+
         kichthuocservice.updateKichThuoc(kichThuoc, this.state.kichThuocUpdate.id).then((res) => {
             let kichThuocCapNhat = res.data; // Giả sử API trả về đối tượng vừa được cập nhật
             this.setState(prevState => ({
@@ -109,6 +151,8 @@ class KichThuocComponent extends Component {
                 trangThai: event.target.value
             }
         }));
+        let errorsAdd = { ...this.state.errorsAdd, trangThai: "" };
+        this.setState({ errorsAdd: errorsAdd });
     }
     thayDoiGiaTriAdd = (event) => {
         this.setState(prevState => ({
@@ -117,6 +161,8 @@ class KichThuocComponent extends Component {
                 giaTri: event.target.value
             }
         }));
+        let errorsAdd = { ...this.state.errorsAdd, giaTri: "" };
+        this.setState({ errorsAdd: errorsAdd });
     }
     
     thayDoiGiaTriUpdate = (event) => {
@@ -126,6 +172,8 @@ class KichThuocComponent extends Component {
                 giaTri: event.target.value
             }
         }));
+        let errorsUpdate = { ...this.state.errorsUpdate, giaTri: "" };
+        this.setState({ errorsUpdate: errorsUpdate });
     }
     thayDoiTrangThaiUpdate = (event) => {
         this.setState(prevState => ({
@@ -134,6 +182,8 @@ class KichThuocComponent extends Component {
                 trangThai: event.target.value
             }
         }));
+        let errorsUpdate = { ...this.state.errorsUpdate, trangThai: "" };
+        this.setState({ errorsUpdate: errorsUpdate });
     }
 
 
@@ -251,15 +301,17 @@ class KichThuocComponent extends Component {
                                             <form>
                                                 <div>
                                                     Giá trị :
-                                                    <input className="form-control" name="giaTri" value={this.state.kichThuocUpdate.giaTri} onChange={this.thayDoiGiaTriUpdate} />
+                                                    <input className={`form-control ${this.state.errorsUpdate.giaTri ? 'is-invalid' : ''}`} name="giaTri" value={this.state.kichThuocUpdate.giaTri} onChange={this.thayDoiGiaTriUpdate} />
+                                                    {this.state.errorsUpdate.giaTri && <div className="text-danger">{this.state.errorsUpdate.giaTri}</div>}
                                                 </div>
                                                 
                                                 <div className='form-group'>
                                                     <label>Trạng thái</label>
-                                                    <select name="trangThai" id="trangThai" value={this.state.kichThuocUpdate.trangThai} className="form-control" onChange={this.thayDoiTrangThaiUpdate}>
+                                                    <select name="trangThai" id="trangThai" value={this.state.kichThuocUpdate.trangThai} className={`form-control ${this.state.errorsUpdate.trangThai ? 'is-invalid' : ''}`} onChange={this.thayDoiTrangThaiUpdate}>
                                                         <option value='true'>Còn</option>
                                                         <option value="false">Ko còn</option>
                                                     </select>
+                                                    {this.state.errorsUpdate.trangThai && <div className="text-danger">{this.state.errorsUpdate.trangThai}</div>}
                                                 </div>
                                                 <input type="submit" className="btn btn-primary" value="Update" style={{ marginTop: '10px' }} onClick={this.update} />
                                             </form>
@@ -269,15 +321,17 @@ class KichThuocComponent extends Component {
                                             <form>
                                                 <div>
                                                     Giá trị :
-                                                    <input className="form-control" name="giaTri" onChange={this.thayDoiGiaTriAdd} />
+                                                    <input className={`form-control ${this.state.errorsAdd.giaTri ? 'is-invalid' : ''}`} name="giaTri" onChange={this.thayDoiGiaTriAdd} />
+                                                    {this.state.errorsAdd.giaTri && <div className="text-danger">{this.state.errorsAdd.giaTri}</div>}
                                                 </div>
                                         
                                                 <div className='form-group'>
                                                     <label>Trạng thái</label>
-                                                    <select name="trangThai" id="trangThai" className="form-control" onChange={this.thayDoiTrangThaiAdd}>
+                                                    <select name="trangThai" id="trangThai" className={`form-control ${this.state.errorsAdd.trangThai ? 'is-invalid' : ''}`} onChange={this.thayDoiTrangThaiAdd}>
                                                         <option value='true'>Còn</option>
                                                         <option value="false">Ko còn</option>
                                                     </select>
+                                                    {this.state.errorsAdd.trangThai && <div className="text-danger">{this.state.errorsAdd.trangThai}</div>}
                                                 </div>
                                                 <input type="submit" className="btn btn-primary" value="Add" style={{ marginTop: '10px' }} onClick={this.add} />
                                             </form>

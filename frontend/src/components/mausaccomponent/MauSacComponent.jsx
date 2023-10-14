@@ -17,6 +17,16 @@ class MauSacComponent extends Component {
                 giaTri: '',
                 ten: '',
                 trangThai: '',
+            },
+            errorsAdd: {
+                giaTri: '',
+                ten: '',
+                trangThai: '',
+            },
+            errorsUpdate: {
+                giaTri: '',
+                ten: '',
+                trangThai: '',
             }
         }
         this.add = this.add.bind(this);
@@ -63,6 +73,34 @@ class MauSacComponent extends Component {
     add = (e) => {
         e.preventDefault();
         let mauSac = { giaTri: this.state.mauSacAdd.giaTri, ten: this.state.mauSacAdd.ten, trangThai: this.state.mauSacAdd.trangThai }
+
+        if (!this.state.mauSacAdd.giaTri) {
+            this.setState({ errorsAdd: { ...this.state.errorsAdd, giaTri: "Giá trị không được bỏ trống!" } });
+            return;
+        } else if (isNaN(this.state.mauSacAdd.giaTri)) {
+            this.setState({ errorsAdd: { ...this.state.errorsAdd, giaTri: "Giá trị phải là một số!" } });
+            return;
+        } else {
+            this.setState({ errorsAdd: { ...this.state.errorsAdd, giaTri: "" } });
+        }
+
+        if (!this.state.mauSacAdd.ten) {
+            this.setState({ errorsAdd: { ...this.state.errorsAdd, ten: "Tên màu không được bỏ trống!" } });
+            return;
+        }else if (!isNaN(this.state.mauSacAdd.ten)) {
+            this.setState({ errorsAdd: { ...this.state.errorsAdd, ten: "Tên phải là chữ!" } });
+            return;
+        }
+         else {
+            this.setState({ errorsAdd: { ...this.state.errorsAdd, ten: "" } });
+        }
+        if (!this.state.mauSacAdd.trangThai) {
+            this.setState({ errorsAdd: { ...this.state.errorsAdd, trangThai: "Trạng thái không được bỏ trống!" } });
+            return;
+        } else {
+            this.setState({ errorsAdd: { ...this.state.errorsAdd, trangThai: "" } });
+        }
+
         mausacservice.createMauSac(mauSac).then((res) => {
             if (res.status === 200) {
                 // Xử lý khi thêm thành công
@@ -87,6 +125,33 @@ class MauSacComponent extends Component {
         let mauSac = { giaTri: this.state.mauSacUpdate.giaTri, ten: this.state.mauSacUpdate.ten, trangThai: this.state.mauSacUpdate.trangThai }
         console.log('nsx' + JSON.stringify(mauSac));
         let id = this.state.mauSacUpdate.id;
+
+        if (!this.state.mauSacUpdate.giaTri) {
+            this.setState({ errorsUpdate: { ...this.state.errorsUpdate, giaTri: "Giá trị không được bỏ trống!" } });
+            return;
+        }else if (isNaN(this.state.mauSacUpdate.giaTri)) {
+            this.setState({ errorsUpdate: { ...this.state.errorsUpdate, giaTri: "Giá trị phải là một số!" } });
+            return;
+        } else {
+            this.setState({ errorsUpdate: { ...this.state.errorsUpdate, giaTri: "" } });
+        }
+
+        if (!this.state.mauSacUpdate.ten) {
+            this.setState({ errorsUpdate: { ...this.state.errorsUpdate, ten: "Tên màu không được bỏ trống!" } });
+            return;
+        }else if (!isNaN(this.state.mauSacUpdate.ten)) {
+            this.setState({ errorsUpdate: { ...this.state.errorsUpdate, ten: "Tên phải là chữ!" } });
+            return;
+        } else {
+            this.setState({ errorsUpdate: { ...this.state.errorsUpdate, ten: "" } });
+        }
+        if (!this.state.mauSacUpdate.trangThai) {
+            this.setState({ errorsUpdate: { ...this.state.errorsUpdate, trangThai: "Trạng thái không được bỏ trống!" } });
+            return;
+        } else {
+            this.setState({ errorsUpdate: { ...this.state.errorsUpdate, trangThai: "" } });
+        }
+
         mausacservice.updateMauSac(mauSac, this.state.mauSacUpdate.id).then((res) => {
             let mauSacCapNhat = res.data; // Giả sử API trả về đối tượng vừa được cập nhật
             this.setState(prevState => ({
@@ -111,6 +176,8 @@ class MauSacComponent extends Component {
                 ten: event.target.value
             }
         }));
+        let errorsAdd = { ...this.state.errorsAdd, ten: "" };
+        this.setState({ errorsAdd: errorsAdd });
     }
 
     thayDoiTrangThaiAdd = (event) => {
@@ -120,6 +187,8 @@ class MauSacComponent extends Component {
                 trangThai: event.target.value
             }
         }));
+        let errorsAdd = { ...this.state.errorsAdd, trangThai: "" };
+        this.setState({ errorsAdd: errorsAdd });
     }
     thayDoiGiaTriAdd = (event) => {
         this.setState(prevState => ({
@@ -128,6 +197,8 @@ class MauSacComponent extends Component {
                 giaTri: event.target.value
             }
         }));
+        let errorsAdd = { ...this.state.errorsAdd, giaTri: "" };
+        this.setState({ errorsAdd: errorsAdd });
     }
     thayDoiTenUpdate = (event) => {
         this.setState(prevState => ({
@@ -136,6 +207,8 @@ class MauSacComponent extends Component {
                 ten: event.target.value
             }
         }));
+        let errorsUpdate = { ...this.state.errorsUpdate, ten: "" };
+        this.setState({ errorsUpdate: errorsUpdate });
     }
     thayDoiGiaTriUpdate = (event) => {
         this.setState(prevState => ({
@@ -144,6 +217,8 @@ class MauSacComponent extends Component {
                 giaTri: event.target.value
             }
         }));
+        let errorsUpdate = { ...this.state.errorsUpdate, giaTri: "" };
+        this.setState({ errorsUpdate: errorsUpdate });
     }
     thayDoiTrangThaiUpdate = (event) => {
         this.setState(prevState => ({
@@ -152,6 +227,8 @@ class MauSacComponent extends Component {
                 trangThai: event.target.value
             }
         }));
+        let errorsUpdate = { ...this.state.errorsUpdate, trangThai: "" };
+        this.setState({ errorsUpdate: errorsUpdate });
     }
 
 
@@ -270,18 +347,21 @@ class MauSacComponent extends Component {
                                             <form>
                                                 <div>
                                                     Giá trị :
-                                                    <input className="form-control" name="giaTri" value={this.state.mauSacUpdate.giaTri} onChange={this.thayDoiGiaTriUpdate} />
+                                                    <input className={`form-control ${this.state.errorsUpdate.giaTri ? 'is-invalid' : ''}`} name="giaTri" value={this.state.mauSacUpdate.giaTri} onChange={this.thayDoiGiaTriUpdate} />
+                                                    {this.state.errorsUpdate.giaTri && <div className="text-danger">{this.state.errorsUpdate.giaTri}</div>}
                                                 </div>
                                                 <div>
                                                     Tên :
-                                                    <input className="form-control" name="ten" value={this.state.mauSacUpdate.ten} onChange={this.thayDoiTenUpdate} />
+                                                    <input className={`form-control ${this.state.errorsUpdate.ten ? 'is-invalid' : ''}`} name="ten" value={this.state.mauSacUpdate.ten} onChange={this.thayDoiTenUpdate} />
+                                                    {this.state.errorsUpdate.ten && <div className="text-danger">{this.state.errorsUpdate.ten}</div>}
                                                 </div>
                                                 <div className='form-group'>
                                                     <label>Trạng thái</label>
-                                                    <select name="trangThai" id="trangThai" value={this.state.mauSacUpdate.trangThai} className="form-control" onChange={this.thayDoiTrangThaiUpdate}>
+                                                    <select name="trangThai" id="trangThai" value={this.state.mauSacUpdate.trangThai} className={`form-control ${this.state.errorsUpdate.trangThai ? 'is-invalid' : ''}`} onChange={this.thayDoiTrangThaiUpdate}>
                                                         <option value='true'>Còn</option>
                                                         <option value="false">Ko còn</option>
                                                     </select>
+                                                    {this.state.errorsUpdate.trangThai && <div className="text-danger">{this.state.errorsUpdate.trangThai}</div>}
                                                 </div>
                                                 <input type="submit" className="btn btn-primary" value="Update" style={{ marginTop: '10px' }} onClick={this.update} />
                                             </form>
@@ -291,18 +371,22 @@ class MauSacComponent extends Component {
                                             <form>
                                                 <div>
                                                     Giá trị :
-                                                    <input className="form-control" name="giaTri" onChange={this.thayDoiGiaTriAdd} />
+                                                    <input className={`form-control ${this.state.errorsAdd.giaTri ? 'is-invalid' : ''}`} name="giaTri" onChange={this.thayDoiGiaTriAdd} />
+                                                    {this.state.errorsAdd.giaTri && <div className="text-danger">{this.state.errorsAdd.giaTri}</div>}
                                                 </div>
                                                 <div>
                                                     Tên :
-                                                    <input className="form-control" name="ten" onChange={this.thayDoiTenAdd} />
+                                                    <input className={`form-control ${this.state.errorsAdd.ten ? 'is-invalid' : ''}`} name="ten" onChange={this.thayDoiTenAdd} />
+                                                    {this.state.errorsAdd.ten && <div className="text-danger">{this.state.errorsAdd.ten}</div>}
+
                                                 </div>
                                                 <div className='form-group'>
                                                     <label>Trạng thái</label>
-                                                    <select name="trangThai" id="trangThai" className="form-control" onChange={this.thayDoiTrangThaiAdd}>
+                                                    <select name="trangThai" id="trangThai" className={`form-control ${this.state.errorsAdd.trangThai ? 'is-invalid' : ''}`} onChange={this.thayDoiTrangThaiAdd}>
                                                         <option value='true'>Còn</option>
                                                         <option value="false">Ko còn</option>
                                                     </select>
+                                                    {this.state.errorsAdd.trangThai && <div className="text-danger">{this.state.errorsAdd.trangThai}</div>}
                                                 </div>
                                                 <input type="submit" className="btn btn-primary" value="Add" style={{ marginTop: '10px' }} onClick={this.add} />
                                             </form>

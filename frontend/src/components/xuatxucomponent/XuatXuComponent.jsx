@@ -120,7 +120,7 @@ class XuatXuComponent extends Component {
         }
 
 
-        if (!this.state.xuatXuUpdate.trangThai.trim()) {
+        if (!this.state.xuatXuUpdate.trangThai) {
             this.setState({ errorsUpdate: { ...this.state.errorsUpdate, trangThai: "Trạng thái không được bỏ trống!" } });
             return;
         } else {
@@ -293,7 +293,8 @@ class XuatXuComponent extends Component {
                                                     <input
                                                         className={`form-control ${this.state.errorsUpdate.ten ? 'is-invalid' : ''}`}
                                                         name="ten"
-                                                        onChange={this.thayDoiTenAdd}
+                                                        onChange={this.thayDoiTenUpdate}
+                                                        value={this.state.xuatXuUpdate.ten}
                                                     />
                                                     {this.state.errorsUpdate.ten && <div className="text-danger">{this.state.errorsUpdate.ten}</div>}
                                                 </div>
