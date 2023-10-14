@@ -16,6 +16,7 @@ import SanPhamThuongHieuComponent from './components/sanphamthuonghieucomponent/
 import SanPhamXuatXuComponent from './components/sanphamxuatxucomponent/SanPhamXuatXuComponent';
 import KichThuocMauSacComponent from './components/kichthuocmausaccomponent/KichThuocMauSacComponent';
 import SanPhamCTComponent from './components/spctcomponent/SanPhamCTComponent';
+import TaiKhoanComponent from "./components/taikhoancomponent/TaiKhoanComponent";
 function App() {
   return (
 
@@ -52,6 +53,8 @@ function App() {
             <Route path='/kichthuocmausacdetail/:id' component={KichThuocMauSacComponent} />
             <Route path='/sanphamchitiet' component={SanPhamCTComponent} />
             <Route path='/sanphamchitietdetail/:id' component={SanPhamCTComponent} />
+            <Route path='/taikhoan' component={TaiKhoanComponent} />
+            <Route path='/taikhoandetail/:id' component={TaiKhoanComponent} />
           </Switch>
 
 

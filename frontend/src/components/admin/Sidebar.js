@@ -117,8 +117,8 @@ function Sidebar() {
           </a>
           <ul id="charts-nav" className="nav-content collapse " data-bs-parent="#sidebar-nav">
             <li>
-              <a href="charts-chartjs.html">
-                <i className="bi bi-circle"></i><span>Chart.js</span>
+              <a href="/taikhoan">
+                <i className="bi bi-circle"></i><span>Quản lý tài khoản</span>
               </a>
             </li>
             <li>

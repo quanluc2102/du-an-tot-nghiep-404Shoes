@@ -17,55 +17,58 @@ import java.util.Optional;
 @Service
 public class TaiKhoanServiceimpl implements TaiKhoanService {
     @Autowired
-    private TaiKhoanResponsitory taiKhoanResponsitory;
-    @Override
-    public ArrayList<TaiKhoan> getAll() {
-        return (ArrayList<TaiKhoan>) taiKhoanResponsitory.findAll();
-    }
+    private TaiKhoanResponsitory responsitory;
+
+
+//    @Override
+//    public void importExcel(MultipartFile file) {
+//        try {
+//            List<TaiKhoan> tutorials = TaiKhoanExcelSave.excelToTutorials(file.getInputStream());
+//            for(TaiKhoan a :tutorials){
+//                responsitory.save(a);
+//                a.toString();
+//            }
+//            responsitory.flush();
+//        } catch (IOException e) {
+//            throw new RuntimeException("fail to store excel data: " + e.getMessage());
+//        }
+//    }
 
     @Override
-    public void add(TaiKhoan taiKhoan) {
-        taiKhoanResponsitory.saveAndFlush(taiKhoan);
+    public TaiKhoan add(TaiKhoan taiKhoan) {
+         responsitory.save(taiKhoan);
+        return taiKhoan;
     }
 
     @Override
     public void delete(Long id) {
-             taiKhoanResponsitory.deleteById(id);
+               responsitory.deleteById(id);
     }
 
     @Override
-    public void update(Long id, TaiKhoan taiKhoan) {
-                Optional<TaiKhoan> tk = taiKhoanResponsitory.findById(id);
-                tk.get().setUsername(taiKhoan.getUsername());
-        tk.get().setTen(taiKhoan.getTen());
-        tk.get().setDiaChi(taiKhoan.getDiaChi());
-        tk.get().setAnh(taiKhoan.getAnh());
-        tk.get().setNgayCapNhat(taiKhoan.getNgayCapNhat());
-        tk.get().setNgayTao(taiKhoan.getNgayTao());
-        tk.get().setPassword(taiKhoan.getPassword());
-        tk.get().setSdt(taiKhoan.getSdt());
-        tk.get().setTrangThai(taiKhoan.isTrangThai());
-        tk.get().setEmail(taiKhoan.getEmail());
-        taiKhoanResponsitory.flush();
-
+    public TaiKhoan update(Long id, TaiKhoan taiKhoan) {
+        TaiKhoan tk = getOne(id);
+        tk.setUsername(taiKhoan.getUsername());
+        tk.setEmail(taiKhoan.getEmail());
+        tk.setTen(taiKhoan.getTen());
+        tk.setDiaChi(taiKhoan.getDiaChi());
+        tk.setNgayTao(taiKhoan.getNgayTao());
+        tk.setNgayCapNhat(taiKhoan.getNgayCapNhat());
+        tk.setPassword(taiKhoan.getPassword());
+        tk.setAnh(taiKhoan.getAnh());
+        tk.setSdt(taiKhoan.getSdt());
+        tk.setTrangThai(taiKhoan.isTrangThai());
+      responsitory.save(taiKhoan);
+        return taiKhoan;
     }
 
     @Override
-    public Optional<TaiKhoan> detail(Long id) {
-        return taiKhoanResponsitory.findById(id);
+    public List<TaiKhoan> getAll() {
+        return responsitory.findAll();
     }
 
     @Override
-    public void importExcel(MultipartFile file) {
-        try {
-            List<TaiKhoan> tutorials = TaiKhoanExcelSave.excelToTutorials(file.getInputStream());
-            for(TaiKhoan a :tutorials){
-                taiKhoanResponsitory.save(a);
-                a.toString();
-            }
-            taiKhoanResponsitory.flush();
-        } catch (IOException e) {
-            throw new RuntimeException("fail to store excel data: " + e.getMessage());
-        }
+    public TaiKhoan getOne(Long id) {
+        return responsitory.findById(id).get();
     }
 }
