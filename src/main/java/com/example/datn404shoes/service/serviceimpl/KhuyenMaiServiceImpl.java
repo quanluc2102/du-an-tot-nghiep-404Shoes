@@ -25,9 +25,11 @@ public class KhuyenMaiServiceImpl implements KhuyenMaiService {
     }
 
     @Override
-    public void add(KhuyenMai khuyenMai) {
+    public KhuyenMai add(KhuyenMai khuyenMai) {
         khuyenMaiRepository.save(khuyenMai);
+        return khuyenMai;
     }
+
 
     @Override
     public void delete(Long id) {
@@ -35,17 +37,17 @@ public class KhuyenMaiServiceImpl implements KhuyenMaiService {
     }
 
     @Override
-    public void update(Long id, KhuyenMai km) {
-        Optional<KhuyenMai>khuyenMai = khuyenMaiRepository.findById(id);
-        khuyenMai.get().setTen(km.getTen());
-        khuyenMai.get().setMoTa(km.getMoTa());
-        khuyenMai.get().setBatDau(km.getBatDau());
-        khuyenMai.get().setKetThuc(km.getKetThuc());
-        khuyenMai.get().setGiamGia(km.getGiamGia());
-        khuyenMai.get().setKieuKhuyenMai(km.getKieuKhuyenMai());
-        khuyenMaiRepository.flush();
+    public KhuyenMai update(Long id, KhuyenMai km) {
+        KhuyenMai khuyenMai = findOne(id);
+        khuyenMai.setTen(km.getTen());
+        khuyenMai.setMoTa(km.getMoTa());
+        khuyenMai.setBatDau(km.getBatDau());
+        khuyenMai.setKetThuc(km.getKetThuc());
+        khuyenMai.setGiamGia(km.getGiamGia());
+        khuyenMai.setKieuKhuyenMai(km.getKieuKhuyenMai());
+        khuyenMaiRepository.save(km);
+        return km;
     }
-
 
 
     @Override
@@ -56,20 +58,21 @@ public class KhuyenMaiServiceImpl implements KhuyenMaiService {
 
     @Override
     public KhuyenMai findOne(Long id) {
+
         return khuyenMaiRepository.findById(id).get();
     }
 
     @Override
     public void imPortExcel(MultipartFile file) {
-       try {
-           List<KhuyenMai> importEX = KhuyenMaiExcelSave.excelImport(file.getInputStream());
-           for (KhuyenMai khuyenMai: importEX){
-               add(khuyenMai);
-               khuyenMai.toString();
-           }
-       }catch (IOException e){
-           e.printStackTrace();
-           throw new RuntimeException("fail to store excel data:" + e.getMessage());
-       }
+        try {
+            List<KhuyenMai> importEX = KhuyenMaiExcelSave.excelImport(file.getInputStream());
+            for (KhuyenMai khuyenMai: importEX){
+                add(khuyenMai);
+                khuyenMai.toString();
+            }
+        }catch (IOException e){
+            e.printStackTrace();
+            throw new RuntimeException("fail to store excel data:" + e.getMessage());
+        }
     }
 }

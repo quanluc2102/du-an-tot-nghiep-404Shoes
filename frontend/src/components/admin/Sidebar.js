@@ -99,13 +99,13 @@ function Sidebar() {
           </a>
           <ul id="tables-nav" className="nav-content collapse " data-bs-parent="#sidebar-nav">
             <li>
-              <a href="tables-general.html">
+              <a href="/khuyenmai">
                 <i className="bi bi-circle"></i><span>Quản lý khuyến mãi</span>
               </a>
             </li>
             <li>
-              <a href="tables-data.html">
-                <i className="bi bi-circle"></i><span>Data Tables</span>
+              <a href="tables-general.html">
+                <i className="bi bi-circle"></i><span>Khuyến mãi</span>
               </a>
             </li>
           </ul>
