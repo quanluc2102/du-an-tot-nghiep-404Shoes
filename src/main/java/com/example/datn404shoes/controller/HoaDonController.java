@@ -7,11 +7,13 @@ import com.example.datn404shoes.repository.TaiKhoanRepository;
 import com.example.datn404shoes.repository.ThanhToanRepository;
 import com.example.datn404shoes.service.serviceimpl.HoaDonImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-@Controller
+@RestController
+@CrossOrigin(origins = "http://localhost:3000")
 @RequestMapping("hoa_don")
 public class HoaDonController {
     @Autowired
@@ -21,22 +23,13 @@ public class HoaDonController {
 @Autowired
     TaiKhoanRepository taiKhoanRepository;
     @GetMapping("hien-thi")
-    public  String hienThi(Model model){
-
-        model.addAttribute("listHoaDon",hoaDonImpl.getAll());
-        model.addAttribute("listThanhToan",thanhToanRepository.findAll());
-        model.addAttribute("listTaiKhoan",taiKhoanRepository.findAll());
-        System.out.println("đến đây r");
-        model.addAttribute("view", "/hoa_don/index.jsp");
-        return "admin/index";
+    public ResponseEntity<?> hienThi(Model model){
+        return ResponseEntity.ok(hoaDonImpl.getAll());
     }
-    @GetMapping("create")
-    public  String create(Model model){
-        model.addAttribute("listThanhToan",thanhToanRepository.findAll());
-        model.addAttribute("listTaiKhoan",taiKhoanRepository.findAll());
-        System.out.println("đến đây r");
-        model.addAttribute("view", "/hoa_don/addNew.jsp");
-        return "admin/index";
+    @PostMapping("create")
+    public  ResponseEntity<?> create(Model model,@RequestBody HoaDon hoaDon){
+
+        return ResponseEntity.ok(hoaDonImpl.add(hoaDon));
     }
     @PostMapping("add")
     public  String addNew(Model model,

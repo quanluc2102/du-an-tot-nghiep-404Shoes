@@ -16,10 +16,11 @@ public class HoaDonImpl implements HoaDonService {
     HoaDonRepository hoaDonRepository;
 
     @Override
-    public void add(HoaDon sp) {
+    public HoaDon add(HoaDon sp) {
         sp.setNgayTao(Date.valueOf(LocalDate.now()));
         sp.setNgayCapNhat(Date.valueOf(LocalDate.now()));
         hoaDonRepository.save(sp);
+        return sp;
     }
 
     @Override

@@ -5,7 +5,7 @@ import com.example.datn404shoes.entity.HoaDon;
 import java.util.List;
 
 public interface HoaDonService {
-    void add(HoaDon sp);
+    HoaDon add(HoaDon sp);
     void delete(Long id);
     void update(HoaDon hoaDon);
     List<HoaDon> getAll();
