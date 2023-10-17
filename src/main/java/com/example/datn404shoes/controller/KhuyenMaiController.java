@@ -16,6 +16,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.sql.Date;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -26,7 +28,7 @@ public class KhuyenMaiController {
     private KhuyenMaiServiceImpl khuyenMaiServiceImpl;
 
 
-    @GetMapping("hien_thi")
+    @GetMapping("index")
     public ResponseEntity<?> index(Model model){
         return ResponseEntity.ok(khuyenMaiServiceImpl.getAll());
     }
@@ -37,17 +39,17 @@ public class KhuyenMaiController {
         return ResponseEntity.ok(khuyenMaiServiceImpl.add(khuyenMai));
     }
     @GetMapping("/delete/{id}")
-    public String delete(Model model,
-                         @PathVariable("id") Long id){
+    public ResponseEntity<?> delete(@PathVariable("id") Long id){
         khuyenMaiServiceImpl.delete(id);
-        return "OK";
+        Map<String,Boolean>respose = new HashMap<>();
+        respose.put("Delete",Boolean.TRUE);
+        return ResponseEntity.ok(respose);
     }
-    @GetMapping("/hien_thi/{id}")
-    public ResponseEntity<?> detail(Model model,
-                                    @PathVariable("id")Long id){
+    @GetMapping("/detail/{id}")
+    public ResponseEntity<?> detail(@PathVariable("id")Long id){
         return ResponseEntity.ok(khuyenMaiServiceImpl.findOne(id));
     }
-    @PostMapping("/update/{id}")
+    @PutMapping("/update/{id}")
     public ResponseEntity<?> update(Model model,
                                     @PathVariable("id")Long id,
                                     @RequestBody KhuyenMai khuyenMai){

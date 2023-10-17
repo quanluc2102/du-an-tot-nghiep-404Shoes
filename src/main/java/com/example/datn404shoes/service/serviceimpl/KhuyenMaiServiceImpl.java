@@ -8,7 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.xml.crypto.Data;
 import java.io.IOException;
+import java.sql.Date;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -20,20 +23,29 @@ public class KhuyenMaiServiceImpl implements KhuyenMaiService {
     KhuyenMaiRepository khuyenMaiRepository;
 
     @Override
-    public ArrayList<KhuyenMai> getAll() {
-        return (ArrayList<KhuyenMai>) khuyenMaiRepository.findAll();
+    public List<KhuyenMai> getAll() {
+
+        return  khuyenMaiRepository.findAll();
     }
 
     @Override
     public KhuyenMai add(KhuyenMai khuyenMai) {
-        khuyenMaiRepository.save(khuyenMai);
-        return khuyenMai;
+       khuyenMai.setBatDau(Date.valueOf(LocalDate.now()));
+       khuyenMai.setKetThuc(Date.valueOf(LocalDate.now()));
+       return khuyenMaiRepository.save(khuyenMai);
     }
 
 
     @Override
     public void delete(Long id) {
-        khuyenMaiRepository.deleteById(id);
+
+        KhuyenMai a = khuyenMaiRepository.findById(id).get();
+        if(a.getKieuKhuyenMai()==1){
+            a.setKieuKhuyenMai(0);
+        }else{
+            a.setKieuKhuyenMai(1);
+        }
+        khuyenMaiRepository.flush();
     }
 
     @Override
@@ -41,8 +53,8 @@ public class KhuyenMaiServiceImpl implements KhuyenMaiService {
         KhuyenMai khuyenMai = findOne(id);
         khuyenMai.setTen(km.getTen());
         khuyenMai.setMoTa(km.getMoTa());
-        khuyenMai.setBatDau(km.getBatDau());
-        khuyenMai.setKetThuc(km.getKetThuc());
+        khuyenMai.setBatDau(Date.valueOf(LocalDate.now()));
+        khuyenMai.setKetThuc(Date.valueOf(LocalDate.now()));
         khuyenMai.setGiamGia(km.getGiamGia());
         khuyenMai.setKieuKhuyenMai(km.getKieuKhuyenMai());
         khuyenMaiRepository.save(km);

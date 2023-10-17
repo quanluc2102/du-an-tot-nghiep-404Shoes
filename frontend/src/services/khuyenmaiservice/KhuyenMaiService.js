@@ -1,28 +1,32 @@
 import axios from 'axios';
 
-const API_BASE_URL = "http://localhost:8080/khuyen_mai/hien_thi";
-const API_SAVE_URL = "http://localhost:8080/khuyen_mai/add";
-const API_DELETE_URL = "http://localhost:8080/khuyen_mai/delete";
-const API_UPDATE_URL = "http://localhost:8080/khuyen_mai/update";
+const BASE_URL_INDEX = "http://localhost:8080/khuyen_mai/index";
+const BASE_URL_DETAIL = "http://localhost:8080/khuyen_mai/detail";
+const BASE_URL_ADD = "http://localhost:8080/khuyen_mai/add";
+const BASE_URL_DELETE = "http://localhost:8080/khuyen_mai/delete";
+const BASE_URL_UPDATE = "http://localhost:8080/khuyen_mai/update";
 
 class KhuyenMaiService {
 
     getKhuyenMai(){
-        return axios.get(API_BASE_URL);
+        return axios.get(BASE_URL_INDEX);
     }
-    createKhuyenMai(khuyenMai){
-        return axios.post(API_SAVE_URL,khuyenMai);
-    }
-    deleteKhuyenMai(khuyenMaiId){
-        return axios.get(API_DELETE_URL + "/" + khuyenMaiId);
-    }
-    getKhuyenMaiById(khuyenMaiId){
-        return axios.get(API_BASE_URL + "/" + khuyenMaiId);
 
+    getKhuyenMaiById(id){
+        return axios.get(BASE_URL_DETAIL+"/"+id);
     }
-    updateKhuyenMai(khuyenMai,khuyenMaiId){
-        console.log(khuyenMaiId)
-        return axios.put(API_UPDATE_URL + "/" + khuyenMaiId,khuyenMai)
+
+    addKhuyenMai(khuyenMai){
+        return axios.post(BASE_URL_ADD,khuyenMai);
+    }
+
+    deleteKhuyenMai(id){
+        return axios.delete(BASE_URL_DELETE+"/"+id);
+    }
+
+    updateKhuyenMai(id,khuyenMai){
+        console.log(id);
+        return axios.put(BASE_URL_UPDATE+"/"+id,khuyenMai);
     }
 }
 export  default new KhuyenMaiService();
