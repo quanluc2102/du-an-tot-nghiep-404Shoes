@@ -113,7 +113,7 @@ class ListDanhMucComponent extends Component {
         }
 
 
-        if (!this.state.danhMucUpdate.trangThai.trim()) {
+        if (!this.state.danhMucUpdate.trangThai) {
             this.setState({ errorsUpdate: { ...this.state.errorsUpdate, trangThai: "Trạng thái không được bỏ trống!" } });
             return;
         } else {
