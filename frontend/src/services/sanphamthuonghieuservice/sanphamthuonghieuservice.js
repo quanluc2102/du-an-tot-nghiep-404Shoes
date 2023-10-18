@@ -1,6 +1,6 @@
 import axios from 'axios';
-const SANPHAM_API_BASE_URL = "http://localhost:8080/san_pham/hien_thi";
-const THUONGHIEU_API = 'http://localhost:8080/thuong_hieu/index';
+const SANPHAM_API_BASE_URL = "http://localhost:8080/san_pham/index";
+const THUONGHIEU_API = 'http://localhost:8080/thuong_hieu/hien_thi';
 const API_BASE_URL = "http://localhost:8080/san_pham_thuong_hieu/hien_thi";
 const API_SAVE_URL = "http://localhost:8080/san_pham_thuong_hieu/add";
 const API_DELETE_URL = "http://localhost:8080/san_pham_thuong_hieu/delete";
@@ -15,8 +15,8 @@ class sanphamthuonghieuservice {
     getThuongHieu() {
         return axios.get(THUONGHIEU_API);
     }
-    getSanPhamThuongHieu() {
-        return axios.get(API_BASE_URL);
+    getSanPhamThuongHieu(pageNumber) {
+        return axios.get(API_BASE_URL+`?page=${pageNumber}&size=5`);
     }
 
     createSanPhamThuongHieu(sanPhamThuongHieu) {

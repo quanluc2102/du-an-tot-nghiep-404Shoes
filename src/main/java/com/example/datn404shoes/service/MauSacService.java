@@ -2,6 +2,8 @@ package com.example.datn404shoes.service;
 
 
 import com.example.datn404shoes.entity.MauSac;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -19,7 +21,7 @@ public interface MauSacService {
 
     MauSac findOne(Long id);
 
-    List<MauSac> findAll();
+    Page<MauSac> findAll(Pageable pageable);
 
     void imPortExcel(MultipartFile file);
 }

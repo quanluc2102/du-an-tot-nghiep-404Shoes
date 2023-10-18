@@ -7,8 +7,8 @@ const BASE_URL_DELETE = "http://localhost:8080/san_pham/delete";
 const BASE_URL_UPDATE = "http://localhost:8080/san_pham/update";
 class SanPhamService{
 
-    getSanPham(){
-        return axios.get(BASE_URL_INDEX);
+    getSanPham(pageNumber){
+        return axios.get(BASE_URL_INDEX+`?page=${pageNumber}&size=5`);
     }
 
     getSanPhamById(id){

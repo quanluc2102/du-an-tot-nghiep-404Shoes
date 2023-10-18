@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { toast } from 'react-toastify';
 import kichthuocmausacservice from '../../services/kichthuocmausacservice/kichthuocmausacservice';
+import ReactPaginate from 'react-paginate';
 // import KichThuocService1 from '../../services/sanphamservice/KichThuocService1';
 // import xuatxuservice from '../../services/xuatxuservice/xuatxuservice';
 
@@ -9,6 +10,7 @@ class KichThuocMauSacComponent extends Component {
         super(props);
         this.state = {
             kichThuocMauSac: [],
+            pageCount: 0,
             kichThuocMauSacAdd: {
                 mauSacId: '', // Sử dụng 'mauSacId' và 'kichThuocId' thay vì 'mauSacId' hai lần
                 kichThuocId: '',
@@ -52,18 +54,32 @@ class KichThuocMauSacComponent extends Component {
         this.loadKichThuocData(); // Thêm dòng này để tải danh sách Kích thước
     }
 
+    loadPageData(pageNumber) {
+        kichthuocmausacservice.getKichThuocMauSac(pageNumber).then(res => {
+            this.setState({
+                kichThuocMauSac: res.data.content, // Dữ liệu trên trang hiện tại
+                pageCount: res.data.totalPages, // Tổng số trang
+            });
+        });
+    }
+
+    handlePageClick = data => {
+        let selected = data.selected; // Trang được chọn từ react-paginate
+        this.loadPageData(selected);
+    };
+
 
     loadKichThuocData() {
         // Gọi API hoặc lấy danh sách Kích thước từ dữ liệu và lưu vào state
         kichthuocmausacservice.getKichThuoc().then((res) => {
-            this.setState({ kichThuocs: res.data });
+            this.setState({ kichThuocs: res.data.content });
         });
     }
 
     loadMauSacData() {
         // Gọi API hoặc lấy danh sách Thương Hiệu từ dữ liệu và lưu vào state
         kichthuocmausacservice.getMauSac().then((res) => {
-            this.setState({ mauSacs: res.data });
+            this.setState({ mauSacs: res.data.content });
         });
     }
 
@@ -73,10 +89,12 @@ class KichThuocMauSacComponent extends Component {
         }
     }
 
-    loadKichThuocMauSacData() {
-        kichthuocmausacservice.getKichThuocMauSac().then((res) => {
-            console.log(res.data);
-            this.setState({ kichThuocMauSac: res.data });
+    loadKichThuocMauSacData(pageNumber) {
+        kichthuocmausacservice.getKichThuocMauSac(pageNumber).then(res => {
+            this.setState({
+                kichThuocMauSac: res.data.content, // Dữ liệu trên trang hiện tại
+                pageCount: res.data.totalPages, // Tổng số trang
+            });
         });
 
         const id = this.props.match.params.id;
@@ -129,7 +147,7 @@ class KichThuocMauSacComponent extends Component {
             this.setState({ errorsAdd: { ...this.state.errorsAdd, mauSacId: "" } });
         }
 
-        
+
 
         if (!this.state.kichThuocMauSac.trangThai) {
             this.setState({ errorsAdd: { ...this.state.errorsAdd, trangThai: "Trạng thái không được bỏ trống!" } });
@@ -331,6 +349,25 @@ class KichThuocMauSacComponent extends Component {
                                                     ))}
                                                 </tbody>
                                             </table>
+                                            <ReactPaginate
+                                                previousLabel={"<"}
+                                                nextLabel={">"}
+                                                breakLabel={"..."}
+                                                breakClassName={"page-item"}
+                                                breakLinkClassName={"page-link"}
+                                                pageClassName={"page-item"}
+                                                pageLinkClassName={"page-link"}
+                                                previousClassName={"page-item"}
+                                                previousLinkClassName={"page-link"}
+                                                nextClassName={"page-item"}
+                                                nextLinkClassName={"page-link"}
+                                                pageCount={this.state.pageCount}
+                                                marginPagesDisplayed={2}
+                                                pageRangeDisplayed={5}
+                                                onPageChange={this.handlePageClick}
+                                                containerClassName={"pagination justify-content-center"} // added justify-content-center for center alignment
+                                                activeClassName={"active"}
+                                            />
                                         </div>
                                     </div>
                                 </div>

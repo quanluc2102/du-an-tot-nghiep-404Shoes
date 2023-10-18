@@ -6,6 +6,8 @@ import com.example.datn404shoes.helper.KichThuocExcelSave;
 import com.example.datn404shoes.repository.KichThuocRepository;
 import com.example.datn404shoes.service.KichThuocService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -50,8 +52,8 @@ public class KichThuocServiceImpl implements KichThuocService {
     }
 
     @Override
-    public List<KichThuoc> findAll() {
-        return kichThuocRepository.findAll();
+    public Page<KichThuoc> findAll(Pageable pageable) {
+        return kichThuocRepository.findAll(pageable);
     }
 
     @Override

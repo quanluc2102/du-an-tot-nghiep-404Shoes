@@ -1,7 +1,5 @@
 package com.example.datn404shoes.request;
 
-import com.example.datn404shoes.entity.KichThuocMauSac;
-import com.example.datn404shoes.entity.SanPham;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

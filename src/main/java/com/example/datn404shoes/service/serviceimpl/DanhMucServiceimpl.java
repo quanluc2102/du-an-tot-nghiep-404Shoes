@@ -4,6 +4,8 @@ import com.example.datn404shoes.entity.DanhMuc;
 import com.example.datn404shoes.repository.DanhMucRepository;
 import com.example.datn404shoes.service.DanhMucService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -34,8 +36,8 @@ public class DanhMucServiceimpl implements DanhMucService {
     }
 
     @Override
-    public List<DanhMuc> getAll() {
-        return repository.findAll();
+    public Page<DanhMuc> getAll(Pageable pageable) {
+        return repository.findAll(pageable);
     }
 
     @Override

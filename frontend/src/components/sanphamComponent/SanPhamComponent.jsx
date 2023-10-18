@@ -1,11 +1,13 @@
 import React, {Component} from 'react';
 import SanPhamService from "../../services/sanphamservice/SanPhamService";
+import ReactPaginate from 'react-paginate';
 
 class SanPhamComponent extends Component {
     constructor(props) {
         super(props);
         this.state = {
             sanPham:[],
+            pageCount: 0,
             sanPhamAdd:{
                 ten : '',
                 giaNhap : '',
@@ -57,9 +59,26 @@ class SanPhamComponent extends Component {
         this.thayDoiTrangThaiUpdate=this.thayDoiTrangThaiUpdate.bind(this);
     }
 
-    componentDidMount(){
-        SanPhamService.getSanPham().then((res)=>{
-            this.setState({sanPham:res.data});
+    loadPageData(pageNumber) {
+        SanPhamService.getSanPham(pageNumber).then(res => {
+            this.setState({
+                sanPham: res.data.content, // Dữ liệu trên trang hiện tại
+                pageCount: res.data.totalPages, // Tổng số trang
+            });
+        });
+    }
+
+    handlePageClick = data => {
+        let selected = data.selected; // Trang được chọn từ react-paginate
+        this.loadPageData(selected);
+    };
+    
+    componentDidMount(pageNumber){
+        SanPhamService.getSanPham(pageNumber).then(res => {
+            this.setState({
+                sanPham: res.data.content, // Dữ liệu trên trang hiện tại
+                pageCount: res.data.totalPages, // Tổng số trang
+            });
         });
         const id = this.props.match.params.id;
         if (id) {
@@ -427,7 +446,25 @@ class SanPhamComponent extends Component {
 
 
                                             </table>
-
+                                            <ReactPaginate
+                                                previousLabel={"<"}
+                                                nextLabel={">"}
+                                                breakLabel={"..."}
+                                                breakClassName={"page-item"}
+                                                breakLinkClassName={"page-link"}
+                                                pageClassName={"page-item"}
+                                                pageLinkClassName={"page-link"}
+                                                previousClassName={"page-item"}
+                                                previousLinkClassName={"page-link"}
+                                                nextClassName={"page-item"}
+                                                nextLinkClassName={"page-link"}
+                                                pageCount={this.state.pageCount}
+                                                marginPagesDisplayed={2}
+                                                pageRangeDisplayed={5}
+                                                onPageChange={this.handlePageClick}
+                                                containerClassName={"pagination justify-content-center"} // added justify-content-center for center alignment
+                                                activeClassName={"active"}
+                                            />
                                         </div>
 
                                     </div>

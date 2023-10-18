@@ -8,8 +8,8 @@ class xuatxuservice {
 
 
     
-    getXuatXu() {
-        return axios.get(API_BASE_URL);
+    getXuatXu(pageNumber) {
+        return axios.get(API_BASE_URL+`?page=${pageNumber}&size=5`);
     }
 
     createXuatXu(xuatXu) {

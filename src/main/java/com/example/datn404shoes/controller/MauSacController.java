@@ -5,6 +5,7 @@ import com.example.datn404shoes.entity.MauSac;
 import com.example.datn404shoes.helper.MauSacExcelSave;
 import com.example.datn404shoes.service.serviceimpl.MauSacServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -23,8 +24,8 @@ public class MauSacController {
     MauSacServiceImpl mauSacService;
 
     @GetMapping("hien_thi")
-    public ResponseEntity<?> hienThi(Model model) {
-        return ResponseEntity.ok(mauSacService.findAll());
+    public ResponseEntity<?> hienThi(Model model, Pageable pageable) {
+        return ResponseEntity.ok(mauSacService.findAll(pageable));
     }
 
 //    @GetMapping("create")

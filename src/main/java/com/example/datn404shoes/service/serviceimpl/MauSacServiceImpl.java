@@ -5,6 +5,8 @@ import com.example.datn404shoes.helper.MauSacExcelSave;
 import com.example.datn404shoes.repository.MauSacRepository;
 import com.example.datn404shoes.service.MauSacService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -49,8 +51,8 @@ public class MauSacServiceImpl implements MauSacService {
     }
 
     @Override
-    public List<MauSac> findAll() {
-        return mauSacRepository.findAll();
+    public Page<MauSac> findAll(Pageable pageable) {
+        return mauSacRepository.findAll(pageable);
     }
 
     @Override

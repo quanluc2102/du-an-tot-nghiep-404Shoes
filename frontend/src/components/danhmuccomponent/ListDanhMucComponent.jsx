@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
 import danhmucservice from '../../services/danhmucservice/danhmucservice';
 import { toast } from 'react-toastify';
-
+import ReactPaginate from 'react-paginate';
 class ListDanhMucComponent extends Component {
     constructor(props) {
         super(props);
         this.state = {
             danhMuc: [],
+            pageCount: 0,
             danhMucAdd: {
                 ten: '',
                 trangThai: '',
@@ -36,8 +37,22 @@ class ListDanhMucComponent extends Component {
     }
 
     componentDidMount() {
-        this.loadDanhMucData();
+        this.loadDanhMucData(0);
     }
+
+    loadPageData(pageNumber) {
+        danhmucservice.getDanhMuc(pageNumber).then(res => {
+            this.setState({
+                danhMuc: res.data.content, // Dữ liệu trên trang hiện tại
+                pageCount: res.data.totalPages, // Tổng số trang
+            });
+        });
+    }
+
+    handlePageClick = data => {
+        let selected = data.selected; // Trang được chọn từ react-paginate
+        this.loadPageData(selected);
+    };
 
     componentDidUpdate(prevProps) {
         if (this.props.match.params.id !== prevProps.match.params.id) {
@@ -45,9 +60,12 @@ class ListDanhMucComponent extends Component {
         }
     }
 
-    loadDanhMucData() {
-        danhmucservice.getDanhMuc().then((res) => {
-            this.setState({ danhMuc: res.data });
+    loadDanhMucData(pageNumber) {
+        danhmucservice.getDanhMuc(pageNumber).then(res => {
+            this.setState({
+                danhMuc: res.data.content, // Dữ liệu trên trang hiện tại
+                pageCount: res.data.totalPages, // Tổng số trang
+            });
         });
 
         const id = this.props.match.params.id;
@@ -67,7 +85,7 @@ class ListDanhMucComponent extends Component {
     add = (e) => {
         e.preventDefault();
         let danhMuc = { ten: this.state.danhMucAdd.ten, trangThai: this.state.danhMucAdd.trangThai }
-        
+
         if (!this.state.danhMucAdd.ten.trim()) {
             this.setState({ errorsAdd: { ...this.state.errorsAdd, ten: "Tên không được bỏ trống!" } });
             return;
@@ -82,7 +100,7 @@ class ListDanhMucComponent extends Component {
         } else {
             this.setState({ errorsAdd: { ...this.state.errorsAdd, trangThai: "" } });
         }
-        
+
         danhmucservice.createDanhMuc(danhMuc).then((res) => {
             if (res.status === 200) {
                 // Xử lý khi thêm thành công
@@ -242,7 +260,25 @@ class ListDanhMucComponent extends Component {
 
 
                                             </table>
-
+                                            <ReactPaginate
+                                                previousLabel={"<"}
+                                                nextLabel={">"}
+                                                breakLabel={"..."}
+                                                breakClassName={"page-item"}
+                                                breakLinkClassName={"page-link"}
+                                                pageClassName={"page-item"}
+                                                pageLinkClassName={"page-link"}
+                                                previousClassName={"page-item"}
+                                                previousLinkClassName={"page-link"}
+                                                nextClassName={"page-item"}
+                                                nextLinkClassName={"page-link"}
+                                                pageCount={this.state.pageCount}
+                                                marginPagesDisplayed={2}
+                                                pageRangeDisplayed={5}
+                                                onPageChange={this.handlePageClick}
+                                                containerClassName={"pagination justify-content-center"} // added justify-content-center for center alignment
+                                                activeClassName={"active"}
+                                            />
                                         </div>
 
                                     </div>

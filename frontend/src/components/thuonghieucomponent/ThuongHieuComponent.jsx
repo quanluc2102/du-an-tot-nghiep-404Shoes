@@ -1,12 +1,14 @@
 import React, { Component } from 'react';
 import thuonghieuservice from '../../services/thuonghieuservice/thuonghieuservice';
 import { toast } from 'react-toastify';
+import ReactPaginate from 'react-paginate';
 
 class ThuongHieuComponent extends Component {
     constructor(props) {
         super(props);
         this.state = {
             thuongHieu: [],
+            pageCount: 0,
             thuongHieuAdd: {
                 ten: '',
                 trangThai: '',
@@ -36,7 +38,7 @@ class ThuongHieuComponent extends Component {
     }
 
     componentDidMount() {
-        this.loadThuongHieuData();
+        this.loadThuongHieuData(0);
     }
 
     componentDidUpdate(prevProps) {
@@ -45,9 +47,26 @@ class ThuongHieuComponent extends Component {
         }
     }
 
-    loadThuongHieuData() {
-        thuonghieuservice.getThuongHieu().then((res) => {
-            this.setState({ thuongHieu: res.data });
+    loadPageData(pageNumber) {
+        thuonghieuservice.getThuongHieu(pageNumber).then(res => {
+            this.setState({
+                thuongHieu: res.data.content, // Dữ liệu trên trang hiện tại
+                pageCount: res.data.totalPages, // Tổng số trang
+            });
+        });
+    }
+
+    handlePageClick = data => {
+        let selected = data.selected; // Trang được chọn từ react-paginate
+        this.loadPageData(selected);
+    };
+
+    loadThuongHieuData(pageNumber) {
+        thuonghieuservice.getThuongHieu(pageNumber).then(res => {
+            this.setState({
+                thuongHieu: res.data.content, // Dữ liệu trên trang hiện tại
+                pageCount: res.data.totalPages, // Tổng số trang
+            });
         });
 
         const id = this.props.match.params.id;
@@ -71,11 +90,11 @@ class ThuongHieuComponent extends Component {
         if (!this.state.thuongHieuAdd.ten) {
             this.setState({ errorsAdd: { ...this.state.errorsAdd, ten: "Tên màu không được bỏ trống!" } });
             return;
-        }else if (!isNaN(this.state.thuongHieuAdd.ten)) {
+        } else if (!isNaN(this.state.thuongHieuAdd.ten)) {
             this.setState({ errorsAdd: { ...this.state.errorsAdd, ten: "Tên phải là chữ!" } });
             return;
         }
-         else {
+        else {
             this.setState({ errorsAdd: { ...this.state.errorsAdd, ten: "" } });
         }
 
@@ -115,11 +134,11 @@ class ThuongHieuComponent extends Component {
         if (!this.state.thuongHieuUpdate.ten) {
             this.setState({ errorsUpdate: { ...this.state.errorsUpdate, ten: "Tên thương hiệu không được bỏ trống!" } });
             return;
-        }else if (!isNaN(this.state.thuongHieuUpdate.ten)) {
+        } else if (!isNaN(this.state.thuongHieuUpdate.ten)) {
             this.setState({ errorsUpdate: { ...this.state.errorsUpdate, ten: "Tên phải là chữ!" } });
             return;
         }
-         else {
+        else {
             this.setState({ errorsUpdate: { ...this.state.errorsUpdate, ten: "" } });
         }
 
@@ -243,7 +262,7 @@ class ThuongHieuComponent extends Component {
                                                         this.state.thuongHieu.map(
                                                             th =>
                                                                 <tr key={th.id}>
-                                                                        <td>{th.ten}</td>
+                                                                    <td>{th.ten}</td>
                                                                     <td>{th.trangThai == 1 ? "HD" : "Ko HD"}</td>
                                                                     <td>
                                                                         <button onClick={() => this.delete(th.id)} className='btn btn-danger'>Xóa</button>
@@ -256,7 +275,25 @@ class ThuongHieuComponent extends Component {
 
 
                                             </table>
-
+                                            <ReactPaginate
+                                                previousLabel={"<"}
+                                                nextLabel={">"}
+                                                breakLabel={"..."}
+                                                breakClassName={"page-item"}
+                                                breakLinkClassName={"page-link"}
+                                                pageClassName={"page-item"}
+                                                pageLinkClassName={"page-link"}
+                                                previousClassName={"page-item"}
+                                                previousLinkClassName={"page-link"}
+                                                nextClassName={"page-item"}
+                                                nextLinkClassName={"page-link"}
+                                                pageCount={this.state.pageCount}
+                                                marginPagesDisplayed={2}
+                                                pageRangeDisplayed={5}
+                                                onPageChange={this.handlePageClick}
+                                                containerClassName={"pagination justify-content-center"} // added justify-content-center for center alignment
+                                                activeClassName={"active"}
+                                            />
                                         </div>
 
                                     </div>
@@ -334,6 +371,7 @@ class ThuongHieuComponent extends Component {
                                                         <option value="false">Ko còn</option>
                                                     </select>
                                                     {this.state.errorsAdd.trangThai && <div className="text-danger">{this.state.errorsAdd.trangThai}</div>}
+
                                                 </div>
                                                 <input type="submit" className="btn btn-primary" value="Add" style={{ marginTop: '10px' }} onClick={this.add} />
                                             </form>

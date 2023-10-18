@@ -8,8 +8,8 @@ class danhmucservice {
 
 
     
-    getDanhMuc() {
-        return axios.get(DANHMUC_API_BASE_URL);
+    getDanhMuc(pageNumber) {
+        return axios.get(DANHMUC_API_BASE_URL+`?page=${pageNumber}&size=5`);
     }
 
     createDanhMuc(danhMuc) {

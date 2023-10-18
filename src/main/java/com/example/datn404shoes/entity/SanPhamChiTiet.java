@@ -32,18 +32,21 @@ public class SanPhamChiTiet {
     @Column(name = "so_luong")
     private Integer soLuong;
 
-    @ManyToOne(fetch = FetchType.EAGER) // chua ro lam
-    @JoinColumn(name = "kich_thuoc_mau_sac_id", referencedColumnName = "id")
-    private KichThuocMauSac kichThuocMauSacId;
 
-    @ManyToOne(fetch = FetchType.EAGER) // chua ro lam
-    @JoinColumn(name = "san_pham_id", referencedColumnName = "id")
-    private SanPham sanPhamId;
+    @ManyToOne
+    @JoinColumn(name = "kich_thuoc", referencedColumnName = "id", nullable = true)
+    private KichThuoc kichThuoc;
 
-    public SanPhamChiTiet(Integer trangThai, Integer soLuong, KichThuocMauSac kichThuocMauSacId, SanPham sanPhamId) {
+    @ManyToOne
+    @JoinColumn(name = "mau_sac", referencedColumnName = "id", nullable = true)
+    private MauSac mauSac;
+    @ManyToOne
+    @JoinColumn(name = "san_pham_id", referencedColumnName = "id", nullable = true)
+    private SanPham sanPham;
+
+    public SanPhamChiTiet(Integer trangThai, Integer soLuong, SanPham sanPhamId) {
         this.trangThai = trangThai;
         this.soLuong = soLuong;
-        this.kichThuocMauSacId = kichThuocMauSacId;
-        this.sanPhamId = sanPhamId;
+        this.sanPham = sanPhamId;
     }
 }

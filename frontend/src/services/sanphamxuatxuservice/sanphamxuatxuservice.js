@@ -15,8 +15,8 @@ class sanphamxuatxuservice {
     getSanPham() {
         return axios.get(SANPHAM_API);
     }
-    getSanPhamXuatXu() {
-        return axios.get(API_BASE_URL);
+    getSanPhamXuatXu(pageNumber) {
+        return axios.get(API_BASE_URL+`?page=${pageNumber}&size=5`);
     }
 
     createSanPhamXuatXu(sanPhamXuatXu) {

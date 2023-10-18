@@ -24,22 +24,25 @@ public class ThongTinNguoiDungController {
     private TaiKhoanServiceimpl taiKhoanServiceimpl;
     @Autowired
     private ThongTinNguoiDungServiceimpl thongTinNguoiDungServiceimpl;
+
     @GetMapping("/index")
-    public String index (Model model){
+    public String index(Model model) {
         ArrayList<ThongTinNguoiDung> list = thongTinNguoiDungServiceimpl.getAll();
 //        ArrayList<TaiKhoan> listtk = taiKhoanServiceimpl.getAll();
-        model.addAttribute("listND",list);
+        model.addAttribute("listND", list);
 //        model.addAttribute("listTK",listtk);
         model.addAttribute("view", "/tai_khoan/danh_sach.jsp");
         return "admin/index";
     }
+
     @GetMapping("/create")
-    public String create(Model model){
+    public String create(Model model) {
 //        ArrayList<TaiKhoan> listtk = taiKhoanServiceimpl.getAll();
 //        model.addAttribute("listTK",listtk);
         model.addAttribute("view", "/tai_khoan/viewThem.jsp");
         return "admin/index";
     }
+
     @PostMapping("add")
     public String add(Model model,
                       @RequestParam("diaChi") String diaChi,
@@ -48,37 +51,40 @@ public class ThongTinNguoiDungController {
                       @RequestParam("ngaySinh") Date ngaySinh,
                       @RequestParam("ngayCapNhat") Date ngayCapNhat,
                       @RequestParam("taiKhoan") String taiKhoan
-    ){
+    ) {
         TaiKhoan khoan = taiKhoanResponsitory.findById(Long.valueOf(taiKhoan)).orElse(null);
-       thongTinNguoiDungServiceimpl.add(new ThongTinNguoiDung(diaChi,sdt,ten,ngaySinh,ngayCapNhat,khoan));
-        return "redirect:/nguoi-dung/index";
-    }
-    @GetMapping("/delete/{id}")
-    public String delete (Model model,
-                          @PathVariable("id") String id){
-        thongTinNguoiDungServiceimpl.delete(Long.valueOf(id));
-        return "redirect:/nguoi-dung/index";
-    }
-    @GetMapping("/detail/{id}")
-    public String detail(Model model,
-                         @PathVariable("id") String id
-    ){
-        Optional<ThongTinNguoiDung> dung = thongTinNguoiDungServiceimpl.detail(Long.valueOf(id));
-        ArrayList<ThongTinNguoiDung> list = thongTinNguoiDungServiceimpl.getAll();
-//        ArrayList<TaiKhoan> listtk = taiKhoanServiceimpl.getAll();
-        model.addAttribute("listND",list);
-//        model.addAttribute("listTK",listtk);
-        model.addAttribute("nd",dung.get());
-        model.addAttribute("listTK",taiKhoanServiceimpl.getAll());
-        model.addAttribute("view", "/tai_khoan/danh_sach.jsp");
-        return "admin/index";
-    }
-    @PostMapping("/update/{id}")
-    public String update(Model model,
-                         @PathVariable("id") String id,
-                         @ModelAttribute("ThongTinNguoiDung") ThongTinNguoiDung thongTinNguoiDung){
-        thongTinNguoiDungServiceimpl.update(Long.valueOf(id),thongTinNguoiDung);
+        thongTinNguoiDungServiceimpl.add(new ThongTinNguoiDung(diaChi, sdt, ten, ngaySinh, ngayCapNhat, khoan));
         return "redirect:/nguoi-dung/index";
     }
 
+    @GetMapping("/delete/{id}")
+    public String delete(Model model,
+                         @PathVariable("id") String id) {
+        thongTinNguoiDungServiceimpl.delete(Long.valueOf(id));
+        return "redirect:/nguoi-dung/index";
+    }
+
+    @GetMapping("/detail/{id}")
+    public String detail(Model model,
+                         @PathVariable("id") String id
+    ) {
+        Optional<ThongTinNguoiDung> dung = thongTinNguoiDungServiceimpl.detail(Long.valueOf(id));
+        ArrayList<ThongTinNguoiDung> list = thongTinNguoiDungServiceimpl.getAll();
+//        ArrayList<TaiKhoan> listtk = taiKhoanServiceimpl.getAll();
+        model.addAttribute("listND", list);
+//        model.addAttribute("listTK",listtk);
+        model.addAttribute("nd", dung.get());
+        model.addAttribute("listTK", taiKhoanServiceimpl.getAll());
+        model.addAttribute("view", "/tai_khoan/danh_sach.jsp");
+        return "admin/index";
+
+//    @PostMapping("/update/{id}")
+//    public String update(Model model,
+//                         @PathVariable("id") String id,
+//                         @ModelAttribute("ThongTinNguoiDung") ThongTinNguoiDung thongTinNguoiDung){
+//        thongTinNguoiDungServiceimpl.update(Long.valueOf(id),thongTinNguoiDung);
+//        return "redirect:/nguoi-dung/index";
+//    }
+
+    }
 }

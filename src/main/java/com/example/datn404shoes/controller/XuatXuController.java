@@ -5,6 +5,7 @@ package com.example.datn404shoes.controller;
 import com.example.datn404shoes.entity.XuatXu;
 import com.example.datn404shoes.service.serviceimpl.XuatXuServiceimpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
@@ -22,8 +23,8 @@ public class XuatXuController {
     XuatXuServiceimpl xuatXuServiceimpl;
 
     @GetMapping("hien_thi")
-    public ResponseEntity<?> hienThi(Model model) {
-        return ResponseEntity.ok(xuatXuServiceimpl.getAll());
+    public ResponseEntity<?> hienThi(Model model, Pageable pageable) {
+        return ResponseEntity.ok(xuatXuServiceimpl.getAll(pageable));
     }
 
 //    @GetMapping("create")

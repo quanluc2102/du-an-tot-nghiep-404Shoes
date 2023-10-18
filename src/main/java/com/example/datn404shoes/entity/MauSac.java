@@ -19,10 +19,6 @@ public class MauSac {
     @Column(name = "id")
     private long id;
 
-//    @NotBlank(message = "Giá trị không được để trống")
-    @Column(name = "gia_tri")
-    private int giaTri;
-
     @NotBlank(message = "Tên không được để trống")
     @Column(name = "ten")
     private String ten;

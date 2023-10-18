@@ -15,8 +15,8 @@ class sanphamdanhmucservice {
     getSanPham() {
         return axios.get(SANPHAM_API);
     }
-    getSanPhamDanhMuc() {
-        return axios.get(API_BASE_URL);
+    getSanPhamDanhMuc(pageNumber) {
+        return axios.get(API_BASE_URL+`?page=${pageNumber}&size=5`);
     }
 
     createSanPhamDanhMuc(sanPhamDanhMuc) {

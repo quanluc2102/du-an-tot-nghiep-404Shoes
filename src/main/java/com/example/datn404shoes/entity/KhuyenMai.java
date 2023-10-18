@@ -36,13 +36,12 @@ public class KhuyenMai {
 
     @Column(name = "kieu_khuyen_mai")
     private int kieuKhuyenMai;
+    @Column(name = "dieu_kien")
+    private float dieuKien;
+    @Column(name = "so_luong")
+    private int soLuong;
+    @Column(name = "trang_thai")
+    private int trangThai;
 
-    public KhuyenMai(String ten, String moTa, Date batDau, Date ketThuc, float giamGia, int kieuKhuyenMai) {
-        this.ten = ten;
-        this.moTa = moTa;
-        this.batDau = batDau;
-        this.ketThuc = ketThuc;
-        this.giamGia = giamGia;
-        this.kieuKhuyenMai = kieuKhuyenMai;
-    }
+
 }

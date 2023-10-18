@@ -3,12 +3,13 @@ import { toast } from 'react-toastify';
 import sanphamxuatxuservice from '../../services/sanphamxuatxuservice/sanphamxuatxuservice';
 import SanPhamService1 from '../../services/sanphamservice/SanPhamService1';
 import xuatxuservice from '../../services/xuatxuservice/xuatxuservice';
-
+import ReactPaginate from 'react-paginate';
 class SanPhamXuatXuComponent extends Component {
     constructor(props) {
         super(props);
         this.state = {
             sanPhamXuatXu: [],
+            pageCount: 0,
             sanPhamXuatXuAdd: {
                 sanPhamId: '',
                 xuatXuId: '',
@@ -46,12 +47,27 @@ class SanPhamXuatXuComponent extends Component {
         this.loadSanPhamData(); // Thêm dòng này để tải danh sách Sản phẩm
     }
 
+    loadPageData(pageNumber) {
+        sanphamxuatxuservice.getSanPhamXuatXu(pageNumber).then(res => {
+            this.setState({
+                sanPhamXuatXu: res.data.content, // Dữ liệu trên trang hiện tại
+                pageCount: res.data.totalPages, // Tổng số trang
+            });
+        });
+    }
+
+    handlePageClick = data => {
+        let selected = data.selected; // Trang được chọn từ react-paginate
+        this.loadPageData(selected);
+    };
+
 
     loadSanPhamData() {
         // Gọi API hoặc lấy danh sách Sản phẩm từ dữ liệu và lưu vào state
         // Ví dụ:
-        SanPhamService1.getSanPham().then((res) => {
-            this.setState({ sanPhams: res.data });
+        sanphamxuatxuservice.getSanPham().then((res) => {
+            this.setState({ sanPhams: res.data.content });
+            console.log("sanPham"+{ sanPhams: res.data });
         });
     }
 
@@ -59,7 +75,8 @@ class SanPhamXuatXuComponent extends Component {
         // Gọi API hoặc lấy danh sách Thương Hiệu từ dữ liệu và lưu vào state
         // Ví dụ:
         xuatxuservice.getXuatXu().then((res) => {
-            this.setState({ xuatXus: res.data });
+            this.setState({ xuatXus: res.data.content });
+            console.log("sanPham"+{ xuatXus: res.data.content });
         });
     }
 
@@ -69,10 +86,12 @@ class SanPhamXuatXuComponent extends Component {
         }
     }
 
-    loadSanPhamXuatXuData() {
-        sanphamxuatxuservice.getSanPhamXuatXu().then((res) => {
-            console.log(res.data);
-            this.setState({ sanPhamXuatXu: res.data });
+    loadSanPhamXuatXuData(pageNumber) {
+        sanphamxuatxuservice.getSanPhamXuatXu(pageNumber).then(res => {
+            this.setState({
+                sanPhamXuatXu: res.data.content, // Dữ liệu trên trang hiện tại
+                pageCount: res.data.totalPages, // Tổng số trang
+            });
         });
 
         const id = this.props.match.params.id;
@@ -285,6 +304,25 @@ class SanPhamXuatXuComponent extends Component {
                                                     ))}
                                                 </tbody>
                                             </table>
+                                            <ReactPaginate
+                                                previousLabel={"<"}
+                                                nextLabel={">"}
+                                                breakLabel={"..."}
+                                                breakClassName={"page-item"}
+                                                breakLinkClassName={"page-link"}
+                                                pageClassName={"page-item"}
+                                                pageLinkClassName={"page-link"}
+                                                previousClassName={"page-item"}
+                                                previousLinkClassName={"page-link"}
+                                                nextClassName={"page-item"}
+                                                nextLinkClassName={"page-link"}
+                                                pageCount={this.state.pageCount}
+                                                marginPagesDisplayed={2}
+                                                pageRangeDisplayed={5}
+                                                onPageChange={this.handlePageClick}
+                                                containerClassName={"pagination justify-content-center"} // added justify-content-center for center alignment
+                                                activeClassName={"active"}
+                                            />
                                         </div>
                                     </div>
                                 </div>

@@ -1,7 +1,6 @@
 package com.example.datn404shoes.repository;
 
 import com.example.datn404shoes.entity.SanPhamChiTiet;
-import com.example.datn404shoes.entity.SanPhamXuatXu;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

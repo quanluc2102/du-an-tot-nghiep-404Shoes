@@ -2,12 +2,13 @@ import React, { Component } from 'react';
 import danhmucservice from '../../services/sanphamdanhmucservice/sanphamdanhmucservice';
 import { toast } from 'react-toastify';
 import sanphamdanhmucservice from '../../services/sanphamdanhmucservice/sanphamdanhmucservice';
-
+import ReactPaginate from 'react-paginate';
 class SanPhamDanhMucComponent extends Component {
     constructor(props) {
         super(props);
         this.state = {
             sanPhamDanhMuc: [],
+            pageCount: 0,
             sanPhamDanhMucAdd: {
                 sanPhamId: '',
                 danhMucId: '',
@@ -39,17 +40,33 @@ class SanPhamDanhMucComponent extends Component {
     }
 
     componentDidMount() {
-        this.loadSanPhamDanhMucData();
+        this.loadSanPhamDanhMucData(0);
         this.loadDanhMucData();
         this.loadSanPhamData(); // Thêm dòng này để tải danh sách Sản phẩm
+        console.log("sanPhamDanhMuc:", this.state.sanPhamDanhMuc);
+        console.log("danhMucs:", this.state.danhMucs);
+        console.log("sanPhams:", this.state.sanPhams);
     }
 
+    loadPageData(pageNumber) {
+        sanphamdanhmucservice.getSanPhamDanhMuc(pageNumber).then(res => {
+            this.setState({
+                sanPhamDanhMuc: res.data.content, // Dữ liệu trên trang hiện tại
+                pageCount: res.data.totalPages, // Tổng số trang
+            });
+        });
+    }
+
+    handlePageClick = data => {
+        let selected = data.selected; // Trang được chọn từ react-paginate
+        this.loadPageData(selected);
+    };
 
     loadSanPhamData() {
         // Gọi API hoặc lấy danh sách Sản phẩm từ dữ liệu và lưu vào state
         // Ví dụ:
         sanphamdanhmucservice.getSanPham().then((res) => {
-            this.setState({ sanPhams: res.data });
+            this.setState({ sanPhams: res.data.content });
         });
     }
 
@@ -57,7 +74,7 @@ class SanPhamDanhMucComponent extends Component {
         // Gọi API hoặc lấy danh sách Danh mục từ dữ liệu và lưu vào state
         // Ví dụ:
         sanphamdanhmucservice.getDanhMuc().then((res) => {
-            this.setState({ danhMucs: res.data });
+            this.setState({ danhMucs: res.data.content });
         });
     }
 
@@ -67,16 +84,18 @@ class SanPhamDanhMucComponent extends Component {
         }
     }
 
-    loadSanPhamDanhMucData() {
-        sanphamdanhmucservice.getSanPhamDanhMuc().then((res) => {
-            console.log(res.data);
-            this.setState({ sanPhamDanhMuc: res.data });
+    loadSanPhamDanhMucData(pageNumber) {
+        sanphamdanhmucservice.getSanPhamDanhMuc(pageNumber).then(res => {
+            this.setState({
+                sanPhamDanhMuc: res.data.content, // Dữ liệu trên trang hiện tại
+                pageCount: res.data.totalPages, // Tổng số trang
+            });
         });
 
         const id = this.props.match.params.id;
         if (id) {
             danhmucservice.getSanPhamDanhMucById(id).then((res) => {
-                this.setState({ sanPhamDanhMucUpdate: res.data });
+                this.setState({ sanPhamDanhMucUpdate: res.data.content });
             });
         }
     }
@@ -160,8 +179,8 @@ class SanPhamDanhMucComponent extends Component {
         } else {
             this.setState({ errorsUpdate: { ...this.state.errorsUpdate, danhMucId: "" } });
         }
-        
-       
+
+
         danhmucservice.updateSanPhamDanhMuc(sanPhamDanhMuc, this.state.sanPhamDanhMucUpdate.id).then((res) => {
             let sanPhamDanhMucCapNhat = res.data; // Giả sử API trả về đối tượng vừa được cập nhật
             this.setState(prevState => ({
@@ -286,6 +305,25 @@ class SanPhamDanhMucComponent extends Component {
                                                     ))}
                                                 </tbody>
                                             </table>
+                                            <ReactPaginate
+                                                previousLabel={"<"}
+                                                nextLabel={">"}
+                                                breakLabel={"..."}
+                                                breakClassName={"page-item"}
+                                                breakLinkClassName={"page-link"}
+                                                pageClassName={"page-item"}
+                                                pageLinkClassName={"page-link"}
+                                                previousClassName={"page-item"}
+                                                previousLinkClassName={"page-link"}
+                                                nextClassName={"page-item"}
+                                                nextLinkClassName={"page-link"}
+                                                pageCount={this.state.pageCount}
+                                                marginPagesDisplayed={2}
+                                                pageRangeDisplayed={5}
+                                                onPageChange={this.handlePageClick}
+                                                containerClassName={"pagination justify-content-center"} // added justify-content-center for center alignment
+                                                activeClassName={"active"}
+                                            />
                                         </div>
                                     </div>
                                 </div>

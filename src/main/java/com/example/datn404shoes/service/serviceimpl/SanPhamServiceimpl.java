@@ -5,6 +5,8 @@ import com.example.datn404shoes.helper.SanPhamExcelSave;
 import com.example.datn404shoes.repository.SanPhamRespository;
 import com.example.datn404shoes.service.SanPhamService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -17,6 +19,7 @@ import java.util.List;
 public class SanPhamServiceimpl implements SanPhamService {
     @Autowired
     SanPhamRespository sanPhamRespository;
+
     @Override
     public SanPham add(SanPham sp) {
         sp.setNgayTao(Date.valueOf(LocalDate.now()));
@@ -27,9 +30,9 @@ public class SanPhamServiceimpl implements SanPhamService {
     @Override
     public void delete(Long id) {
         SanPham a = sanPhamRespository.findById(id).get();
-        if(a.getTrangThai()==1){
+        if (a.getTrangThai() == 1) {
             a.setTrangThai(0);
-        }else{
+        } else {
             a.setTrangThai(1);
         }
         sanPhamRespository.flush();
@@ -46,6 +49,11 @@ public class SanPhamServiceimpl implements SanPhamService {
         a.setNgayCapNhat(Date.valueOf(LocalDate.now()));
         sanPhamRespository.save(a);
         return a;
+    }
+
+    @Override
+    public Page<SanPham> getAllPhanTrang(Pageable pageable) {
+        return sanPhamRespository.findAll(pageable);
     }
 
     @Override
@@ -70,7 +78,7 @@ public class SanPhamServiceimpl implements SanPhamService {
     public void importExcel(MultipartFile file) {
         try {
             List<SanPham> tutorials = SanPhamExcelSave.excelToTutorials(file.getInputStream());
-            for(SanPham a :tutorials){
+            for (SanPham a : tutorials) {
                 sanPhamRespository.save(a);
                 a.toString();
             }

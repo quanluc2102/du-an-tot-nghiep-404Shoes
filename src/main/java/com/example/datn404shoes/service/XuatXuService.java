@@ -1,6 +1,8 @@
 package com.example.datn404shoes.service;
 
 import com.example.datn404shoes.entity.XuatXu;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -11,7 +13,7 @@ public interface XuatXuService {
 
     XuatXu update(Long id, XuatXu xuatXu);
 
-    List<XuatXu> getAll();
+    Page<XuatXu> getAll(Pageable pageable);
 
     XuatXu getOne(Long id);
 }

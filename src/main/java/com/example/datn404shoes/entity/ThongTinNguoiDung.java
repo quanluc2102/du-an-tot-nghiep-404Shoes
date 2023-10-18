@@ -18,7 +18,7 @@ public class ThongTinNguoiDung {
     @Column(name = "id")
     private long id;
 
-    @Column(name = "diaChi")
+    @Column(name = "dia_chi")
     private String diaChi;
 
     @Column(name = "sdt")
@@ -26,6 +26,10 @@ public class ThongTinNguoiDung {
 
     @Column(name = "ten")
     private String ten;
+    @Column(name = "cccd")
+    private String CCCD;
+    @Column(name = "gioi_tinh")
+    private int gioiTinh;
     @Column(name = " ngay_sinh")
     private Date ngaySinh;
     @Column(name = "ngay_cap_nhat")
@@ -35,7 +39,7 @@ public class ThongTinNguoiDung {
     @JoinColumn(name = "tai_khoan_id")
     private TaiKhoan taiKhoan;
 
-    public ThongTinNguoiDung( String diaChi, String sdt, String ten, Date ngaySinh, Date ngayCapNhat, TaiKhoan taiKhoan) {
+    public ThongTinNguoiDung(String diaChi, String sdt, String ten, Date ngaySinh, Date ngayCapNhat, TaiKhoan taiKhoan) {
 
         this.diaChi = diaChi;
         this.sdt = sdt;

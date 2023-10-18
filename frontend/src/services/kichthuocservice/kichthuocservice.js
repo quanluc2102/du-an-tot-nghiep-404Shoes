@@ -8,8 +8,8 @@ class kichthuocservice {
 
 
     
-    getKichThuoc() {
-        return axios.get(API_BASE_URL);
+    getKichThuoc(pageNumber) {
+        return axios.get(API_BASE_URL+`?page=${pageNumber}&size=5`);
     }
 
     createKichThuoc(kichThuoc) {

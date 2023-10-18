@@ -6,9 +6,10 @@ import com.example.datn404shoes.helper.SanPhamExport;
 import com.example.datn404shoes.service.serviceimpl.SanPhamServiceimpl;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -16,10 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
@@ -28,8 +26,8 @@ public class SanPhamController {
     @Autowired
     SanPhamServiceimpl sanPhamServiceimpl;
     @GetMapping("index")
-    public List<SanPham> index(){
-        return sanPhamServiceimpl.getAll();
+    public Page<SanPham> index(Pageable pageable){
+        return sanPhamServiceimpl.getAllPhanTrang(pageable);
     }
     @PostMapping("add")
     public SanPham add(@RequestBody SanPham sanPham){
@@ -73,7 +71,7 @@ public class SanPhamController {
     }
 
     @GetMapping("export")
-    public void exportToExcel(HttpServletResponse response) throws IOException {
+    public void exportToExcel(HttpServletResponse response,Pageable pageable) throws IOException {
         response.setContentType("application/octet-stream");
         DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
         String currentDateTime = dateFormatter.format(new Date());
@@ -82,9 +80,9 @@ public class SanPhamController {
         String headerValue = "attachment; filename=users_" + currentDateTime + ".xlsx";
         response.setHeader(headerKey, headerValue);
 
-        List listSP = sanPhamServiceimpl.getAll();
+        List<SanPham> listSP = sanPhamServiceimpl.getAll();
 
-        SanPhamExport excelExporter = new SanPhamExport(listSP);
+        SanPhamExport excelExporter = new SanPhamExport((listSP));
 
         excelExporter.export(response);
     }

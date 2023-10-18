@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
 import kichthuocservice from '../../services/kichthuocservice/kichthuocservice';
 import { toast } from 'react-toastify';
-
+import ReactPaginate from 'react-paginate';
 class KichThuocComponent extends Component {
     constructor(props) {
         super(props);
         this.state = {
             kichThuoc: [],
+            pageCount: 0,
             kichThuocAdd: {
                 giaTri: '',
                 trangThai: '',
@@ -45,9 +46,26 @@ class KichThuocComponent extends Component {
         }
     }
 
-    loadKichThuocData() {
-        kichthuocservice.getKichThuoc().then((res) => {
-            this.setState({ kichThuoc: res.data });
+    loadPageData(pageNumber) {
+        kichthuocservice.getKichThuoc(pageNumber).then(res => {
+            this.setState({
+                kichThuoc: res.data.content, // Dữ liệu trên trang hiện tại
+                pageCount: res.data.totalPages, // Tổng số trang
+            });
+        });
+    }
+
+    handlePageClick = data => {
+        let selected = data.selected; // Trang được chọn từ react-paginate
+        this.loadPageData(selected);
+    };
+
+    loadKichThuocData(pageNumber) {
+        kichthuocservice.getKichThuoc(pageNumber).then(res => {
+            this.setState({
+                kichThuoc: res.data.content, // Dữ liệu trên trang hiện tại
+                pageCount: res.data.totalPages, // Tổng số trang
+            });
         });
 
         const id = this.props.match.params.id;
@@ -142,7 +160,7 @@ class KichThuocComponent extends Component {
         window.location.href = (`/kichthuocdetail/${id}`);
     }
 
-    
+
 
     thayDoiTrangThaiAdd = (event) => {
         this.setState(prevState => ({
@@ -164,7 +182,7 @@ class KichThuocComponent extends Component {
         let errorsAdd = { ...this.state.errorsAdd, giaTri: "" };
         this.setState({ errorsAdd: errorsAdd });
     }
-    
+
     thayDoiGiaTriUpdate = (event) => {
         this.setState(prevState => ({
             kichThuocUpdate: {
@@ -252,7 +270,25 @@ class KichThuocComponent extends Component {
 
 
                                             </table>
-
+                                            <ReactPaginate
+                                                previousLabel={"<"}
+                                                nextLabel={">"}
+                                                breakLabel={"..."}
+                                                breakClassName={"page-item"}
+                                                breakLinkClassName={"page-link"}
+                                                pageClassName={"page-item"}
+                                                pageLinkClassName={"page-link"}
+                                                previousClassName={"page-item"}
+                                                previousLinkClassName={"page-link"}
+                                                nextClassName={"page-item"}
+                                                nextLinkClassName={"page-link"}
+                                                pageCount={this.state.pageCount}
+                                                marginPagesDisplayed={2}
+                                                pageRangeDisplayed={5}
+                                                onPageChange={this.handlePageClick}
+                                                containerClassName={"pagination justify-content-center"} // added justify-content-center for center alignment
+                                                activeClassName={"active"}
+                                            />
                                         </div>
 
                                     </div>
@@ -304,7 +340,7 @@ class KichThuocComponent extends Component {
                                                     <input className={`form-control ${this.state.errorsUpdate.giaTri ? 'is-invalid' : ''}`} name="giaTri" value={this.state.kichThuocUpdate.giaTri} onChange={this.thayDoiGiaTriUpdate} />
                                                     {this.state.errorsUpdate.giaTri && <div className="text-danger">{this.state.errorsUpdate.giaTri}</div>}
                                                 </div>
-                                                
+
                                                 <div className='form-group'>
                                                     <label>Trạng thái</label>
                                                     <select name="trangThai" id="trangThai" value={this.state.kichThuocUpdate.trangThai} className={`form-control ${this.state.errorsUpdate.trangThai ? 'is-invalid' : ''}`} onChange={this.thayDoiTrangThaiUpdate}>
@@ -324,7 +360,7 @@ class KichThuocComponent extends Component {
                                                     <input className={`form-control ${this.state.errorsAdd.giaTri ? 'is-invalid' : ''}`} name="giaTri" onChange={this.thayDoiGiaTriAdd} />
                                                     {this.state.errorsAdd.giaTri && <div className="text-danger">{this.state.errorsAdd.giaTri}</div>}
                                                 </div>
-                                        
+
                                                 <div className='form-group'>
                                                     <label>Trạng thái</label>
                                                     <select name="trangThai" id="trangThai" className={`form-control ${this.state.errorsAdd.trangThai ? 'is-invalid' : ''}`} onChange={this.thayDoiTrangThaiAdd}>

@@ -4,6 +4,8 @@ import com.example.datn404shoes.entity.ThuongHieu;
 import com.example.datn404shoes.repository.ThuongHieuRepository;
 import com.example.datn404shoes.service.ThuongHieuService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -34,8 +36,8 @@ public class ThuongHieuServiceimpl implements ThuongHieuService {
     }
 
     @Override
-    public List<ThuongHieu> getAll() {
-        return repository.findAll();
+    public Page<ThuongHieu> getAll(Pageable pageable) {
+        return repository.findAll(pageable);
     }
 
     @Override

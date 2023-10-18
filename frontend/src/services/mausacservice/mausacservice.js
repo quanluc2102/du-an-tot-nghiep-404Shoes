@@ -8,8 +8,8 @@ class mausacservice {
 
 
     
-    getMauSac() {
-        return axios.get(API_BASE_URL);
+    getMauSac(pageNumber) {
+        return axios.get(API_BASE_URL+`?page=${pageNumber}&size=5`);
     }
 
     createMauSac(mauSac) {

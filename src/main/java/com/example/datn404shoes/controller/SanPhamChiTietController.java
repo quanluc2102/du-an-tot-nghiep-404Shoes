@@ -5,6 +5,7 @@ import com.example.datn404shoes.entity.SanPhamChiTiet;
 import com.example.datn404shoes.request.SanPhamChiTietRequest;
 import com.example.datn404shoes.service.serviceimpl.SanPhamChiTietServiceimpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -21,31 +22,35 @@ public class SanPhamChiTietController {
     SanPhamChiTietServiceimpl serviceimpl;
 
     @GetMapping("index")
-    public List<SanPhamChiTiet> index(){
-        return serviceimpl.getAll();
+    public ResponseEntity<?> index(Pageable pageable) {
+        return ResponseEntity.ok(serviceimpl.getAllPhanTrang(pageable));
     }
+
     @PostMapping("add")
-    public SanPhamChiTiet add(@RequestBody SanPhamChiTietRequest spct){
+    public SanPhamChiTiet add(@RequestBody SanPhamChiTietRequest spct) {
 
         return serviceimpl.add(spct);
     }
+
     @DeleteMapping("delete/{id}")
-    public ResponseEntity<?> delete(@PathVariable("id") Long id){
+    public ResponseEntity<?> delete(@PathVariable("id") Long id) {
         serviceimpl.delete(id);
-        Map<String,Boolean> response =new HashMap<>();
-        response.put("Delete",Boolean.TRUE);
+        Map<String, Boolean> response = new HashMap<>();
+        response.put("Delete", Boolean.TRUE);
         return ResponseEntity.ok(response);
     }
+
     @GetMapping("detail/{id}")
-    public ResponseEntity<?> detail(@PathVariable("id") Long id){
+    public ResponseEntity<?> detail(@PathVariable("id") Long id) {
 
         return ResponseEntity.ok(serviceimpl.getOne(id));
     }
+
     @PutMapping("update/{id}")
     public ResponseEntity<?> update(Model model,
                                     @PathVariable("id") Long id,
-                                    @RequestBody SanPhamChiTietRequest spct){
+                                    @RequestBody SanPhamChiTietRequest spct) {
 
-        return ResponseEntity.ok(serviceimpl.update(id,spct));
+        return ResponseEntity.ok(serviceimpl.update(id, spct));
     }
 }

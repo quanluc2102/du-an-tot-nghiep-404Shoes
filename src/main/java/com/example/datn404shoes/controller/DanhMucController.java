@@ -4,6 +4,7 @@ import com.example.datn404shoes.entity.DanhMuc;
 import com.example.datn404shoes.service.serviceimpl.DanhMucServiceimpl;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -23,8 +24,8 @@ public class DanhMucController {
     DanhMucServiceimpl serviceimpl;
 
     @GetMapping("hien_thi")
-    public ResponseEntity<?> index(Model model) {
-        return ResponseEntity.ok(serviceimpl.getAll());
+    public ResponseEntity<?> index(Model model, Pageable pageable) {
+        return ResponseEntity.ok(serviceimpl.getAll(pageable));
     }
 
     @PostMapping("add")

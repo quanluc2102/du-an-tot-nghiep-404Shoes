@@ -1,29 +1,29 @@
 import React, { Component } from 'react';
 import { toast } from 'react-toastify';
 import sanphamthuonghieuservice from '../../services/sanphamthuonghieuservice/sanphamthuonghieuservice';
-import SanPhamService1 from '../../services/sanphamservice/SanPhamService1';
-import thuonghieuservice from '../../services/thuonghieuservice/thuonghieuservice';
+import ReactPaginate from 'react-paginate';
 
 class SanPhamThuongHieuComponent extends Component {
     constructor(props) {
         super(props);
         this.state = {
             sanPhamThuongHieu: [],
+            pageCount: 0,
             sanPhamThuongHieuAdd: {
-                sanPhamId: '', 
+                sanPhamId: '',
                 thuongHieuId: '',
             },
             sanPhamThuongHieuUpdate: {
                 id: this.props.match.params.id,
-                sanPhamId: '', 
+                sanPhamId: '',
                 thuongHieuId: '',
             },
             errorsAdd: {
-                sanPhamId: '', 
+                sanPhamId: '',
                 thuongHieuId: '',
             },
             errorsUpdate: {
-                sanPhamId: '', 
+                sanPhamId: '',
                 thuongHieuId: '',
             },
             sanPhams: [],  // Thêm danh sách Sản phẩm vào state
@@ -41,25 +41,39 @@ class SanPhamThuongHieuComponent extends Component {
     }
 
     componentDidMount() {
-        this.loadSanPhamThuongHieuData();
+        this.loadSanPhamThuongHieuData(0);
         this.loadThuongHieuData();
         this.loadSanPhamData(); // Thêm dòng này để tải danh sách Sản phẩm
     }
+
+    loadPageData(pageNumber) {
+        sanphamthuonghieuservice.getSanPhamThuongHieu(pageNumber).then(res => {
+            this.setState({
+                sanPhamThuongHieu: res.data.content, // Dữ liệu trên trang hiện tại
+                pageCount: res.data.totalPages, // Tổng số trang
+            });
+        });
+    }
+
+    handlePageClick = data => {
+        let selected = data.selected; // Trang được chọn từ react-paginate
+        this.loadPageData(selected);
+    };
 
 
     loadSanPhamData() {
         // Gọi API hoặc lấy danh sách Sản phẩm từ dữ liệu và lưu vào state
         // Ví dụ:
-        SanPhamService1.getSanPham().then((res) => {
-            this.setState({ sanPhams: res.data });
+        sanphamthuonghieuservice.getSanPham().then((res) => {
+            this.setState({ sanPhams: res.data.content });
         });
     }
 
     loadThuongHieuData() {
         // Gọi API hoặc lấy danh sách Thương Hiệu từ dữ liệu và lưu vào state
         // Ví dụ:
-        thuonghieuservice.getThuongHieu().then((res) => {
-            this.setState({ thuongHieus: res.data });
+        sanphamthuonghieuservice.getThuongHieu().then((res) => {
+            this.setState({ thuongHieus: res.data.content });
         });
     }
 
@@ -69,16 +83,18 @@ class SanPhamThuongHieuComponent extends Component {
         }
     }
 
-    loadSanPhamThuongHieuData() {
-        sanphamthuonghieuservice.getSanPhamThuongHieu().then((res) => {
-            console.log(res.data);
-            this.setState({ sanPhamThuongHieu: res.data });
+    loadSanPhamThuongHieuData(pageNumber) {
+        sanphamthuonghieuservice.getSanPhamThuongHieu(pageNumber).then(res => {
+            this.setState({
+                sanPhamThuongHieu: res.data.content, // Dữ liệu trên trang hiện tại
+                pageCount: res.data.totalPages, // Tổng số trang
+            });
         });
 
         const id = this.props.match.params.id;
         if (id) {
             sanphamthuonghieuservice.getSanPhamThuongHieuById(id).then((res) => {
-                this.setState({ sanPhamThuongHieuUpdate: res.data });
+                this.setState({ sanPhamThuongHieuUpdate: res.data.content });
             });
         }
     }
@@ -286,6 +302,25 @@ class SanPhamThuongHieuComponent extends Component {
                                                     ))}
                                                 </tbody>
                                             </table>
+                                            <ReactPaginate
+                                                previousLabel={"<"}
+                                                nextLabel={">"}
+                                                breakLabel={"..."}
+                                                breakClassName={"page-item"}
+                                                breakLinkClassName={"page-link"}
+                                                pageClassName={"page-item"}
+                                                pageLinkClassName={"page-link"}
+                                                previousClassName={"page-item"}
+                                                previousLinkClassName={"page-link"}
+                                                nextClassName={"page-item"}
+                                                nextLinkClassName={"page-link"}
+                                                pageCount={this.state.pageCount}
+                                                marginPagesDisplayed={2}
+                                                pageRangeDisplayed={5}
+                                                onPageChange={this.handlePageClick}
+                                                containerClassName={"pagination justify-content-center"} // added justify-content-center for center alignment
+                                                activeClassName={"active"}
+                                            />
                                         </div>
                                     </div>
                                 </div>

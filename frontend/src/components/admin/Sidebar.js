@@ -18,8 +18,13 @@ function Sidebar() {
           </a>
           <ul id="components-nav" className="nav-content collapse " data-bs-parent="#sidebar-nav">
             <li>
-              <a href="components-alerts.html">
+              <a href="/sanphamchitiet">
                 <i className="bi bi-circle"></i><span>Sản phẩm chi tiết</span>
+              </a>
+            </li>
+            <li>
+              <a href="/">
+                <i className="bi bi-circle"></i><span>Sản phẩm</span>
               </a>
             </li>
             <li>
@@ -33,7 +38,7 @@ function Sidebar() {
               </a>
             </li>
             <li>
-              <a href="components-breadcrumbs.html">
+              <a href="/kichthuocmausac">
                 <i className="bi bi-circle"></i><span>Màu sắc kích thước</span>
               </a>
             </li>
@@ -58,17 +63,17 @@ function Sidebar() {
               </a>
             </li>
             <li>
-              <a href="components-list-group.html">
+              <a href="/sanphamthuonghieu">
                 <i className="bi bi-circle"></i><span>Thương hiệu sản phẩm</span>
               </a>
             </li>
             <li>
-              <a href="components-list-group.html">
+              <a href="/sanphamdanhmuc">
                 <i className="bi bi-circle"></i><span>Danh mục sản phẩm</span>
               </a>
             </li>
             <li>
-              <a href="components-list-group.html">
+              <a href="/sanphamxuatxu">
                 <i className="bi bi-circle"></i><span>Xuất xứ sản phẩm</span>
               </a>
             </li>

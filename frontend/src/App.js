@@ -18,6 +18,7 @@ import KichThuocMauSacComponent from './components/kichthuocmausaccomponent/Kich
 import SanPhamCTComponent from './components/spctcomponent/SanPhamCTComponent';
 import TaiKhoanComponent from "./components/taikhoancomponent/TaiKhoanComponent";
 import KhuyenMaiComponent from "./components/khuyenmaicomponent/KhuyenMaiComponent";
+import HoaDonComponents from './components/hoadoncomponents/HoaDonComponents';
 function App() {
   return (
 
@@ -58,6 +59,7 @@ function App() {
             <Route path='/taikhoandetail/:id' component={TaiKhoanComponent} />
             <Route path='/khuyenmai' component={KhuyenMaiComponent} />
             <Route path='/khuyenmaidetail/:id' component={KhuyenMaiComponent} />
+            <Route path='/hoadon' component={HoaDonComponents} />
           </Switch>
 
 

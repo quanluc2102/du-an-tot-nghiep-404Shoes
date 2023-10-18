@@ -36,7 +36,19 @@ public class SanPham {
     @Column(name = "giam_gia")
     private Float giamGia;
 
-    public SanPham( double giaNhap, String ten, double giaBan, int trangThai, String moTa, Float giamGia) {
+    @ManyToOne
+    @JoinColumn(name = "thuong_hieu", referencedColumnName = "id", nullable = true)
+    private ThuongHieu thuongHieu;
+
+    @ManyToOne
+    @JoinColumn(name = "xuat_xu", referencedColumnName = "id", nullable = true)
+    private XuatXu xuatXu;
+
+    @ManyToOne
+    @JoinColumn(name = "danh_muc", referencedColumnName = "id", nullable = true)
+    private DanhMuc danhMuc;
+
+    public SanPham(double giaNhap, String ten, double giaBan, int trangThai, String moTa, Float giamGia) {
         this.giaNhap = giaNhap;
         this.ten = ten;
         this.giaBan = giaBan;

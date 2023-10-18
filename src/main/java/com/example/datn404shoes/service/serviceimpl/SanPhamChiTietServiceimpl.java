@@ -1,12 +1,13 @@
 package com.example.datn404shoes.service.serviceimpl;
 
-import com.example.datn404shoes.entity.KichThuocMauSac;
 import com.example.datn404shoes.entity.SanPham;
 import com.example.datn404shoes.entity.SanPhamChiTiet;
 import com.example.datn404shoes.repository.SanPhamChiTietRepository;
 import com.example.datn404shoes.request.SanPhamChiTietRequest;
 import com.example.datn404shoes.service.SanPhamChiTietService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.sql.Date;
@@ -24,6 +25,11 @@ public class SanPhamChiTietServiceimpl implements SanPhamChiTietService {
     @Override
     public List<SanPhamChiTiet> getAll() {
         return repo.findAll();
+    }
+
+    @Override
+    public Page<SanPhamChiTiet> getAllPhanTrang(Pageable pageable) {
+        return repo.findAll(pageable);
     }
 
     @Override

@@ -9,8 +9,8 @@ const BASE_URL_DELETE = "http://localhost:8080/san_pham_chi_tiet/delete";
 const BASE_URL_UPDATE = "http://localhost:8080/san_pham_chi_tiet/update";
 
 class SanPhamChiTietService{
-    getSanPhamChiTiet(){
-        return axios.get(BASE_URL_SPCT_INDEX);
+    getSanPhamChiTiet(pageNumber){
+        return axios.get(BASE_URL_SPCT_INDEX+`?page=${pageNumber}&size=5`);
     }
 
     getSanPham(){

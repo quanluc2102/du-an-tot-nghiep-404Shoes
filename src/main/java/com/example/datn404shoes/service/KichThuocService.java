@@ -2,6 +2,8 @@ package com.example.datn404shoes.service;
 
 
 import com.example.datn404shoes.entity.KichThuoc;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -20,7 +22,7 @@ public interface KichThuocService {
 
     KichThuoc findOne(Long id);
 
-    List<KichThuoc> findAll();
+    Page<KichThuoc> findAll(Pageable pageable);
 
     void imPortExcel(MultipartFile file);
 }
