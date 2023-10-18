@@ -1,7 +1,7 @@
 package com.example.datn404shoes.service.serviceimpl;
 
 import com.example.datn404shoes.entity.MauSac;
-import com.example.datn404shoes.helper.MauSacExcelSave;
+//import com.example.datn404shoes.helper.MauSacExcelSave;
 import com.example.datn404shoes.repository.MauSacRepository;
 import com.example.datn404shoes.service.MauSacService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +33,7 @@ public class MauSacServiceImpl implements MauSacService {
     @Override
     public MauSac update(Long idud, MauSac mauSac) {
         MauSac mauSac1 = mauSacRepository.findById(idud).get();
-        mauSac1.setGiaTri(mauSac.getGiaTri());
+//        mauSac1.setGiaTri(mauSac.getGiaTri());
         mauSac1.setTen(mauSac.getTen());
         mauSac1.setTrangThai(mauSac.getTrangThai());
         this.mauSacRepository.save(mauSac1);
@@ -57,18 +57,18 @@ public class MauSacServiceImpl implements MauSacService {
 
     @Override
     public void imPortExcel(MultipartFile file) {
-        try {
-            List<MauSac> importEX = MauSacExcelSave.excelImport(file.getInputStream());
-            for (MauSac mauSac : importEX) {
-                add(mauSac);
-                mauSac.toString();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-            throw new RuntimeException("fail to store excel data: " + e.getMessage());
-        }
-        {
-
-        }
+//        try {
+//            List<MauSac> importEX = MauSacExcelSave.excelImport(file.getInputStream());
+//            for (MauSac mauSac : importEX) {
+//                add(mauSac);
+//                mauSac.toString();
+//            }
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//            throw new RuntimeException("fail to store excel data: " + e.getMessage());
+//        }
+//        {
+//
+//        }
     }
 }

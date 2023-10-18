@@ -2,7 +2,7 @@ package com.example.datn404shoes.service.serviceimpl;
 
 
 import com.example.datn404shoes.entity.TaiKhoan;
-import com.example.datn404shoes.helper.TaiKhoanExcelSave;
+//import com.example.datn404shoes.helper.TaiKhoanExcelSave;
 import com.example.datn404shoes.repository.TaiKhoanResponsitory;
 import com.example.datn404shoes.service.TaiKhoanService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,7 +51,7 @@ public class TaiKhoanServiceimpl implements TaiKhoanService {
         tk.setUsername(taiKhoan.getUsername());
         tk.setEmail(taiKhoan.getEmail());
         tk.setTen(taiKhoan.getTen());
-        tk.setDiaChi(taiKhoan.getDiaChi());
+//        tk.setDiaChi(taiKhoan.getDiaChi());
         tk.setNgayTao(taiKhoan.getNgayTao());
         tk.setNgayCapNhat(taiKhoan.getNgayCapNhat());
         tk.setPassword(taiKhoan.getPassword());

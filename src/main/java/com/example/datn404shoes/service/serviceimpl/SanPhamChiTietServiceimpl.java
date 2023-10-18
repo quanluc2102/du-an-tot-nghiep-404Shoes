@@ -39,8 +39,6 @@ public class SanPhamChiTietServiceimpl implements SanPhamChiTietService {
         spct.setNgayCapNhat(Date.valueOf(LocalDate.now()));
         spct.setSoLuong(spct1.getSoLuong());
         spct.setTrangThai(spct1.getTrangThai());
-        spct.setKichThuocMauSacId(KichThuocMauSac.builder().id(spct1.getKichThuocMauSacId()).build());
-        spct.setSanPhamId(SanPham.builder().id(spct1.getSanPhamId()).build());
         return repo.save(spct);
     }
 
@@ -60,9 +58,8 @@ public class SanPhamChiTietServiceimpl implements SanPhamChiTietService {
         SanPhamChiTiet a = repo.findById(id).orElse(null);
         a.setTrangThai(spct.getTrangThai());
         a.setNgayCapNhat(Date.valueOf(LocalDate.now()));
-        a.setSanPhamId(SanPham.builder().id(spct.getSanPhamId()).build());
+        a.setSanPham(SanPham.builder().id(spct.getSanPhamId()).build());
         a.setSoLuong(spct.getSoLuong());
-        a.setKichThuocMauSacId(KichThuocMauSac.builder().id(spct.getKichThuocMauSacId()).build());
         repo.save(a);
         return a;
     }

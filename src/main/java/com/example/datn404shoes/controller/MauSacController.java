@@ -2,7 +2,7 @@ package com.example.datn404shoes.controller;
 
 
 import com.example.datn404shoes.entity.MauSac;
-import com.example.datn404shoes.helper.MauSacExcelSave;
+//import com.example.datn404shoes.helper.MauSacExcelSave;
 import com.example.datn404shoes.service.serviceimpl.MauSacServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -65,14 +65,14 @@ public class MauSacController {
     @PostMapping(value = "import", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public String importExcel(@RequestParam("file") MultipartFile file) throws IOException {
         String message = "";
-        if (MauSacExcelSave.hasExcelFormat(file)) {
-            try {
-                mauSacService.imPortExcel(file);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-        message = "Please upload an excel file!";
+//        if (MauSacExcelSave.hasExcelFormat(file)) {
+//            try {
+//                mauSacService.imPortExcel(file);
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//        }
+//        message = "Please upload an excel file!";
         return "redirect:/mau_sac/hien_thi";
     }
 
