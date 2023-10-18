@@ -120,7 +120,7 @@ CREATE TABLE san_pham_chi_tiet (
                                    kich_thuoc BIGINT,
                                    mau_sac BIGINT,
                                    san_pham_id BIGINT,
-                                   anh nvarchar,
+                                   anh nvarchar(255),
                                    FOREIGN KEY (kich_thuoc) REFERENCES kich_thuoc(id),
                                    FOREIGN KEY (mau_sac) REFERENCES mau_sac(id),
                                    FOREIGN KEY (san_pham_id) REFERENCES san_pham(id)
@@ -245,3 +245,222 @@ CREATE TABLE lich_su_hoa_don(
                                 FOREIGN KEY (khuyen_mai) REFERENCES khuyen_mai(id)
 );
 use ShopShoe
+
+
+
+
+INSERT INTO [dbo].[xuat_xu]
+           ([ten],[trang_thai])
+     VALUES
+           (N'Trung quốc',1),
+		   (N'Việt Nam',1),
+		   (N'Mỹ',1),
+		   (N'Pháp',1),
+		   (N'Nhật',1);
+
+
+INSERT INTO quyen (ten, trang_thai)
+VALUES
+(N'Nhân Viên', 1),
+(N'Quản Lý', 1),
+(N'Khách Hàng', 1)
+
+    INSERT INTO tai_khoan (username, email, ngay_tao, ngay_cap_nhat, password, anh, trang_thai)
+VALUES
+    ( 'quanluc2102','quanluc123@gmail.com', GETDATE(), GETDATE(), '0987654321', 'anh1.jpg', 1),
+    ( 'thieubx33', 'thieu456@gmail.com',  GETDATE(), GETDATE(), '0987654321', 'anh2.jpg', 1),
+    (  'tienhungbt66','hungbt99@gmail.com' , GETDATE(), GETDATE(), '0987654321', 'anh3.jpg', 1),
+    ( 'dangbui98k', 'dang3389@gmail.com', GETDATE(), GETDATE(), '0987654321', 'anh4.jpg', 1),
+    ( 'dang78hy', 'dang78yu@gmail.com', GETDATE(), GETDATE(), '0987654321', 'anh5.jpg', 1);
+INSERT INTO phan_quyen (tai_khoan_id, quyen_id)
+VALUES
+(1, 1),
+(2, 2),
+(3, 3),
+(4, 2),
+(5, 2);
+INSERT INTO danh_muc (ten, trang_thai)
+VALUES
+(N'Giày Chạy Bộ', 1),
+(N'Giày Nhảy Dây', 1),
+(N'Giày Bóng Rổ', 1),
+(N'Giày Đá Bóng', 1),
+(N'Giày Đánh Cầu', 1),
+(N'Giày Bóng Chuyền', 1),
+(N'Giày Tập Gym', 1);
+INSERT INTO mau_sac (ten, trang_thai)
+VALUES
+(N'Trắng', 1),
+(N'Xanh Đen', 1),
+( N'Hồng Đen', 1),
+( N'Đỏ Trắng', 1),
+(N'Xanh Lam', 1),
+(N'Đỏ Đen', 1),
+( N'Tím Đen', 1),
+( N'Vàng Trắng', 1),
+(N'Hồng Lam', 1),
+(N'Ngọc Bích', 1),
+( N'Pha Lê', 1),
+( N'Nâu', 1),
+(N'Galaxy', 1),
+(N'Xám Khói', 1),
+( N'Trắng Đen', 1),
+( N'Đỏ Tươi', 1),
+(N'Lục Lam', 1),
+( N'Vàng', 1);
+INSERT INTO kich_thuoc (gia_tri, trang_thai)
+VALUES
+(36, 1),
+(37, 1),
+(38, 1),
+(39, 1),
+(40, 1),
+(41, 1),
+(42, 1),
+(43, 1)
+
+    INSERT INTO thanh_toan (ten, trang_thai)
+VALUES
+    (N'Thanh toán online', 1),
+    (N'Thanh toán khi nhận hàng', 1),
+    (N'Thanh toán VNPay', 1);
+
+INSERT INTO thuong_hieu (ten, trang_thai)
+VALUES
+('Nike', 1),
+('Adidas', 1),
+('Puma', 1),
+('New Balance', 1),
+('Skechers', 1),
+('Reebok', 1),
+('Asic', 1),
+('Converse', 1);
+
+SELECT * FROM THONG_TIN_NGUOI_DUNG
+
+    INSERT INTO thong_tin_nguoi_dung (dia_chi, ngay_sinh, sdt, ten,cccd,gioi_tinh, ngay_cap_nhat, tai_khoan_id)
+VALUES
+    (N'Hưng Yên', '1990-01-01', '0987654321', N'Trần Đăng','009876000765',1, GETDATE(), 1),
+    (N'Thái Bình', '1990-02-02', '0987654321', N'Bùi Hùng','098786788765',1, GETDATE(), 2),
+    (N'Hải Phòng', '1990-03-03', '0987654321', N'Minh Quân','008675000223',1, GETDATE(), 3),
+    (N'Bắc Kan', '1990-04-04', '0987654321', N'Xuân Thiệu','009034055123',1, GETDATE(), 4),
+    (N'Nam ĐỊnh', '1990-05-05', '0987654321', N'Xuân Mai','006756777867',2, GETDATE(), 5);
+
+
+
+
+
+INSERT INTO san_pham (ngay_tao, gia_nhap, ten, gia_ban, trang_thai, ngay_cap_nhat, mo_ta,giam_gia,thuong_hieu,xuat_xu,danh_muc)
+VALUES
+(GETDATE(), 2000000, N'Giày Thể Thao Nam Adidas Mens Courtphase Trainers', 2100000, 1, GETDATE(), N'Sản phẩm tốt',0,2,2,3),
+(GETDATE(), 2100000, N'Giày Thể Thao Adidas Stan Smith Shoes', 178000, 1, GETDATE(), N'Sản phẩm tốt',0,2,2,1),
+(GETDATE(), 4500000, N'Giày Thể Thao Nike Air Force 1 High Green White', 150000, 1, GETDATE(), N'Sản phẩm tốt',0,1,3,1)
+
+
+
+select * from san_pham_chi_tiet
+    INSERT INTO san_pham_chi_tiet (so_luong, ngay_tao, ngay_cap_nhat, trang_thai,kich_thuoc,mau_sac,san_pham_id,anh)
+VALUES
+    (100, GETDATE(), GETDATE(), 1,2,3,1,'anh5.jpg'),
+    (20, GETDATE(), GETDATE(), 1,4,3,1,'anh5.jpg'),
+    (40, GETDATE(), GETDATE(), 1,3,6,1,'anh5.jpg'),
+    (20, GETDATE(), GETDATE(), 1,3,3,1,'anh5.jpg'),
+    (30, GETDATE(), GETDATE(), 1,4,2,1,'anh5.jpg')
+
+
+
+INSERT INTO san_pham_anh (san_pham_id, anh)
+VALUES
+    (1, 'anh1.jpg'),
+    (2, 'anh2.jpg'),
+    (1, 'anh3.jpg'),
+    (3, 'anh4.jpg'),
+    (2, 'anh5.jpg');
+
+
+INSERT INTO hoa_don (ngay_tao, ghi_chu, ngay_cap_nhat, trang_thai, tai_khoan_id, thanh_toan_id,kieu_hoa_don,tong_tien,phi_ship,tien_giam,tong_tien_sau_giam,ten,sdt,email,thanh_pho,quan_huyen,phuong_xa)
+VALUES
+(GETDATE(), N'Khách hàng yêu cầu bọc', GETDATE(), 1, 1, 1,1,0,20000,30000,10000,N'Lương Văn Mai','0362460679','thieutttt01@gmail.com',N'Hà Nội',N'Đông Anh',N'Vân NộI'),
+(GETDATE(), N'Hỏa tốc', GETDATE(), 1, 2, 2,1,0,20000,30000,10000,N'Kiều Minh Quang','0362460679','thieutttt02@gmail.com',N'Hà Nội',N'Đông Anh',N'Vân NộI')
+
+
+    INSERT INTO gio_hang (ngay_tao, ghi_chu, ngay_cap_nhat, trang_thai, tai_khoan_id,tong_tien)
+VALUES
+    (GETDATE(), N'Giỏ hàng của khách', GETDATE(), 1, 1,0),
+    (GETDATE(), N'Giỏ hàng của khách', GETDATE(), 1, 2,0),
+    (GETDATE(), N'Giỏ hàng của khách', GETDATE(), 1, 3,0),
+    (GETDATE(), N'Giỏ hàng của khách', GETDATE(), 1, 4,0),
+    (GETDATE(), N'Giỏ hàng của khách', GETDATE(), 1, 5,0);
+
+
+INSERT INTO hoa_don_chi_tiet (ghi_chu, so_luong, hoa_don_id, san_pham_chi_tiet_id)
+VALUES
+(N'Tốt', 2, 1, 1),
+(N'Tốt', 3, 2, 2),
+(N'Tốt', 4, 1, 1),
+(N'Tốt', 5, 1, 1),
+(N'Tốt', 6, 2, 1);
+
+
+
+
+INSERT INTO hoa_don_chi_tiet (ghi_chu, so_luong, hoa_don_id, san_pham_chi_tiet_id)
+VALUES
+(N'Ghi chú 1', 2, 1, 1),
+(N'Ghi chú 2', 3, 2, 2)
+
+
+    INSERT INTO gio_hang_chi_tiet (gio_hang_id, san_pham_chi_tiet_id, so_luong)
+VALUES
+    (1, 1, 2),
+    (2, 2, 3),
+    (3, 3, 4),
+    (4, 4, 5),
+    (5, 5, 6);
+
+INSERT INTO [dbo].[khuyen_mai]
+(ma,[ten],[mo_ta],[bat_dau],[ket_thuc],[giam_gia],[kieu_khuyen_mai],dieu_kien,so_luong,trang_thai)
+VALUES
+    ('KHUYENMAICHAOMUNG',N'KHUYẾN MÃI CHÀO MỪNG NGƯỜI MỚI',N'GIẢM 50K VỚI THÀNH VIÊN MỚI','2023/10/1','2023/10/5',10 ,1,50000,20,1),
+    ('KHUYENMAIPK',N'KHUYẾN MÃI TƯNG BỪNG',N'GIẢM 10K KHI MUA SẢN PHẨM TRÊN 10K','2023/10/1','2023/10/5',10000 ,0,10000,20,1),
+    ('KHUYENMAITHANG10',N'KHUYẾN MÃI THÁNG 10',N'GIẢM 10K KHI MUA SẢN PHẨM TRÊN 15K','2023/10/1','2023/10/5',15000 ,1,100000,20,1),
+    ('KHUYENMAIDEMDONG',N'ĐÔNG KHUYẾN MÃI',N'GIẢM 80K KHI MUA SẢN PHẨM TRÊN 800K','2023/10/10','2023/11/11',10000 ,1,800000,20,1),
+    ('KHUYENMAIBLACKDAY',N'KHUYẾN MÃI NGÀY ĐEN',N'GIẢM 10K KHI MUA SẢN PHẨM TRÊN 10K','2023/09/1','2023/10/5',10 ,1,0,20,1);
+
+
+INSERT INTO [dbo].[lich_su_hoa_don]
+([ma_hoa_don],[san_pham_chi_tiet],[phuong_thuc_thanh_toan],[nguoi_nhan],[khuyen_mai],[ngay_tao_hoa_don],[tong_tien],[dia_chi_giao],[ghi_chu],[trang_thai_hoa_don])
+VALUES
+    (1,1,1,1,1,'2023/10/5',0,'Hà Nội','Không',1),
+    (2,2,2,2,2,'2023/10/5',0,'Hà Nội','Không',1)
+
+
+INSERT INTO [dbo].[tich_diem]
+([tai_khoan_id],[diem])
+VALUES
+    (1,10000),
+    (2,1000),
+    (3,40000),
+    (4,15000),
+    (5,5000);
+
+select * from danh_muc
+select * from gio_hang
+select * from gio_hang_chi_tiet
+select * from hoa_don
+select * from hoa_don_chi_tiet
+select * from khuyen_mai
+select * from kich_thuoc
+select * from lich_su_hoa_don
+select * from mau_sac
+select * from phan_quyen
+select * from quyen
+select * from san_pham
+select * from san_pham_anh
+select * from tai_khoan
+select * from thanh_toan
+select * from thong_tin_nguoi_dung
+select * from thuong_hieu
+select * from tich_diem
+select * from xuat_xu
+

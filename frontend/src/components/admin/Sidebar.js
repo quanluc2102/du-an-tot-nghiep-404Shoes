@@ -38,11 +38,6 @@ function Sidebar() {
               </a>
             </li>
             <li>
-              <a href="/kichthuocmausac">
-                <i className="bi bi-circle"></i><span>Màu sắc kích thước</span>
-              </a>
-            </li>
-            <li>
               <a href="/thuonghieu">
                 <i className="bi bi-circle"></i><span>Thương hiệu</span>
               </a>
@@ -62,21 +57,7 @@ function Sidebar() {
                 <i className="bi bi-circle"></i><span>Ảnh sản phẩm</span>
               </a>
             </li>
-            <li>
-              <a href="/sanphamthuonghieu">
-                <i className="bi bi-circle"></i><span>Thương hiệu sản phẩm</span>
-              </a>
-            </li>
-            <li>
-              <a href="/sanphamdanhmuc">
-                <i className="bi bi-circle"></i><span>Danh mục sản phẩm</span>
-              </a>
-            </li>
-            <li>
-              <a href="/sanphamxuatxu">
-                <i className="bi bi-circle"></i><span>Xuất xứ sản phẩm</span>
-              </a>
-            </li>
+            
           </ul>
         </li>
 

@@ -47,7 +47,7 @@ class XuatXuComponent extends Component {
 
     loadXuatXuData() {
         xuatxuservice.getXuatXu().then((res) => {
-            this.setState({ xuatXu: res.data });
+            this.setState({ xuatXu: res.data.content });
         });
 
         const id = this.props.match.params.id;
