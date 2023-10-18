@@ -11,10 +11,6 @@ import MauSacComponent from './components/mausaccomponent/MauSacComponent';
 import KichThuocComponent from './components/kichthuoccomponent/KichThuocComponent';
 import ThuongHieuComponent from './components/thuonghieucomponent/ThuongHieuComponent';
 import XuatXuComponent from './components/xuatxucomponent/XuatXuComponent';
-import SanPhamDanhMucComponent from './components/sanphamdanhmuccomponent/SanPhamDanhMucComponent';
-import SanPhamThuongHieuComponent from './components/sanphamthuonghieucomponent/SanPhamThuongHieuComponent';
-import SanPhamXuatXuComponent from './components/sanphamxuatxucomponent/SanPhamXuatXuComponent';
-import KichThuocMauSacComponent from './components/kichthuocmausaccomponent/KichThuocMauSacComponent';
 import SanPhamCTComponent from './components/spctcomponent/SanPhamCTComponent';
 import TaiKhoanComponent from "./components/taikhoancomponent/TaiKhoanComponent";
 import KhuyenMaiComponent from "./components/khuyenmaicomponent/KhuyenMaiComponent";
@@ -45,14 +41,6 @@ function App() {
             <Route path='/thuonghieudetail/:id' component={ThuongHieuComponent} />
             <Route path='/xuatxu' component={XuatXuComponent} />
             <Route path='/xuatxudetail/:id' component={XuatXuComponent} />
-            <Route path='/sanphamdanhmuc' component={SanPhamDanhMucComponent} />
-            <Route path='/sanphamdanhmuc/:id' component={SanPhamDanhMucComponent} />
-            <Route path='/sanphamthuonghieu' component={SanPhamThuongHieuComponent} />
-            <Route path='/sanphamthuonghieu/:id' component={SanPhamThuongHieuComponent} />
-            <Route path='/sanphamxuatxu' component={SanPhamXuatXuComponent} />
-            <Route path='/sanphamxuatxu/:id' component={SanPhamXuatXuComponent} />
-            <Route path='/kichthuocmausac' component={KichThuocMauSacComponent} />
-            <Route path='/kichthuocmausacdetail/:id' component={KichThuocMauSacComponent} />
             <Route path='/sanphamchitiet' component={SanPhamCTComponent} />
             <Route path='/sanphamchitietdetail/:id' component={SanPhamCTComponent} />
             <Route path='/taikhoan' component={TaiKhoanComponent} />
@@ -61,8 +49,6 @@ function App() {
             <Route path='/khuyenmaidetail/:id' component={KhuyenMaiComponent} />
             <Route path='/hoadon' component={HoaDonComponents} />
           </Switch>
-
-
         </main>
         <Footer />
       </Router>
