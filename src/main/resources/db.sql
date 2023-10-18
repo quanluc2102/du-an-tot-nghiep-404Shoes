@@ -8,7 +8,6 @@ CREATE TABLE tai_khoan (
                            id BIGINT PRIMARY KEY IDENTITY(1,1),
                            username NVARCHAR(255) NOT NULL,
                            email NVARCHAR(255) NOT NULL,
-                           ten NVARCHAR(255) NOT NULL,
                            ngay_tao DATETIME,
                            ngay_cap_nhat DATETIME,
                            password NVARCHAR(255) NOT NULL,
