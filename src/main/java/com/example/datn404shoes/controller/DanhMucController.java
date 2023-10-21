@@ -1,6 +1,7 @@
 package com.example.datn404shoes.controller;
 
 import com.example.datn404shoes.entity.DanhMuc;
+import com.example.datn404shoes.repository.DanhMucRepository;
 import com.example.datn404shoes.service.serviceimpl.DanhMucServiceimpl;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,10 +25,16 @@ import java.util.stream.Collectors;
 public class DanhMucController {
     @Autowired
     DanhMucServiceimpl serviceimpl;
-
+    @Autowired
+    DanhMucRepository repository;
     @GetMapping("hien_thi")
     public ResponseEntity<?> index(Model model, Pageable pageable) {
         return ResponseEntity.ok(serviceimpl.getAll(pageable));
+    }
+
+    @GetMapping("index")
+    public ResponseEntity<?> index1(Model model) {
+        return ResponseEntity.ok(repository.findAll());
     }
 
     @PostMapping("add")

@@ -4,6 +4,7 @@ package com.example.datn404shoes.controller;
 import com.example.datn404shoes.entity.KichThuoc;
 import com.example.datn404shoes.entity.KichThuoc;
 import com.example.datn404shoes.helper.KichThuocExcelSave;
+import com.example.datn404shoes.repository.KichThuocRepository;
 import com.example.datn404shoes.service.serviceimpl.KichThuocServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -24,12 +25,17 @@ public class KichThuocController {
 
     @Autowired
     KichThuocServiceImpl kichThuocService;
-
+    @Autowired
+    KichThuocRepository repository;
     @GetMapping("hien_thi")
     public ResponseEntity<?> hienThi(Model model, Pageable pageable) {
         return ResponseEntity.ok(kichThuocService.findAll(pageable));
     }
 
+    @GetMapping("index")
+    public ResponseEntity<?> index1(Model model) {
+        return ResponseEntity.ok(repository.findAll());
+    }
 //    @GetMapping("create")
 //    public String addView(Model model) {
 //        model.addAttribute("listKichThuoc", kichThuocService.findAll());

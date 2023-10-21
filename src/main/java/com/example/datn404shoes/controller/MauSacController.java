@@ -3,6 +3,7 @@ package com.example.datn404shoes.controller;
 
 import com.example.datn404shoes.entity.MauSac;
 //import com.example.datn404shoes.helper.MauSacExcelSave;
+import com.example.datn404shoes.repository.MauSacRepository;
 import com.example.datn404shoes.service.serviceimpl.MauSacServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -22,12 +23,17 @@ public class MauSacController {
 
     @Autowired
     MauSacServiceImpl mauSacService;
-
+    @Autowired
+    MauSacRepository repository;
     @GetMapping("hien_thi")
     public ResponseEntity<?> hienThi(Model model, Pageable pageable) {
         return ResponseEntity.ok(mauSacService.findAll(pageable));
     }
 
+    @GetMapping("index")
+    public ResponseEntity<?> index1(Model model) {
+        return ResponseEntity.ok(repository.findAll());
+    }
 //    @GetMapping("create")
 //    public String create(Model model) {
 //        model.addAttribute("view", "/mau_sac/mau_sac_add.jsp");

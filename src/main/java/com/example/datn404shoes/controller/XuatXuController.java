@@ -3,6 +3,7 @@ package com.example.datn404shoes.controller;
 
 
 import com.example.datn404shoes.entity.XuatXu;
+import com.example.datn404shoes.repository.XuatXuRepository;
 import com.example.datn404shoes.service.serviceimpl.XuatXuServiceimpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -21,12 +22,16 @@ public class XuatXuController {
 
     @Autowired
     XuatXuServiceimpl xuatXuServiceimpl;
-
+    @Autowired
+    XuatXuRepository repository;
     @GetMapping("hien_thi")
     public ResponseEntity<?> hienThi(Model model, Pageable pageable) {
         return ResponseEntity.ok(xuatXuServiceimpl.getAll(pageable));
     }
-
+    @GetMapping("index")
+    public ResponseEntity<?> index1(Model model) {
+        return ResponseEntity.ok(repository.findAll());
+    }
 //    @GetMapping("create")
 //    public String addView(Model model) {
 //        model.addAttribute("listXuatXu", xuatXuServiceimpl.findAll());
