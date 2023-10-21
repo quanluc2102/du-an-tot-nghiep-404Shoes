@@ -15,6 +15,8 @@ public interface MauSacService {
 
     void delete(Long id);
 
+    MauSac thayDoiTrangThai(Long id, MauSac mauSac);
+
     MauSac update(Long idud, MauSac mauSac);
 
     MauSac detail(Long id);

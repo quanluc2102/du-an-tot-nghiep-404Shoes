@@ -1,6 +1,7 @@
 package com.example.datn404shoes.service.serviceimpl;
 
 import com.example.datn404shoes.entity.ThuongHieu;
+import com.example.datn404shoes.entity.ThuongHieu;
 import com.example.datn404shoes.repository.ThuongHieuRepository;
 import com.example.datn404shoes.service.ThuongHieuService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,14 @@ public class ThuongHieuServiceimpl implements ThuongHieuService {
     public ThuongHieu add(ThuongHieu th) {
         repository.save(th);
         return th;
+    }
+
+    @Override
+    public ThuongHieu thayDoiTrangThai(Long id, ThuongHieu thuongHieu) {
+        ThuongHieu thuongHieu1 = repository.findById(id).get();
+        thuongHieu1.setTen(thuongHieu.getTen());
+        thuongHieu1.setTrangThai(thuongHieu.getTrangThai());
+        return repository.save(thuongHieu1);
     }
 
     @Override

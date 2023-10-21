@@ -178,19 +178,29 @@ class XuatXuComponent extends Component {
         }));
     }
 
-
+    toggleXuatXu(id, currentTrangThai) {
+        const newTrangThai = currentTrangThai === 0 ? 1 : 0; // Chuyển đổi trạng thái
+        xuatxuservice.updateXuatXuTrangThai({ trangThai: newTrangThai }, id).then((res) => {
+            let xuatXuCapNhat = res.data;
+            this.setState(prevState => ({
+                xuatXu: prevState.xuatXu.map(xx =>
+                    xx.id === xuatXuCapNhat.id ? xuatXuCapNhat : xx
+                )
+            }));
+        });
+    }
 
 
     render() {
         return (
             <div>
                 <div className="pagetitle">
-                    <h1>Color</h1>
+                    <h1>Xuất xứ</h1>
                     <nav>
                         <ol className="breadcrumb">
-                            <li className="breadcrumb-item"><a href="index.html">Home</a></li>
-                            <li className="breadcrumb-item active">Overview</li>
-                            <li className="breadcrumb-item active">Color</li>
+                            {/*<li className="breadcrumb-item"><a href="index.html">Home</a></li>*/}
+                            {/*<li className="breadcrumb-item active">Overview</li>*/}
+                            {/*<li className="breadcrumb-item active">Color</li>*/}
                         </ol>
                     </nav>
                 </div>
@@ -204,11 +214,11 @@ class XuatXuComponent extends Component {
                                 <div className="col-12">
                                     <div className="card recent-sales overflow-auto">
                                         <div className="card-body">
-                                            <h5 className="card-title">Color <span>| </span></h5>
+                                            <h5 className="card-title">Danh sách xuất xứ <span>| </span></h5>
                                             <table className="table datatable table-borderless ">
                                                 <thead>
                                                     <tr>
-                                                        <th>Thương hiệu</th>
+                                                        <th>Xuất xứ</th>
                                                         <th>Trạng thái</th>
                                                         <th>Action</th>
                                                     </tr>
@@ -229,9 +239,17 @@ class XuatXuComponent extends Component {
                                                             xx =>
                                                                 <tr key={xx.id}>
                                                                     <td>{xx.ten}</td>
-                                                                    <td>{xx.trangThai == 1 ? "HD" : "Ko HD"}</td>
+                                                                    <td><label className="switch">
+                                                                        <input
+                                                                            type="checkbox"
+                                                                            checked={xx.trangThai === 0}
+                                                                            onChange={() => this.toggleXuatXu(xx.id, xx.trangThai)}
+                                                                        />
+
+                                                                        <span className="slider round"></span>
+                                                                    </label></td>
                                                                     <td>
-                                                                        <button onClick={() => this.delete(xx.id)} className='btn btn-danger'>Xóa</button>
+                                                                        {/*<button onClick={() => this.delete(xx.id)} className='btn btn-danger'>Xóa</button>*/}
                                                                         <button onClick={() => this.detail(xx.id)} className='btn btn-primary'>Chi tiết</button>
                                                                     </td>
                                                                 </tr>
@@ -275,12 +293,12 @@ class XuatXuComponent extends Component {
                                                 aria-selected="false">Add new
                                             </button>
                                         </li>
-                                        <li className="nav-item" role="presentation">
-                                            <button className="nav-link" id="contact-tab" data-bs-toggle="tab"
-                                                data-bs-target="#contact" type="button" role="tab" aria-controls="contact"
-                                                aria-selected="false">Detail
-                                            </button>
-                                        </li>
+                                        {/*<li className="nav-item" role="presentation">*/}
+                                        {/*    <button className="nav-link" id="contact-tab" data-bs-toggle="tab"*/}
+                                        {/*        data-bs-target="#contact" type="button" role="tab" aria-controls="contact"*/}
+                                        {/*        aria-selected="false">Detail*/}
+                                        {/*    </button>*/}
+                                        {/*</li>*/}
                                     </ul>
 
 
@@ -307,8 +325,9 @@ class XuatXuComponent extends Component {
                                                         className={`form-control ${this.state.errorsUpdate.trangThai ? 'is-invalid' : ''}`}
                                                         onChange={this.thayDoiTrangThaiUpdate}
                                                     >
-                                                        <option value='0'>Còn</option>
-                                                        <option value="1">Ko còn</option>
+                                                        <option value=''>Chọn trạng thái</option>
+                                                        <option value="0">Hoạt động</option>
+                                                        <option value="1">Không hoạt động</option>
                                                     </select>
                                                     {this.state.errorsUpdate.trangThai && <div className="text-danger">{this.state.errorsUpdate.trangThai}</div>}
                                                 </div>
@@ -338,8 +357,9 @@ class XuatXuComponent extends Component {
                                                         className={`form-control ${this.state.errorsAdd.trangThai ? 'is-invalid' : ''}`}
                                                         onChange={this.thayDoiTrangThaiAdd}
                                                     >
-                                                        <option value='0'>Còn</option>
-                                                        <option value="1">Ko còn</option>
+                                                        <option value=''>Chọn trạng thái</option>
+                                                        <option value="0">Hoạt động</option>
+                                                        <option value="1">Không hoạt động</option>
                                                     </select>
                                                     {this.state.errorsAdd.trangThai && <div className="text-danger">{this.state.errorsAdd.trangThai}</div>}
                                                 </div>

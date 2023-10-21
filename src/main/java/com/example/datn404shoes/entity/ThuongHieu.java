@@ -22,18 +22,18 @@ public class ThuongHieu {
     private String ten;
 
     @Column(name = "trang_thai")
-    private Boolean trangThai;
+    private Integer trangThai;
 
-    public String layTrangThai(){
-        if(trangThai == true){
-            return "Active";
-        }else{
-            return "Inactive";
-        }
-    }
-
-    public ThuongHieu(String ten, Boolean trangThai) {
-        this.ten = ten;
-        this.trangThai = trangThai;
-    }
+//    public String layTrangThai(){
+//        if(trangThai == true){
+//            return "Active";
+//        }else{
+//            return "Inactive";
+//        }
+//    }
+//
+//    public ThuongHieu(String ten, Boolean trangThai) {
+//        this.ten = ten;
+//        this.trangThai = trangThai;
+//    }
 }

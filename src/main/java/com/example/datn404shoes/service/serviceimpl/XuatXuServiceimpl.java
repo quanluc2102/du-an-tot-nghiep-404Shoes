@@ -2,6 +2,7 @@ package com.example.datn404shoes.service.serviceimpl;
 
 
 import com.example.datn404shoes.entity.XuatXu;
+import com.example.datn404shoes.entity.XuatXu;
 import com.example.datn404shoes.repository.XuatXuRepository;
 import com.example.datn404shoes.service.XuatXuService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,14 @@ public class XuatXuServiceimpl implements XuatXuService {
     public XuatXu add(XuatXu xuatXu) {
         repository.save(xuatXu);
         return xuatXu;
+    }
+
+    @Override
+    public XuatXu thayDoiTrangThai(Long id, XuatXu xuatXu) {
+        XuatXu xuatXu1 = repository.findById(id).get();
+        xuatXu1.setTen(xuatXu.getTen());
+        xuatXu1.setTrangThai(xuatXu.getTrangThai());
+        return repository.save(xuatXu1);
     }
 
     @Override

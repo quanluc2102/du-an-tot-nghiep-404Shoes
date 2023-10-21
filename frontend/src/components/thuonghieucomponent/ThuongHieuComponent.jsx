@@ -209,19 +209,29 @@ class ThuongHieuComponent extends Component {
         this.setState({ errorsUpdate: errorsUpdate });
     }
 
-
+    toggleThuongHieu(id, currentTrangThai) {
+        const newTrangThai = currentTrangThai === 0 ? 1 : 0; // Chuyển đổi trạng thái
+        thuonghieuservice.updateThuongHieuTrangThai({ trangThai: newTrangThai }, id).then((res) => {
+            let thuongHieuCapNhat = res.data;
+            this.setState(prevState => ({
+                thuongHieu: prevState.thuongHieu.map(th =>
+                    th.id === thuongHieuCapNhat.id ? thuongHieuCapNhat : th
+                )
+            }));
+        });
+    }
 
 
     render() {
         return (
             <div>
                 <div className="pagetitle">
-                    <h1>Color</h1>
+                    <h1>Thương hiệu</h1>
                     <nav>
                         <ol className="breadcrumb">
-                            <li className="breadcrumb-item"><a href="index.html">Home</a></li>
-                            <li className="breadcrumb-item active">Overview</li>
-                            <li className="breadcrumb-item active">Color</li>
+                            {/*<li className="breadcrumb-item"><a href="index.html">Home</a></li>*/}
+                            {/*<li className="breadcrumb-item active">Overview</li>*/}
+                            {/*<li className="breadcrumb-item active">Color</li>*/}
                         </ol>
                     </nav>
                 </div>
@@ -237,7 +247,7 @@ class ThuongHieuComponent extends Component {
 
 
                                         <div className="card-body">
-                                            <h5 className="card-title">Color <span>| </span></h5>
+                                            <h5 className="card-title">Danh sách thương hiệu <span>| </span></h5>
 
                                             <table className="table table-borderless datatable">
                                                 <thead>
@@ -263,9 +273,17 @@ class ThuongHieuComponent extends Component {
                                                             th =>
                                                                 <tr key={th.id}>
                                                                     <td>{th.ten}</td>
-                                                                    <td>{th.trangThai == 1 ? "HD" : "Ko HD"}</td>
+                                                                    <td><label className="switch">
+                                                                        <input
+                                                                            type="checkbox"
+                                                                            checked={th.trangThai === 0}
+                                                                            onChange={() => this.toggleThuongHieu(th.id, th.trangThai)}
+                                                                        />
+
+                                                                        <span className="slider round"></span>
+                                                                    </label></td>
                                                                     <td>
-                                                                        <button onClick={() => this.delete(th.id)} className='btn btn-danger'>Xóa</button>
+                                                                        {/*<button onClick={() => this.delete(th.id)} className='btn btn-danger'>Xóa</button>*/}
                                                                         <button onClick={() => this.detail(th.id)} className='btn btn-primary'>Chi tiết</button>
                                                                     </td>
                                                                 </tr>
@@ -312,7 +330,7 @@ class ThuongHieuComponent extends Component {
                             <div className="card">
 
                                 <div className="card-body">
-                                    <h5 className="card-title">Sửa <span>| xx</span></h5>
+                                    <h5 className="card-title">Thao tác <span>|</span></h5>
 
                                     <ul className="nav nav-tabs" id="myTab" role="tablist">
                                         <li className="nav-item" role="presentation">
@@ -327,12 +345,12 @@ class ThuongHieuComponent extends Component {
                                                 aria-selected="false">Add new
                                             </button>
                                         </li>
-                                        <li className="nav-item" role="presentation">
-                                            <button className="nav-link" id="contact-tab" data-bs-toggle="tab"
-                                                data-bs-target="#contact" type="button" role="tab" aria-controls="contact"
-                                                aria-selected="false">Detail
-                                            </button>
-                                        </li>
+                                        {/*<li className="nav-item" role="presentation">*/}
+                                        {/*    <button className="nav-link" id="contact-tab" data-bs-toggle="tab"*/}
+                                        {/*        data-bs-target="#contact" type="button" role="tab" aria-controls="contact"*/}
+                                        {/*        aria-selected="false">Detail*/}
+                                        {/*    </button>*/}
+                                        {/*</li>*/}
                                     </ul>
 
 
@@ -348,8 +366,9 @@ class ThuongHieuComponent extends Component {
                                                 <div className='form-group'>
                                                     <label>Trạng thái</label>
                                                     <select name="trangThai" id="trangThai" value={this.state.thuongHieuUpdate.trangThai} className={`form-control ${this.state.errorsUpdate.trangThai ? 'is-invalid' : ''}`} onChange={this.thayDoiTrangThaiUpdate}>
-                                                        <option value='true'>Còn</option>
-                                                        <option value="false">Ko còn</option>
+                                                        <option value=''>Chọn trạng thái</option>
+                                                        <option value="0">Hoạt động</option>
+                                                        <option value="1">Không hoạt động</option>
                                                     </select>
                                                     {this.state.errorsUpdate.trangThai && <div className="text-danger">{this.state.errorsUpdate.trangThai}</div>}
                                                 </div>
@@ -367,8 +386,9 @@ class ThuongHieuComponent extends Component {
                                                 <div className='form-group'>
                                                     <label>Trạng thái</label>
                                                     <select name="trangThai" id="trangThai" className={`form-control ${this.state.errorsAdd.trangThai ? 'is-invalid' : ''}`} onChange={this.thayDoiTrangThaiAdd}>
-                                                        <option value='true'>Còn</option>
-                                                        <option value="false">Ko còn</option>
+                                                        <option value=''>Chọn trạng thái</option>
+                                                        <option value="0">Hoạt động</option>
+                                                        <option value="1">Không hoạt động</option>
                                                     </select>
                                                     {this.state.errorsAdd.trangThai && <div className="text-danger">{this.state.errorsAdd.trangThai}</div>}
 

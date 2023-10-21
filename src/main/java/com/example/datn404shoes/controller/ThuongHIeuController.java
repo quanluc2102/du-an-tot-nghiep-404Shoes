@@ -1,6 +1,7 @@
 package com.example.datn404shoes.controller;
 
 import com.example.datn404shoes.entity.ThuongHieu;
+import com.example.datn404shoes.entity.ThuongHieu;
 import com.example.datn404shoes.repository.ThuongHieuRepository;
 import com.example.datn404shoes.service.serviceimpl.ThuongHieuServiceimpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:3000")
@@ -55,5 +57,15 @@ public class ThuongHIeuController {
                                     @RequestBody ThuongHieu thuongHieu) {
 
         return ResponseEntity.ok(serviceimpl.update(id, thuongHieu));
+    }
+
+    @PutMapping("updatett/{id}")
+    public ResponseEntity<?> updatett(Model model,
+                                      @PathVariable("id") Long id,
+                                      @RequestBody Map<String, Integer> trangThaiData) {
+        Integer newTrangThai = trangThaiData.get("trangThai");
+        ThuongHieu thuongHieu = serviceimpl.getOne(id);
+        thuongHieu.setTrangThai(newTrangThai);
+        return ResponseEntity.ok(serviceimpl.thayDoiTrangThai(id, thuongHieu));
     }
 }

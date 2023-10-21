@@ -31,6 +31,14 @@ public class MauSacServiceImpl implements MauSacService {
     }
 
     @Override
+    public MauSac thayDoiTrangThai(Long id, MauSac mauSac) {
+        MauSac mauSac1 = mauSacRepository.findById(id).get();
+        mauSac1.setTen(mauSac.getTen());
+        mauSac1.setTrangThai(mauSac.getTrangThai());
+        return mauSacRepository.save(mauSac1);
+    }
+
+    @Override
     public MauSac update(Long idud, MauSac mauSac) {
         MauSac mauSac1 = mauSacRepository.findById(idud).get();
 //        mauSac1.setGiaTri(mauSac.getGiaTri());

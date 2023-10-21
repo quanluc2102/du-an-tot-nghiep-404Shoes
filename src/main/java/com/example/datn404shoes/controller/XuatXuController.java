@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Map;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:3000")
@@ -64,6 +65,16 @@ public class XuatXuController {
     public ResponseEntity<?> detail(Model model, @PathVariable("iddt") Long iddt) {
         return ResponseEntity.ok(xuatXuServiceimpl.getOne(iddt));
 
+    }
+
+    @PutMapping("updatett/{id}")
+    public ResponseEntity<?> updatett(Model model,
+                                      @PathVariable("id") Long id,
+                                      @RequestBody Map<String, Integer> trangThaiData) {
+        Integer newTrangThai = trangThaiData.get("trangThai");
+        XuatXu xuatXu = xuatXuServiceimpl.getOne(id);
+        xuatXu.setTrangThai(newTrangThai);
+        return ResponseEntity.ok(xuatXuServiceimpl.thayDoiTrangThai(id, xuatXu));
     }
 
 }

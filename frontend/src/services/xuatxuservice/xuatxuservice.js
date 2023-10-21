@@ -3,6 +3,7 @@ const API_BASE_URL = "http://localhost:8080/xuat_xu/hien_thi";
 const API_SAVE_URL = "http://localhost:8080/xuat_xu/add";
 const API_DELETE_URL = "http://localhost:8080/xuat_xu/delete";
 const API_UPDATE_URL = "http://localhost:8080/xuat_xu/update";
+const XUATXU_API_UPDATEtt_URL = "http://localhost:8080/xuat_xu/updatett";
 
 class xuatxuservice {
 
@@ -27,6 +28,10 @@ class xuatxuservice {
     updateXuatXu(xuatXu, xuatXuId) {
         console.log(xuatXuId)
         return axios.put(API_UPDATE_URL + "/" + xuatXuId, xuatXu)
+    }
+
+    updateXuatXuTrangThai(trangThai, xuatXuId) {
+        return axios.put(XUATXU_API_UPDATEtt_URL + "/" + xuatXuId, trangThai); // Truyền trạng thái thay vì xuatXu
     }
 
 }

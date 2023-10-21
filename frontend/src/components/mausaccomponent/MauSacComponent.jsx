@@ -249,6 +249,17 @@ class MauSacComponent extends Component {
         this.setState({ errorsUpdate: errorsUpdate });
     }
 
+    toggleMauSac(id, currentTrangThai) {
+        const newTrangThai = currentTrangThai === 0 ? 1 : 0; // Chuyển đổi trạng thái
+        mausacservice.updateMauSacTrangThai({ trangThai: newTrangThai }, id).then((res) => {
+            let mauSacCapNhat = res.data;
+            this.setState(prevState => ({
+                mauSac: prevState.mauSac.map(ms =>
+                    ms.id === mauSacCapNhat.id ? mauSacCapNhat : ms
+                )
+            }));
+        });
+    }
 
 
 
@@ -256,12 +267,12 @@ class MauSacComponent extends Component {
         return (
             <div>
                 <div className="pagetitle">
-                    <h1>Color</h1>
+                    <h1>Màu sắc</h1>
                     <nav>
                         <ol className="breadcrumb">
-                            <li className="breadcrumb-item"><a href="index.html">Home</a></li>
-                            <li className="breadcrumb-item active">Overview</li>
-                            <li className="breadcrumb-item active">Color</li>
+                            {/*<li className="breadcrumb-item"><a href="index.html">Home</a></li>*/}
+                            {/*<li className="breadcrumb-item active">Overview</li>*/}
+                            {/*<li className="breadcrumb-item active">Color</li>*/}
                         </ol>
                     </nav>
                 </div>
@@ -277,12 +288,12 @@ class MauSacComponent extends Component {
 
 
                                         <div className="card-body">
-                                            <h5 className="card-title">Color <span>| </span></h5>
+                                            <h5 className="card-title">Danh sách màu sắc <span>| </span></h5>
 
                                             <table className="table table-borderless datatable">
                                                 <thead>
                                                     <tr>
-                                                        <th>Giá trị</th>
+                                                        {/*<th>Giá trị</th>*/}
                                                         <th>Tên màu</th>
                                                         <th>Trạng thái</th>
                                                         <th>Action</th>
@@ -303,11 +314,19 @@ class MauSacComponent extends Component {
                                                         this.state.mauSac.map(
                                                             ms =>
                                                                 <tr key={ms.id}>
-                                                                    <td>{ms.giaTri}</td>
+                                                                    {/*<td>{ms.giaTri}</td>*/}
                                                                     <td>{ms.ten}</td>
-                                                                    <td>{ms.trangThai == 1 ? "HD" : "Ko HD"}</td>
+                                                                    <td><label className="switch">
+                                                                        <input
+                                                                            type="checkbox"
+                                                                            checked={ms.trangThai === 0}
+                                                                            onChange={() => this.toggleMauSac(ms.id, ms.trangThai)}
+                                                                        />
+
+                                                                        <span className="slider round"></span>
+                                                                    </label></td>
                                                                     <td>
-                                                                        <button onClick={() => this.delete(ms.id)} className='btn btn-danger'>Xóa</button>
+                                                                        {/*<button onClick={() => this.delete(ms.id)} className='btn btn-danger'>Xóa</button>*/}
                                                                         <button onClick={() => this.detail(ms.id)} className='btn btn-primary'>Chi tiết</button>
                                                                     </td>
                                                                 </tr>
@@ -354,7 +373,7 @@ class MauSacComponent extends Component {
                             <div className="card">
 
                                 <div className="card-body">
-                                    <h5 className="card-title">Sửa <span>| xx</span></h5>
+                                    <h5 className="card-title">Thao tác <span>| xx</span></h5>
 
                                     <ul className="nav nav-tabs" id="myTab" role="tablist">
                                         <li className="nav-item" role="presentation">
@@ -369,12 +388,6 @@ class MauSacComponent extends Component {
                                                 aria-selected="false">Add new
                                             </button>
                                         </li>
-                                        <li className="nav-item" role="presentation">
-                                            <button className="nav-link" id="contact-tab" data-bs-toggle="tab"
-                                                data-bs-target="#contact" type="button" role="tab" aria-controls="contact"
-                                                aria-selected="false">Detail
-                                            </button>
-                                        </li>
                                     </ul>
 
 
@@ -383,11 +396,6 @@ class MauSacComponent extends Component {
                                             aria-labelledby="home-tab">
                                             <form>
                                                 <div>
-                                                    Giá trị :
-                                                    <input className={`form-control ${this.state.errorsUpdate.giaTri ? 'is-invalid' : ''}`} name="giaTri" value={this.state.mauSacUpdate.giaTri} onChange={this.thayDoiGiaTriUpdate} />
-                                                    {this.state.errorsUpdate.giaTri && <div className="text-danger">{this.state.errorsUpdate.giaTri}</div>}
-                                                </div>
-                                                <div>
                                                     Tên :
                                                     <input className={`form-control ${this.state.errorsUpdate.ten ? 'is-invalid' : ''}`} name="ten" value={this.state.mauSacUpdate.ten} onChange={this.thayDoiTenUpdate} />
                                                     {this.state.errorsUpdate.ten && <div className="text-danger">{this.state.errorsUpdate.ten}</div>}
@@ -395,8 +403,9 @@ class MauSacComponent extends Component {
                                                 <div className='form-group'>
                                                     <label>Trạng thái</label>
                                                     <select name="trangThai" id="trangThai" value={this.state.mauSacUpdate.trangThai} className={`form-control ${this.state.errorsUpdate.trangThai ? 'is-invalid' : ''}`} onChange={this.thayDoiTrangThaiUpdate}>
-                                                        <option value='true'>Còn</option>
-                                                        <option value="false">Ko còn</option>
+                                                        <option value=''>Chọn trạng thái</option>
+                                                        <option value="0">Hoạt động</option>
+                                                        <option value="1">Không hoạt động</option>
                                                     </select>
                                                     {this.state.errorsUpdate.trangThai && <div className="text-danger">{this.state.errorsUpdate.trangThai}</div>}
                                                 </div>
@@ -407,11 +416,6 @@ class MauSacComponent extends Component {
                                         <div className="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
                                             <form>
                                                 <div>
-                                                    Giá trị :
-                                                    <input className={`form-control ${this.state.errorsAdd.giaTri ? 'is-invalid' : ''}`} name="giaTri" onChange={this.thayDoiGiaTriAdd} />
-                                                    {this.state.errorsAdd.giaTri && <div className="text-danger">{this.state.errorsAdd.giaTri}</div>}
-                                                </div>
-                                                <div>
                                                     Tên :
                                                     <input className={`form-control ${this.state.errorsAdd.ten ? 'is-invalid' : ''}`} name="ten" onChange={this.thayDoiTenAdd} />
                                                     {this.state.errorsAdd.ten && <div className="text-danger">{this.state.errorsAdd.ten}</div>}
@@ -420,8 +424,9 @@ class MauSacComponent extends Component {
                                                 <div className='form-group'>
                                                     <label>Trạng thái</label>
                                                     <select name="trangThai" id="trangThai" className={`form-control ${this.state.errorsAdd.trangThai ? 'is-invalid' : ''}`} onChange={this.thayDoiTrangThaiAdd}>
-                                                        <option value='true'>Còn</option>
-                                                        <option value="false">Ko còn</option>
+                                                        <option value=''>Chọn trạng thái</option>
+                                                        <option value="0">Hoạt động</option>
+                                                        <option value="1">Không hoạt động</option>
                                                     </select>
                                                     {this.state.errorsAdd.trangThai && <div className="text-danger">{this.state.errorsAdd.trangThai}</div>}
                                                 </div>
