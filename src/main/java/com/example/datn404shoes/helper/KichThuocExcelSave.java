@@ -53,7 +53,7 @@ public class KichThuocExcelSave {
                             kichThuoc.setGiaTri((int) currentCell.getNumericCellValue());
                             break;
                         case 1:
-                            kichThuoc.setTrangThai(currentCell.getBooleanCellValue());
+                            kichThuoc.setTrangThai((int) currentCell.getNumericCellValue());
                             break;
                         default:
                             break;

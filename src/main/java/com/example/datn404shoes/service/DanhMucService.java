@@ -13,6 +13,8 @@ public interface DanhMucService {
 
     DanhMuc update(Long id, DanhMuc danhMuc);
 
+    DanhMuc thayDoiTrangThai(Long id, DanhMuc danhMuc);
+
     Page<DanhMuc> getAll(Pageable pageable);
 
     DanhMuc getOne(Long id);

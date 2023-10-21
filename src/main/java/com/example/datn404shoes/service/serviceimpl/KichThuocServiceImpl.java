@@ -2,6 +2,7 @@ package com.example.datn404shoes.service.serviceimpl;
 
 
 import com.example.datn404shoes.entity.KichThuoc;
+import com.example.datn404shoes.entity.KichThuoc;
 import com.example.datn404shoes.helper.KichThuocExcelSave;
 import com.example.datn404shoes.repository.KichThuocRepository;
 import com.example.datn404shoes.service.KichThuocService;
@@ -25,6 +26,14 @@ public class KichThuocServiceImpl implements KichThuocService {
     public KichThuoc add(KichThuoc kichThuoc) {
         kichThuocRepository.save(kichThuoc);
         return kichThuoc;
+    }
+
+    @Override
+    public KichThuoc thayDoiTrangThai(Long id, KichThuoc kichThuoc) {
+        KichThuoc kichThuoc1 = kichThuocRepository.findById(id).get();
+        kichThuoc1.setGiaTri(kichThuoc.getGiaTri());
+        kichThuoc1.setTrangThai(kichThuoc.getTrangThai());
+        return kichThuocRepository.save(kichThuoc1);
     }
 
     @Override

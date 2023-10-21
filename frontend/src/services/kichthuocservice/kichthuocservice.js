@@ -3,6 +3,8 @@ const API_BASE_URL = "http://localhost:8080/kich_thuoc/hien_thi";
 const API_SAVE_URL = "http://localhost:8080/kich_thuoc/add";
 const API_DELETE_URL = "http://localhost:8080/kich_thuoc/delete";
 const API_UPDATE_URL = "http://localhost:8080/kich_thuoc/update";
+const KICHTHUOC_API_UPDATEtt_URL = "http://localhost:8080/kich_thuoc/updatett";
+
 
 class kichthuocservice {
 
@@ -27,6 +29,10 @@ class kichthuocservice {
     updateKichThuoc(kichThuoc, kichThuocId) {
         console.log(kichThuocId)
         return axios.put(API_UPDATE_URL + "/" + kichThuocId, kichThuoc)
+    }
+
+    updateKichThuocTrangThai(trangThai, kichThuocId) {
+        return axios.put(KICHTHUOC_API_UPDATEtt_URL + "/" + kichThuocId, trangThai); // Truyền trạng thái thay vì danhMuc
     }
 
 }

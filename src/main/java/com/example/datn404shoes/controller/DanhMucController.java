@@ -11,9 +11,11 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -60,4 +62,15 @@ public class DanhMucController {
 
         return ResponseEntity.ok(serviceimpl.update(id, danhMuc));
     }
+
+    @PutMapping("updatett/{id}")
+    public ResponseEntity<?> updatett(Model model,
+                                      @PathVariable("id") Long id,
+                                      @RequestBody Map<String, Integer> trangThaiData) {
+        Integer newTrangThai = trangThaiData.get("trangThai");
+        DanhMuc danhMuc1 = serviceimpl.getOne(id);
+        danhMuc1.setTrangThai(newTrangThai);
+        return ResponseEntity.ok(serviceimpl.thayDoiTrangThai(id, danhMuc1));
+    }
+
 }

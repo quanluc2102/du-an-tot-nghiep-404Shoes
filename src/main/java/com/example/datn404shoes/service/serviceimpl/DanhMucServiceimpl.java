@@ -36,6 +36,14 @@ public class DanhMucServiceimpl implements DanhMucService {
     }
 
     @Override
+    public DanhMuc thayDoiTrangThai(Long id, DanhMuc danhMuc) {
+        DanhMuc danhMuc1 = repository.findById(id).get();
+        danhMuc1.setTen(danhMuc.getTen());
+        danhMuc1.setTrangThai(danhMuc.getTrangThai());
+        return repository.save(danhMuc1);
+    }
+
+    @Override
     public Page<DanhMuc> getAll(Pageable pageable) {
         return repository.findAll(pageable);
     }

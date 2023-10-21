@@ -21,7 +21,7 @@ public class KichThuoc {
     private int giaTri;
 
     @Column(name = "trang_thai")
-    private Boolean trangThai;
+    private Integer trangThai;
 
 
 }

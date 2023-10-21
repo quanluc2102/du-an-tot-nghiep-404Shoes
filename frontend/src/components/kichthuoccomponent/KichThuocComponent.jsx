@@ -204,19 +204,29 @@ class KichThuocComponent extends Component {
         this.setState({ errorsUpdate: errorsUpdate });
     }
 
-
+    toggleKichThuoc(id, currentTrangThai) {
+        const newTrangThai = currentTrangThai === 0 ? 1 : 0; // Chuyển đổi trạng thái
+        kichthuocservice.updateKichThuocTrangThai({ trangThai: newTrangThai }, id).then((res) => {
+            let kichThuocCapNhat = res.data;
+            this.setState(prevState => ({
+                kichThuoc: prevState.kichThuoc.map(kt =>
+                    kt.id === kichThuocCapNhat.id ? kichThuocCapNhat : kt
+                )
+            }));
+        });
+    }
 
 
     render() {
         return (
             <div>
                 <div className="pagetitle">
-                    <h1>Color</h1>
+                    <h1>Kích thước</h1>
                     <nav>
                         <ol className="breadcrumb">
-                            <li className="breadcrumb-item"><a href="index.html">Home</a></li>
-                            <li className="breadcrumb-item active">Overview</li>
-                            <li className="breadcrumb-item active">Color</li>
+                            {/*<li className="breadcrumb-item"><a href="index.html">Home</a></li>*/}
+                            {/*<li className="breadcrumb-item active">Overview</li>*/}
+                            {/*<li className="breadcrumb-item active">Color</li>*/}
                         </ol>
                     </nav>
                 </div>
@@ -232,7 +242,7 @@ class KichThuocComponent extends Component {
 
 
                                         <div className="card-body">
-                                            <h5 className="card-title">Color <span>| </span></h5>
+                                            <h5 className="card-title">Danh sách kích thước <span>| </span></h5>
 
                                             <table className="table table-borderless datatable">
                                                 <thead>
@@ -258,7 +268,15 @@ class KichThuocComponent extends Component {
                                                             kt =>
                                                                 <tr key={kt.id}>
                                                                     <td>{kt.giaTri}</td>
-                                                                    <td>{kt.trangThai == 1 ? "HD" : "Ko HD"}</td>
+                                                                    <td><label className="switch">
+                                                                        <input
+                                                                            type="checkbox"
+                                                                            checked={kt.trangThai === 0}
+                                                                            onChange={() => this.toggleKichThuoc(kt.id, kt.trangThai)}
+                                                                        />
+
+                                                                        <span className="slider round"></span>
+                                                                    </label></td>
                                                                     <td>
                                                                         <button onClick={() => this.delete(kt.id)} className='btn btn-danger'>Xóa</button>
                                                                         <button onClick={() => this.detail(kt.id)} className='btn btn-primary'>Chi tiết</button>
@@ -307,7 +325,7 @@ class KichThuocComponent extends Component {
                             <div className="card">
 
                                 <div className="card-body">
-                                    <h5 className="card-title">Sửa <span>| xx</span></h5>
+                                    <h5 className="card-title">Thao tác <span>| xx</span></h5>
 
                                     <ul className="nav nav-tabs" id="myTab" role="tablist">
                                         <li className="nav-item" role="presentation">
@@ -344,8 +362,9 @@ class KichThuocComponent extends Component {
                                                 <div className='form-group'>
                                                     <label>Trạng thái</label>
                                                     <select name="trangThai" id="trangThai" value={this.state.kichThuocUpdate.trangThai} className={`form-control ${this.state.errorsUpdate.trangThai ? 'is-invalid' : ''}`} onChange={this.thayDoiTrangThaiUpdate}>
-                                                        <option value='true'>Còn</option>
-                                                        <option value="false">Ko còn</option>
+                                                        <option value=''>Chọn trạng thái</option>
+                                                        <option value="0">Hoạt động</option>
+                                                        <option value="1">Không hoạt động</option>
                                                     </select>
                                                     {this.state.errorsUpdate.trangThai && <div className="text-danger">{this.state.errorsUpdate.trangThai}</div>}
                                                 </div>
@@ -364,8 +383,9 @@ class KichThuocComponent extends Component {
                                                 <div className='form-group'>
                                                     <label>Trạng thái</label>
                                                     <select name="trangThai" id="trangThai" className={`form-control ${this.state.errorsAdd.trangThai ? 'is-invalid' : ''}`} onChange={this.thayDoiTrangThaiAdd}>
-                                                        <option value='true'>Còn</option>
-                                                        <option value="false">Ko còn</option>
+                                                        <option value=''>Chọn trạng thái</option>
+                                                        <option value="0">Hoạt động</option>
+                                                        <option value="1">Không hoạt động</option>
                                                     </select>
                                                     {this.state.errorsAdd.trangThai && <div className="text-danger">{this.state.errorsAdd.trangThai}</div>}
                                                 </div>

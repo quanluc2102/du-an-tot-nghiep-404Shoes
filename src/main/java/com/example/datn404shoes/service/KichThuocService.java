@@ -1,6 +1,7 @@
 package com.example.datn404shoes.service;
 
 
+import com.example.datn404shoes.entity.DanhMuc;
 import com.example.datn404shoes.entity.KichThuoc;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -13,6 +14,8 @@ import java.util.UUID;
 @Service
 public interface KichThuocService {
     KichThuoc add(KichThuoc kichThuoc);
+
+    KichThuoc thayDoiTrangThai(Long id, KichThuoc kichThuoc);
 
     void delete(Long id);
 

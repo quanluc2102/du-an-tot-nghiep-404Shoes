@@ -2,6 +2,7 @@ package com.example.datn404shoes.controller;
 
 
 import com.example.datn404shoes.entity.KichThuoc;
+import com.example.datn404shoes.entity.KichThuoc;
 import com.example.datn404shoes.helper.KichThuocExcelSave;
 import com.example.datn404shoes.service.serviceimpl.KichThuocServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Map;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:3000")
@@ -74,5 +76,15 @@ public class KichThuocController {
         }
         message = "Please upload an excel file!";
         return "redirect:/kich_thuoc/hien_thi";
+    }
+
+    @PutMapping("updatett/{id}")
+    public ResponseEntity<?> updatett(Model model,
+                                      @PathVariable("id") Long id,
+                                      @RequestBody Map<String, Integer> trangThaiData) {
+        Integer newTrangThai = trangThaiData.get("trangThai");
+        KichThuoc kichThuoc = kichThuocService.findOne(id);
+        kichThuoc.setTrangThai(newTrangThai);
+        return ResponseEntity.ok(kichThuocService.thayDoiTrangThai(id, kichThuoc));
     }
 }

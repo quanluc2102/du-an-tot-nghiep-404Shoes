@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import danhmucservice from '../../services/danhmucservice/danhmucservice';
 import { toast } from 'react-toastify';
+import "./danhmuccom.css";
 import ReactPaginate from 'react-paginate';
 class ListDanhMucComponent extends Component {
     constructor(props) {
@@ -195,13 +196,26 @@ class ListDanhMucComponent extends Component {
     }
 
 
+    toggleDanhMuc(id, currentTrangThai) {
+        const newTrangThai = currentTrangThai === 0 ? 1 : 0; // Chuyển đổi trạng thái
+        danhmucservice.updateDanhMucTrangThai({ trangThai: newTrangThai }, id).then((res) => {
+            let danhMucCapNhat = res.data;
+            this.setState(prevState => ({
+                danhMuc: prevState.danhMuc.map(dm =>
+                    dm.id === danhMucCapNhat.id ? danhMucCapNhat : dm
+                )
+            }));
+        });
+    }
+
+
 
 
     render() {
         return (
             <div>
                 <div className="pagetitle">
-                    <h1>Color</h1>
+                    <h1>Danh mục</h1>
                     <nav>
                         <ol className="breadcrumb">
                             <li className="breadcrumb-item"><a href="index.html">Home</a></li>
@@ -222,7 +236,7 @@ class ListDanhMucComponent extends Component {
 
 
                                         <div className="card-body">
-                                            <h5 className="card-title">Color <span>| </span></h5>
+                                            <h5 className="card-title">Danh sách các danh mục <span></span></h5>
 
                                             <table className="table table-borderless datatable">
                                                 <thead>
@@ -248,9 +262,19 @@ class ListDanhMucComponent extends Component {
                                                             dm =>
                                                                 <tr key={dm.id}>
                                                                     <td>{dm.ten}</td>
-                                                                    <td>{dm.trangThai == 1 ? "HD" : "Ko HD"}</td>
                                                                     <td>
-                                                                        <button onClick={() => this.delete(dm.id)} className='btn btn-danger'>Xóa</button>
+                                                                        <label className="switch">
+                                                                            <input
+                                                                                type="checkbox"
+                                                                                checked={dm.trangThai === 0}
+                                                                                onChange={() => this.toggleDanhMuc(dm.id, dm.trangThai)}
+                                                                            />
+
+                                                                            <span className="slider round"></span>
+                                                                        </label>
+                                                                    </td>
+
+                                                                    <td>
                                                                         <button onClick={() => this.detail(dm.id)} className='btn btn-primary'>Chi tiết</button>
                                                                     </td>
                                                                 </tr>
@@ -297,7 +321,7 @@ class ListDanhMucComponent extends Component {
                             <div className="card">
 
                                 <div className="card-body">
-                                    <h5 className="card-title">Sửa <span>| xx</span></h5>
+                                    <h5 className="card-title">Thao tác <span>| xx</span></h5>
 
                                     <ul className="nav nav-tabs" id="myTab" role="tablist">
                                         <li className="nav-item" role="presentation">
@@ -312,12 +336,6 @@ class ListDanhMucComponent extends Component {
                                                 aria-selected="false">Add new
                                             </button>
                                         </li>
-                                        <li className="nav-item" role="presentation">
-                                            <button className="nav-link" id="contact-tab" data-bs-toggle="tab"
-                                                data-bs-target="#contact" type="button" role="tab" aria-controls="contact"
-                                                aria-selected="false">Detail
-                                            </button>
-                                        </li>
                                     </ul>
 
 
@@ -326,15 +344,16 @@ class ListDanhMucComponent extends Component {
                                             aria-labelledby="home-tab">
                                             <form>
                                                 <div>
-                                                    Tên :
+                                                    <span style={{color: "red"}}>*</span> Tên :
                                                     <input className={`form-control ${this.state.errorsUpdate.ten ? 'is-invalid' : ''}`} name="ten" value={this.state.danhMucUpdate.ten} onChange={this.thayDoiTenUpdate} />
                                                     {this.state.errorsUpdate.ten && <div className="text-danger">{this.state.errorsUpdate.ten}</div>}
                                                 </div>
                                                 <div className='form-group'>
-                                                    <label>Trạng thái</label>
+                                                    <label><span style={{color: "red"}}>*</span>Trạng thái</label>
                                                     <select name="trangThai" id="trangThai" value={this.state.danhMucUpdate.trangThai} className={`form-control ${this.state.errorsUpdate.trangThai ? 'is-invalid' : ''}`} onChange={this.thayDoiTrangThaiUpdate}>
-                                                        <option value="1">Còn</option>
-                                                        <option value="0">Ko còn</option>
+                                                        <option value="">Chọn trạng thái</option>
+                                                        <option value="0">Hoạt động</option>
+                                                        <option value="1">Không hoạt động</option>
                                                     </select>
                                                     {this.state.errorsUpdate.trangThai && <div className="text-danger">{this.state.errorsUpdate.trangThai}</div>}
                                                 </div>
@@ -345,16 +364,19 @@ class ListDanhMucComponent extends Component {
                                         <div className="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
                                             <form>
                                                 <div>
-                                                    Tên :
+                                                    <span style={{color: "red"}}>*</span> Tên :
                                                     <input className={`form-control ${this.state.errorsAdd.ten ? 'is-invalid' : ''}`} name="ten" onChange={this.thayDoiTenAdd} />
                                                     {this.state.errorsAdd.ten && <div className="text-danger">{this.state.errorsAdd.ten}</div>}
 
                                                 </div>
                                                 <div className='form-group'>
-                                                    <label>Trạng thái</label>
+
+                                                    <label><span style={{color: "red"}}>*</span>Trạng thái</label>
                                                     <select name="trangThai" id="trangThai" className={`form-control ${this.state.errorsAdd.trangThai ? 'is-invalid' : ''}`} onChange={this.thayDoiTrangThaiAdd}>
-                                                        <option value="1">Còn</option>
-                                                        <option value="0">Ko còn</option>
+                                                        <option value="">Chọn trạng thái</option>
+                                                        <option value="0">Hoạt động</option>
+                                                        <option value="1">Không hoạt động</option>
+
                                                     </select>
                                                     {this.state.errorsAdd.trangThai && <div className="text-danger">{this.state.errorsAdd.trangThai}</div>}
 
