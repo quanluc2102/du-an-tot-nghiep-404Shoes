@@ -12,8 +12,8 @@ class TaiKhoanComponent extends Component {
             taiKhoanAdd: {
                 username: '',
                 email: '',
-                ngayTao: '',
-                ngayCapNhat: '',
+                // ngayTao: '',
+                // ngayCapNhat: '',
                 password: '',
                 anh: '',
                 trangThai: ''
@@ -22,8 +22,8 @@ class TaiKhoanComponent extends Component {
                 id: this.props.match.params.id,
                 username: '',
                 email: '',
-                ngayTao: '',
-                ngayCapNhat: '',
+                // ngayTao: '',
+                // ngayCapNhat: '',
                 password: '',
                 anh: '',
                 trangThai: ''
@@ -31,8 +31,8 @@ class TaiKhoanComponent extends Component {
             errorAdd: {
                 username: '',
                 email: '',
-                ngayTao: '',
-                ngayCapNhat: '',
+                // ngayTao: '',
+                // ngayCapNhat: '',
                 password: '',
                 anh: '',
                 trangThai: ''
@@ -40,8 +40,8 @@ class TaiKhoanComponent extends Component {
             errorUpdate: {
                 username: '',
                 email: '',
-                ngayTao: '',
-                ngayCapNhat: '',
+                // ngayTao: '',
+                // ngayCapNhat: '',
                 password: '',
                 anh: '',
                 trangThai: ''
@@ -53,15 +53,15 @@ class TaiKhoanComponent extends Component {
         this.detail = this.detail.bind(this);
         this.thayDoiUsernameAdd = this.thayDoiUsernameAdd.bind(this);
         this.thayDoiEmailAdd = this.thayDoiEmailAdd.bind(this);
-        this.thayDoiNgayTaoAdd = this.thayDoiNgayTaoAdd.bind(this);
-        this.thayDoiNgayCapNhatAdd = this.thayDoiNgayCapNhatAdd.bind(this);
+        // this.thayDoiNgayTaoAdd = this.thayDoiNgayTaoAdd.bind(this);
+        // this.thayDoiNgayCapNhatAdd = this.thayDoiNgayCapNhatAdd.bind(this);
         this.thayDoiPasswordAdd = this.thayDoiPasswordAdd.bind(this);
         this.thayDoiAnhAdd = this.thayDoiAnhAdd.bind(this);
         this.thayDoiTrangThaiAdd = this.thayDoiTrangThaiAdd.bind(this);
         this.thayDoiUsernameUpdate = this.thayDoiUsernameUpdate.bind(this);
         this.thayDoiEmailUpdate = this.thayDoiEmailUpdate.bind(this);
-        this.thayDoiNgayTaoUpdate = this.thayDoiNgayTaoUpdate.bind(this);
-        this.thayDoiNgayCapNhatUpdate = this.thayDoiNgayCapNhatUpdate.bind(this);
+        // this.thayDoiNgayTaoUpdate = this.thayDoiNgayTaoUpdate.bind(this);
+        // this.thayDoiNgayCapNhatUpdate = this.thayDoiNgayCapNhatUpdate.bind(this);
         this.thayDoiPasswordUpdate = this.thayDoiPasswordUpdate.bind(this);
         this.thayDoiAnhUpdate = this.thayDoiAnhUpdate.bind(this);
         this.thayDoiTrangThaiUpdate = this.thayDoiTrangThaiUpdate.bind(this);
@@ -105,13 +105,13 @@ class TaiKhoanComponent extends Component {
         let taiKhoan = {
             username: this.state.taiKhoanAdd.username,
             email: this.state.taiKhoanAdd.email,
-            ngayTao: this.state.taiKhoanAdd.ngayTao,
-            ngayCapNhat: this.state.taiKhoanAdd.ngayCapNhat,
+            // ngayTao: this.state.taiKhoanAdd.ngayTao,
+            // ngayCapNhat: this.state.taiKhoanAdd.ngayCapNhat,
             password: this.state.taiKhoanAdd.password,
             anh: this.state.taiKhoanAdd.anh,
             trangThai: this.state.taiKhoanAdd.trangThai
         }
-        if (!this.state.taiKhoanAdd.username.trim()) {
+        if (!this.state.taiKhoanAdd.username) {
             this.setState({ errorAdd: { ...this.state.errorAdd, username: "username không được bỏ trống!" } });
             return;
         } else if (!isNaN(this.state.taiKhoanAdd.username)) {
@@ -122,44 +122,44 @@ class TaiKhoanComponent extends Component {
             this.setState({ errorAdd: { ...this.state.errorAdd, username: "" } });
         }
         /////
-        if (!this.state.taiKhoanAdd.email.trim()) {
+        if (!this.state.taiKhoanAdd.email) {
             this.setState({ errorAdd: { ...this.state.errorAdd, email: "email không được bỏ trống!" } });
             return;
-        } else if (!isValidEmail(this.state.taiKhoanAdd.email)) {
-            this.setState({ errorAdd: { ...this.state.errorAdd, email: "Email không hợp lệ!" } });
-            return;
+        // } else if (!isValidEmail(this.state.taiKhoanAdd.email)) {
+        //     this.setState({ errorAdd: { ...this.state.errorAdd, email: "Email không hợp lệ!" } });
+        //     return;
         } else {
             this.setState({ errorAdd: { ...this.state.errorAdd, email: "" } });
         }
-        function isValidEmail(email) {
-            const emailPattern = /^[A-Za-z0-9+_.-]+@.+/;
-            return emailPattern.test(email);
-        }
+        // function isValidEmail(email) {
+        //     const emailPattern = /^[A-Za-z0-9+_.-]+@.+/;
+        //     return emailPattern.test(email);
+        // }
         /////
-        if (!this.state.taiKhoanAdd.ngayTao.trim()) {
-            this.setState({ errorAdd: { ...this.state.errorAdd, ngayTao: "Ngày tạo không được bỏ trống!" } });
-            return;
-        }
-        else {
-            this.setState({ errorAdd: { ...this.state.errorAdd, ngayTao: "" } });
-        }
-        /////
-        if (!this.state.taiKhoanAdd.ngayCapNhat.trim()) {
-            this.setState({ errorAdd: { ...this.state.errorAdd, ngayCapNhat: "Ngày cập nhật không được bỏ trống!" } });
-            return;
-        }
-        else {
-            this.setState({ errorAdd: { ...this.state.errorAdd, ngayCapNhat: "" } });
-        }
+        // if (!this.state.taiKhoanAdd.ngayTao) {
+        //     this.setState({ errorAdd: { ...this.state.errorAdd, ngayTao: "Ngày tạo không được bỏ trống!" } });
+        //     return;
+        // }
+        // else {
+        //     this.setState({ errorAdd: { ...this.state.errorAdd, ngayTao: "" } });
+        // }
+        // /////
+        // if (!this.state.taiKhoanAdd.ngayCapNhat) {
+        //     this.setState({ errorAdd: { ...this.state.errorAdd, ngayCapNhat: "Ngày cập nhật không được bỏ trống!" } });
+        //     return;
+        // }
+        // else {
+        //     this.setState({ errorAdd: { ...this.state.errorAdd, ngayCapNhat: "" } });
+        // }
         //////
-        if (!this.state.taiKhoanAdd.password.trim()) {
+        if (!this.state.taiKhoanAdd.password) {
             this.setState({errorAdd: {...this.state.errorAdd, password: "Password không được bỏ trống!"}});
             return;
         }else {
             this.setState({ errorAdd: { ...this.state.errorAdd, password: "" } });
         }
         ///
-        if (!this.state.taiKhoanAdd.anh.trim()) {
+        if (!this.state.taiKhoanAdd.anh) {
             this.setState({ errorAdd: { ...this.state.errorAdd, anh: "Ảnh không được bỏ trống!" } });
             return;
         }
@@ -167,7 +167,7 @@ class TaiKhoanComponent extends Component {
             this.setState({ errorAdd: { ...this.state.errorAdd, anh: "" } });
         }
         //
-        if (!this.state.taiKhoanAdd.trangThai.trim()) {
+        if (!this.state.taiKhoanAdd.trangThai) {
             this.setState({errorAdd: { ...this.state.errorAdd, trangThai: "Trạng thái không được bỏ trống!" } });
             return;
         }
@@ -200,15 +200,15 @@ class TaiKhoanComponent extends Component {
         let taiKhoan = {
             username: this.state.taiKhoanUpdate.username,
             email: this.state.taiKhoanUpdate.email,
-            ngayTao: this.state.taiKhoanUpdate.ngayTao,
-            ngayCapNhat: this.state.taiKhoanUpdate.ngayCapNhat,
+            // ngayTao: this.state.taiKhoanUpdate.ngayTao,
+            // ngayCapNhat: this.state.taiKhoanUpdate.ngayCapNhat,
             password: this.state.taiKhoanUpdate.password,
             anh: this.state.taiKhoanUpdate.anh,
             trangThai: this.state.taiKhoanUpdate.trangThai }
 
         console.log('nsx' + JSON.stringify(taiKhoan));
         let id = this.state.taiKhoanUpdate.id;
-        if (!this.state.taiKhoanUpdate.username.trim()) {
+        if (!this.state.taiKhoanUpdate.username) {
             this.setState({ errorUpdate: { ...this.state.errorUpdate, username: "username không được bỏ trống!" } });
             return;
         } else if (!isNaN(this.state.taiKhoanUpdate.username)) {
@@ -219,44 +219,44 @@ class TaiKhoanComponent extends Component {
             this.setState({ errorUpdate: { ...this.state.errorUpdate, username: "" } });
         }
         /////
-        if (!this.state.taiKhoanUpdate.email.trim()) {
+        if (!this.state.taiKhoanUpdate.email) {
             this.setState({ errorUpdate: { ...this.state.errorUpdate, email: "email không được bỏ trống!" } });
             return;
-        } else if (!isValidEmail(this.state.taiKhoanUpdate.email)) {
-            this.setState({ errorUpdate: { ...this.state.errorUpdate, email: "Email không hợp lệ!" } });
-            return;
+        // } else if (!isValidEmail(this.state.taiKhoanUpdate.email)) {
+        //     this.setState({ errorUpdate: { ...this.state.errorUpdate, email: "Email không hợp lệ!" } });
+        //     return;
         } else {
             this.setState({ errorUpdate: { ...this.state.errorUpdate, email: "" } });
         }
-        function isValidEmail(email) {
-            const emailPattern = /^[A-Za-z0-9+_.-]+@.+/;
-            return emailPattern.test(email);
-        }
+        // function isValidEmail(email) {
+        //     const emailPattern = /^[A-Za-z0-9+_.-]+@.+/;
+        //     return emailPattern.test(email);
+        // }
         /////
-        if (!this.state.taiKhoanUpdate.ngayTao.trim()) {
-            this.setState({ errorUpdate: { ...this.state.errorUpdate, ngayTao: "Ngày tạo không được bỏ trống!" } });
-            return;
-        }
-        else {
-            this.setState({ errorUpdate: { ...this.state.errorUpdate, ngayTao: "" } });
-        }
-        /////
-        if (!this.state.taiKhoanUpdate.ngayCapNhat.trim()) {
-            this.setState({ errorUpdate: { ...this.state.errorUpdate, ngayCapNhat: "Ngày cập nhật không được bỏ trống!" } });
-            return;
-        }
-        else {
-            this.setState({ errorUpdate: { ...this.state.errorUpdate, ngayCapNhat: "" } });
-        }
+        // if (!this.state.taiKhoanUpdate.ngayTao) {
+        //     this.setState({ errorUpdate: { ...this.state.errorUpdate, ngayTao: "Ngày tạo không được bỏ trống!" } });
+        //     return;
+        // }
+        // else {
+        //     this.setState({ errorUpdate: { ...this.state.errorUpdate, ngayTao: "" } });
+        // }
+        // /////
+        // if (!this.state.taiKhoanUpdate.ngayCapNhat) {
+        //     this.setState({ errorUpdate: { ...this.state.errorUpdate, ngayCapNhat: "Ngày cập nhật không được bỏ trống!" } });
+        //     return;
+        // }
+        // else {
+        //     this.setState({ errorUpdate: { ...this.state.errorUpdate, ngayCapNhat: "" } });
+        // }
         //////
-        if (!this.state.taiKhoanUpdate.password.trim()) {
+        if (!this.state.taiKhoanUpdate.password) {
             this.setState({errorUpdate: {...this.state.errorUpdate, password: "Password không được bỏ trống!"}});
             return;
         }else {
             this.setState({ errorUpdate: { ...this.state.errorUpdate, password: "" } });
         }
         ///
-        if (!this.state.taiKhoanUpdate.anh.trim()) {
+        if (!this.state.taiKhoanUpdate.anh) {
             this.setState({ errorUpdate: { ...this.state.errorUpdate, anh: "Ảnh không được bỏ trống!" } });
             return;
         }
@@ -264,24 +264,24 @@ class TaiKhoanComponent extends Component {
             this.setState({ errorUpdate: { ...this.state.errorUpdate, anh: "" } });
         }
         //
-        if (!this.state.taiKhoanUpdate.trangThai.trim()) {
+        if (!this.state.taiKhoanUpdate.trangThai) {
             this.setState({errorUpdate: { ...this.state.errorUpdate, trangThai: "Trạng thái không được bỏ trống!" } });
             return;
         }
         else {
             this.setState({ errorUpdate: { ...this.state.errorUpdate, trangThai: "" } });
         }
-       taikhoanservice.updateTaiKhoan(taiKhoan, this.state.taiKhoanUpdate.id).then((res) => {
-           let taiKhoanCapNhat = res.data; // Giả sử API trả về đối tượng vừa được cập nhật
-           this.setState(prevState => ({
-               taiKhoan: prevState.taiKhoan.map(tk =>
-                   tk.id === taiKhoanCapNhat.id ? taiKhoanCapNhat : tk
-               )
-           }));
-       }).catch(error => {
-           // Log the error or handle it as needed
-           console.error("Update request error:", error);
-       });
+        taikhoanservice.updateTaiKhoan(taiKhoan, this.state.taiKhoanUpdate.id).then((res) => {
+            let taiKhoanCapNhat = res.data; // Giả sử API trả về đối tượng vừa được cập nhật
+            this.setState(prevState => ({
+                taiKhoan: prevState.taiKhoan.map(tk =>
+                    tk.id === taiKhoanCapNhat.id ? taiKhoanCapNhat : tk
+                )
+            }));
+        }).catch(error => {
+            // Log the error or handle it as needed
+            console.error("Update request error:", error);
+        });
     }
     detail(id) {
         window.location.href = (`/taikhoandetail/${id}`);
@@ -303,22 +303,22 @@ class TaiKhoanComponent extends Component {
         }));
     }
 
-    thayDoiNgayTaoAdd = (event) => {
-        this.setState(prevState => ({
-            taiKhoanAdd: {
-                ...prevState.taiKhoanAdd,
-                ngayTao: event.target.value
-            }
-        }));
-    }
-    thayDoiNgayCapNhatAdd = (event) => {
-        this.setState(prevState => ({
-            taiKhoanAdd: {
-                ...prevState.taiKhoanAdd,
-                ngayCapNhat: event.target.value
-            }
-        }));
-    }
+    // thayDoiNgayTaoAdd = (event) => {
+    //     this.setState(prevState => ({
+    //         taiKhoanAdd: {
+    //             ...prevState.taiKhoanAdd,
+    //             ngayTao: event.target.value
+    //         }
+    //     }));
+    // }
+    // thayDoiNgayCapNhatAdd = (event) => {
+    //     this.setState(prevState => ({
+    //         taiKhoanAdd: {
+    //             ...prevState.taiKhoanAdd,
+    //             ngayCapNhat: event.target.value
+    //         }
+    //     }));
+    // }
     thayDoiPasswordAdd = (event) => {
         this.setState(prevState => ({
             taiKhoanAdd: {
@@ -335,14 +335,7 @@ class TaiKhoanComponent extends Component {
             }
         }));
     }
-    thayDoiQuyenAdd = (event) => {
-        this.setState(prevState => ({
-            taiKhoanAdd: {
-                ...prevState.taiKhoanAdd,
-                listPhanQuyen: event.target.value
-            }
-        }));
-    }
+
     thayDoiTrangThaiAdd = (event) => {
         this.setState(prevState => ({
             taiKhoanAdd: {
@@ -370,22 +363,22 @@ class TaiKhoanComponent extends Component {
     }
 
 
-    thayDoiNgayTaoUpdate = (event) => {
-        this.setState(prevState => ({
-            taiKhoanUpdate: {
-                ...prevState.taiKhoanUpdate,
-                ngayTao: event.target.value
-            }
-        }));
-    }
-    thayDoiNgayCapNhatUpdate = (event) => {
-        this.setState(prevState => ({
-            taiKhoanUpdate: {
-                ...prevState.taiKhoanUpdate,
-                ngayCapNhat: event.target.value
-            }
-        }));
-    }
+    // thayDoiNgayTaoUpdate = (event) => {
+    //     this.setState(prevState => ({
+    //         taiKhoanUpdate: {
+    //             ...prevState.taiKhoanUpdate,
+    //             ngayTao: event.target.value
+    //         }
+    //     }));
+    // }
+    // thayDoiNgayCapNhatUpdate = (event) => {
+    //     this.setState(prevState => ({
+    //         taiKhoanUpdate: {
+    //             ...prevState.taiKhoanUpdate,
+    //             ngayCapNhat: event.target.value
+    //         }
+    //     }));
+    // }
     thayDoiPasswordUpdate = (event) => {
         this.setState(prevState => ({
             taiKhoanUpdate: {
@@ -445,6 +438,7 @@ class TaiKhoanComponent extends Component {
                                                     <th>Email</th>
                                                     <th>Ngày tạo</th>
                                                     <th>Ngày cập nhật</th>
+                                                    <th>Password</th>
                                                     <th>Ảnh</th>
                                                     <th>Trạng thái</th>
                                                     <th>Action</th>
@@ -461,6 +455,7 @@ class TaiKhoanComponent extends Component {
                                                                 <td>{tk.ngayCapNhat}</td>
                                                                 <td>{tk.password}</td>
                                                                 <td>{tk.anh}</td>
+
                                                                 <td>{tk.trangThai == true ? "Hoạt động" : "Ngừng hoạt động"}</td>
                                                                 <td>
                                                                     <button onClick={() => this.delete(tk.id)} className='btn btn-danger'>Xóa</button>
@@ -537,6 +532,7 @@ class TaiKhoanComponent extends Component {
                                         <div className="tab-pane fade show active" id="home" role="tabpanel"
                                              aria-labelledby="home-tab">
                                             <form>
+
                                                 <div>
                                                     UserName :
                                                     <input className={`form-control ${this.state.errorUpdate.username ? 'is-invalid' : ''}`} name="username" style={{}} value={this.state.taiKhoanUpdate.username} onChange={this.thayDoiUsernameUpdate} />
@@ -549,26 +545,38 @@ class TaiKhoanComponent extends Component {
                                                     {this.state.errorUpdate.email && <div className="text-danger">{this.state.errorUpdate.email}</div>}
 
                                                 </div>
+                                                {/*<div>*/}
+                                                {/*    Ngày tạo :*/}
+                                                {/*    <input className={`form-control ${this.state.errorUpdate.ngayTao ? 'is-invalid' : ''}`} name="ngayTao" type={"date"} style={{}} value={this.state.taiKhoanUpdate.ngayTao} onChange={this.thayDoiNgayTaoUpdate} />*/}
+                                                {/*    {this.state.errorUpdate.ngayTao && <div className="text-danger">{this.state.errorUpdate.ngayTao}</div>}*/}
+
+                                                {/*</div>*/}
+                                                {/*<div>*/}
+                                                {/*    Ngày cập nhật :*/}
+                                                {/*    <input className={`form-control ${this.state.errorUpdate.ngayCapNhat ? 'is-invalid' : ''}`} name="ngayCapNhat"  type={"date"} style={{}} value={this.state.taiKhoanUpdate.ngayCapNhat} onChange={this.thayDoiNgayCapNhatUpdate} />*/}
+                                                {/*    {this.state.errorUpdate.ngayCapNhat && <div className="text-danger">{this.state.errorUpdate.ngayCapNhat}</div>}*/}
+
+                                                {/*</div>*/}
                                                 <div>
-                                                    Ngày tạo :
-                                                    <input className={`form-control ${this.state.errorUpdate.ngayTao ? 'is-invalid' : ''}`} name="ngayTao" type={"date"} style={{}} value={this.state.taiKhoanUpdate.ngayTao} onChange={this.thayDoiNgayTaoUpdate} />
-                                                    {this.state.errorUpdate.ngayTao && <div className="text-danger">{this.state.errorUpdate.ngayTao}</div>}
+                                                    PassWord :
+                                                    <input className={`form-control ${this.state.errorUpdate.password ? 'is-invalid' : ''}`} name="password"   style={{}} value={this.state.taiKhoanUpdate.password} onChange={this.thayDoiPasswordUpdate} />
+                                                    {this.state.errorUpdate.password && <div className="text-danger">{this.state.errorUpdate.password}</div>}
 
                                                 </div>
-
                                                 <div>
                                                     Ảnh :
-                                                    <input className={`form-control ${this.state.errorUpdate.anh ? 'is-invalid' : ''}`} name="anh" type={"file"} style={{}} value={this.state.taiKhoanUpdate.anh} onChange={this.thayDoiAnhUpdate} />
-                                                    {this.state.errorUpdate.username && <div className="text-danger">{this.state.errorUpdate.username}</div>}
+                                                    <input className={`form-control ${this.state.errorUpdate.anh? 'is-invalid' : ''}`} name="anh" style={{}} value={this.state.taiKhoanUpdate.anh} onChange={this.thayDoiAnhUpdate} />
+                                                    {this.state.errorUpdate.anh && <div className="text-danger">{this.state.errorUpdate.anh}</div>}
 
                                                 </div>
                                                 <div className='form-group'>
                                                     <label>Trạng thái</label>
-                                                    <select name="trangThai" id="trangThai" value={this.state.taiKhoanUpdate.trangThai} className={`form-control ${this.state.errorUpdate.trangThai ? 'is-invalid' : ''}`} onChange={this.thayDoiTrangThaiUpdate}>
+                                                    <select name="trangThai" id="trangThai" className={`form-control ${this.state.errorUpdate.trangThai ? 'is-invalid' : ''}`} onChange={this.thayDoiTrangThaiUpdate}>
                                                         <option value=''>Chọn trạng thái</option>
                                                         <option value="true">Hoạt động</option>
                                                         <option value="false">Không hoạt động</option>
                                                     </select>
+                                                    {this.state.errorUpdate.trangThai && <div className="text-danger">{this.state.errorUpdate.trangThai}</div>}
                                                 </div>
                                                 <input type="submit" className="btn btn-primary" value="Update" style={{ marginTop: '10px' }} onClick={this.update} />
                                             </form>
@@ -576,6 +584,7 @@ class TaiKhoanComponent extends Component {
 
                                         <div className="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
                                             <form>
+
                                                 <div>
                                                     UserName :
                                                     <input className={`form-control ${this.state.errorAdd.username ? 'is-invalid' : ''}`} name="username" style={{}} value={this.state.taiKhoanAdd.username} onChange={this.thayDoiUsernameAdd} />
@@ -588,26 +597,32 @@ class TaiKhoanComponent extends Component {
                                                     {this.state.errorAdd.email && <div className="text-danger">{this.state.errorAdd.email}</div>}
 
                                                 </div>
+                                                {/*<div>*/}
+                                                {/*    Ngày tạo :*/}
+                                                {/*    <input className={`form-control ${this.state.errorAdd.ngayTao ? 'is-invalid' : ''}`} name="ngayTao" type={"date"} style={{}} value={this.state.taiKhoanAdd.ngayTao} onChange={this.thayDoiNgayTaoAdd} />*/}
+                                                {/*    {this.state.errorAdd.ngayTao && <div className="text-danger">{this.state.errorAdd.ngayTao}</div>}*/}
+
+                                                {/*</div>*/}
                                                 <div>
-                                                    Ngày tạo :
-                                                    <input className={`form-control ${this.state.errorAdd.ngayTao ? 'is-invalid' : ''}`} name="ngayTao" type={"date"} style={{}} value={this.state.taiKhoanAdd.ngayTao} onChange={this.thayDoiNgayTaoAdd} />
-                                                    {this.state.errorAdd.ngayTao && <div className="text-danger">{this.state.errorAdd.ngayTao}</div>}
+                                                    PassWord :
+                                                    <input className={`form-control ${this.state.errorAdd.password ? 'is-invalid' : ''}`} name="password"   style={{}} value={this.state.taiKhoanAdd.password} onChange={this.thayDoiPasswordAdd} />
+                                                    {this.state.errorAdd.password && <div className="text-danger">{this.state.errorAdd.password}</div>}
 
                                                 </div>
-
                                                 <div>
                                                     Ảnh :
-                                                    <input className={`form-control ${this.state.errorAdd.anh ? 'is-invalid' : ''}`} name="anh" type={"file"} style={{}} value={this.state.taiKhoanAdd.anh} onChange={this.thayDoiAnhAdd} />
-                                                    {this.state.errorAdd.username && <div className="text-danger">{this.state.errorAdd.username}</div>}
+                                                    <input className={`form-control ${this.state.errorAdd.anh ? 'is-invalid' : ''}`} type={"file"}  name="anh"  style={{}} value={this.state.taiKhoanAdd.anh} onChange={this.thayDoiAnhAdd} />
+                                                    {this.state.errorAdd.anh && <div className="text-danger">{this.state.errorAdd.anh}</div>}
 
                                                 </div>
                                                 <div className='form-group'>
                                                     <label>Trạng thái</label>
-                                                    <select name="trangThai" id="trangThai" value={this.state.taiKhoanAdd.trangThai} className={`form-control ${this.state.errorAdd.trangThai ? 'is-invalid' : ''}`} onChange={this.thayDoiTrangThaiAdd}>
+                                                    <select name="trangThai" id="trangThai" className={`form-control ${this.state.errorAdd.trangThai ? 'is-invalid' : ''}`} onChange={this.thayDoiTrangThaiAdd}>
                                                         <option value=''>Chọn trạng thái</option>
                                                         <option value="true">Hoạt động</option>
                                                         <option value="false">Không hoạt động</option>
                                                     </select>
+                                                    {this.state.errorAdd.trangThai && <div className="text-danger">{this.state.errorAdd.trangThai}</div>}
                                                 </div>
                                                 <input type="submit" className="btn btn-primary" value="Add" style={{ marginTop: '10px' }} onClick={this.add} />
                                             </form>

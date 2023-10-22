@@ -21,7 +21,10 @@ import java.io.IOException;
 import java.sql.Date;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:3000")
@@ -38,15 +41,15 @@ public class TaiKhoanController {
     @PostMapping("add")
     public ResponseEntity<?> add(Model model,
                                  @RequestBody TaiKhoan taiKhoan) {
+
         return ResponseEntity.ok(serviceimpl.add(taiKhoan));
     }
 
     @DeleteMapping("delete/{id}")
-    public ResponseEntity<?> delete(@PathVariable("id") Long id) {
+    public String delete(Model model,
+                         @PathVariable("id") Long id) {
         serviceimpl.delete(id);
-        Map<String, Boolean> response = new HashMap<>();
-        response.put("Delete", Boolean.TRUE);
-        return ResponseEntity.ok(response);
+        return "OK";
     }
 
     @GetMapping("index/{id}")
