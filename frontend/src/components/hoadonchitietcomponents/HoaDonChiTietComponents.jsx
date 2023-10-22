@@ -17,9 +17,9 @@ class HoaDonChiTietComponents extends Component {
         HoaDonChiTietService.detailHDCT(this.state.hoaDonId.id).then((res) => {
             this.setState({ hoaDonChiTiet: res.data })
         });
-        HoaDonChiTietService.getOneHDCT(this.state.hoaDonId.id).then((res) => {
-            this.setState({ hoaDonChiTiet: res.data })
-        });
+        // HoaDonChiTietService.getOneHDCT(this.state.hoaDonId.id).then((res) => {
+        //     this.setState({ hoaDonChiTiet: res.data })
+        // });
     }
 
     render() {
@@ -72,11 +72,11 @@ class HoaDonChiTietComponents extends Component {
                                                                     <td>{hoaDonChiTiet.id}</td>
                                                                     <td>{hoaDonChiTiet.soLuong}</td>
                                                                     <td>{hoaDonChiTiet.hd.id}</td>
-                                                                    <td>{hoaDonChiTiet.sanPhamChiTiet.sanPhamId.ten}</td>
-                                                                    <td>{hoaDonChiTiet.sanPhamChiTiet.sanPhamId.giamGia}</td>
+                                                                    <td>{hoaDonChiTiet.sanPhamChiTiet.sanPham.ten}</td>
+                                                                    <td>{hoaDonChiTiet.sanPhamChiTiet.sanPham.giamGia}</td>
                                                                     <td>{hoaDonChiTiet.ghiChu}</td>
-                                                                    <td>{hoaDonChiTiet.sanPhamChiTiet.sanPhamId.giamGia * hoaDonChiTiet.soLuong}</td>
-                                                                    <td>{hoaDonChiTiet.hd.taiKhoan.ten}</td>
+                                                                    <td>{hoaDonChiTiet.sanPhamChiTiet.sanPham.giamGia * hoaDonChiTiet.soLuong}</td>
+                                                                    <td>{hoaDonChiTiet.hd.taiKhoan.id}</td>
                                                                     <td>{hoaDonChiTiet.hd.ten}</td>
                                                                     <td>{hoaDonChiTiet.hd.ngayTao}</td>
 

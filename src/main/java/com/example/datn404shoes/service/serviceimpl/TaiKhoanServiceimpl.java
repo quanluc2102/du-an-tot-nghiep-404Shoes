@@ -50,13 +50,13 @@ public class TaiKhoanServiceimpl implements TaiKhoanService {
         TaiKhoan tk = getOne(id);
         tk.setUsername(taiKhoan.getUsername());
         tk.setEmail(taiKhoan.getEmail());
-        tk.setTen(taiKhoan.getTen());
+
 //        tk.setDiaChi(taiKhoan.getDiaChi());
         tk.setNgayTao(taiKhoan.getNgayTao());
         tk.setNgayCapNhat(taiKhoan.getNgayCapNhat());
         tk.setPassword(taiKhoan.getPassword());
         tk.setAnh(taiKhoan.getAnh());
-        tk.setSdt(taiKhoan.getSdt());
+
         tk.setTrangThai(taiKhoan.isTrangThai());
        responsitory.save(taiKhoan);
         return tk;

@@ -25,8 +25,7 @@ public class TaiKhoan {
     @Column(name = "email")
     private String email;
 
-    @Column(name = "ten")
-    private String ten;
+
 
     @Column(name = "ngay_tao")
     private Date ngayTao;
@@ -40,21 +39,19 @@ public class TaiKhoan {
     @Column(name = "anh")
     private String anh;
 
-    @Column(name = "sdt")
-    private String sdt;
 
     @Column(name = "trang_thai")
     private boolean trangThai;
 
-    public TaiKhoan(String username, String email, String ten, Date ngayTao, Date ngayCapNhat, String password, String anh, String sdt, boolean trangThai) {
+    public TaiKhoan(String username, String emai, Date ngayTao, Date ngayCapNhat, String password, String anh, String sdt, boolean trangThai) {
         this.username = username;
         this.email = email;
-        this.ten = ten;
+
         this.ngayTao = ngayTao;
         this.ngayCapNhat = ngayCapNhat;
         this.password = password;
         this.anh = anh;
-        this.sdt = sdt;
+
         this.trangThai = trangThai;
 
     }
