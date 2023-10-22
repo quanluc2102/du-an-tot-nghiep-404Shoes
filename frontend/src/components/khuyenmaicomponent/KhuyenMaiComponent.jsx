@@ -9,59 +9,87 @@ class KhuyenMaiComponent extends Component {
         this.state = {
             khuyenMai:[],
             khuyenMaiAdd: {
+                ma: '',
                 ten: '',
                 moTa: '',
                 batDau: '',
                 ketThuc: '',
                 giamGia: '',
-                kieuKhuyenMai: ''},
+                kieuKhuyenMai: '',
+                dieuKien: '',
+                soLuong: '',
+                trangThai: ''},
             khuyenMaiUpdate:{
                 id:this.props.match.params.id,
+                ma: '',
                 ten : '',
                 moTa : '',
                 batDau: '',
                 ketThuc: '',
                 giamGia : '',
-                kieuKhuyenMai:''
+                kieuKhuyenMai:'',
+                dieuKien: '',
+                soLuong: '',
+                trangThai: ''
             },
             errorAdd: {
+                ma: '',
                 ten : '',
                 moTa : '',
                 batDau: '',
                 ketThuc: '',
                 giamGia : '',
-                kieuKhuyenMai:''
+                kieuKhuyenMai:'',
+                dieuKien: '',
+                soLuong: '',
+                trangThai: ''
             },
             errorUpdate: {
+                ma: '',
                 ten : '',
                 moTa : '',
                 batDau: '',
                 ketThuc: '',
                 giamGia : '',
-                kieuKhuyenMai:''
+                kieuKhuyenMai:'',
+                dieuKien: '',
+                soLuong: '',
+                trangThai: ''
             }
         }
+
+
         this.add=this.add.bind(this);
         this.delete=this.delete.bind(this);
         this.update=this.update.bind(this);
         this.detail=this.detail.bind(this);
+        this.thayDoiMaAdd=this.thayDoiMaAdd.bind(this);
         this.thayDoiTenAdd=this.thayDoiTenAdd.bind(this);
         this.thayDoiMoTaAdd=this.thayDoiMoTaAdd.bind(this);
         this.thayDoiBatDauAdd=this.thayDoiBatDauAdd.bind(this);
         this.thayDoiKetThucAdd=this.thayDoiKetThucAdd.bind(this);
         this.thayDoiGiamGiaAdd=this.thayDoiGiamGiaAdd.bind(this);
         this.thayDoiKieuKhuyenMaiAdd=this.thayDoiKieuKhuyenMaiAdd.bind(this);
+        this.thayDoiDieuKienAdd=this.thayDoiDieuKienAdd.bind(this);
+        this.thayDoiSoLuongAdd=this.thayDoiSoLuongAdd.bind(this);
+        this.thayDoiTrangThaiAdd=this.thayDoiTrangThaiAdd.bind(this);
+        this.thayDoiMaUpdate=this.thayDoiMaUpdate.bind(this);
         this.thayDoiTenUpdate=this.thayDoiTenUpdate.bind(this);
         this.thayDoiMoTaUpdate=this.thayDoiMoTaUpdate.bind(this);
         this.thayDoiBatDauUpdate=this.thayDoiBatDauUpdate.bind(this);
         this.thayDoiKetThucUpdate=this.thayDoiKetThucUpdate.bind(this);
         this.thayDoiGiamGiaUpdate=this.thayDoiGiamGiaUpdate.bind(this);
         this.thayDoiKieuKhuyenMaiUpdate=this.thayDoiKieuKhuyenMaiUpdate.bind(this);
+        this.thayDoiDieuKienUpdate=this.thayDoiDieuKienUpdate.bind(this);
+        this.thayDoiSoLuongUpdate=this.thayDoiSoLuongUpdate.bind(this);
+        this.thayDoiTrangThaiUpdate=this.thayDoiTrangThaiUpdate.bind(this);
     }
     componentDidMount(){
+        // this.loadKhuyenMaiData();
         KhuyenMaiService.getKhuyenMai().then((res)=>{
             this.setState({khuyenMai:res.data});
         });
+    //
         const id = this.props.match.params.id;
         if (id) {
             KhuyenMaiService.getKhuyenMaiById(this.state.khuyenMaiUpdate.id).then((res)=>{
@@ -77,16 +105,56 @@ class KhuyenMaiComponent extends Component {
 
 
     }
+    // loadPageData(pageNumber){
+    //     KhuyenMaiService.getKhuyenMai(pageNumber).then(res => {
+    //         this.setState({
+    //             khuyenMai: res.data.content, // Dữ liệu trên trang hiện tại
+    //             pageCount: res.data.totalPages, // Tổng số trang
+    //         });
+    //     });
+    // }
+    // handlePageClick = data => {
+    //     let selected = data.selected; // Trang được chọn từ react-paginate
+    //     this.loadPageData(selected);
+    // };
+    // loadKhuyenMaiData(pageNumber) {
+    //     KhuyenMaiService.getKhuyenMai(pageNumber).then(res => {
+    //         this.setState({
+    //             khuyenMai: res.data.content, // Dữ liệu trên trang hiện tại
+    //             pageCount: res.data.totalPages, // Tổng số trang
+    //         });
+    //     });
+    //
+    //     const id = this.props.match.params.id;
+    //     if (id) {
+    //         KhuyenMaiService.getKhuyenMaiById(id).then((res) => {
+    //             this.setState({ khuyenMaiUpdate: res.data });
+    //         });
+    //     }
+    // }
     delete(id){
         KhuyenMaiService.deleteKhuyenMai(id).then((res)=>{
         });
         window.location.href = (`/index`);
     }
+
     add = (e)=>{
         e.preventDefault();
 
         let giamGia = parseInt(this.state.khuyenMaiAdd.giamGia);
+        let soLuong = parseInt(this.state.khuyenMaiAdd.soLuong);
+        let  dieuKien = parseInt(this.state.khuyenMaiAdd. dieuKien);
 
+
+        const batDau = new Date(this.state.khuyenMaiAdd.batDau);
+        const ketThuc = new Date(this.state.khuyenMaiAdd.ketThuc);
+        const currentDate = new Date();
+        if (!this.state.khuyenMaiAdd.ma) {
+            this.setState({errorAdd: {...this.state.errorAdd, ma: "Mã không được bỏ trống!"}});
+            return;
+        } else {
+            this.setState({ errorAdd: { ...this.state.errorAdd, ma: "" } });
+        }
         if (!this.state.khuyenMaiAdd.ten.trim()) {
             this.setState({errorAdd: {...this.state.errorAdd, ten: "Tên không được bỏ trống!"}});
             return;
@@ -101,23 +169,30 @@ class KhuyenMaiComponent extends Component {
         }
         if(!this.state.khuyenMaiAdd.batDau.trim()){
             this.setState({errorAdd: {...this.state.errorAdd,batDau: "Ngày bắt đầu không được bỏ trống "}})
-        }else{
+        }else  if (batDau < currentDate) {
+            this.setState({ errorAdd: { ...this.state.errorAdd, batDau: "Ngày bắt đầu không được là ngày quá khứ!" } });
+            return;
+        }
+        else{
             this.setState({ errorAdd: { ...this.state.errorAdd,batDau: "" } });
 
         }
         if(!this.state.khuyenMaiAdd.ketThuc.trim()){
-            this.setState({errorAdd: {...this.state.errorAdd,ketThuc: "Ngày bắt đầu không được bỏ trống "}})
+            this.setState({errorAdd: {...this.state.errorAdd,ketThuc: "Ngày kết thúc không được bỏ trống "}})
          }
-        // else if(ketThuc < batDau) {
-        //         this.setState({ errorAdd: { ...this.state.errorAdd,ketThuc: "Ngày kết thúc không được bé hơn ngày bắt đầu!" } });
-        //         return;
-        // }
+        else if(ketThuc < batDau) {
+            this.setState({errorAdd: {...this.state.errorAdd,ketThuc: "Ngày kết thúc không được nhỏ hơn ngày bắt đầu "}})
+        return;
+        }else  if (ketThuc < currentDate) {
+            this.setState({ errorAdd: { ...this.state.errorAdd, ketThuc: "Ngày kết thúc không được là ngày quá khứ!" } });
+            return;
+        }
         else{
             this.setState({ errorAdd: { ...this.state.errorAdd,ketThuc: "" } });
 
         }
 
-        if (!this.state.khuyenMaiAdd.giamGia.trim()) {
+        if (!this.state.khuyenMaiAdd.giamGia) {
             this.setState({errorAdd: {...this.state.errorAdd, giamGia: "Giá giảm không được bỏ trống!"}});
             return;
         } else if(giamGia < 0) {
@@ -126,24 +201,55 @@ class KhuyenMaiComponent extends Component {
         } else {
             this.setState({ errorAdd: { ...this.state.errorAdd, giamGia: "" } });
         }
-
-
+        if (!this.state.khuyenMaiAdd.dieuKien) {
+            this.setState({errorAdd: {...this.state.errorAdd, dieuKien: "Điều kiện  không được bỏ trống!"}});
+            return;
+        }
+        else if(dieuKien < 0) {
+                this.setState({errorAdd: { ...this.state.errorAdd, dieuKien: "Điều kiện  không được bé hơn 0 !" } });
+                return;
+        } else {
+            this.setState({ errorAdd: { ...this.state.errorAdd, dieuKien: "" } });
+        }
+        if (!this.state.khuyenMaiAdd.soLuong) {
+            this.setState({errorAdd: {...this.state.errorAdd, soLuong: "Số lượng  không được bỏ trống!"}});
+            return;
+        } else if( soLuong < 0) {
+            this.setState({ errorAdd: { ...this.state.errorAdd, soLuong: "Số lượng  không được bé hơn 0 !" } });
+            return;
+        } else {
+            this.setState({ errorAdd: { ...this.state.errorAdd, soLuong: "" } });
+        }
         KhuyenMaiService.addKhuyenMai(this.state.khuyenMaiAdd).then((res)=>{
             window.location.href = (`/khuyenmai`);
         })
     }
     update=(e)=>{
         e.preventDefault();
-        var khuyenMai= {ten: this.state.khuyenMaiUpdate.ten,
+        var khuyenMai= {ma: this.state.khuyenMaiUpdate.ma,
+            ten: this.state.khuyenMaiUpdate.ten,
             moTa:this.state.khuyenMaiUpdate.moTa,
             batDau:this.state.khuyenMaiUpdate.batDau,
             ketThuc:this.state.khuyenMaiUpdate.ketThuc,
             giamGia:this.state.khuyenMaiUpdate.giamGia,
-            kieuKhuyenMai: this.state.khuyenMaiUpdate.kieuKhuyenMai}
+            kieuKhuyenMai: this.state.khuyenMaiUpdate.kieuKhuyenMai,
+            dieuKien: this.state.khuyenMaiUpdate.dieuKien,
+            soLuong: this.state.khuyenMaiUpdate.soLuong,
+           trangThai: this.state.khuyenMaiUpdate.trangThai}
         console.log('nsx' + JSON.stringify(khuyenMai));
 
         let giamGia = parseInt(khuyenMai.giamGia);
-
+        let soLuong = parseInt(khuyenMai.soLuong);
+        let dieuKien = parseInt(khuyenMai.dieuKien);
+        const batDau = new Date(khuyenMai.batDau);
+        const ketThuc = new Date(khuyenMai.ketThuc);
+        const currentDate = new Date();
+        if (!this.state.khuyenMaiUpdate.ma.trim()) {
+            this.setState({errorUpdate: {...this.state.errorUpdate, ma: "Mã không được bỏ trống!"}});
+            return;
+        } else {
+            this.setState({ errorUpdate: { ...this.state.errorUpdate, ma: "" } });
+        }
         if (!this.state.khuyenMaiUpdate.ten.trim()) {
             this.setState({errorUpdate: {...this.state.errorUpdate, ten: "Tên không được bỏ trống!"}});
             return;
@@ -156,32 +262,59 @@ class KhuyenMaiComponent extends Component {
         } else {
             this.setState({ errorUpdate: { ...this.state.errorUpdate, moTa: "" } });
         }
+
         if(!this.state.khuyenMaiUpdate.batDau.trim()){
             this.setState({errorUpdate: {...this.state.errorUpdate,batDau: "Ngày bắt đầu không được bỏ trống "}})
-        }else{
+        }else  if (batDau < currentDate) {
+            this.setState({ errorUpdate: { ...this.state.errorUpdate, batDau: "Ngày bắt đầu không được là ngày quá khứ!" } });
+            return;
+        }
+        else{
             this.setState({ errorUpdate: { ...this.state.errorUpdate,batDau: "" } });
 
         }
         if(!this.state.khuyenMaiUpdate.ketThuc.trim()){
-            this.setState({errorUpdate: {...this.state.errorUpdate,ketThuc: "Ngày bắt đầu không được bỏ trống "}})
-        // }else if(ketThuc < batDau) {
-        //     this.setState({ errorUpdate: { ...this.state.errorUpdate,ketThuc: "Ngày kết thúc không được bé hơn ngày bắt đầu!" } });
-        //     return;
-        }else{
+            this.setState({errorUpdate: {...this.state.errorUpdate,ketThuc: "Ngày kết thúc không được bỏ trống "}})
+        }
+        else if(ketThuc < batDau) {
+            this.setState({errorUpdate: {...this.state.errorUpdate,ketThuc: "Ngày kết thúc không được nhỏ hơn ngày bắt đầu "}})
+            return;
+        }else  if (ketThuc < currentDate) {
+            this.setState({ errorUpdate: { ...this.state.errorUpdate, ketThuc: "Ngày kết thúc không được là ngày quá khứ!" } });
+            return;
+        }
+        else{
             this.setState({ errorUpdate: { ...this.state.errorUpdate,ketThuc: "" } });
 
         }
 
-        // if (!this.state.khuyenMaiUpdate.giamGia.trim()) {
-        //     this.setState({errorUpdate: {...this.state.errorUpdate, giamGia: "Giá giảm không được bỏ trống!"}});
-        //     return;
-        // } else if(giamGia < 0) {
-        //     this.setState({ errorUpdate: { ...this.state.errorUpdate, giamGia: "Giá giảm không được bé hơn 0 !" } });
-        //     return;
-        // } else {
-        //     this.setState({ errorUpdate: { ...this.state.errorUpdate, giamGia: "" } });
-        // }
 
+        if (!this.state.khuyenMaiUpdate.giamGia) {
+            this.setState({ errorUpdate: { ...this.state.errorUpdate, giamGia: "Giảm giá không được bỏ trống" }});
+        }else if(giamGia < 0) {
+            this.setState({ errorUpdate: { ...this.state.errorUpdate, giamGia: "Giá giảm không được bé hơn 0 !" } });
+            return;
+        } else {
+            this.setState({ errorUpdate: { ...this.state.errorUpdate, giamGia: "" } });
+        }
+        if (!this.state.khuyenMaiUpdate.dieuKien) {
+            this.setState({errorUpdate: {...this.state.errorUpdate, dieuKien: "Điều kiện  không được bỏ trống!"}});
+            return;
+        } else if(dieuKien < 0) {
+            this.setState({errorUpdate: { ...this.state.errorUpdate, dieuKien: "Điều kiện  không được bé hơn 0 !" } });
+            return;
+        }  else {
+            this.setState({ errorUpdate: { ...this.state.errorUpdate, dieuKien: "" } });
+        }
+        if (!this.state.khuyenMaiUpdate.soLuong) {
+            this.setState({errorUpdate: {...this.state.errorUpdate, soLuong: "Số lượng  không được bỏ trống!"}});
+            return;
+        } else if(soLuong < 0) {
+            this.setState({errorUpdate: { ...this.state.errorUpdate, soLuong: "Số lượng  không được bé hơn 0 !" } });
+            return;
+        } else {
+            this.setState({ errorUpdate: { ...this.state.errorUpdate, soLuong: "" } });
+        }
         let id = this.state.khuyenMaiUpdate.id;
         KhuyenMaiService.updateKhuyenMai(id,khuyenMai).then((res)=>{
             window.location.href = (`/khuyenMai`);
@@ -190,6 +323,18 @@ class KhuyenMaiComponent extends Component {
     detail(id){
         window.location.href = (`/khuyenMaidetail/${id}`);
 
+    }
+    thayDoiMaAdd=(event)=>{
+        this.setState(
+            prevState=>({
+                khuyenMaiAdd:{
+                    ...prevState.khuyenMaiAdd,
+                    ma:event.target.value
+                }
+            })
+        );
+        let errorAdd = {...this.state.errorAdd,ma:""};
+        this.setState({errorAdd:errorAdd});
     }
     thayDoiTenAdd=(event)=>{
         this.setState(
@@ -262,6 +407,48 @@ class KhuyenMaiComponent extends Component {
             })
         );
     }
+    thayDoiDieuKienAdd=(event)=>{
+        this.setState(
+            prevState=>({
+                khuyenMaiAdd:{
+                    ...prevState.khuyenMaiAdd,
+                    dieuKien:event.target.value
+                }
+            })
+        );
+    }
+    thayDoiSoLuongAdd=(event)=>{
+        this.setState(
+            prevState=>({
+                khuyenMaiAdd:{
+                    ...prevState.khuyenMaiAdd,
+                    soLuong:event.target.value
+                }
+            })
+        );
+    }
+    thayDoiTrangThaiAdd=(event)=>{
+        this.setState(
+            prevState=>({
+                khuyenMaiAdd:{
+                    ...prevState.khuyenMaiAdd,
+                   trangThai:event.target.value
+                }
+            })
+        );
+    }
+    thayDoiMaUpdate=(event)=>{
+        this.setState(
+            prevState=>({
+                khuyenMaiUpdate:{
+                    ...prevState.khuyenMaiUpdate,
+                    ma:event.target.value
+                }
+            })
+        );
+        let errorUpdate = {...this.state.errorUpdate,ma:""};
+        this.setState({errorUpdate:errorUpdate});
+    }
     thayDoiTenUpdate=(event)=>{
         this.setState(
             prevState=>({
@@ -333,16 +520,46 @@ class KhuyenMaiComponent extends Component {
             })
         );
     }
+    thayDoiDieuKienUpdate=(event)=>{
+        this.setState(
+            prevState=>({
+                khuyenMaiUpdate:{
+                    ...prevState.khuyenMaiUpdate,
+                    dieuKien:event.target.value
+                }
+            })
+        );
+    }
+    thayDoiSoLuongUpdate=(event)=>{
+        this.setState(
+            prevState=>({
+                khuyenMaiUpdate:{
+                    ...prevState.khuyenMaiUpdate,
+                    soLuong:event.target.value
+                }
+            })
+        );
+    }
+    thayDoiTrangThaiUpdate=(event)=>{
+        this.setState(
+            prevState=>({
+                khuyenMaiUpdate:{
+                    ...prevState.khuyenMaiUpdate,
+                    trangThai:event.target.value
+                }
+            })
+        );
+    }
     render() {
         return (
             <div>
                 <div className="pagetitle">
-                    <h1>Color</h1>
+                    <h1>Khuyến mãi</h1>
                     <nav>
                         <ol className="breadcrumb">
                             <li className="breadcrumb-item"><a href="index.html">Home</a></li>
                             <li className="breadcrumb-item active">Overview</li>
-                            <li className="breadcrumb-item active">Color</li>
+                            <li className="breadcrumb-item active">Khuyến mãi</li>
                         </ol>
                     </nav>
                 </div>
@@ -351,73 +568,9 @@ class KhuyenMaiComponent extends Component {
                 <section className="section dashboard">
                     <div className="row">
 
-                        <div className="col-lg-8">
-                            <div className="row">
-                                <div className="col-12">
-                                    <div className="card recent-sales overflow-auto">
 
 
-                                        <div className="card-body">
-                                            <h5 className="card-title">Khuyến mãi <span>| </span></h5>
-
-                                            <table className="table table-borderless datatable">
-                                                <thead>
-                                                <tr>
-                                                    <th>Tên</th>
-                                                    <th>Mô tả</th>
-                                                    <th>Bắt đầu</th>
-                                                    <th>Kết thúc</th>
-                                                    <th>Giảm giá</th>
-                                                    <th>Kiểu khuyến mãi</th>
-                                                    <th>Action</th>
-                                                </tr>
-                                                </thead>
-                                                {/* </tr>
-                                                    <tr>
-                                                        <td>${mau.id}</td>
-                                                        <td>${mau.name}</td>
-
-                                                        <td>
-                                                            <a href="/color/delete/${mau.id}" className="btn btn-danger" onclick="return confirm('Bạn chắc chắn có muốn xóa??')" style="text-decoration: none;color: white"><i className='bx bx-trash'></i></a>
-                                                            <a href="/color/detail/${mau.id}" className="btn btn-success" style="text-decoration: none;color: white; margin-top: 5px" ><i className='bi bi-arrow-repeat'></i></a>
-                                                        </td>
-                                                    </tr> */}
-                                                <tbody>
-                                                {
-                                                    this.state.khuyenMai.map(
-                                                        km =>
-                                                            <tr key={km.id}>
-                                                                <td>{km.ten}</td>
-                                                                <td>{km.moTa}</td>
-                                                                <td>{km.batDau}</td>
-                                                                <td>{km.ketThuc}</td>
-                                                                <td>{km.giamGia}</td>
-                                                                <td>{km.kieuKhuyenMai===1?"Phần trăm":"Tiền"}</td>
-                                                                <td>
-                                                                    <button onClick={()=>this.delete(km.id)} className='btn btn-danger'>Xóa</button>
-                                                                    <button onClick={()=>this.detail(km.id)} className='btn btn-primary'>Chi tiết</button>
-                                                                </td>
-                                                            </tr>
-                                                    )
-                                                }
-                                                </tbody>
-
-
-                                            </table>
-
-                                        </div>
-
-                                    </div>
-
-
-                                </div>
-
-                            </div>
-
-                        </div>
-
-
-                        <div className="col-lg-4">
+                        <div className="col-lg-10">
 
 
                             <div className="card">
@@ -425,32 +578,16 @@ class KhuyenMaiComponent extends Component {
                                 <div className="card-body">
                                     <h5 className="card-title">Sửa <span>| xx</span></h5>
 
-                                    <ul className="nav nav-tabs" id="myTab" role="tablist">
-                                        <li className="nav-item" role="presentation">
-                                            <button className="nav-link active" id="home-tab" data-bs-toggle="tab"
-                                                    data-bs-target="#home" type="button" role="tab" aria-controls="home"
-                                                    aria-selected="true">Edit
-                                            </button>
-                                        </li>
-                                        <li className="nav-item" role="presentation">
-                                            <button className="nav-link" id="profile-tab" data-bs-toggle="tab"
-                                                    data-bs-target="#profile" type="button" role="tab" aria-controls="profile"
-                                                    aria-selected="false">Add new
-                                            </button>
-                                        </li>
-                                        <li className="nav-item" role="presentation">
-                                            <button className="nav-link" id="contact-tab" data-bs-toggle="tab"
-                                                    data-bs-target="#contact" type="button" role="tab" aria-controls="contact"
-                                                    aria-selected="false">Detail
-                                            </button>
-                                        </li>
-                                    </ul>
-
 
                                     <div className="tab-content pt-2" id="myTabContent">
                                         <div className="tab-pane fade show active" id="home" role="tabpanel"
                                              aria-labelledby="home-tab">
                                             <form>
+                                                <div>
+                                                    Mã :
+                                                    <input className={`form-control ${this.state.errorUpdate.ma ? 'is-invalid' : ''}`} name="ma" value={this.state.khuyenMaiUpdate.ma} onChange={this.thayDoiMaUpdate}/>
+                                                    {this.state.errorUpdate.ma && <div className="text-danger">{this.state.errorUpdate.ma}</div>}
+                                                </div>
                                                 <div>
                                                     Tên :
                                                     <input className={`form-control ${this.state.errorUpdate.ten ? 'is-invalid' : ''}`} name="ten" value={this.state.khuyenMaiUpdate.ten} onChange={this.thayDoiTenUpdate}/>
@@ -463,12 +600,12 @@ class KhuyenMaiComponent extends Component {
                                                 </div>
                                                 <div>
                                                     Bắt đầu :
-                                                    <input className={`form-control ${this.state.errorUpdate.batDau ? 'is-invalid' : ''}`} name="batDau" value={this.state.khuyenMaiUpdate.batDau} onChange={this.thayDoiBatDauUpdate}/>
+                                                    <input className={`form-control ${this.state.errorUpdate.batDau ? 'is-invalid' : ''}`} name="batDau"  type="date" value={this.state.khuyenMaiUpdate.batDau} onChange={this.thayDoiBatDauUpdate}/>
                                                     {this.state.errorUpdate.batDau && <div className="text-danger">{this.state.errorUpdate.batDau}</div>}
                                                 </div>
                                                 <div>
                                                     Kết thúc :
-                                                    <input className={`form-control ${this.state.errorUpdate.ketThuc ? 'is-invalid' : ''}`} name="ketThuc" value={this.state.khuyenMaiUpdate.ketThuc} onChange={this.thayDoiKetThucUpdate}/>
+                                                    <input className={`form-control ${this.state.errorUpdate.ketThuc ? 'is-invalid' : ''}`} name="ketThuc" type="date" value={this.state.khuyenMaiUpdate.ketThuc} onChange={this.thayDoiKetThucUpdate}/>
                                                     {this.state.errorUpdate.ketThuc && <div className="text-danger">{this.state.errorUpdate.ketThuc}</div>}
                                                 </div>
                                                 <div>
@@ -484,61 +621,102 @@ class KhuyenMaiComponent extends Component {
                                                         <option value="0">Tiền</option>
                                                     </select>
                                                 </div>
+                                                <div>
+                                                   Điều kiện :
+                                                    <input className={`form-control ${this.state.errorUpdate.dieuKien ? 'is-invalid' : ''}`} name="dieuKien" value={this.state.khuyenMaiUpdate.dieuKien} onChange={this.thayDoiDieuKienUpdate}/>
+                                                    {this.state.errorUpdate.dieuKien && <div className="text-danger">{this.state.errorUpdate.dieuKien}</div>}
+                                                </div>
+                                                <div>
+                                                    Số  lượng :
+                                                    <input className={`form-control ${this.state.errorUpdate.soLuong ? 'is-invalid' : ''}`} name="soLuong" value={this.state.khuyenMaiUpdate.soLuong} onChange={this.thayDoiSoLuongUpdate}/>
+                                                    {this.state.errorUpdate.soLuong && <div className="text-danger">{this.state.errorUpdate.giamGia}</div>}
+                                                </div>
+                                                <div className='form-group'>
+                                                    <label>Trạng thái</label>
+                                                    <select name="trangThai" id="trangThai" value={this.state.khuyenMaiUpdate.trangThai} className="form-control" onChange={this.thayDoiTrangThaiUpdate}>
+                                                        <option value="1">Hoạt động</option>
+                                                        <option value="0">Ngừng hoạt động</option>
+                                                        <option value="2">Đang diễn ra</option>
+                                                    </select>
+                                                </div>
                                                 <input type="submit" className="btn btn-primary" value="Update" style={{marginTop: '10px'}} onClick={this.update}/>
                                             </form>
                                         </div>
 
-                                        <div className="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-                                            <form>
-                                                <div>
-                                                    Tên :
-                                                    <input className={`form-control ${this.state.errorAdd.ten ? 'is-invalid' : ''}`} name="ten" onChange={this.thayDoiTenAdd}/>
-                                                    {this.state.errorAdd.ten && <div className="text-danger">{this.state.errorAdd.ten}</div>}
-                                                </div>
-                                                <div>
-                                                    Mô tả :
-                                                    <input className={`form-control ${this.state.errorAdd.moTa ? 'is-invalid' : ''}`} name="moTa"  onChange={this.thayDoiMoTaAdd}/>
-                                                    {this.state.errorAdd.moTa && <div className="text-danger">{this.state.errorAdd.moTa}</div>}
-                                                </div>
-                                                <div>
-                                                    Bắt đầu :
-                                                    <input className={`form-control ${this.state.errorAdd.batDau ? 'is-invalid' : ''}`} name="batDau" onChange={this.thayDoiBatDauAdd}/>
-                                                    {this.state.errorAdd.batDau && <div className="text-danger">{this.state.errorAdd.batDau}</div>}
-                                                </div>
-                                                <div>
-                                                    Kết thúc :
-                                                    <input className={`form-control ${this.state.errorAdd.ketThuc ? 'is-invalid' : ''}`} name="ketThuc"  onChange={this.thayDoiKetThucAdd}/>
-                                                    {this.state.errorAdd.ketThuc && <div className="text-danger">{this.state.errorAdd.ketThuc}</div>}
-                                                </div>
-                                                <div>
-                                                    Giảm giá :
-                                                    <input className={`form-control ${this.state.errorAdd.giamGia ? 'is-invalid' : ''}`} name="giamGia" onChange={this.thayDoiGiamGiaAdd}/>
-                                                    {this.state.errorAdd.giamGia && <div className="text-danger">{this.state.errorAdd.giamGia}</div>}
-                                                </div>
+                                        {/*<div className="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">*/}
+                                        {/*    <form>*/}
+                                        {/*        <div>*/}
+                                        {/*            Mã :*/}
+                                        {/*            <input className={`form-control ${this.state.errorAdd.ma ? 'is-invalid' : ''}`} name="ma" onChange={this.thayDoiMaAdd}/>*/}
+                                        {/*            {this.state.errorAdd.ma && <div className="text-danger">{this.state.errorAdd.ma}</div>}*/}
+                                        {/*        </div>*/}
+                                        {/*        <div>*/}
+                                        {/*            Tên :*/}
+                                        {/*            <input className={`form-control ${this.state.errorAdd.ten ? 'is-invalid' : ''}`} name="ten" onChange={this.thayDoiTenAdd}/>*/}
+                                        {/*            {this.state.errorAdd.ten && <div className="text-danger">{this.state.errorAdd.ten}</div>}*/}
+                                        {/*        </div>*/}
+                                        {/*        <div>*/}
+                                        {/*            Mô tả :*/}
+                                        {/*            <input className={`form-control ${this.state.errorAdd.moTa ? 'is-invalid' : ''}`} name="moTa"  onChange={this.thayDoiMoTaAdd}/>*/}
+                                        {/*            {this.state.errorAdd.moTa && <div className="text-danger">{this.state.errorAdd.moTa}</div>}*/}
+                                        {/*        </div>*/}
+                                        {/*        <div>*/}
+                                        {/*            Bắt đầu :*/}
+                                        {/*            <input className={`form-control ${this.state.errorAdd.batDau ? 'is-invalid' : ''}`} name="batDau" type="date" onChange={this.thayDoiBatDauAdd}/>*/}
+                                        {/*            {this.state.errorAdd.batDau && <div className="text-danger">{this.state.errorAdd.batDau}</div>}*/}
+                                        {/*        </div>*/}
+                                        {/*        <div>*/}
+                                        {/*            Kết thúc :*/}
+                                        {/*            <input className={`form-control ${this.state.errorAdd.ketThuc ? 'is-invalid' : ''}`} name="ketThuc" type="date" onChange={this.thayDoiKetThucAdd}/>*/}
+                                        {/*            {this.state.errorAdd.ketThuc && <div className="text-danger">{this.state.errorAdd.ketThuc}</div>}*/}
+                                        {/*        </div>*/}
+                                        {/*        <div>*/}
+                                        {/*            Giảm giá :*/}
+                                        {/*            <input className={`form-control ${this.state.errorAdd.giamGia ? 'is-invalid' : ''}`} name="giamGia" onChange={this.thayDoiGiamGiaAdd}/>*/}
+                                        {/*            {this.state.errorAdd.giamGia && <div className="text-danger">{this.state.errorAdd.giamGia}</div>}*/}
+                                        {/*        </div>*/}
 
-                                                <div className='form-group'>
-                                                    <label>Kiểu khuyến mãi</label>
-                                                    <select name="kieuKhuyenMai" id="kieuKhuyenMai" className="form-control" onChange={this.thayDoiKieuKhuyenMaiAdd}>
-                                                        <option value="1">Phần trăm</option>
-                                                        <option value="0">Tiền</option>
-                                                    </select>
-                                                </div>
-                                                <input type="submit" className="btn btn-primary" value="Add" style={{marginTop: '10px'}} onClick={this.add}/>
-                                            </form>
-                                        </div>
+                                        {/*        <div className='form-group'>*/}
+                                        {/*            <label>Kiểu khuyến mãi</label>*/}
+                                        {/*            <select name="kieuKhuyenMai" id="kieuKhuyenMai" className="form-control" onChange={this.thayDoiKieuKhuyenMaiAdd}>*/}
+                                        {/*                <option value="0">Phần trăm</option>*/}
+                                        {/*                <option value="1">Tiền</option>*/}
+                                        {/*            </select>*/}
+                                        {/*        </div>*/}
+                                        {/*        <div>*/}
+                                        {/*            Điều kiện :*/}
+                                        {/*            <input className={`form-control ${this.state.errorAdd.dieuKien ? 'is-invalid' : ''}`} name="dieuKien" onChange={this.thayDoiDieuKienAdd}/>*/}
+                                        {/*            {this.state.errorAdd.dieuKien && <div className="text-danger">{this.state.errorAdd.dieuKien}</div>}*/}
+                                        {/*        </div>*/}
+                                        {/*        <div>*/}
+                                        {/*           Số lượng :*/}
+                                        {/*            <input className={`form-control ${this.state.errorAdd.soLuong ? 'is-invalid' : ''}`} name="soLuong" onChange={this.thayDoiSoLuongAdd}/>*/}
+                                        {/*            {this.state.errorAdd.soLuong && <div className="text-danger">{this.state.errorAdd.soLuong}</div>}*/}
+                                        {/*        </div>*/}
+                                        {/*        <div className='form-group'>*/}
+                                        {/*            <label>Trạng thái</label>*/}
+                                        {/*            <select name="trangThai" id="trangThai" className="form-control" onChange={this.thayDoiTrangThaiAdd}>*/}
+                                        {/*                <option value="0">Ngừng hoạt động</option>*/}
+                                        {/*                <option value="1">Hoạt động</option>*/}
+                                        {/*                <option value="2">Đang diễn ra</option>*/}
+                                        {/*            </select>*/}
+                                        {/*        </div>*/}
+                                        {/*        <input type="submit" className="btn btn-primary" value="Add" style={{marginTop: '10px'}} onClick={this.add}/>*/}
+                                        {/*    </form>*/}
+                                        {/*</div>*/}
 
 
-                                        <div className="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
-                                            <form className="row g-3"  method="get">
-                                                <div className="form-group">
-                                                    {/* ID : ${mau.id} */}
-                                                </div>
-                                                <div className="form-group">
-                                                    {/* Name : ${mau.name} */}
-                                                </div>
+                                        {/*<div className="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">*/}
+                                        {/*    <form className="row g-3"  method="get">*/}
+                                        {/*        <div className="form-group">*/}
+                                        {/*            /!* ID : ${mau.id} *!/*/}
+                                        {/*        </div>*/}
+                                        {/*        <div className="form-group">*/}
+                                        {/*            /!* Name : ${mau.name} *!/*/}
+                                        {/*        </div>*/}
 
-                                            </form>
-                                        </div>
+                                        {/*    </form>*/}
+                                        {/*</div>*/}
                                     </div>
 
 

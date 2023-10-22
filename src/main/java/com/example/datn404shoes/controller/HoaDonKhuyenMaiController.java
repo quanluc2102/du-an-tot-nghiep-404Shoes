@@ -24,19 +24,19 @@ public class HoaDonKhuyenMaiController {
     @GetMapping("/index")
     public String hienThi(Model model){
         List<HoaDonKhuyenMai> list = hoaDonKhuyenMaiServiceimpl.getAll();
-        List<KhuyenMai>listKhuyenMai = khuyenMaiServiceimpl.getAll();
+//        List<KhuyenMai>listKhuyenMai = khuyenMaiServiceimpl.getAll();
         model.addAttribute("listHDKM",list);
          model.addAttribute("listHD",hoaDonServiceimpl.getAll());
-        model.addAttribute("listKM",listKhuyenMai);
+//        model.addAttribute("listKM",listKhuyenMai);
         model.addAttribute("view", "/hoa_don_khuyen_mai/index.jsp");
         return "admin/index";
 
     }
     @GetMapping("/create")
     public String create(Model model){
-        List<KhuyenMai>listKhuyenMai = khuyenMaiServiceimpl.getAll();
+//        List<KhuyenMai>listKhuyenMai = khuyenMaiServiceimpl.getAll();
         model.addAttribute("listHD",hoaDonServiceimpl.getAll());
-        model.addAttribute("listKM",listKhuyenMai);
+//        model.addAttribute("listKM",listKhuyenMai);
         model.addAttribute("view", "/hoa_don_khuyen_mai/add.jsp");
         return "admin/index";
     }
@@ -62,10 +62,10 @@ public class HoaDonKhuyenMaiController {
                          @PathVariable("id")Long id){
         Optional<HoaDonKhuyenMai> hdkm = hoaDonKhuyenMaiServiceimpl.detaill(id);
         List<HoaDonKhuyenMai> list = hoaDonKhuyenMaiServiceimpl.getAll();
-        List<KhuyenMai>listKhuyenMai = khuyenMaiServiceimpl.getAll();
+//        List<KhuyenMai>listKhuyenMai = khuyenMaiServiceimpl.getAll();
         model.addAttribute("listHDKM",list);
         model.addAttribute("listHD",hoaDonServiceimpl.getAll());
-        model.addAttribute("listKM",listKhuyenMai);
+//        model.addAttribute("listKM",listKhuyenMai);
         model.addAttribute("hdkm",hdkm.get());
         model.addAttribute("view","/hoa_don_khuyen_mai/index.jsp");
         return "admin/index";
