@@ -1,7 +1,10 @@
 package com.example.datn404shoes.service;
 
+import com.example.datn404shoes.entity.KichThuoc;
 import com.example.datn404shoes.entity.TaiKhoan;
 import com.example.datn404shoes.entity.XuatXu;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
@@ -18,4 +21,5 @@ public interface TaiKhoanService {
     List<TaiKhoan> getAll();
 
     TaiKhoan getOne(Long id);
+    Page<TaiKhoan> findAll(Pageable pageable);
 }

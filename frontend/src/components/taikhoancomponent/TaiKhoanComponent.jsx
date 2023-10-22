@@ -1,36 +1,51 @@
 import React, { Component } from 'react';
 import taikhoanservice from "../../services/taikhoanservice/taikhoanservice";
+import ReactPaginate from 'react-paginate';
 
 class TaiKhoanComponent extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            id: this.props.match.params.id,
             taiKhoan: [],
+            pageCount: 0,
             taiKhoanAdd: {
                 username: '',
                 email: '',
-                ten: '',
-                diaChi: '',
                 ngayTao: '',
                 ngayCapNhat: '',
                 password: '',
                 anh: '',
-                sdt: '',
                 trangThai: ''
             },
             taiKhoanUpdate: {
                 id: this.props.match.params.id,
                 username: '',
                 email: '',
-                ten: '',
-                diaChi: '',
                 ngayTao: '',
                 ngayCapNhat: '',
                 password: '',
                 anh: '',
-                sdt: '',
                 trangThai: ''
             },
+            errorAdd: {
+                username: '',
+                email: '',
+                ngayTao: '',
+                ngayCapNhat: '',
+                password: '',
+                anh: '',
+                trangThai: ''
+            },
+            errorUpdate: {
+                username: '',
+                email: '',
+                ngayTao: '',
+                ngayCapNhat: '',
+                password: '',
+                anh: '',
+                trangThai: ''
+            }
         }
         this.add = this.add.bind(this);
         this.delete = this.delete.bind(this);
@@ -38,69 +53,128 @@ class TaiKhoanComponent extends Component {
         this.detail = this.detail.bind(this);
         this.thayDoiUsernameAdd = this.thayDoiUsernameAdd.bind(this);
         this.thayDoiEmailAdd = this.thayDoiEmailAdd.bind(this);
-        this.thayDoiTenAdd = this.thayDoiTenAdd.bind(this);
-        this.thayDoiDiaChiAdd= this.thayDoiDiaChiAdd.bind(this);
         this.thayDoiNgayTaoAdd = this.thayDoiNgayTaoAdd.bind(this);
         this.thayDoiNgayCapNhatAdd = this.thayDoiNgayCapNhatAdd.bind(this);
         this.thayDoiPasswordAdd = this.thayDoiPasswordAdd.bind(this);
         this.thayDoiAnhAdd = this.thayDoiAnhAdd.bind(this);
-        this.thayDoiSdtAdd = this.thayDoiSdtAdd.bind(this);
         this.thayDoiTrangThaiAdd = this.thayDoiTrangThaiAdd.bind(this);
         this.thayDoiUsernameUpdate = this.thayDoiUsernameUpdate.bind(this);
         this.thayDoiEmailUpdate = this.thayDoiEmailUpdate.bind(this);
-        this.thayDoiTenUpdate = this.thayDoiTenUpdate.bind(this);
-        this.thayDoiDiaChiUpdate = this.thayDoiDiaChiUpdate.bind(this);
         this.thayDoiNgayTaoUpdate = this.thayDoiNgayTaoUpdate.bind(this);
         this.thayDoiNgayCapNhatUpdate = this.thayDoiNgayCapNhatUpdate.bind(this);
         this.thayDoiPasswordUpdate = this.thayDoiPasswordUpdate.bind(this);
         this.thayDoiAnhUpdate = this.thayDoiAnhUpdate.bind(this);
-        this.thayDoiSdtUpdate = this.thayDoiSdtUpdate.bind(this);
         this.thayDoiTrangThaiUpdate = this.thayDoiTrangThaiUpdate.bind(this);
     }
 
-    componentDidMount() {
-        this.loadTaiKhoanData();
-    }
-
-    componentDidUpdate(prevProps) {
-        if (this.props.match.params.id !== prevProps.match.params.id) {
-            this.loadTaiKhoanData();
-        }
-    }
-
-    loadTaiKhoanData() {
-        taikhoanservice.getTaiKhoan().then((res) => {
-            this.setState({ taiKhoan: res.data });
+    loadPageData(pageNumber) {
+        taikhoanservice.getTaiKhoan(pageNumber).then(res => {
+            this.setState({
+                taiKhoan: res.data.content, // Dữ liệu trên trang hiện tại
+                pageCount: res.data.totalPages, // Tổng số trang
+            });
         });
+    }
 
+    handlePageClick = data => {
+        let selected = data.selected; // Trang được chọn từ react-paginate
+        this.loadPageData(selected);
+    };
+
+    componentDidMount(pageNumber) {
+        taikhoanservice.getTaiKhoan(pageNumber).then(res => {
+            this.setState({
+                taiKhoan: res.data.content, // Dữ liệu trên trang hiện tại
+                pageCount: res.data.totalPages, // Tổng số trang
+            });
+        });
         const id = this.props.match.params.id;
         if (id) {
-            taikhoanservice.getTaiKhoanById(id).then((res) => {
+            taikhoanservice.getTaiKhoanById(this.state.id).then((res) => {
                 this.setState({ taiKhoanUpdate: res.data });
-            });
+            })
         }
     }
-
-
     delete(id) {
         taikhoanservice.deleteTaiKhoan(id).then((res) => {
-            this.setState({ taiKhoan: this.state.taiKhoan.filter(taiKhoan => taiKhoan.id != id) });
         });
+        window.location.href = (`/taikhoan`);
     }
     add = (e) => {
         e.preventDefault();
         let taiKhoan = {
             username: this.state.taiKhoanAdd.username,
             email: this.state.taiKhoanAdd.email,
-            ten: this.state.taiKhoanAdd.ten,
-            diaChi: this.state.taiKhoanAdd.diaChi,
             ngayTao: this.state.taiKhoanAdd.ngayTao,
             ngayCapNhat: this.state.taiKhoanAdd.ngayCapNhat,
             password: this.state.taiKhoanAdd.password,
             anh: this.state.taiKhoanAdd.anh,
-            sdt: this.state.taiKhoanAdd.sdt,
             trangThai: this.state.taiKhoanAdd.trangThai
         }
+        if (!this.state.taiKhoanAdd.username.trim()) {
+            this.setState({ errorAdd: { ...this.state.errorAdd, username: "username không được bỏ trống!" } });
+            return;
+        } else if (!isNaN(this.state.taiKhoanAdd.username)) {
+            this.setState({ errorAdd: { ...this.state.errorAdd, username: "username phải là chữ!" } });
+            return;
+        }
+        else {
+            this.setState({ errorAdd: { ...this.state.errorAdd, username: "" } });
+        }
+        /////
+        if (!this.state.taiKhoanAdd.email.trim()) {
+            this.setState({ errorAdd: { ...this.state.errorAdd, email: "email không được bỏ trống!" } });
+            return;
+        } else if (!isValidEmail(this.state.taiKhoanAdd.email)) {
+            this.setState({ errorAdd: { ...this.state.errorAdd, email: "Email không hợp lệ!" } });
+            return;
+        } else {
+            this.setState({ errorAdd: { ...this.state.errorAdd, email: "" } });
+        }
+        function isValidEmail(email) {
+            const emailPattern = /^[A-Za-z0-9+_.-]+@.+/;
+            return emailPattern.test(email);
+        }
+        /////
+        if (!this.state.taiKhoanAdd.ngayTao.trim()) {
+            this.setState({ errorAdd: { ...this.state.errorAdd, ngayTao: "Ngày tạo không được bỏ trống!" } });
+            return;
+        }
+        else {
+            this.setState({ errorAdd: { ...this.state.errorAdd, ngayTao: "" } });
+        }
+        /////
+        if (!this.state.taiKhoanAdd.ngayCapNhat.trim()) {
+            this.setState({ errorAdd: { ...this.state.errorAdd, ngayCapNhat: "Ngày cập nhật không được bỏ trống!" } });
+            return;
+        }
+        else {
+            this.setState({ errorAdd: { ...this.state.errorAdd, ngayCapNhat: "" } });
+        }
+        //////
+        if (!this.state.taiKhoanAdd.password.trim()) {
+            this.setState({errorAdd: {...this.state.errorAdd, password: "Password không được bỏ trống!"}});
+            return;
+        }else {
+            this.setState({ errorAdd: { ...this.state.errorAdd, password: "" } });
+        }
+        ///
+        if (!this.state.taiKhoanAdd.anh.trim()) {
+            this.setState({ errorAdd: { ...this.state.errorAdd, anh: "Ảnh không được bỏ trống!" } });
+            return;
+        }
+        else {
+            this.setState({ errorAdd: { ...this.state.errorAdd, anh: "" } });
+        }
+        //
+        if (!this.state.taiKhoanAdd.trangThai.trim()) {
+            this.setState({errorAdd: { ...this.state.errorAdd, trangThai: "Trạng thái không được bỏ trống!" } });
+            return;
+        }
+        else {
+            this.setState({ errorAdd: { ...this.state.errorAdd, trangThai: "" } });
+        }
+
         taikhoanservice.addTaiKhoan(taiKhoan).then((res) => {
             if (res.status === 200) {
                 // Xử lý khi thêm thành công
@@ -117,7 +191,8 @@ class TaiKhoanComponent extends Component {
         }).catch(error => {
             // Log the error or handle it as needed
             console.error("Update request error:", error);
-        });
+        })
+
 
     }
     update = (e) => {
@@ -125,33 +200,92 @@ class TaiKhoanComponent extends Component {
         let taiKhoan = {
             username: this.state.taiKhoanUpdate.username,
             email: this.state.taiKhoanUpdate.email,
-            ten: this.state.taiKhoanUpdate.ten,
-            diaChi: this.state.taiKhoanUpdate.diaChi,
             ngayTao: this.state.taiKhoanUpdate.ngayTao,
             ngayCapNhat: this.state.taiKhoanUpdate.ngayCapNhat,
             password: this.state.taiKhoanUpdate.password,
             anh: this.state.taiKhoanUpdate.anh,
-            sdt: this.state.taiKhoanUpdate.sdt,
             trangThai: this.state.taiKhoanUpdate.trangThai }
+
         console.log('nsx' + JSON.stringify(taiKhoan));
         let id = this.state.taiKhoanUpdate.id;
-        taikhoanservice.updateTaiKhoan( this.state.taiKhoanUpdate.id).then((res) => {
-            let taiKhoanCapNhat = res.data; // Giả sử API trả về đối tượng vừa được cập nhật
-            this.setState(prevState => ({
-                taiKhoan: prevState.taiKhoan.map(tk =>
-                    tk.id === taiKhoanCapNhat.id ? taiKhoanCapNhat : tk
-                )
-            }));
-        }).catch(error => {
-            // Log the error or handle it as needed
-            console.error("Update request error:", error);
-        });
-
+        if (!this.state.taiKhoanUpdate.username.trim()) {
+            this.setState({ errorUpdate: { ...this.state.errorUpdate, username: "username không được bỏ trống!" } });
+            return;
+        } else if (!isNaN(this.state.taiKhoanUpdate.username)) {
+            this.setState({ errorUpdate: { ...this.state.errorUpdate, username: "username phải là chữ!" } });
+            return;
+        }
+        else {
+            this.setState({ errorUpdate: { ...this.state.errorUpdate, username: "" } });
+        }
+        /////
+        if (!this.state.taiKhoanUpdate.email.trim()) {
+            this.setState({ errorUpdate: { ...this.state.errorUpdate, email: "email không được bỏ trống!" } });
+            return;
+        } else if (!isValidEmail(this.state.taiKhoanUpdate.email)) {
+            this.setState({ errorUpdate: { ...this.state.errorUpdate, email: "Email không hợp lệ!" } });
+            return;
+        } else {
+            this.setState({ errorUpdate: { ...this.state.errorUpdate, email: "" } });
+        }
+        function isValidEmail(email) {
+            const emailPattern = /^[A-Za-z0-9+_.-]+@.+/;
+            return emailPattern.test(email);
+        }
+        /////
+        if (!this.state.taiKhoanUpdate.ngayTao.trim()) {
+            this.setState({ errorUpdate: { ...this.state.errorUpdate, ngayTao: "Ngày tạo không được bỏ trống!" } });
+            return;
+        }
+        else {
+            this.setState({ errorUpdate: { ...this.state.errorUpdate, ngayTao: "" } });
+        }
+        /////
+        if (!this.state.taiKhoanUpdate.ngayCapNhat.trim()) {
+            this.setState({ errorUpdate: { ...this.state.errorUpdate, ngayCapNhat: "Ngày cập nhật không được bỏ trống!" } });
+            return;
+        }
+        else {
+            this.setState({ errorUpdate: { ...this.state.errorUpdate, ngayCapNhat: "" } });
+        }
+        //////
+        if (!this.state.taiKhoanUpdate.password.trim()) {
+            this.setState({errorUpdate: {...this.state.errorUpdate, password: "Password không được bỏ trống!"}});
+            return;
+        }else {
+            this.setState({ errorUpdate: { ...this.state.errorUpdate, password: "" } });
+        }
+        ///
+        if (!this.state.taiKhoanUpdate.anh.trim()) {
+            this.setState({ errorUpdate: { ...this.state.errorUpdate, anh: "Ảnh không được bỏ trống!" } });
+            return;
+        }
+        else {
+            this.setState({ errorUpdate: { ...this.state.errorUpdate, anh: "" } });
+        }
+        //
+        if (!this.state.taiKhoanUpdate.trangThai.trim()) {
+            this.setState({errorUpdate: { ...this.state.errorUpdate, trangThai: "Trạng thái không được bỏ trống!" } });
+            return;
+        }
+        else {
+            this.setState({ errorUpdate: { ...this.state.errorUpdate, trangThai: "" } });
+        }
+       taikhoanservice.updateTaiKhoan(taiKhoan, this.state.taiKhoanUpdate.id).then((res) => {
+           let taiKhoanCapNhat = res.data; // Giả sử API trả về đối tượng vừa được cập nhật
+           this.setState(prevState => ({
+               taiKhoan: prevState.taiKhoan.map(tk =>
+                   tk.id === taiKhoanCapNhat.id ? taiKhoanCapNhat : tk
+               )
+           }));
+       }).catch(error => {
+           // Log the error or handle it as needed
+           console.error("Update request error:", error);
+       });
     }
     detail(id) {
         window.location.href = (`/taikhoandetail/${id}`);
     }
-
     thayDoiUsernameAdd = (event) => {
         this.setState(prevState => ({
             taiKhoanAdd: {
@@ -168,22 +302,7 @@ class TaiKhoanComponent extends Component {
             }
         }));
     }
-    thayDoiTenAdd = (event) => {
-        this.setState(prevState => ({
-            taiKhoanAdd: {
-                ...prevState.taiKhoanAdd,
-                ten: event.target.value
-            }
-        }));
-    }
-    thayDoiDiaChiAdd = (event) => {
-        this.setState(prevState => ({
-            taiKhoanAdd: {
-                ...prevState.taiKhoanAdd,
-                diaChi: event.target.value
-            }
-        }));
-    }
+
     thayDoiNgayTaoAdd = (event) => {
         this.setState(prevState => ({
             taiKhoanAdd: {
@@ -216,11 +335,11 @@ class TaiKhoanComponent extends Component {
             }
         }));
     }
-    thayDoiSdtAdd = (event) => {
+    thayDoiQuyenAdd = (event) => {
         this.setState(prevState => ({
             taiKhoanAdd: {
                 ...prevState.taiKhoanAdd,
-                sdt: event.target.value
+                listPhanQuyen: event.target.value
             }
         }));
     }
@@ -249,22 +368,8 @@ class TaiKhoanComponent extends Component {
             }
         }));
     }
-    thayDoiTenUpdate = (event) => {
-        this.setState(prevState => ({
-            taiKhoanUpdate: {
-                ...prevState.taiKhoanUpdate,
-                ten: event.target.value
-            }
-        }));
-    }
-    thayDoiDiaChiUpdate = (event) => {
-        this.setState(prevState => ({
-            taiKhoanUpdate: {
-                ...prevState.taiKhoanUpdate,
-                diaChi: event.target.value
-            }
-        }));
-    }
+
+
     thayDoiNgayTaoUpdate = (event) => {
         this.setState(prevState => ({
             taiKhoanUpdate: {
@@ -297,14 +402,7 @@ class TaiKhoanComponent extends Component {
             }
         }));
     }
-    thayDoiSdtUpdate = (event) => {
-        this.setState(prevState => ({
-            taiKhoanUpdate: {
-                ...prevState.taiKhoanUpdate,
-                sdt: event.target.value
-            }
-        }));
-    }
+
     thayDoiTrangThaiUpdate = (event) => {
         this.setState(prevState => ({
             taiKhoanUpdate: {
@@ -313,20 +411,16 @@ class TaiKhoanComponent extends Component {
             }
         }));
     }
-
-
-
-
     render() {
         return (
             <div>
                 <div className="pagetitle">
-                    <h1>Tài khoản</h1>
+                    <h1>Color</h1>
                     <nav>
                         <ol className="breadcrumb">
                             <li className="breadcrumb-item"><a href="index.html">Home</a></li>
                             <li className="breadcrumb-item active">Overview</li>
-                            <li className="breadcrumb-item active">Tài khoản</li>
+                            <li className="breadcrumb-item active">Color</li>
                         </ol>
                     </nav>
                 </div>
@@ -342,15 +436,15 @@ class TaiKhoanComponent extends Component {
 
 
                                         <div className="card-body">
-                                            <h5 className="card-title">Tài khoản <span>| </span></h5>
+                                            <h5 className="card-title">Color <span>| </span></h5>
 
                                             <table className="table table-borderless datatable">
                                                 <thead>
                                                 <tr>
                                                     <th>Username</th>
-                                                    <th>Tên</th>
-                                                    <th>Địa chỉ</th>
-                                                    <th>SDT</th>
+                                                    <th>Email</th>
+                                                    <th>Ngày tạo</th>
+                                                    <th>Ngày cập nhật</th>
                                                     <th>Ảnh</th>
                                                     <th>Trạng thái</th>
                                                     <th>Action</th>
@@ -362,9 +456,10 @@ class TaiKhoanComponent extends Component {
                                                         tk =>
                                                             <tr key={tk.id}>
                                                                 <td>{tk.username}</td>
-                                                                <td>{tk.ten}</td>
-                                                                <td>{tk.diaChi}</td>
-                                                                <td>{tk.sdt}</td>
+                                                                <td>{tk.email}</td>
+                                                                <td>{tk.ngayTao}</td>
+                                                                <td>{tk.ngayCapNhat}</td>
+                                                                <td>{tk.password}</td>
                                                                 <td>{tk.anh}</td>
                                                                 <td>{tk.trangThai == true ? "Hoạt động" : "Ngừng hoạt động"}</td>
                                                                 <td>
@@ -378,9 +473,26 @@ class TaiKhoanComponent extends Component {
 
 
                                             </table>
-
+                                            <ReactPaginate
+                                                previousLabel={"<"}
+                                                nextLabel={">"}
+                                                breakLabel={"..."}
+                                                breakClassName={"page-item"}
+                                                breakLinkClassName={"page-link"}
+                                                pageClassName={"page-item"}
+                                                pageLinkClassName={"page-link"}
+                                                previousClassName={"page-item"}
+                                                previousLinkClassName={"page-link"}
+                                                nextClassName={"page-item"}
+                                                nextLinkClassName={"page-link"}
+                                                pageCount={this.state.pageCount}
+                                                marginPagesDisplayed={2}
+                                                pageRangeDisplayed={5}
+                                                onPageChange={this.handlePageClick}
+                                                containerClassName={"pagination justify-content-center"} // added justify-content-center for center alignment
+                                                activeClassName={"active"}
+                                            />
                                         </div>
-
                                     </div>
 
 
@@ -426,42 +538,36 @@ class TaiKhoanComponent extends Component {
                                              aria-labelledby="home-tab">
                                             <form>
                                                 <div>
-                                                    Username :
-                                                    <input className="form-control" name="username" value={this.state.taiKhoanUpdate.username} onChange={this.thayDoiUsernameUpdate} />
+                                                    UserName :
+                                                    <input className={`form-control ${this.state.errorUpdate.username ? 'is-invalid' : ''}`} name="username" style={{}} value={this.state.taiKhoanUpdate.username} onChange={this.thayDoiUsernameUpdate} />
+                                                    {this.state.errorUpdate.username && <div className="text-danger">{this.state.errorUpdate.username}</div>}
+
                                                 </div>
                                                 <div>
                                                     Email :
-                                                    <input className="form-control" name="email" value={this.state.taiKhoanUpdate.email} onChange={this.thayDoiEmailUpdate} />
+                                                    <input className={`form-control ${this.state.errorUpdate.email ? 'is-invalid' : ''}`} name="email" style={{}} value={this.state.taiKhoanUpdate.email} onChange={this.thayDoiEmailUpdate} />
+                                                    {this.state.errorUpdate.email && <div className="text-danger">{this.state.errorUpdate.email}</div>}
+
                                                 </div>
                                                 <div>
-                                                    Tên :
-                                                    <input className="form-control" name="ten" value={this.state.taiKhoanUpdate.ten} onChange={this.thayDoiTenUpdate} />
+                                                    Ngày tạo :
+                                                    <input className={`form-control ${this.state.errorUpdate.ngayTao ? 'is-invalid' : ''}`} name="ngayTao" type={"date"} style={{}} value={this.state.taiKhoanUpdate.ngayTao} onChange={this.thayDoiNgayTaoUpdate} />
+                                                    {this.state.errorUpdate.ngayTao && <div className="text-danger">{this.state.errorUpdate.ngayTao}</div>}
+
                                                 </div>
-                                                <div>
-                                                    Địa chỉ :
-                                                    <input className="form-control" name="diaChi" value={this.state.taiKhoanUpdate.diaChi} onChange={this.thayDoiDiaChiUpdate} />
-                                                </div>
-                                                <div>
-                                                    Ngày cập nhật :
-                                                    <input className="form-control" name="ngayCapNhat" type="date"  value={this.state.taiKhoanUpdate.ngayCapNhat} onChange={this.thayDoiNgayCapNhatUpdate} />
-                                                </div>
-                                                <div>
-                                                    Password :
-                                                    <input className="form-control" name="password" value={this.state.taiKhoanUpdate.password} onChange={this.thayDoiPasswordUpdate} />
-                                                </div>
+
                                                 <div>
                                                     Ảnh :
-                                                    <input className="form-control" name="anh" value={this.state.taiKhoanUpdate.anh} onChange={this.thayDoiAnhUpdate} />
-                                                </div>
-                                                <div>
-                                                    SDT :
-                                                    <input className="form-control" name="sdt" value={this.state.taiKhoanUpdate.sdt} onChange={this.thayDoiSdtUpdate} />
+                                                    <input className={`form-control ${this.state.errorUpdate.anh ? 'is-invalid' : ''}`} name="anh" type={"file"} style={{}} value={this.state.taiKhoanUpdate.anh} onChange={this.thayDoiAnhUpdate} />
+                                                    {this.state.errorUpdate.username && <div className="text-danger">{this.state.errorUpdate.username}</div>}
+
                                                 </div>
                                                 <div className='form-group'>
                                                     <label>Trạng thái</label>
-                                                    <select name="trangThai" id="trangThai" value={this.state.taiKhoanUpdate.trangThai} className="form-control" onChange={this.thayDoiTrangThaiUpdate}>
-                                                        <option value='true'>Hoạt động</option>
-                                                        <option value="false">Ngừng hoạt động</option>
+                                                    <select name="trangThai" id="trangThai" value={this.state.taiKhoanUpdate.trangThai} className={`form-control ${this.state.errorUpdate.trangThai ? 'is-invalid' : ''}`} onChange={this.thayDoiTrangThaiUpdate}>
+                                                        <option value=''>Chọn trạng thái</option>
+                                                        <option value="true">Hoạt động</option>
+                                                        <option value="false">Không hoạt động</option>
                                                     </select>
                                                 </div>
                                                 <input type="submit" className="btn btn-primary" value="Update" style={{ marginTop: '10px' }} onClick={this.update} />
@@ -471,43 +577,36 @@ class TaiKhoanComponent extends Component {
                                         <div className="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
                                             <form>
                                                 <div>
-                                                    Username :
-                                                    <input className="form-control" name="username" onChange={this.thayDoiUsernameAdd} />
+                                                    UserName :
+                                                    <input className={`form-control ${this.state.errorAdd.username ? 'is-invalid' : ''}`} name="username" style={{}} value={this.state.taiKhoanAdd.username} onChange={this.thayDoiUsernameAdd} />
+                                                    {this.state.errorAdd.username && <div className="text-danger">{this.state.errorAdd.username}</div>}
+
                                                 </div>
                                                 <div>
                                                     Email :
-                                                    <input className="form-control" name="email" onChange={this.thayDoiEmailAdd} />
-                                                </div>
-                                                <div>
-                                                    Tên :
-                                                    <input className="form-control" name="ten" onChange={this.thayDoiTenAdd} />
-                                                </div>
-                                                <div>
-                                                    Địa chỉ :
-                                                    <input className="form-control" name="diaChi" onChange={this.thayDoiDiaChiAdd} />
+                                                    <input className={`form-control ${this.state.errorAdd.email ? 'is-invalid' : ''}`} name="email" style={{}} value={this.state.taiKhoanAdd.email} onChange={this.thayDoiEmailAdd} />
+                                                    {this.state.errorAdd.email && <div className="text-danger">{this.state.errorAdd.email}</div>}
+
                                                 </div>
                                                 <div>
                                                     Ngày tạo :
-                                                    <input className="form-control" name="ngayTao" type="date" onChange={this.thayDoiNgayTaoAdd} />
+                                                    <input className={`form-control ${this.state.errorAdd.ngayTao ? 'is-invalid' : ''}`} name="ngayTao" type={"date"} style={{}} value={this.state.taiKhoanAdd.ngayTao} onChange={this.thayDoiNgayTaoAdd} />
+                                                    {this.state.errorAdd.ngayTao && <div className="text-danger">{this.state.errorAdd.ngayTao}</div>}
+
                                                 </div>
 
                                                 <div>
-                                                    Password :
-                                                    <input className="form-control" name="password" onChange={this.thayDoiPasswordAdd} />
-                                                </div>
-                                                <div>
                                                     Ảnh :
-                                                    <input className="form-control" name="anh" type="file" onChange={this.thayDoiAnhAdd} />
-                                                </div>
-                                                <div>
-                                                    SDT :
-                                                    <input className="form-control" name="sdt" onChange={this.thayDoiSdtAdd} />
+                                                    <input className={`form-control ${this.state.errorAdd.anh ? 'is-invalid' : ''}`} name="anh" type={"file"} style={{}} value={this.state.taiKhoanAdd.anh} onChange={this.thayDoiAnhAdd} />
+                                                    {this.state.errorAdd.username && <div className="text-danger">{this.state.errorAdd.username}</div>}
+
                                                 </div>
                                                 <div className='form-group'>
                                                     <label>Trạng thái</label>
-                                                    <select name="trangThai" id="trangThai" className="form-control" onChange={this.thayDoiTrangThaiAdd}>
-                                                        <option value='true'>Hoạt động</option>
-                                                        <option value="false">Ngừng hoạt động</option>
+                                                    <select name="trangThai" id="trangThai" value={this.state.taiKhoanAdd.trangThai} className={`form-control ${this.state.errorAdd.trangThai ? 'is-invalid' : ''}`} onChange={this.thayDoiTrangThaiAdd}>
+                                                        <option value=''>Chọn trạng thái</option>
+                                                        <option value="true">Hoạt động</option>
+                                                        <option value="false">Không hoạt động</option>
                                                     </select>
                                                 </div>
                                                 <input type="submit" className="btn btn-primary" value="Add" style={{ marginTop: '10px' }} onClick={this.add} />
@@ -539,8 +638,8 @@ class TaiKhoanComponent extends Component {
 
                 </section>
             </div>
-        )
+        );
     }
-
 }
-export default TaiKhoanComponent
+
+export default TaiKhoanComponent;

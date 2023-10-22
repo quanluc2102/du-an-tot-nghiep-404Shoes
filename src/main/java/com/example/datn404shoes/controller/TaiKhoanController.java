@@ -8,6 +8,8 @@ import com.example.datn404shoes.helper.SanPhamExcelSave;
 import com.example.datn404shoes.service.serviceimpl.TaiKhoanServiceimpl;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -19,9 +21,7 @@ import java.io.IOException;
 import java.sql.Date;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:3000")
@@ -31,22 +31,22 @@ public class TaiKhoanController {
     private TaiKhoanServiceimpl serviceimpl;
 
     @GetMapping("index")
-    public ResponseEntity<?> index(Model model) {
-        return ResponseEntity.ok(serviceimpl.getAll());
+    public Page<TaiKhoan> index(Model model, Pageable pageable) {
+        return serviceimpl.findAll(pageable);
     }
 
     @PostMapping("add")
     public ResponseEntity<?> add(Model model,
                                  @RequestBody TaiKhoan taiKhoan) {
-
         return ResponseEntity.ok(serviceimpl.add(taiKhoan));
     }
 
     @DeleteMapping("delete/{id}")
-    public String delete(Model model,
-                         @PathVariable("id") Long id) {
+    public ResponseEntity<?> delete(@PathVariable("id") Long id) {
         serviceimpl.delete(id);
-        return "OK";
+        Map<String, Boolean> response = new HashMap<>();
+        response.put("Delete", Boolean.TRUE);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("index/{id}")
