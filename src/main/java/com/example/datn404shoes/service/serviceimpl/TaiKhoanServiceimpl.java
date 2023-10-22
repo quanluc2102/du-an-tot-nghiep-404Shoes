@@ -6,10 +6,14 @@ import com.example.datn404shoes.entity.TaiKhoan;
 import com.example.datn404shoes.repository.TaiKhoanResponsitory;
 import com.example.datn404shoes.service.TaiKhoanService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.sql.Date;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -36,6 +40,8 @@ public class TaiKhoanServiceimpl implements TaiKhoanService {
 
     @Override
     public TaiKhoan add(TaiKhoan taiKhoan) {
+        taiKhoan.setNgayTao(Date.valueOf(LocalDate.now()));
+        taiKhoan.setNgayCapNhat(Date.valueOf(LocalDate.now()));
          responsitory.save(taiKhoan);
         return taiKhoan;
     }
@@ -50,13 +56,9 @@ public class TaiKhoanServiceimpl implements TaiKhoanService {
         TaiKhoan tk = getOne(id);
         tk.setUsername(taiKhoan.getUsername());
         tk.setEmail(taiKhoan.getEmail());
-
-//        tk.setDiaChi(taiKhoan.getDiaChi());
-        tk.setNgayTao(taiKhoan.getNgayTao());
-        tk.setNgayCapNhat(taiKhoan.getNgayCapNhat());
+        tk.setNgayCapNhat(Date.valueOf(LocalDate.now()));
         tk.setPassword(taiKhoan.getPassword());
         tk.setAnh(taiKhoan.getAnh());
-
         tk.setTrangThai(taiKhoan.isTrangThai());
        responsitory.save(taiKhoan);
         return tk;
@@ -70,5 +72,10 @@ public class TaiKhoanServiceimpl implements TaiKhoanService {
     @Override
     public TaiKhoan getOne(Long id) {
         return responsitory.findById(id).get();
+    }
+
+    @Override
+    public Page<TaiKhoan> findAll(Pageable pageable) {
+        return responsitory.findAll(pageable);
     }
 }

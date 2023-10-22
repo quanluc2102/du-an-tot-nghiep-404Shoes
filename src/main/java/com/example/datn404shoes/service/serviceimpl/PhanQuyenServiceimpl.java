@@ -25,4 +25,35 @@ public class PhanQuyenServiceimpl implements PhanQuyenService {
     public Page<PhanQuyen> getAllPhanTrang(Pageable pageable) {
         return phanQuyenRepository.findAll(pageable);
     }
+
+    @Override
+    public PhanQuyen add(PhanQuyen phanQuyen) {
+        PhanQuyen quyen = new PhanQuyen();
+        quyen.setTaiKhoan(phanQuyen.getTaiKhoan());
+        quyen.setQuyen(phanQuyen.getQuyen());
+        return phanQuyenRepository.save(phanQuyen);
+    }
+
+    @Override
+    public void delete(Long id) {
+         phanQuyenRepository.deleteById(id);
+    }
+
+    @Override
+    public PhanQuyen getOne(Long id) {
+        return phanQuyenRepository.findById(id).get();
+    }
+
+    @Override
+    public PhanQuyen update(Long id, PhanQuyen phanQuyen) {
+        PhanQuyen quyen = phanQuyenRepository.findById(id).orElse(null);
+        quyen.setTaiKhoan(phanQuyen.getTaiKhoan());
+        quyen.setQuyen(phanQuyen.getQuyen());
+        return phanQuyenRepository.save(phanQuyen);
+    }
+
+//    @Override
+//    public List<PhanQuyen> findPhanQuyenByQuyenId(Long id) {
+//        return phanQuyenRepository.findPhanQuyenByQuyenId(id);
+//    }
 }
