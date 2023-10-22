@@ -4,6 +4,7 @@ import com.example.datn404shoes.entity.KhuyenMai;
 import com.example.datn404shoes.helper.KhuyenMaiExcelSave;
 import com.example.datn404shoes.service.serviceimpl.KhuyenMaiServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -29,8 +30,8 @@ public class KhuyenMaiController {
 
 
     @GetMapping("index")
-    public ResponseEntity<?> index(Model model){
-        return ResponseEntity.ok(khuyenMaiServiceImpl.getAll());
+    public ResponseEntity<?> index(Model model, Pageable pageable){
+        return ResponseEntity.ok(khuyenMaiServiceImpl.getAll(pageable));
     }
 
     @PostMapping("add")

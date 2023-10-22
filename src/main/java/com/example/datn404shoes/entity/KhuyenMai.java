@@ -19,6 +19,10 @@ public class KhuyenMai {
     @Column(name = "id", nullable = false)
     private long id;
 
+
+    @Column(name = "ma")
+    private String ma;
+
     @Column(name = "ten")
     private String ten;
 
