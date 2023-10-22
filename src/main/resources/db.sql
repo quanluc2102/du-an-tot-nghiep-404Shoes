@@ -1,9 +1,24 @@
-﻿create database ShopShoe
+﻿
+create database ShopShoe
+go
 use ShopShoe
-drop database ShopShoe
+go
 
 
 
+-- Create thong_tin_nguoi_dung table
+CREATE TABLE thong_tin_nguoi_dung (
+                                      id BIGINT PRIMARY KEY IDENTITY(1,1),
+                                      dia_chi NVARCHAR(255) NOT NULL,
+                                      ngay_sinh DATE NOT NULL,
+                                      sdt NVARCHAR(255) NOT NULL,
+                                      ten NVARCHAR(255) NOT NULL,
+                                      cccd nvarchar(12),
+
+                                      gioi_tinh int  not null,
+                                      ngay_cap_nhat DATETIME,
+                                      
+);
 CREATE TABLE tai_khoan (
                            id BIGINT PRIMARY KEY IDENTITY(1,1),
                            username NVARCHAR(255) NOT NULL,
@@ -13,6 +28,8 @@ CREATE TABLE tai_khoan (
                            password NVARCHAR(255) NOT NULL,
                            anh NVARCHAR(255),
                            trang_thai BIT NOT NULL,
+						   thong_tin_nguoi_dung_id BIGINT,
+                                      FOREIGN KEY (thong_tin_nguoi_dung_id) REFERENCES thong_tin_nguoi_dung(id)
 );
 -- Create vai_tro table
 CREATE TABLE quyen (
@@ -75,20 +92,7 @@ CREATE Table xuat_xu(
                         ten NVARCHAR(255),
                         trang_thai INT
 );
--- Create thong_tin_nguoi_dung table
-CREATE TABLE thong_tin_nguoi_dung (
-                                      id BIGINT PRIMARY KEY IDENTITY(1,1),
-                                      dia_chi NVARCHAR(255) NOT NULL,
-                                      ngay_sinh DATE NOT NULL,
-                                      sdt NVARCHAR(255) NOT NULL,
-                                      ten NVARCHAR(255) NOT NULL,
-                                      cccd nvarchar(12),
 
-                                      gioi_tinh int  not null,
-                                      ngay_cap_nhat DATETIME,
-                                      tai_khoan_id BIGINT,
-                                      FOREIGN KEY (tai_khoan_id) REFERENCES tai_khoan(id)
-);
 
 -- Create san_pham table
 CREATE TABLE san_pham (
@@ -217,6 +221,10 @@ CREATE TABLE gio_hang_chi_tiet (
 
 
 
+SELECT * FROM THONG_TIN_NGUOI_DUNG
+
+
+
 
 
 CREATE TABLE tich_diem(
@@ -246,6 +254,13 @@ CREATE TABLE lich_su_hoa_don(
 );
 use ShopShoe
 
+    INSERT INTO thong_tin_nguoi_dung (dia_chi, ngay_sinh, sdt, ten,cccd,gioi_tinh, ngay_cap_nhat)
+VALUES
+    (N'Hưng Yên', '1990-01-01', '0987654321', N'Trần Đăng','009876000765',1, GETDATE() ),
+    (N'Thái Bình', '1990-02-02', '0987654321', N'Bùi Hùng','098786788765',1, GETDATE()),
+    (N'Hải Phòng', '1990-03-03', '0987654321', N'Minh Quân','008675000223',1, GETDATE()),
+    (N'Bắc Kan', '1990-04-04', '0987654321', N'Xuân Thiệu','009034055123',1, GETDATE()),
+    (N'Nam ĐỊnh', '1990-05-05', '0987654321', N'Xuân Mai','006756777867',2, GETDATE());
 
 
 
@@ -265,13 +280,13 @@ VALUES
 (N'Quản Lý', 1),
 (N'Khách Hàng', 1)
 
-    INSERT INTO tai_khoan (username, email, ngay_tao, ngay_cap_nhat, password, anh, trang_thai)
+    INSERT INTO tai_khoan (username, email, ngay_tao, ngay_cap_nhat, password, anh, trang_thai, thong_tin_nguoi_dung_id)
 VALUES
-    ( 'quanluc2102','quanluc123@gmail.com', GETDATE(), GETDATE(), '0987654321', 'anh1.jpg', 1),
-    ( 'thieubx33', 'thieu456@gmail.com',  GETDATE(), GETDATE(), '0987654321', 'anh2.jpg', 1),
-    (  'tienhungbt66','hungbt99@gmail.com' , GETDATE(), GETDATE(), '0987654321', 'anh3.jpg', 1),
-    ( 'dangbui98k', 'dang3389@gmail.com', GETDATE(), GETDATE(), '0987654321', 'anh4.jpg', 1),
-    ( 'dang78hy', 'dang78yu@gmail.com', GETDATE(), GETDATE(), '0987654321', 'anh5.jpg', 1);
+    ( 'quanluc2102','quanluc123@gmail.com', GETDATE(), GETDATE(), '0987654321', 'anh1.jpg',1,1),
+    ( 'thieubx33', 'thieu456@gmail.com',  GETDATE(), GETDATE(), '0987654321', 'anh2.jpg',1,2),
+    (  'tienhungbt66','hungbt99@gmail.com' , GETDATE(), GETDATE(), '0987654321', 'anh3.jpg',1,3),
+    ( 'dangbui98k', 'dang3389@gmail.com', GETDATE(), GETDATE(), '0987654321', 'anh4.jpg',1, 4),
+    ( 'dang78hy', 'dang78yu@gmail.com', GETDATE(), GETDATE(), '0987654321', 'anh5.jpg',1,5);
 INSERT INTO phan_quyen (tai_khoan_id, quyen_id)
 VALUES
 (1, 1),
@@ -336,17 +351,6 @@ VALUES
 ('Asic', 1),
 ('Converse', 1);
 
-SELECT * FROM THONG_TIN_NGUOI_DUNG
-
-    INSERT INTO thong_tin_nguoi_dung (dia_chi, ngay_sinh, sdt, ten,cccd,gioi_tinh, ngay_cap_nhat, tai_khoan_id)
-VALUES
-    (N'Hưng Yên', '1990-01-01', '0987654321', N'Trần Đăng','009876000765',1, GETDATE(), 1),
-    (N'Thái Bình', '1990-02-02', '0987654321', N'Bùi Hùng','098786788765',1, GETDATE(), 2),
-    (N'Hải Phòng', '1990-03-03', '0987654321', N'Minh Quân','008675000223',1, GETDATE(), 3),
-    (N'Bắc Kan', '1990-04-04', '0987654321', N'Xuân Thiệu','009034055123',1, GETDATE(), 4),
-    (N'Nam ĐỊnh', '1990-05-05', '0987654321', N'Xuân Mai','006756777867',2, GETDATE(), 5);
-
-
 
 
 
@@ -358,7 +362,7 @@ VALUES
 
 
 
-select * from san_pham_chi_tiet
+
     INSERT INTO san_pham_chi_tiet (so_luong, ngay_tao, ngay_cap_nhat, trang_thai,kich_thuoc,mau_sac,san_pham_id,anh)
 VALUES
     (100, GETDATE(), GETDATE(), 1,2,3,1,'anh5.jpg'),

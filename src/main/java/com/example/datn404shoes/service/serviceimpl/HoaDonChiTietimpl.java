@@ -18,10 +18,6 @@ public class HoaDonChiTietimpl implements HoaDonChiTietService {
         return hoaDonChiTietRepository.findAllByHd_Id(idHD);
     }
 
-    @Override
-    public HoaDonChiTiet getOne(Long idHd) {
-        return hoaDonChiTietRepository.findById(idHd).get();
-    }
 
 
 }

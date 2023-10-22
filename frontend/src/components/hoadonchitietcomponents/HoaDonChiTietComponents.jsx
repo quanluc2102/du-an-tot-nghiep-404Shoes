@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import HoaDonChiTietService from '../../services/hoadonchitietservice/HoaDonChiTietService';
+import HoaDonService from '../../services/hoadonservice/HoaDonService';
 
 class HoaDonChiTietComponents extends Component {
     constructor(props) {
@@ -9,7 +10,12 @@ class HoaDonChiTietComponents extends Component {
             hoaDonId: {
                 id: this.props.match.params.id
             },
-         
+            hoaDon:{
+                id:this.props.match.params.id,
+                thanhToan:'',
+                taiKhoan:''
+            }
+
         }
         // this.detail = this.detail.bind(this);
     }
@@ -17,9 +23,9 @@ class HoaDonChiTietComponents extends Component {
         HoaDonChiTietService.detailHDCT(this.state.hoaDonId.id).then((res) => {
             this.setState({ hoaDonChiTiet: res.data })
         });
-        // HoaDonChiTietService.getOneHDCT(this.state.hoaDonId.id).then((res) => {
-        //     this.setState({ hoaDonChiTiet: res.data })
-        // });
+        HoaDonService.getOneHD(this.state.hoaDonId.id).then((res) => {
+            this.setState({ hoaDon: res.data })
+        });
     }
 
     render() {
@@ -115,7 +121,7 @@ class HoaDonChiTietComponents extends Component {
                                             <button className="nav-link active" id="home-tab" data-bs-toggle="tab"
                                                 data-bs-target="#home" type="button" role="tab" aria-controls="home"
                                                 aria-selected="true">Người tạo
-                                                
+
                                             </button>
                                         </li>
                                         <li className="nav-item" role="presentation">
@@ -137,16 +143,19 @@ class HoaDonChiTietComponents extends Component {
                                         <div className="tab-pane fade show active" id="home" role="tabpanel"
                                             aria-labelledby="home-tab">
 
-                                            <div>
+                                            {/* <div>
                                                 Tên :
 
                                             </div>
                                             <div className='form-group'>
                                                 <label>Trạng thái</label>
 
+                                            </div> */}
+                                            <div>
+                                            <input className={`label label-info`} name="ten" value={this.state.hoaDon.taiKhoan.anh}/>
+                                                    {<div className="text-danger"></div>}
                                             </div>
-
-                                            <input type="submit" className="btn btn-primary" value="Update" style={{ marginTop: '10px' }} onClick={this.update} />
+                                            <input type="submit" className="btn btn-primary" value="Update" style={{ marginTop: '10px' }} />
 
                                         </div>
 

@@ -21,9 +21,9 @@ public class HoaDonChiTietController {
         List<HoaDonChiTiet> listHDCT = hoaDonChiTietimpl.getAllByIdHD(idHD);
         return ResponseEntity.ok(listHDCT);
     }
-    @GetMapping("hien-thi-one/{idHD}")
-    public ResponseEntity<?> hienthiOne(@PathVariable("idHD") Long idHD){
-        HoaDonChiTiet hoaDonChiTiet = hoaDonChiTietimpl.getOne(idHD);
-        return ResponseEntity.ok(hoaDonChiTiet);
-    }
+//    @GetMapping("hien-thi-one/{idHD}")
+//    public ResponseEntity<?> hienthiOne(@PathVariable("idHD") Long idHD){
+//        HoaDonChiTiet hoaDonChiTiet = hoaDonChiTietimpl.getOne(idHD);
+//        return ResponseEntity.ok(hoaDonChiTiet);
+//    }
 }

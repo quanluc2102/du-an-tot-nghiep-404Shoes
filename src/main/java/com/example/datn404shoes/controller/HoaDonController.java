@@ -50,16 +50,11 @@ public class HoaDonController {
 //        hoaDonImpl.add(hoaDon);
 //        return "redirect:/hoa_don/hien-thi";
 //    }
-//    @GetMapping("detail/{id}")
-//    public String detail(Model model, @PathVariable("id") Long id){
-//        model.addAttribute("listHoaDon",hoaDonImpl.getAll());
-//        model.addAttribute("hddt",hoaDonImpl.getOne(id));
-//        model.addAttribute("listThanhToan",thanhToanRepository.findAll());
-//        model.addAttribute("listTaiKhoan",taiKhoanRepository.findAll());
-//        model.addAttribute("view", "/hoa_don/index.jsp");
-//        System.out.println("tới detail r");
-//        return "admin/index";
-//    }
+    @GetMapping("detail/{id}")
+    public ResponseEntity<?> detail(Model model, @PathVariable("id") Long id){
+
+        return ResponseEntity.ok(hoaDonImpl.getOne(id));
+    }
 //    @PostMapping("update/{id}")
 //    public String update(Model model,
 //                         @PathVariable("id") Long id,

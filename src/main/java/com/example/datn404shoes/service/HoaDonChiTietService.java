@@ -6,5 +6,4 @@ import java.util.List;
 
 public interface HoaDonChiTietService {
     List<HoaDonChiTiet> getAllByIdHD  (Long idHD);
-    HoaDonChiTiet getOne(Long idHd);
 }

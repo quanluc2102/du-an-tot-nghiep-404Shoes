@@ -36,7 +36,7 @@ public class ThongTinNguoiDungServiceimpl implements ThongTinNguoiDungService {
         dung.get().setDiaChi(thongTinNguoiDung.getDiaChi());
         dung.get().setSdt(thongTinNguoiDung.getSdt());
         dung.get().setNgaySinh(thongTinNguoiDung.getNgaySinh());
-        dung.get().setTaiKhoan(thongTinNguoiDung.getTaiKhoan());
+//        dung.get().setTaiKhoan(thongTinNguoiDung.getTaiKhoan());
         thongTinNguoiDungRespository.flush();
 
     }

@@ -5,8 +5,6 @@ class HoaDonService{
    detailHDCT(HDID){
     return axios.get(HOADON_API_BASE_URL_DETAIL+"/"+HDID)
    }
-   // getOneHDCT(HDID){
-   //    return axios.get(HOADON_API_BASE_URL+"/"+HDID)
-   // }
+
 }
 export default new HoaDonService()

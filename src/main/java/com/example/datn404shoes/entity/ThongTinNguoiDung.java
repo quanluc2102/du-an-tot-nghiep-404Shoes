@@ -35,10 +35,6 @@ public class ThongTinNguoiDung {
     @Column(name = "ngay_cap_nhat")
     private Date ngayCapNhat;
 
-    @ManyToOne
-    @JoinColumn(name = "tai_khoan_id")
-    private TaiKhoan taiKhoan;
-
     public ThongTinNguoiDung(String diaChi, String sdt, String ten, Date ngaySinh, Date ngayCapNhat, TaiKhoan taiKhoan) {
 
         this.diaChi = diaChi;
@@ -46,6 +42,6 @@ public class ThongTinNguoiDung {
         this.ten = ten;
         this.ngaySinh = ngaySinh;
         this.ngayCapNhat = ngayCapNhat;
-        this.taiKhoan = taiKhoan;
+//        this.taiKhoan = taiKhoan;
     }
 }
