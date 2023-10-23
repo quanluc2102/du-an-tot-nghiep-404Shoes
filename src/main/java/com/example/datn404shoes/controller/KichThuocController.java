@@ -3,6 +3,7 @@ package com.example.datn404shoes.controller;
 
 import com.example.datn404shoes.entity.KichThuoc;
 import com.example.datn404shoes.entity.KichThuoc;
+import com.example.datn404shoes.entity.KichThuocValue;
 import com.example.datn404shoes.helper.KichThuocExcelSave;
 import com.example.datn404shoes.repository.KichThuocRepository;
 import com.example.datn404shoes.service.serviceimpl.KichThuocServiceImpl;
@@ -16,6 +17,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -34,7 +37,12 @@ public class KichThuocController {
 
     @GetMapping("index")
     public ResponseEntity<?> index1(Model model) {
-        return ResponseEntity.ok(repository.findAll());
+        List<KichThuocValue> list = new ArrayList<>();
+        for(KichThuoc b : repository.findAll()){
+            KichThuocValue a = new KichThuocValue(b.getId(),b.getGiaTri());
+            list.add(a);
+        }
+        return ResponseEntity.ok(list);
     }
 //    @GetMapping("create")
 //    public String addView(Model model) {

@@ -42,6 +42,7 @@ class SanPhamComponent extends Component {
         }
 
         this.add=this.add.bind(this);
+        this.formAdd=this.formAdd.bind(this);
         this.delete=this.delete.bind(this);
         this.update=this.update.bind(this);
         this.detail=this.detail.bind(this);
@@ -94,6 +95,9 @@ class SanPhamComponent extends Component {
         }
 
 
+    }
+    formAdd(){
+        window.location.href=(`/sanpham/formadd`);
     }
     delete(id){
         SanPhamService.deleteSanPham(id).then((res)=>{
@@ -392,6 +396,19 @@ class SanPhamComponent extends Component {
 
                 <section className="section dashboard">
                     <div className="row">
+                        <div className="col-lg-12">
+                            <div className="row">
+                                <div className="col-12">
+                                    <div className="card recent-sales overflow-auto">
+                                            <button className="btn btn-primary col-lg-4" onClick={this.formAdd}> Add</button>
+                                    </div>
+
+
+                                </div>
+
+                            </div>
+
+                        </div>
 
                         <div className="col-lg-8">
                             <div className="row">
@@ -466,7 +483,6 @@ class SanPhamComponent extends Component {
                                                 activeClassName={"active"}
                                             />
                                         </div>
-
                                     </div>
 
 

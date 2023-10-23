@@ -1,8 +1,12 @@
 package com.example.datn404shoes.controller;
 
-import com.example.datn404shoes.entity.SanPham;
+import com.example.datn404shoes.entity.*;
 import com.example.datn404shoes.helper.SanPhamExcelSave;
 import com.example.datn404shoes.helper.SanPhamExport;
+import com.example.datn404shoes.repository.SanPhamChiTietRepository;
+import com.example.datn404shoes.repository.SanPhamRespository;
+import com.example.datn404shoes.request.SanPhamRequest;
+import com.example.datn404shoes.service.serviceimpl.SanPhamAnhServiceimpl;
 import com.example.datn404shoes.service.serviceimpl.SanPhamServiceimpl;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,9 +18,15 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.*;
 
 @CrossOrigin(origins = "http://localhost:3000")
@@ -25,14 +35,55 @@ import java.util.*;
 public class SanPhamController {
     @Autowired
     SanPhamServiceimpl sanPhamServiceimpl;
+    @Autowired
+    SanPhamAnhServiceimpl sanPhamAnhServiceimpl;
+    @Autowired
+    SanPhamChiTietRepository sanPhamChiTietRepository;
+    private final Path root = Paths.get("frontend/src/img");
     @GetMapping("index")
     public Page<SanPham> index(Pageable pageable){
         return sanPhamServiceimpl.getAllPhanTrang(pageable);
     }
     @PostMapping("add")
-    public SanPham add(@RequestBody SanPham sanPham){
+//    public SanPham add(@RequestBody SanPham sanPham){
+//
+//        return sanPhamServiceimpl.add(sanPham);
+//    }
+    public SanPham add(@RequestBody SanPhamRequest sanPham){
+        SanPham a = new SanPham();
+        a.setTen(sanPham.getTen());
+        a.setGiamGia(sanPham.getGiamGia());
+        a.setGiaBan(sanPham.getGiaBan());
+        a.setGiaNhap(sanPham.getGiaNhap());
+        a.setMoTa(sanPham.getMoTa());
+        a.setTrangThai(1);
+        a.setNgayCapNhat(java.sql.Date.valueOf(LocalDate.now()));
+        a.setNgayTao(java.sql.Date.valueOf(LocalDate.now()));
+        a.setDanhMuc(DanhMuc.builder().id(sanPham.getDanhMucId()).build());
+        a.setXuatXu(XuatXu.builder().id(sanPham.getXuatXuId()).build());
+        a.setThuongHieu(ThuongHieu.builder().id(sanPham.getThuongHieuId()).build());
+        sanPhamServiceimpl.add(a);
+        for (MauSacValue ms:sanPham.getListMauSac()){
+            for (KichThuocValue kt:sanPham.getListKichThuoc()){
+                SanPhamChiTiet spct = new SanPhamChiTiet();
+                spct.setNgayTao(java.sql.Date.valueOf(LocalDate.now()));
+                spct.setNgayCapNhat(java.sql.Date.valueOf(LocalDate.now()));
+                spct.setSoLuong(0);
+                spct.setTrangThai(1);
+                spct.setMauSac(MauSac.builder().id(ms.getValue()).build());
+                spct.setKichThuoc(KichThuoc.builder().id(kt.getValue()).build());
+                spct.setSanPham(a);
+                sanPhamChiTietRepository.save(spct);
+            }
 
-        return sanPhamServiceimpl.add(sanPham);
+        }
+        for(String file : sanPham.getFiles()){
+            SanPhamAnh spa = new SanPhamAnh();
+            spa.setAnh(file);
+            spa.setSanPham(a);
+            sanPhamAnhServiceimpl.save(spa);
+        }
+        return a;
     }
     @DeleteMapping("delete/{id}")
     public ResponseEntity<?> delete(@PathVariable("id") long id){

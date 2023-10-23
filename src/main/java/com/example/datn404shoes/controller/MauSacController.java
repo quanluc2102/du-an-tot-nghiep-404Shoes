@@ -3,6 +3,7 @@ package com.example.datn404shoes.controller;
 
 import com.example.datn404shoes.entity.MauSac;
 //import com.example.datn404shoes.helper.MauSacExcelSave;
+import com.example.datn404shoes.entity.MauSacValue;
 import com.example.datn404shoes.repository.MauSacRepository;
 import com.example.datn404shoes.service.serviceimpl.MauSacServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -33,7 +36,12 @@ public class MauSacController {
 
     @GetMapping("index")
     public ResponseEntity<?> index1(Model model) {
-        return ResponseEntity.ok(repository.findAll());
+        List<MauSacValue> list = new ArrayList<>();
+        for(MauSac a : repository.findAll()){
+            MauSacValue b = new MauSacValue(a.getId(),a.getTen());
+            list.add(b);
+        }
+        return ResponseEntity.ok(list);
     }
 //    @GetMapping("create")
 //    public String create(Model model) {
