@@ -18,6 +18,7 @@ import HoaDonComponents from './components/hoadoncomponents/HoaDonComponents';
 import KhuyenMaiComponents from "./components/khuyenmaicomponent/KhuyenMaiComponents";
 import KhuyenMaiComponentAdd from "./components/khuyenmaicomponent/KhuyenMaiComponentAdd";
 import ImageUpload from "./components/ImageUpload";
+import SanPhamAddComponent from "./components/sanphamComponent/SanPhamAddComponnent";
 function App() {
   return (
 
@@ -34,6 +35,7 @@ function App() {
             <Route path='/' exact component={SanPhamComponent} />
             <Route path='/index' component={SanPhamComponent} />
             <Route path='/detail/:id' component={SanPhamComponent} />
+            <Route path='/sanpham/formadd' component={SanPhamAddComponent} />
             <Route path='/danhmuc' component={ListDanhMucComponent} />
             <Route path='/danhmucdetail/:id' component={ListDanhMucComponent} />
             <Route path='/mausac' component={MauSacComponent} />
