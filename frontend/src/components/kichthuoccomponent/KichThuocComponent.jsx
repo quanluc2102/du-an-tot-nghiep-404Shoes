@@ -93,6 +93,12 @@ class KichThuocComponent extends Component {
             this.setState({ errorsAdd: { ...this.state.errorsAdd, giaTri: "" } });
         }
 
+        if (isNaN(this.state.kichThuocAdd.giaTri)) {
+            this.setState({ errorsAdd: { ...this.state.errorsAdd, giaTri: "Giá trị phải là số!" } });
+            return;
+        } else {
+            this.setState({ errorsAdd: { ...this.state.errorsAdd, giaTri: "" } });
+        }
 
         if (!this.state.kichThuocAdd.trangThai.trim()) {
             this.setState({ errorsAdd: { ...this.state.errorsAdd, trangThai: "Trạng thái không được bỏ trống!" } });
@@ -128,6 +134,13 @@ class KichThuocComponent extends Component {
 
         if (!this.state.kichThuocUpdate.giaTri) {
             this.setState({ errorsUpdate: { ...this.state.errorsUpdate, giaTri: "Giá trị không được bỏ trống!" } });
+            return;
+        } else {
+            this.setState({ errorsUpdate: { ...this.state.errorsUpdate, giaTri: "" } });
+        }
+
+        if (isNaN(this.state.kichThuocUpdate.giaTri)) {
+            this.setState({ errorsUpdate: { ...this.state.errorsUpdate, giaTri: "Giá trị phải là số!" } });
             return;
         } else {
             this.setState({ errorsUpdate: { ...this.state.errorsUpdate, giaTri: "" } });

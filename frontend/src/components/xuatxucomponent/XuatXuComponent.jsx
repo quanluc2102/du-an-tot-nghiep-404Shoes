@@ -1,12 +1,15 @@
 import React, { Component } from 'react';
 import xuatxuservice from '../../services/xuatxuservice/xuatxuservice';
 import { toast } from 'react-toastify';
+import ReactPaginate from "react-paginate";
+
 
 class XuatXuComponent extends Component {
     constructor(props) {
         super(props);
         this.state = {
             xuatXu: [],
+            pageCount: 0,
             xuatXuAdd: {
                 ten: '',
                 trangThai: '',
@@ -45,9 +48,12 @@ class XuatXuComponent extends Component {
         }
     }
 
-    loadXuatXuData() {
-        xuatxuservice.getXuatXu().then((res) => {
-            this.setState({ xuatXu: res.data.content });
+    loadXuatXuData(pageNumber) {
+        xuatxuservice.getXuatXu(pageNumber).then(res => {
+            this.setState({
+                xuatXu: res.data.content, // Dữ liệu trên trang hiện tại
+                pageCount: res.data.totalPages, // Tổng số trang
+            });
         });
 
         const id = this.props.match.params.id;
@@ -58,6 +64,20 @@ class XuatXuComponent extends Component {
         }
     }
 
+    loadPageData(pageNumber) {
+        xuatxuservice.getXuatXu(pageNumber).then(res => {
+            this.setState({
+                xuatXu: res.data.content, // Dữ liệu trên trang hiện tại
+                pageCount: res.data.totalPages, // Tổng số trang
+            });
+        });
+    }
+
+    handlePageClick = data => {
+        let selected = data.selected; // Trang được chọn từ react-paginate
+        this.loadPageData(selected);
+    };
+
 
     delete(id) {
         xuatxuservice.deleteXuatXu(id).then((res) => {
@@ -66,11 +86,13 @@ class XuatXuComponent extends Component {
     }
     add = (e) => {
         e.preventDefault();
-
         if (!this.state.xuatXuAdd.ten.trim()) {
             this.setState({ errorsAdd: { ...this.state.errorsAdd, ten: "Tên không được bỏ trống!" } });
             return;
-        } else {
+        }else if (!isNaN(this.state.xuatXuAdd.ten.trim())) {
+            this.setState({ errorsAdd: { ...this.state.errorsAdd, ten: "Tên phải là chữ" } });
+            return;
+        }else {
             this.setState({ errorsAdd: { ...this.state.errorsAdd, ten: "" } });
         }
     
@@ -115,7 +137,11 @@ class XuatXuComponent extends Component {
         if (!this.state.xuatXuUpdate.ten.trim()) {
             this.setState({ errorsUpdate: { ...this.state.errorsUpdate, ten: "Tên không được bỏ trống!" } });
             return;
-        } else {
+        }else if (!isNaN(this.state.xuatXuUpdate.ten.trim())) {
+            this.setState({ errorsUpdate: { ...this.state.errorsUpdate, ten: "Tên phải là chữ!" } });
+            return;
+        }
+            else {
             this.setState({ errorsUpdate: { ...this.state.errorsUpdate, ten: "" } });
         }
 
@@ -259,7 +285,25 @@ class XuatXuComponent extends Component {
 
 
                                             </table>
-
+                                            <ReactPaginate
+                                                previousLabel={"<"}
+                                                nextLabel={">"}
+                                                breakLabel={"..."}
+                                                breakClassName={"page-item"}
+                                                breakLinkClassName={"page-link"}
+                                                pageClassName={"page-item"}
+                                                pageLinkClassName={"page-link"}
+                                                previousClassName={"page-item"}
+                                                previousLinkClassName={"page-link"}
+                                                nextClassName={"page-item"}
+                                                nextLinkClassName={"page-link"}
+                                                pageCount={this.state.pageCount}
+                                                marginPagesDisplayed={2}
+                                                pageRangeDisplayed={5}
+                                                onPageChange={this.handlePageClick}
+                                                containerClassName={"pagination justify-content-center"} // added justify-content-center for center alignment
+                                                activeClassName={"active"}
+                                            />
                                         </div>
 
                                     </div>

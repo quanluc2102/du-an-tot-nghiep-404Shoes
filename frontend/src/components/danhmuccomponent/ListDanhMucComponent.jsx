@@ -94,6 +94,13 @@ class ListDanhMucComponent extends Component {
             this.setState({ errorsAdd: { ...this.state.errorsAdd, ten: "" } });
         }
 
+        if (!isNaN(this.state.danhMucAdd.ten)) {
+            this.setState({ errorsAdd: { ...this.state.errorsAdd, ten: "Tên phải là chữ!" } });
+            return;
+        } else {
+            this.setState({ errorsAdd: { ...this.state.errorsAdd, ten: "" } });
+        }
+
 
         if (!this.state.danhMucAdd.trangThai.trim()) {
             this.setState({ errorsAdd: { ...this.state.errorsAdd, trangThai: "Trạng thái không được bỏ trống!" } });

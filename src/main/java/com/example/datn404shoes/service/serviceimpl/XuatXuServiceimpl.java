@@ -19,8 +19,7 @@ public class XuatXuServiceimpl implements XuatXuService {
 
     @Override
     public XuatXu add(XuatXu xuatXu) {
-        repository.save(xuatXu);
-        return xuatXu;
+        return repository.save(xuatXu);
     }
 
     @Override

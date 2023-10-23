@@ -1,7 +1,8 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import mausacservice from '../../services/mausacservice/mausacservice';
-import { toast } from 'react-toastify';
+import {toast} from 'react-toastify';
 import ReactPaginate from 'react-paginate';
+
 class MauSacComponent extends Component {
     constructor(props) {
         super(props);
@@ -77,46 +78,37 @@ class MauSacComponent extends Component {
         const id = this.props.match.params.id;
         if (id) {
             mausacservice.getMauSacById(id).then((res) => {
-                this.setState({ mauSacUpdate: res.data });
+                this.setState({mauSacUpdate: res.data});
             });
         }
     }
 
-
     delete(id) {
         mausacservice.deleteMauSac(id).then((res) => {
-            this.setState({ mauSac: this.state.mauSac.filter(mauSac => mauSac.id != id) });
+            this.setState({mauSac: this.state.mauSac.filter(mauSac => mauSac.id != id)});
         });
     }
+
     add = (e) => {
         e.preventDefault();
-        let mauSac = { giaTri: this.state.mauSacAdd.giaTri, ten: this.state.mauSacAdd.ten, trangThai: this.state.mauSacAdd.trangThai }
-
-        if (!this.state.mauSacAdd.giaTri) {
-            this.setState({ errorsAdd: { ...this.state.errorsAdd, giaTri: "Giá trị không được bỏ trống!" } });
-            return;
-        } else if (isNaN(this.state.mauSacAdd.giaTri)) {
-            this.setState({ errorsAdd: { ...this.state.errorsAdd, giaTri: "Giá trị phải là một số!" } });
-            return;
-        } else {
-            this.setState({ errorsAdd: { ...this.state.errorsAdd, giaTri: "" } });
-        }
+        let mauSac = {ten: this.state.mauSacAdd.ten, trangThai: this.state.mauSacAdd.trangThai}
 
         if (!this.state.mauSacAdd.ten) {
-            this.setState({ errorsAdd: { ...this.state.errorsAdd, ten: "Tên màu không được bỏ trống!" } });
+            this.setState({errorsAdd: {...this.state.errorsAdd, ten: "Tên màu không được bỏ trống!"}});
             return;
         } else if (!isNaN(this.state.mauSacAdd.ten)) {
-            this.setState({ errorsAdd: { ...this.state.errorsAdd, ten: "Tên phải là chữ!" } });
+            this.setState({errorsAdd: {...this.state.errorsAdd, ten: "Tên phải là chữ!"}});
             return;
         }
-        else {
-            this.setState({ errorsAdd: { ...this.state.errorsAdd, ten: "" } });
+        else
+        {
+            this.setState({errorsAdd: {...this.state.errorsAdd, ten: ""}});
         }
         if (!this.state.mauSacAdd.trangThai) {
-            this.setState({ errorsAdd: { ...this.state.errorsAdd, trangThai: "Trạng thái không được bỏ trống!" } });
+            this.setState({errorsAdd: {...this.state.errorsAdd, trangThai: "Trạng thái không được bỏ trống!"}});
             return;
         } else {
-            this.setState({ errorsAdd: { ...this.state.errorsAdd, trangThai: "" } });
+            this.setState({errorsAdd: {...this.state.errorsAdd, trangThai: ""}});
         }
 
         mausacservice.createMauSac(mauSac).then((res) => {
@@ -140,34 +132,24 @@ class MauSacComponent extends Component {
     }
     update = (e) => {
         e.preventDefault();
-        let mauSac = { giaTri: this.state.mauSacUpdate.giaTri, ten: this.state.mauSacUpdate.ten, trangThai: this.state.mauSacUpdate.trangThai }
+        let mauSac = {ten: this.state.mauSacUpdate.ten, trangThai: this.state.mauSacUpdate.trangThai}
         console.log('nsx' + JSON.stringify(mauSac));
         let id = this.state.mauSacUpdate.id;
 
-        if (!this.state.mauSacUpdate.giaTri) {
-            this.setState({ errorsUpdate: { ...this.state.errorsUpdate, giaTri: "Giá trị không được bỏ trống!" } });
-            return;
-        } else if (isNaN(this.state.mauSacUpdate.giaTri)) {
-            this.setState({ errorsUpdate: { ...this.state.errorsUpdate, giaTri: "Giá trị phải là một số!" } });
-            return;
-        } else {
-            this.setState({ errorsUpdate: { ...this.state.errorsUpdate, giaTri: "" } });
-        }
-
         if (!this.state.mauSacUpdate.ten) {
-            this.setState({ errorsUpdate: { ...this.state.errorsUpdate, ten: "Tên màu không được bỏ trống!" } });
+            this.setState({errorsUpdate: {...this.state.errorsUpdate, ten: "Tên màu không được bỏ trống!"}});
             return;
         } else if (!isNaN(this.state.mauSacUpdate.ten)) {
-            this.setState({ errorsUpdate: { ...this.state.errorsUpdate, ten: "Tên phải là chữ!" } });
+            this.setState({errorsUpdate: {...this.state.errorsUpdate, ten: "Tên phải là chữ!"}});
             return;
         } else {
-            this.setState({ errorsUpdate: { ...this.state.errorsUpdate, ten: "" } });
+            this.setState({errorsUpdate: {...this.state.errorsUpdate, ten: ""}});
         }
         if (!this.state.mauSacUpdate.trangThai) {
-            this.setState({ errorsUpdate: { ...this.state.errorsUpdate, trangThai: "Trạng thái không được bỏ trống!" } });
+            this.setState({errorsUpdate: {...this.state.errorsUpdate, trangThai: "Trạng thái không được bỏ trống!"}});
             return;
         } else {
-            this.setState({ errorsUpdate: { ...this.state.errorsUpdate, trangThai: "" } });
+            this.setState({errorsUpdate: {...this.state.errorsUpdate, trangThai: ""}});
         }
 
         mausacservice.updateMauSac(mauSac, this.state.mauSacUpdate.id).then((res) => {
@@ -183,6 +165,7 @@ class MauSacComponent extends Component {
         });
 
     }
+
     detail(id) {
         window.location.href = (`/mausacdetail/${id}`);
     }
@@ -194,8 +177,8 @@ class MauSacComponent extends Component {
                 ten: event.target.value
             }
         }));
-        let errorsAdd = { ...this.state.errorsAdd, ten: "" };
-        this.setState({ errorsAdd: errorsAdd });
+        let errorsAdd = {...this.state.errorsAdd, ten: ""};
+        this.setState({errorsAdd: errorsAdd});
     }
 
     thayDoiTrangThaiAdd = (event) => {
@@ -205,8 +188,8 @@ class MauSacComponent extends Component {
                 trangThai: event.target.value
             }
         }));
-        let errorsAdd = { ...this.state.errorsAdd, trangThai: "" };
-        this.setState({ errorsAdd: errorsAdd });
+        let errorsAdd = {...this.state.errorsAdd, trangThai: ""};
+        this.setState({errorsAdd: errorsAdd});
     }
     thayDoiGiaTriAdd = (event) => {
         this.setState(prevState => ({
@@ -215,8 +198,8 @@ class MauSacComponent extends Component {
                 giaTri: event.target.value
             }
         }));
-        let errorsAdd = { ...this.state.errorsAdd, giaTri: "" };
-        this.setState({ errorsAdd: errorsAdd });
+        let errorsAdd = {...this.state.errorsAdd, giaTri: ""};
+        this.setState({errorsAdd: errorsAdd});
     }
     thayDoiTenUpdate = (event) => {
         this.setState(prevState => ({
@@ -225,8 +208,8 @@ class MauSacComponent extends Component {
                 ten: event.target.value
             }
         }));
-        let errorsUpdate = { ...this.state.errorsUpdate, ten: "" };
-        this.setState({ errorsUpdate: errorsUpdate });
+        let errorsUpdate = {...this.state.errorsUpdate, ten: ""};
+        this.setState({errorsUpdate: errorsUpdate});
     }
     thayDoiGiaTriUpdate = (event) => {
         this.setState(prevState => ({
@@ -235,8 +218,8 @@ class MauSacComponent extends Component {
                 giaTri: event.target.value
             }
         }));
-        let errorsUpdate = { ...this.state.errorsUpdate, giaTri: "" };
-        this.setState({ errorsUpdate: errorsUpdate });
+        let errorsUpdate = {...this.state.errorsUpdate, giaTri: ""};
+        this.setState({errorsUpdate: errorsUpdate});
     }
     thayDoiTrangThaiUpdate = (event) => {
         this.setState(prevState => ({
@@ -245,13 +228,13 @@ class MauSacComponent extends Component {
                 trangThai: event.target.value
             }
         }));
-        let errorsUpdate = { ...this.state.errorsUpdate, trangThai: "" };
-        this.setState({ errorsUpdate: errorsUpdate });
+        let errorsUpdate = {...this.state.errorsUpdate, trangThai: ""};
+        this.setState({errorsUpdate: errorsUpdate});
     }
 
     toggleMauSac(id, currentTrangThai) {
         const newTrangThai = currentTrangThai === 0 ? 1 : 0; // Chuyển đổi trạng thái
-        mausacservice.updateMauSacTrangThai({ trangThai: newTrangThai }, id).then((res) => {
+        mausacservice.updateMauSacTrangThai({trangThai: newTrangThai}, id).then((res) => {
             let mauSacCapNhat = res.data;
             this.setState(prevState => ({
                 mauSac: prevState.mauSac.map(ms =>
@@ -260,7 +243,6 @@ class MauSacComponent extends Component {
             }));
         });
     }
-
 
 
     render() {
@@ -292,12 +274,12 @@ class MauSacComponent extends Component {
 
                                             <table className="table table-borderless datatable">
                                                 <thead>
-                                                    <tr>
-                                                        {/*<th>Giá trị</th>*/}
-                                                        <th>Tên màu</th>
-                                                        <th>Trạng thái</th>
-                                                        <th>Action</th>
-                                                    </tr>
+                                                <tr>
+                                                    {/*<th>Giá trị</th>*/}
+                                                    <th>Tên màu</th>
+                                                    <th>Trạng thái</th>
+                                                    <th>Action</th>
+                                                </tr>
                                                 </thead>
                                                 {/* </tr>
                                                     <tr>
@@ -310,28 +292,30 @@ class MauSacComponent extends Component {
                                                         </td>
                                                     </tr> */}
                                                 <tbody>
-                                                    {
-                                                        this.state.mauSac.map(
-                                                            ms =>
-                                                                <tr key={ms.id}>
-                                                                    {/*<td>{ms.giaTri}</td>*/}
-                                                                    <td>{ms.ten}</td>
-                                                                    <td><label className="switch">
-                                                                        <input
-                                                                            type="checkbox"
-                                                                            checked={ms.trangThai === 0}
-                                                                            onChange={() => this.toggleMauSac(ms.id, ms.trangThai)}
-                                                                        />
+                                                {
+                                                    this.state.mauSac.map(
+                                                        ms =>
+                                                            <tr key={ms.id}>
+                                                                {/*<td>{ms.giaTri}</td>*/}
+                                                                <td>{ms.ten}</td>
+                                                                <td><label className="switch">
+                                                                    <input
+                                                                        type="checkbox"
+                                                                        checked={ms.trangThai === 0}
+                                                                        onChange={() => this.toggleMauSac(ms.id, ms.trangThai)}
+                                                                    />
 
-                                                                        <span className="slider round"></span>
-                                                                    </label></td>
-                                                                    <td>
-                                                                        {/*<button onClick={() => this.delete(ms.id)} className='btn btn-danger'>Xóa</button>*/}
-                                                                        <button onClick={() => this.detail(ms.id)} className='btn btn-primary'>Chi tiết</button>
-                                                                    </td>
-                                                                </tr>
-                                                        )
-                                                    }
+                                                                    <span className="slider round"></span>
+                                                                </label></td>
+                                                                <td>
+                                                                    {/*<button onClick={() => this.delete(ms.id)} className='btn btn-danger'>Xóa</button>*/}
+                                                                    <button onClick={() => this.detail(ms.id)}
+                                                                            className='btn btn-primary'>Chi tiết
+                                                                    </button>
+                                                                </td>
+                                                            </tr>
+                                                    )
+                                                }
                                                 </tbody>
 
 
@@ -378,14 +362,15 @@ class MauSacComponent extends Component {
                                     <ul className="nav nav-tabs" id="myTab" role="tablist">
                                         <li className="nav-item" role="presentation">
                                             <button className="nav-link active" id="home-tab" data-bs-toggle="tab"
-                                                data-bs-target="#home" type="button" role="tab" aria-controls="home"
-                                                aria-selected="true">Edit
+                                                    data-bs-target="#home" type="button" role="tab" aria-controls="home"
+                                                    aria-selected="true">Edit
                                             </button>
                                         </li>
                                         <li className="nav-item" role="presentation">
                                             <button className="nav-link" id="profile-tab" data-bs-toggle="tab"
-                                                data-bs-target="#profile" type="button" role="tab" aria-controls="profile"
-                                                aria-selected="false">Add new
+                                                    data-bs-target="#profile" type="button" role="tab"
+                                                    aria-controls="profile"
+                                                    aria-selected="false">Add new
                                             </button>
                                         </li>
                                     </ul>
@@ -393,49 +378,67 @@ class MauSacComponent extends Component {
 
                                     <div className="tab-content pt-2" id="myTabContent">
                                         <div className="tab-pane fade show active" id="home" role="tabpanel"
-                                            aria-labelledby="home-tab">
+                                             aria-labelledby="home-tab">
                                             <form>
                                                 <div>
                                                     Tên :
-                                                    <input className={`form-control ${this.state.errorsUpdate.ten ? 'is-invalid' : ''}`} name="ten" value={this.state.mauSacUpdate.ten} onChange={this.thayDoiTenUpdate} />
-                                                    {this.state.errorsUpdate.ten && <div className="text-danger">{this.state.errorsUpdate.ten}</div>}
+                                                    <input
+                                                        className={`form-control ${this.state.errorsUpdate.ten ? 'is-invalid' : ''}`}
+                                                        name="ten" value={this.state.mauSacUpdate.ten}
+                                                        onChange={this.thayDoiTenUpdate}/>
+                                                    {this.state.errorsUpdate.ten &&
+                                                    <div className="text-danger">{this.state.errorsUpdate.ten}</div>}
                                                 </div>
                                                 <div className='form-group'>
                                                     <label>Trạng thái</label>
-                                                    <select name="trangThai" id="trangThai" value={this.state.mauSacUpdate.trangThai} className={`form-control ${this.state.errorsUpdate.trangThai ? 'is-invalid' : ''}`} onChange={this.thayDoiTrangThaiUpdate}>
+                                                    <select name="trangThai" id="trangThai"
+                                                            value={this.state.mauSacUpdate.trangThai}
+                                                            className={`form-control ${this.state.errorsUpdate.trangThai ? 'is-invalid' : ''}`}
+                                                            onChange={this.thayDoiTrangThaiUpdate}>
                                                         <option value=''>Chọn trạng thái</option>
                                                         <option value="0">Hoạt động</option>
                                                         <option value="1">Không hoạt động</option>
                                                     </select>
-                                                    {this.state.errorsUpdate.trangThai && <div className="text-danger">{this.state.errorsUpdate.trangThai}</div>}
+                                                    {this.state.errorsUpdate.trangThai && <div
+                                                        className="text-danger">{this.state.errorsUpdate.trangThai}</div>}
                                                 </div>
-                                                <input type="submit" className="btn btn-primary" value="Update" style={{ marginTop: '10px' }} onClick={this.update} />
+                                                <input type="submit" className="btn btn-primary" value="Update"
+                                                       style={{marginTop: '10px'}} onClick={this.update}/>
                                             </form>
                                         </div>
 
-                                        <div className="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                                        <div className="tab-pane fade" id="profile" role="tabpanel"
+                                             aria-labelledby="profile-tab">
                                             <form>
                                                 <div>
                                                     Tên :
-                                                    <input className={`form-control ${this.state.errorsAdd.ten ? 'is-invalid' : ''}`} name="ten" onChange={this.thayDoiTenAdd} />
-                                                    {this.state.errorsAdd.ten && <div className="text-danger">{this.state.errorsAdd.ten}</div>}
+                                                    <input
+                                                        className={`form-control ${this.state.errorsAdd.ten ? 'is-invalid' : ''}`}
+                                                        name="ten" onChange={this.thayDoiTenAdd}/>
+                                                    {this.state.errorsAdd.ten &&
+                                                    <div className="text-danger">{this.state.errorsAdd.ten}</div>}
 
                                                 </div>
                                                 <div className='form-group'>
                                                     <label>Trạng thái</label>
-                                                    <select name="trangThai" id="trangThai" className={`form-control ${this.state.errorsAdd.trangThai ? 'is-invalid' : ''}`} onChange={this.thayDoiTrangThaiAdd}>
+                                                    <select name="trangThai" id="trangThai"
+                                                            className={`form-control ${this.state.errorsAdd.trangThai ? 'is-invalid' : ''}`}
+                                                            onChange={this.thayDoiTrangThaiAdd}>
                                                         <option value=''>Chọn trạng thái</option>
                                                         <option value="0">Hoạt động</option>
                                                         <option value="1">Không hoạt động</option>
                                                     </select>
-                                                    {this.state.errorsAdd.trangThai && <div className="text-danger">{this.state.errorsAdd.trangThai}</div>}
+                                                    {this.state.errorsAdd.trangThai &&
+                                                    <div className="text-danger">{this.state.errorsAdd.trangThai}</div>}
                                                 </div>
-                                                <input type="submit" className="btn btn-primary" value="Add" style={{ marginTop: '10px' }} onClick={this.add} />
+                                                <input type="submit" className="btn btn-primary" value="Add"
+                                                       style={{marginTop: '10px'}} onClick={this.add}/>
                                             </form>
                                         </div>
 
 
-                                        <div className="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
+                                        <div className="tab-pane fade" id="contact" role="tabpanel"
+                                             aria-labelledby="contact-tab">
                                             <form className="row g-3" method="get">
                                                 <div className="form-group">
                                                     {/* ID : ${mau.id} */}
@@ -463,4 +466,5 @@ class MauSacComponent extends Component {
     }
 
 }
+
 export default MauSacComponent
