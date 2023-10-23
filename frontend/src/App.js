@@ -17,6 +17,7 @@ import KhuyenMaiComponent from "./components/khuyenmaicomponent/KhuyenMaiCompone
 import HoaDonComponents from './components/hoadoncomponents/HoaDonComponents';
 import KhuyenMaiComponents from "./components/khuyenmaicomponent/KhuyenMaiComponents";
 import KhuyenMaiComponentAdd from "./components/khuyenmaicomponent/KhuyenMaiComponentAdd";
+import ImageUpload from "./components/ImageUpload";
 function App() {
   return (
 
@@ -51,6 +52,7 @@ function App() {
             <Route path='/khuyenmaiadd' component={KhuyenMaiComponentAdd} />
             <Route path='/khuyenmaidetail/:id' component={KhuyenMaiComponent} />
             <Route path='/hoadon' component={HoaDonComponents} />
+            <Route path='/anh' component={ImageUpload} />
           </Switch>
         </main>
         <Footer />
