@@ -10,10 +10,10 @@ class HoaDonChiTietComponents extends Component {
             hoaDonId: {
                 id: this.props.match.params.id
             },
-            hoaDon:{
-                id:this.props.match.params.id,
-                thanhToan:'',
-                taiKhoan:''
+            hoaDon: {
+                id: this.props.match.params.id,
+                thanhToan: '',
+                taiKhoan: ''
             }
 
         }
@@ -29,6 +29,7 @@ class HoaDonChiTietComponents extends Component {
     }
 
     render() {
+        let total = 0;
         return (
             <div>
                 <div className="pagetitle">
@@ -53,46 +54,46 @@ class HoaDonChiTietComponents extends Component {
 
 
                                         <div className="card-body">
-                                            <h5 className="card-title">Hóa đơn <span>| </span></h5>
+                                            <h5 className="card-title">Thông tin sản phẩm<span>| </span></h5>
 
-                                            <table className="table table-borderless datatable">
-                                                <thead>
-                                                    <tr>
-                                                        <th>ID</th>
-                                                        <th>Số Lượng</th>
-                                                        <th>Id Hóa đơn</th>
-                                                        <th>Id sản phẩm CT</th>
-                                                        <th>Giá bán</th>
-                                                        <th>Ghi chú</th>
-                                                        <th>Tổng tiền</th>
-                                                        <th>Người tạo hóa đơn</th>
-                                                        <th>Khách hàng</th>
-                                                        <th>Ngày tạo hóa đơn</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    {
-                                                        this.state.hoaDonChiTiet.map(
-                                                            hoaDonChiTiet =>
-                                                                <tr key={hoaDonChiTiet.id}>
-                                                                    <td>{hoaDonChiTiet.id}</td>
-                                                                    <td>{hoaDonChiTiet.soLuong}</td>
-                                                                    <td>{hoaDonChiTiet.hd.id}</td>
-                                                                    <td>{hoaDonChiTiet.sanPhamChiTiet.sanPham.ten}</td>
-                                                                    <td>{hoaDonChiTiet.sanPhamChiTiet.sanPham.giamGia}</td>
-                                                                    <td>{hoaDonChiTiet.ghiChu}</td>
-                                                                    <td>{hoaDonChiTiet.sanPhamChiTiet.sanPham.giamGia * hoaDonChiTiet.soLuong}</td>
-                                                                    <td>{hoaDonChiTiet.hd.taiKhoan.id}</td>
-                                                                    <td>{hoaDonChiTiet.hd.ten}</td>
-                                                                    <td>{hoaDonChiTiet.hd.ngayTao}</td>
+                                            <div>
+        <table className="table table-borderless datatable">
+          <thead>
+            <tr>
+              <th>STT</th>
+              <th>Số Lượng</th>
+              <th>Ảnh</th>
+              <th>Tên sản phẩm</th>
+              <th>Đơn giá</th>
+              <th>Thành tiền</th>
+            </tr>
+          </thead>
+          <tbody>
+            {this.state.hoaDonChiTiet.map((hoaDonChiTiet, index) => {
+              total += hoaDonChiTiet.sanPhamChiTiet.sanPham.giaBan * hoaDonChiTiet.soLuong; // Cộng dồn tổng
 
-                                                                </tr>
-                                                        )
-                                                    }
-                                                </tbody>
+              return (
+                <tr key={hoaDonChiTiet.id}>
+                  <td>{index + 1}</td> {/* STT */}
+                  <td>{hoaDonChiTiet.soLuong}</td>
+                  <td>
+                  <img
+                    // src={hoaDonChiTiet.sanPhamChiTiet.sanPham.imageURL}
+                    // alt={hoaDonChiTiet.sanPhamChiTiet.sanPham.ten}
+                    style={{ width: '50px', height: '50px' }}
+                  />
+                </td>
+                  <td>{hoaDonChiTiet.sanPhamChiTiet.sanPham.ten}</td>
+                  <td>{hoaDonChiTiet.sanPhamChiTiet.sanPham.giaBan}</td>
+                  <td>{hoaDonChiTiet.sanPhamChiTiet.sanPham.giaBan * hoaDonChiTiet.soLuong}</td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
 
-
-                                            </table>
+        <label>Tổng: {total}</label> {/* Hiển thị tổng */}
+      </div>
 
                                         </div>
 
@@ -142,20 +143,21 @@ class HoaDonChiTietComponents extends Component {
                                     <div className="tab-content pt-2" id="myTabContent">
                                         <div className="tab-pane fade show active" id="home" role="tabpanel"
                                             aria-labelledby="home-tab">
+                                            <div className='container'>
+                                                <h10 className="nav-link"  >
+                                                    Người bán : {this.state.hoaDon?.taiKhoan?.thongTinNguoiDung?.ten}
+                                                </h10>
 
-                                            {/* <div>
-                                                Tên :
+                                                <h10 className="nav-link"  >
+                                                    Ngày bán : {this.state.hoaDon?.taiKhoan?.ngayTao}</h10>
 
+                                                    <h10 className="nav-link"  >
+                                                    Ghi chú : {this.state.hoaDon?.ghiChu}</h10>
+
+                                                {<div className="text-danger"></div>}
+                                                <button type="button" class="btn btn-outline-primary">Thông tin chi tiết</button>
                                             </div>
-                                            <div className='form-group'>
-                                                <label>Trạng thái</label>
 
-                                            </div> */}
-                                            <div>
-                                            <input className={`label label-info`} name="ten" value={this.state.hoaDon.taiKhoan.anh}/>
-                                                    {<div className="text-danger"></div>}
-                                            </div>
-                                            <input type="submit" className="btn btn-primary" value="Update" style={{ marginTop: '10px' }} />
 
                                         </div>
 
@@ -178,7 +180,7 @@ class HoaDonChiTietComponents extends Component {
                                                     </select>
 
                                                 </div>
-                                                <input type="submit" className="btn btn-primary" value="Add" style={{ marginTop: '10px' }} onClick={this.add} />
+
                                             </form>
                                         </div>
 
