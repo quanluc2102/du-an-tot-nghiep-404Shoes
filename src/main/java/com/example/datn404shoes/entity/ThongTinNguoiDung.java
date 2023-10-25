@@ -35,13 +35,5 @@ public class ThongTinNguoiDung {
     @Column(name = "ngay_cap_nhat")
     private Date ngayCapNhat;
 
-    public ThongTinNguoiDung(String diaChi, String sdt, String ten, Date ngaySinh, Date ngayCapNhat, TaiKhoan taiKhoan) {
 
-        this.diaChi = diaChi;
-        this.sdt = sdt;
-        this.ten = ten;
-        this.ngaySinh = ngaySinh;
-        this.ngayCapNhat = ngayCapNhat;
-//        this.taiKhoan = taiKhoan;
-    }
 }
