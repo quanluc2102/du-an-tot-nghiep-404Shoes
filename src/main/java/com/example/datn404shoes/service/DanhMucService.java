@@ -18,4 +18,6 @@ public interface DanhMucService {
     Page<DanhMuc> getAll(Pageable pageable);
 
     DanhMuc getOne(Long id);
+
+    boolean isDanhMucNameUnique(String name);
 }

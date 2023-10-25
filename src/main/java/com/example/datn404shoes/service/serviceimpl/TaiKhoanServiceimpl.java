@@ -25,6 +25,8 @@ import java.util.Optional;
 public class TaiKhoanServiceimpl implements TaiKhoanService {
     @Autowired
     private TaiKhoanResponsitory responsitory;
+    @Autowired
+    private TaiKhoanRepository taiKhoanResponsitory;
 
 
 //    @Override
@@ -116,6 +118,12 @@ public class TaiKhoanServiceimpl implements TaiKhoanService {
 
         return responsitory.findNhanVienByQuyenId4();
     }
+
+    @Override
+    public TaiKhoan getOneBySDT(String sdt) {
+        return taiKhoanResponsitory.findByThongTinNguoiDung_Sdt(sdt);
+    }
+
 
 
 }

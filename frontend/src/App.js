@@ -23,6 +23,8 @@ import PhanQuyenComment from "./components/PhanQuyenComment/PhanQuyenComment";
 import NhanVienComponent from "./components/taikhoancomponent/NhanVienComponent";
 import KhachHangComponent from "./components/taikhoancomponent/KhachHangComponent";
 import QuanLyComponent from "./components/taikhoancomponent/QuanLyComponent";
+import HoaDonChiTietComponents from "./components/hoadonchitietcomponents/HoaDonChiTietComponents";
+import TichDiemPopup from "./components/tichdiemcomponent/TichDiemPopup";
 function App() {
   return (
 
@@ -67,6 +69,8 @@ function App() {
             <Route path='/khachhangdetail/:id' component={KhachHangComponent} />
             <Route path='/khachhang' component={KhachHangComponent} />
             <Route path='/phanquyendetail/:id' component={PhanQuyenComment} />
+            <Route path='/HoaDonChiTiet/:id' component={HoaDonChiTietComponents} />
+            <Route path='/tichdiem' component={TichDiemPopup} />
           </Switch>
         </main>
         <Footer />

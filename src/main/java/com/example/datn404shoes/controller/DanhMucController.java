@@ -38,15 +38,21 @@ public class DanhMucController {
     }
 
     @PostMapping("add")
-    public ResponseEntity<?> add(Model model, @Valid @RequestBody DanhMuc danhMuc, BindingResult bindingResult) {
+    public ResponseEntity<?> add(Model model, @RequestBody DanhMuc danhMuc, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             List<FieldError> errors = bindingResult.getFieldErrors();
             String errorMessage = errors.stream().map(error -> error.getDefaultMessage()).collect(Collectors.joining(", "));
+
             return ResponseEntity.badRequest().body(errorMessage);
+        } else if (serviceimpl.isDanhMucNameUnique(danhMuc.getTen())) {
+            System.out.println("Đã trùng");
+            return ResponseEntity.badRequest().body("Tên danh mục đã tồn tại.");
         } else {
             return ResponseEntity.ok(serviceimpl.add(danhMuc));
         }
     }
+
+
 
 
     @DeleteMapping("delete/{id}")
