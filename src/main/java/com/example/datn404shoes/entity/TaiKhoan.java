@@ -2,8 +2,10 @@ package com.example.datn404shoes.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.sql.Date;
+import java.util.Set;
 
 @Entity
 @Table(name = "tai_khoan")
@@ -24,8 +26,6 @@ public class TaiKhoan {
 
     @Column(name = "email")
     private String email;
-
-
 
     @Column(name = "ngay_tao")
     private Date ngayTao;
@@ -48,15 +48,6 @@ public class TaiKhoan {
     @JoinColumn(name = "thong_tin_nguoi_dung_id")
     private ThongTinNguoiDung thongTinNguoiDung;
 
-//    public TaiKhoan(long id, String username, String email, Date ngayTao, Date ngayCapNhat, String password, String anh, boolean trangThai, ThongTinNguoiDung thongTinNguoiDung) {
-//        this.id = id;
-//        this.username = username;
-//        this.email = email;
-//        this.ngayTao = ngayTao;
-//        this.ngayCapNhat = ngayCapNhat;
-//        this.password = password;
-//        this.anh = anh;
-//        this.trangThai = trangThai;
-//        this.thongTinNguoiDung = thongTinNguoiDung;
-//    }
+
+
 }
