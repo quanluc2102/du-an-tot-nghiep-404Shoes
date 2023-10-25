@@ -77,6 +77,10 @@ class ListDanhMucComponent extends Component {
         }
     }
 
+    showErrorToast = (errorMessage) => {
+        toast.error("Lỗi: " + errorMessage);
+    }
+
 
     delete(id) {
         danhmucservice.deleteDanhMuc(id).then((res) => {
@@ -89,6 +93,7 @@ class ListDanhMucComponent extends Component {
 
         if (!this.state.danhMucAdd.ten.trim()) {
             this.setState({ errorsAdd: { ...this.state.errorsAdd, ten: "Tên không được bỏ trống!" } });
+            toast.error("Tên không được bỏ trống!"); // Hiển thị thông báo lỗi
             return;
         } else {
             this.setState({ errorsAdd: { ...this.state.errorsAdd, ten: "" } });
@@ -96,33 +101,42 @@ class ListDanhMucComponent extends Component {
 
         if (!isNaN(this.state.danhMucAdd.ten)) {
             this.setState({ errorsAdd: { ...this.state.errorsAdd, ten: "Tên phải là chữ!" } });
+            toast.error("Tên phải là chữ!"); // Hiển thị thông báo lỗi
             return;
         } else {
             this.setState({ errorsAdd: { ...this.state.errorsAdd, ten: "" } });
         }
 
-
         if (!this.state.danhMucAdd.trangThai.trim()) {
             this.setState({ errorsAdd: { ...this.state.errorsAdd, trangThai: "Trạng thái không được bỏ trống!" } });
+            toast.error("Trạng thái không được bỏ trống!"); // Hiển thị thông báo lỗi
             return;
         } else {
             this.setState({ errorsAdd: { ...this.state.errorsAdd, trangThai: "" } });
         }
 
         danhmucservice.createDanhMuc(danhMuc).then((res) => {
+            if (res.status) {
+                const errorMessage = res.data
+                alert(errorMessage); // Hiển thị thông báo lỗi
+            }
+
             if (res.status === 200) {
                 // Xử lý khi thêm thành công
                 let danhMucMoi = res.data;
                 this.setState(prevState => ({
                     danhMuc: [...prevState.danhMuc, danhMucMoi]
                 }));
+                toast.success("Thêm thành công!"); // Hiển thị thông báo thành công
             } else {
-                // Xử lý khi có lỗi
+                // Xử lý khi có lỗi khác
                 const errorMessage = res.data || "Có lỗi xảy ra khi thêm danh mục.";
                 toast.error("Lỗi: " + errorMessage); // Hiển thị lỗi bằng Toast
                 console.log(errorMessage);
             }
+
         });
+
 
     }
     update = (e) => {

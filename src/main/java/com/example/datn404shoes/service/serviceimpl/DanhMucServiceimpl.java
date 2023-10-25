@@ -16,6 +16,13 @@ public class DanhMucServiceimpl implements DanhMucService {
     DanhMucRepository repository;
 
     @Override
+    public boolean isDanhMucNameUnique(String name) {
+        // Kiểm tra xem tên danh mục đã tồn tại trong cơ sở dữ liệu chưa
+//        DanhMuc existingDanhMuc = repository.findByTen(name);
+        return repository.existsDanhMucByTen(name);
+    }
+
+    @Override
     public DanhMuc add(DanhMuc danhMuc) {
         repository.save(danhMuc);
         return danhMuc;

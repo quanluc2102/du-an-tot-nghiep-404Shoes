@@ -24,6 +24,6 @@ public class TichDiem {
 
 
     @Column(name = "diem")
-    private Integer diem;
+    private Float diem;
 
 }
