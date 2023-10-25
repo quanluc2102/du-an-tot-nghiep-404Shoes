@@ -4,6 +4,7 @@ package com.example.datn404shoes.service;
 import com.example.datn404shoes.entity.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
@@ -18,5 +19,6 @@ public interface PhanQuyenService {
     void delete(Long id);
     PhanQuyen getOne(Long id);
     PhanQuyen update(Long id, PhanQuyen phanQuyen);
-//    List<PhanQuyen> findPhanQuyenByQuyenId(Long id);
+
+
 }

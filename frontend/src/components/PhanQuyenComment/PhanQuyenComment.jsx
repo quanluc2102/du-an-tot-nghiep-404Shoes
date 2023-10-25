@@ -12,20 +12,20 @@ class PhanQuyenComment extends Component {
             quyen: [],
             pageCount: 0,
             phanQuyenAdd: {
-                taiKhoan: '',
-                quyen: '',
+                taiKhoanId: '',
+                quyenId: '',
             },
             phanQuyenUpdate: {
-                taiKhoan: '',
-                quyen: '',
+                taiKhoanId: '',
+                quyenId: '',
             },
             errorAdd: {
-                taiKhoan: '',
-                quyen: '',
+                taiKhoanId: '',
+                quyenId: '',
             },
             errorUpdate: {
-                taiKhoan: '',
-                quyen: '',
+                taiKhoanId: '',
+                quyenId: '',
             }
         }
         this.add = this.add.bind(this);
@@ -80,50 +80,73 @@ class PhanQuyenComment extends Component {
     add = (e) => {
         e.preventDefault();
         let phanQuyen = {
-            taiKhoan: this.state.phanQuyenAdd.taiKhoan,
-            quyen : this.state.phanQuyenAdd.quyen
+            taiKhoanId: this.state.phanQuyenAdd.taiKhoan,
+            quyenId: this.state.phanQuyenAdd.quyen
         }
-        if (!this.state.phanQuyenAdd.taiKhoan) {
-            this.setState({ errorAdd: { ...this.state.errorAdd, taiKhoan: "Tai khoann không được bỏ trống!" } });
+        if (!this.state.phanQuyenAdd.taiKhoanId) {
+            this.setState({ errorAdd: { ...this.state.errorAdd, taiKhoanId: "Tai khoann không được bỏ trống!" } });
             return;
         } else {
-            this.setState({ errorAdd: { ...this.state.errorAdd, taiKhoan: "" } });
+            this.setState({ errorAdd: { ...this.state.errorAdd, taiKhoanId: "" } });
         }
-        if (!this.state.phanQuyenAdd.quyen) {
-            this.setState({ errorAdd: { ...this.state.errorAdd, quyen: "Quyèn không được bỏ trống!" } });
+        if (!this.state.phanQuyenAdd.quyenId) {
+            this.setState({ errorAdd: { ...this.state.errorAdd, quyenId: "Quyèn không được bỏ trống!" } });
             return;
         } else {
-            this.setState({ errorAdd: { ...this.state.errorAdd, quyen: "" } });
+            this.setState({ errorAdd: { ...this.state.errorAdd, quyenId: "" } });
         }
-        phanquyenservice.createPhanQuyen(phanQuyen).then((res) => {
-            window.location.href = (`/phanquyen`);
+        phanquyenservice.addPhanQuyen(phanQuyen).then((res) => {
+            if (res.status === 200) {
+                // Xử lý khi thêm thành công
+                let phanQuyenMoi = res.data;
+                this.setState(prevState => ({
+                    phanQuyen: [...prevState.phanQuyen, phanQuyenMoi]
+                }));
+            } else {
+                // Xử lý khi có lỗi
+                const errorMessage = res.data || "Có lỗi xảy ra khi thêm danh mục.";
+                alert("lỗi" + errorMessage) // Hiển thị lỗi bằng Toast
+                console.log(errorMessage);
+            }
+        }).catch(error => {
+            // Log the error or handle it as needed
+            console.error("Update request error:", error);
         })
+
 
     }
     update = (e) => {
         e.preventDefault();
         var phanQuyen = {
-            taiKhoan: this.state.phanQuyenUpdate.taiKhoan,
-            quyen : this.state.phanQuyenUpdate.quyen
-        }
-        let soLuong = parseInt(this.state.sanPhamChiTietUpdate.soLuong);
-        if (!this.state.phanQuyenUpdate.taiKhoan) {
-            this.setState({ errorUpdate: { ...this.state.errorUpdate, taiKhoan: "Tai khoann không được bỏ trống!" } });
-            return;
-        } else {
-            this.setState({errorUpdate: { ...this.state.errorUpdate, taiKhoan: "" } });
-        }
-        if (!this.state.phanQuyenUpdate.quyen) {
-            this.setState({ errorUpdate: { ...this.state.errorUpdate, quyen: "Quyèn không được bỏ trống!" } });
-            return;
-        } else {
-            this.setState({ errorUpdate: { ...this.state.errorUpdate, quyen: "" } });
+            taiKhoanId: this.state.phanQuyenUpdate.taiKhoan,
+            quyenId : this.state.phanQuyenUpdate.quyen
         }
         console.log('nsx' + JSON.stringify(phanQuyen));
         let id = this.state.phanQuyenUpdate.id;
-        phanquyenservice.updatePhanQuyen(phanQuyen,id).then((res) => {
-            window.location.href = (`/phanquyen`);
-        })
+        if (!this.state.phanQuyenUpdate.taiKhoanId) {
+            this.setState({ errorUpdate: { ...this.state.errorUpdate, taiKhoanId: "Tai khoann không được bỏ trống!" } });
+            return;
+        } else {
+            this.setState({errorUpdate: { ...this.state.errorUpdate, taiKhoanId: "" } });
+        }
+        if (!this.state.phanQuyenUpdate.quyenId) {
+            this.setState({ errorUpdate: { ...this.state.errorUpdate, quyenId: "Quyèn không được bỏ trống!" } });
+            return;
+        } else {
+            this.setState({ errorUpdate: { ...this.state.errorUpdate, quyenId: "" } });
+        }
+
+        phanquyenservice.updatePhanQuyen(phanQuyen,this.state.phanQuyenUpdate.id).then((res) => {
+            let phanQuyenCapNhat = res.data; // Giả sử API trả về đối tượng vừa được cập nhật
+            this.setState(prevState => ({
+                phanQuyen: prevState.phanQuyen.map(pq =>
+                    pq.id === phanQuyenCapNhat.id ? phanQuyenCapNhat : pq
+                )
+            }));
+        }).catch(error => {
+            // Log the error or handle it as needed
+            console.error("Update request error:", error);
+        });
     }
     detail(id) {
         window.location.href = (`/phanquyendetail/${id}`);
@@ -134,7 +157,7 @@ class PhanQuyenComment extends Component {
             prevState => ({
                 taiKhoanAdd: {
                     ...prevState.taiKhoanAdd,
-                    taiKhoan: event.target.value
+                    taiKhoanId: event.target.value
                 }
             })
         );
@@ -144,7 +167,7 @@ class PhanQuyenComment extends Component {
             prevState => ({
                 taiKhoanAdd: {
                     ...prevState.taiKhoanAdd,
-                    quyen: event.target.value
+                    quyenId: event.target.value
                 }
             })
         );
@@ -155,7 +178,7 @@ class PhanQuyenComment extends Component {
             prevState => ({
                 taiKhoanUpdate: {
                     ...prevState.taiKhoanUpdate,
-                    taiKhoan: event.target.value
+                    taiKhoanId: event.target.value
                 }
             })
         );
@@ -165,7 +188,7 @@ class PhanQuyenComment extends Component {
             prevState => ({
                 taiKhoanUpdate: {
                     ...prevState.taiKhoanUpdate,
-                    quyen: event.target.value
+                    quyenId: event.target.value
                 }
             })
         );
@@ -207,16 +230,6 @@ class PhanQuyenComment extends Component {
                                                     <th>Action</th>
                                                 </tr>
                                                 </thead>
-                                                {/* </tr>
-                                                    <tr>
-                                                        <td>${mau.id}</td>
-                                                        <td>${mau.name}</td>
-
-                                                        <td>
-                                                            <a href="/color/delete/${mau.id}" className="btn btn-danger" onclick="return confirm('Bạn chắc chắn có muốn xóa??')" style="text-decoration: none;color: white"><i className='bx bx-trash'></i></a>
-                                                            <a href="/color/detail/${mau.id}" className="btn btn-success" style="text-decoration: none;color: white; margin-top: 5px" ><i className='bi bi-arrow-repeat'></i></a>
-                                                        </td>
-                                                    </tr> */}
                                                 <tbody>
                                                 {
                                                     this.state.phanQuyen.map(
@@ -226,7 +239,7 @@ class PhanQuyenComment extends Component {
                                                                 <td>{pq.quyen.ten}</td>
                                                                 <td>
                                                                     <button onClick={() => this.delete(pq.id)} className='btn btn-danger'>Xóa</button>
-
+                                                                    <button onClick={() => this.detail(pq.id)} className='btn btn-primary'>Chi tiết</button>
                                                                 </td>
                                                             </tr>
 
@@ -303,7 +316,7 @@ class PhanQuyenComment extends Component {
                                             <form>
                                                 <div>
                                                     Tài khoản:
-                                                    <select className="form-control" value={this.state.phanQuyenUpdate.taiKhoan} onChange={this.thayDoiTaiKhoanUpdate}>
+                                                    <select  name="taiKhoan"  className="form-control" value={this.state.phanQuyenUpdate.taiKhoanId} className={`form-control ${this.state.errorUpdate.taiKhoanId ? 'is-invalid' : ''}`} onChange={this.thayDoiTaiKhoanUpdate}>
                                                         {this.state.taiKhoan.map(
                                                             tk =>
                                                                 <option key={tk.id} value={tk.id}>{tk.username}</option>
@@ -313,7 +326,7 @@ class PhanQuyenComment extends Component {
                                                 </div>
                                                 <div>
                                                     Quyền :
-                                                    <select className="form-control" value={this.state.phanQuyenUpdate.quyen} onChange={this.thayDoiQuyenUpdate}>
+                                                    <select name="quyen"   className="form-control" value={this.state.phanQuyenUpdate.quyenId} className={`form-control ${this.state.errorUpdate.taiKhoanId ? 'is-invalid' : ''}`} onChange={this.thayDoiQuyenUpdate}>
                                                         {this.state.quyen.map(
                                                             q =>
                                                                 <option key={q.id} value={q.id} >{q.ten}</option>
@@ -329,24 +342,23 @@ class PhanQuyenComment extends Component {
                                             <form>
                                                 <div>
                                                     Tài khoản:
-                                                    <select className="form-control" value={this.state.phanQuyenAdd.taiKhoan} onChange={this.thayDoiTaiKhoanAdd}>
+                                                    <select className="form-control"  name="taiKhoanId"   onChange={this.thayDoiTaiKhoanAdd}>
                                                         {this.state.taiKhoan.map(
                                                             tk =>
                                                                 <option key={tk.id} value={tk.id}>{tk.username}</option>
                                                         )}
                                                     </select>
-                                                    {/*{this.state.errorAdd.taiKhoan && <div className="text-danger">{this.state.errorAdd.taiKhoan}</div>}*/}
                                                 </div>
                                                 <div>
-                                                    Quyền :
-                                                    <select className="form-control" value={this.state.phanQuyenUpdate.quyen} onChange={this.thayDoiQuyenAdd}>
+                                                    Quyền:
+                                                    <select className="form-control"  name="quyenId"   onChange={this.thayDoiQuyenAdd}>
                                                         {this.state.quyen.map(
                                                             q =>
-                                                                <option key={q.id} value={q.id} >{q.ten}</option>
+                                                                <option key={q.id} value={q.id}>{q.ten}</option>
                                                         )}
                                                     </select>
-                                                    {/*{this.state.errorAdd.quyen && <div className="text-danger">{this.state.errorAdd.quyen}</div>}*/}
                                                 </div>
+
                                                 <input type="submit" className="btn btn-primary" value="Add" style={{ marginTop: '10px' }} onClick={this.add} />
                                             </form>
                                         </div>

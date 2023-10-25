@@ -18,4 +18,9 @@ public class QuyenServiceimpl implements QuyenService {
     public Page<Quyen> findAll(Pageable pageable) {
         return responsitory.findAll(pageable);
     }
+
+    @Override
+    public Quyen findOne(Long id) {
+        return responsitory.findById(id).get();
+    }
 }

@@ -1,8 +1,11 @@
 package com.example.datn404shoes.service.serviceimpl;
 
 
+import com.example.datn404shoes.entity.PhanQuyen;
 import com.example.datn404shoes.entity.TaiKhoan;
 //import com.example.datn404shoes.helper.TaiKhoanExcelSave;
+import com.example.datn404shoes.repository.PhanQuyenRepository;
+import com.example.datn404shoes.repository.TaiKhoanRepository;
 import com.example.datn404shoes.repository.TaiKhoanResponsitory;
 import com.example.datn404shoes.service.TaiKhoanService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,7 +63,7 @@ public class TaiKhoanServiceimpl implements TaiKhoanService {
         tk.setPassword(taiKhoan.getPassword());
         tk.setAnh(taiKhoan.getAnh());
         tk.setTrangThai(taiKhoan.isTrangThai());
-       responsitory.save(taiKhoan);
+        responsitory.save(taiKhoan);
         return tk;
     }
 
@@ -78,4 +81,41 @@ public class TaiKhoanServiceimpl implements TaiKhoanService {
     public Page<TaiKhoan> findAll(Pageable pageable) {
         return responsitory.findAll(pageable);
     }
+
+    @Override
+    public TaiKhoan thayDoiTrangThai(Long id, TaiKhoan taiKhoan) {
+        TaiKhoan taiKhoan1 = responsitory.findById(id).get();
+        taiKhoan1.setUsername(taiKhoan.getUsername());
+        taiKhoan1.setEmail(taiKhoan.getEmail());
+        taiKhoan1.setNgayCapNhat(Date.valueOf(LocalDate.now()));
+        taiKhoan1.setPassword(taiKhoan.getPassword());
+        taiKhoan1.setAnh(taiKhoan.getAnh());
+        taiKhoan1.setTrangThai(taiKhoan.isTrangThai());
+        return responsitory.save(taiKhoan);
+    }
+
+    @Override
+    public List<TaiKhoan> getNhanVienByQuyenId1() {
+        return responsitory.findNhanVienByQuyenId1();
+    }
+
+    @Override
+    public List<TaiKhoan> getNhanVienByQuyenId2() {
+        return responsitory.findNhanVienByQuyenId2();
+    }
+
+
+    @Override
+    public List<TaiKhoan> getNhanVienByQuyenId3() {
+
+        return responsitory.findNhanVienByQuyenId3();
+    }
+
+    @Override
+    public List<TaiKhoan> getNhanVienByQuyenId4() {
+
+        return responsitory.findNhanVienByQuyenId4();
+    }
+
+
 }

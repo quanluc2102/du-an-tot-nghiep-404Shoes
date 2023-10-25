@@ -19,6 +19,10 @@ import KhuyenMaiComponents from "./components/khuyenmaicomponent/KhuyenMaiCompon
 import KhuyenMaiComponentAdd from "./components/khuyenmaicomponent/KhuyenMaiComponentAdd";
 import ImageUpload from "./components/ImageUpload";
 import SanPhamAddComponent from "./components/sanphamComponent/SanPhamAddComponnent";
+import PhanQuyenComment from "./components/PhanQuyenComment/PhanQuyenComment";
+import NhanVienComponent from "./components/taikhoancomponent/NhanVienComponent";
+import KhachHangComponent from "./components/taikhoancomponent/KhachHangComponent";
+import QuanLyComponent from "./components/taikhoancomponent/QuanLyComponent";
 function App() {
   return (
 
@@ -55,6 +59,14 @@ function App() {
             <Route path='/khuyenmaidetail/:id' component={KhuyenMaiComponent} />
             <Route path='/hoadon' component={HoaDonComponents} />
             <Route path='/anh' component={ImageUpload} />
+            <Route path='/phanquyen' component={PhanQuyenComment} />
+            <Route path='/nhanvien' component={NhanVienComponent} />
+            <Route path='/quanly' component={QuanLyComponent} />
+            <Route path='/quanlydetail/:id' component={QuanLyComponent} />
+            <Route path='/nhanviendetail/:id' component={NhanVienComponent} />
+            <Route path='/khachhangdetail/:id' component={KhachHangComponent} />
+            <Route path='/khachhang' component={KhachHangComponent} />
+            <Route path='/phanquyendetail/:id' component={PhanQuyenComment} />
           </Switch>
         </main>
         <Footer />

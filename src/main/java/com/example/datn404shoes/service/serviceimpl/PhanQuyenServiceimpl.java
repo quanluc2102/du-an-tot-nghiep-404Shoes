@@ -28,10 +28,8 @@ public class PhanQuyenServiceimpl implements PhanQuyenService {
 
     @Override
     public PhanQuyen add(PhanQuyen phanQuyen) {
-        PhanQuyen quyen = new PhanQuyen();
-        quyen.setTaiKhoan(phanQuyen.getTaiKhoan());
-        quyen.setQuyen(phanQuyen.getQuyen());
-        return phanQuyenRepository.save(phanQuyen);
+        phanQuyenRepository.save(phanQuyen);
+        return phanQuyen;
     }
 
     @Override
@@ -46,14 +44,12 @@ public class PhanQuyenServiceimpl implements PhanQuyenService {
 
     @Override
     public PhanQuyen update(Long id, PhanQuyen phanQuyen) {
-        PhanQuyen quyen = phanQuyenRepository.findById(id).orElse(null);
+        PhanQuyen quyen = getOne(id);
         quyen.setTaiKhoan(phanQuyen.getTaiKhoan());
         quyen.setQuyen(phanQuyen.getQuyen());
-        return phanQuyenRepository.save(phanQuyen);
+         phanQuyenRepository.save(phanQuyen);
+        return phanQuyen;
     }
 
-//    @Override
-//    public List<PhanQuyen> findPhanQuyenByQuyenId(Long id) {
-//        return phanQuyenRepository.findPhanQuyenByQuyenId(id);
-//    }
+
 }

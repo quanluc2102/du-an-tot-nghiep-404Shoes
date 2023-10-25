@@ -9,4 +9,6 @@ public interface QuyenService {
 
 
     Page<Quyen> findAll(Pageable pageable);
+
+    Quyen findOne(Long id);
 }

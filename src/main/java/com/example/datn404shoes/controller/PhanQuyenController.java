@@ -1,7 +1,7 @@
 package com.example.datn404shoes.controller;
 
-import com.example.datn404shoes.entity.PhanQuyen;
-import com.example.datn404shoes.entity.SanPhamChiTiet;
+import com.example.datn404shoes.entity.*;
+import com.example.datn404shoes.request.PhanQuyenRepuest;
 import com.example.datn404shoes.request.SanPhamChiTietRequest;
 import com.example.datn404shoes.service.serviceimpl.PhanQuyenServiceimpl;
 import com.example.datn404shoes.service.serviceimpl.SanPhamChiTietServiceimpl;
@@ -12,6 +12,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -30,9 +31,12 @@ public class PhanQuyenController {
 //        return ResponseEntity.ok(serviceimpl.findPhanQuyenByQuyenId(id));
 //    }
     @PostMapping("add")
-    public PhanQuyen add(@RequestBody PhanQuyen phanQuyen) {
+    public PhanQuyen add(@RequestBody PhanQuyenRepuest phanQuyen) {
 
-        return serviceimpl.add(phanQuyen);
+        PhanQuyen phanQuyen1 = new PhanQuyen();
+        phanQuyen1.setTaiKhoan(TaiKhoan.builder().id(phanQuyen.getTaiKhoanId()).build());
+        phanQuyen1.setQuyen(Quyen.builder().id(phanQuyen.getQuyenId()).build());
+        return serviceimpl.add(phanQuyen1);
     }
 
     @DeleteMapping("delete/{id}")

@@ -99,12 +99,21 @@ function Sidebar() {
 
         <li className="nav-item">
           <a className="nav-link collapsed" data-bs-target="#charts-nav" data-bs-toggle="collapse" >
-            <i className="bi bi-bar-chart"></i><span>Người dùng</span><i className="bi bi-chevron-down ms-auto"></i>
+            <i className="bi bi-bar-chart"></i><span>Quản lý tài khoản</span><i className="bi bi-chevron-down ms-auto"></i>
           </a>
           <ul id="charts-nav" className="nav-content collapse " data-bs-parent="#sidebar-nav">
             <li>
+              <a href="/nhanvien">
+                <i className="bi bi-circle"></i><span>Nhân viên</span>
+              </a>
+              <a href="/quanly">
+                <i className="bi bi-circle"></i><span>Quản lý</span>
+              </a>
+              <a href="/khachhang">
+                <i className="bi bi-circle"></i><span>Khách hàng</span>
+              </a>
               <a href="/taikhoan">
-                <i className="bi bi-circle"></i><span>Quản lý tài khoản</span>
+                <i className="bi bi-circle"></i><span>Tài khoản</span>
               </a>
             </li>
             <li>

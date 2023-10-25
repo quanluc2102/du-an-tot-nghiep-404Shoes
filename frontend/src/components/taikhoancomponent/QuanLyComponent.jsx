@@ -1,15 +1,18 @@
 import React, { Component } from 'react';
 import taikhoanservice from "../../services/taikhoanservice/taikhoanservice";
 import ReactPaginate from 'react-paginate';
-import thuonghieuservice from "../../services/thuonghieuservice/thuonghieuservice";
 
-class TaiKhoanComponent extends Component {
+
+class QuanLyComponent extends Component {
     constructor(props) {
         super(props);
         this.state = {
             id: this.props.match.params.id,
             taiKhoan: [],
-            pageCount: 0,
+            itemsPerPage: 5, // Number of items to display per page
+            currentPage: 1,   // Current page
+            files:null,
+            nhanVienQuyen2: [],
             taiKhoanAdd: {
                 username: '',
                 email: '',
@@ -49,7 +52,7 @@ class TaiKhoanComponent extends Component {
             }
         }
         this.add = this.add.bind(this);
-        this.delete = this.delete.bind(this);
+        // this.delete = this.delete.bind(this);
         this.update = this.update.bind(this);
         this.detail = this.detail.bind(this);
         this.thayDoiUsernameAdd = this.thayDoiUsernameAdd.bind(this);
@@ -62,40 +65,48 @@ class TaiKhoanComponent extends Component {
         this.thayDoiPasswordUpdate = this.thayDoiPasswordUpdate.bind(this);
         this.thayDoiAnhUpdate = this.thayDoiAnhUpdate.bind(this);
         this.thayDoiTrangThaiUpdate = this.thayDoiTrangThaiUpdate.bind(this);
-    }
 
-    loadPageData(pageNumber) {
-        taikhoanservice.getTaiKhoan(pageNumber).then(res => {
-            this.setState({
-                taiKhoan: res.data.content, // Dữ liệu trên trang hiện tại
-                pageCount: res.data.totalPages, // Tổng số trang
+    }
+    loadQuanLyData(pageNumber) {
+        taikhoanservice.getQuanLy(pageNumber)
+            .then(response => {
+                this.setState({
+                    nhanVienQuyen2: response.data,
+                    pageCount: response.data.totalPages,
+                });
+            })
+            .catch(error => {
+                console.error('Error:', error);
             });
-        });
     }
 
-    handlePageClick = data => {
-        let selected = data.selected; // Trang được chọn từ react-paginate
-        this.loadPageData(selected);
+
+    handlePageClick = (selectedPage) => {
+        const pageNumber = selectedPage.selected + 1; // ReactPaginate uses zero-based indexing
+        this.setState({ pageNumber }, () => {
+            this.loadQuanLyData(pageNumber);
+        });
     };
-
-    componentDidMount(pageNumber) {
-        taikhoanservice.getTaiKhoan(pageNumber).then(res => {
-            this.setState({
-                taiKhoan: res.data.content, // Dữ liệu trên trang hiện tại
-                pageCount: res.data.totalPages, // Tổng số trang
-            });
+    handlePageChange = (pageNumber) => {
+        this.setState({
+            currentPage: pageNumber,
         });
+    };
+    componentDidMount(pageNumber) {
+        taikhoanservice.getQuanLy(pageNumber)
+            .then(res => {
+                this.setState({
+                    nhanVienQuyen2: res.data,
+                    pageCount: res.data.totalPages,
+                });
+            });
         const id = this.props.match.params.id;
         if (id) {
             taikhoanservice.getTaiKhoanById(this.state.id).then((res) => {
                 this.setState({ taiKhoanUpdate: res.data });
             })
         }
-    }
-    delete(id) {
-        taikhoanservice.deleteTaiKhoan(id).then((res) => {
-            this.setState({ taiKhoan: this.state.taiKhoan.filter(taiKhoan => taiKhoan.id != id) });
-        });
+        this.loadQuanLyData(1);
     }
     add = (e) => {
         e.preventDefault();
@@ -170,9 +181,9 @@ class TaiKhoanComponent extends Component {
         else {
             this.setState({ errorAdd: { ...this.state.errorAdd, trangThai: "" } });
         }
-        //trangthai
 
-        taikhoanservice.addTaiKhoan(taiKhoan).then((res) => {
+
+        taikhoanservice.addQuanLy(taiKhoan).then((res) => {
             if (res.status === 200) {
                 // Xử lý khi thêm thành công
                 let taiKhoanMoi = res.data;
@@ -188,9 +199,44 @@ class TaiKhoanComponent extends Component {
         }).catch(error => {
             // Log the error or handle it as needed
             console.error("Update request error:", error);
+        });
+    }
+    fileSelectedHandler = (e) => {
+        this.setState({ files: [ ...e.target.files] })
+    }
+    handleUpload = () => {
+        if (this.state.files) {
+            // Gọi hàm để lưu file vào thư mục public
+            this.saveFileToPublic(this.state.files[0]);
+        } else {
+            alert('Vui lòng chọn một file');
+        }
+    };
+    saveFileToPublic = (file) => {
+        // Tạo một đường dẫn đến thư mục public
+        const publicFolderPath = process.env.PUBLIC_URL;
+
+        // Tạo một đường dẫn đầy đủ cho file trong thư mục public
+        const filePathInPublic = `./src/img/`+this.state.files[0].name;
+
+        // Sử dụng API hoặc thư viện phù hợp để lưu file vào đường dẫn đã tạo
+        // Đoạn mã này chỉ là một ví dụ, bạn có thể sử dụng FormData hoặc các thư viện như axios để gửi file lên server
+
+        // Ví dụ sử dụng fetch API:
+        fetch(filePathInPublic, {
+            method: 'POST', // Hoặc 'POST' tùy thuộc vào yêu cầu của bạn
+            body: this.state.files[0],
         })
-
-
+            .then(response => response.json())
+            .then(data => {
+                console.log('File đã được lưu thành công', data);
+            })
+            .catch(error => {
+                console.error('Lỗi khi lưu file', error);
+            });
+    };
+    detail(id) {
+        window.location.href = (`/quanlydetail/${id}`);
     }
     update = (e) => {
         e.preventDefault();
@@ -267,10 +313,10 @@ class TaiKhoanComponent extends Component {
         else {
             this.setState({ errorUpdate: { ...this.state.errorUpdate, trangThai: "" } });
         }
-        taikhoanservice.updateTaiKhoan(taiKhoan, this.state.taiKhoanUpdate.id).then((res) => {
+        taikhoanservice.updateQuanLy(taiKhoan, this.state.taiKhoanUpdate.id).then((res) => {
             let taiKhoanCapNhat = res.data; // Giả sử API trả về đối tượng vừa được cập nhật
             this.setState(prevState => ({
-                taiKhoan: prevState.taiKhoan.map(tk =>
+                nhanVienQuyen2: prevState.nhanVienQuyen2.map(tk =>
                     tk.id === taiKhoanCapNhat.id ? taiKhoanCapNhat : tk
                 )
             }));
@@ -279,9 +325,6 @@ class TaiKhoanComponent extends Component {
             console.error("Update request error:", error);
         });
     }
-    detail(id) {
-        window.location.href = (`/taikhoandetail/${id}`);
-    }
     thayDoiUsernameAdd = (event) => {
         this.setState(prevState => ({
             taiKhoanAdd: {
@@ -289,6 +332,8 @@ class TaiKhoanComponent extends Component {
                 username: event.target.value
             }
         }));
+        let errorAdd = { ...this.state.errorAdd, username: "" };
+        this.setState({ errorAdd: errorAdd });
     }
     thayDoiEmailAdd = (event) => {
         this.setState(prevState => ({
@@ -297,6 +342,8 @@ class TaiKhoanComponent extends Component {
                 email: event.target.value
             }
         }));
+        let errorAdd = { ...this.state.errorAdd, email: "" };
+        this.setState({ errorAdd: errorAdd });
     }
 
     thayDoiPasswordAdd = (event) => {
@@ -306,6 +353,8 @@ class TaiKhoanComponent extends Component {
                 password: event.target.value
             }
         }));
+        let errorAdd = { ...this.state.errorAdd, password: "" };
+        this.setState({ errorAdd: errorAdd });
     }
     thayDoiAnhAdd = (event) => {
         this.setState(prevState => ({
@@ -314,6 +363,9 @@ class TaiKhoanComponent extends Component {
                 anh: event.target.value
             }
         }));
+        let errorAdd = { ...this.state.errorAdd, anh: "" };
+        this.setState({ errorAdd: errorAdd });
+        console.log(this.state.files)
     }
 
     thayDoiTrangThaiAdd = (event) => {
@@ -323,6 +375,8 @@ class TaiKhoanComponent extends Component {
                 trangThai: event.target.value
             }
         }));
+        let errorAdd = { ...this.state.errorAdd, trangThai: "" };
+        this.setState({ errorAdd: errorAdd });
     }
     ///////
     thayDoiUsernameUpdate = (event) => {
@@ -332,6 +386,8 @@ class TaiKhoanComponent extends Component {
                 username: event.target.value
             }
         }));
+        let errorUpdate = { ...this.state.errorUpdate, username: "" };
+        this.setState({ errorUpdate: errorUpdate });
     }
     thayDoiEmailUpdate = (event) => {
         this.setState(prevState => ({
@@ -340,6 +396,8 @@ class TaiKhoanComponent extends Component {
                 email: event.target.value
             }
         }));
+        let errorUpdate = { ...this.state.errorUpdate, email: "" };
+        this.setState({ errorUpdate: errorUpdate });
     }
 
     thayDoiPasswordUpdate = (event) => {
@@ -349,6 +407,8 @@ class TaiKhoanComponent extends Component {
                 password: event.target.value
             }
         }));
+        let errorUpdate = { ...this.state.errorUpdate, password: "" };
+        this.setState({ errorUpdate: errorUpdate });
     }
     thayDoiAnhUpdate = (event) => {
         this.setState(prevState => ({
@@ -357,6 +417,8 @@ class TaiKhoanComponent extends Component {
                 anh: event.target.value
             }
         }));
+        let errorUpdate = { ...this.state.errorUpdate, anh: "" };
+        this.setState({ errorUpdate: errorUpdate });
     }
 
     thayDoiTrangThaiUpdate = (event) => {
@@ -366,19 +428,28 @@ class TaiKhoanComponent extends Component {
                 trangThai: event.target.value
             }
         }));
+        let errorUpdate = { ...this.state.errorUpdate, trangThai: "" };
+        this.setState({ errorUpdate: errorUpdate });
     }
+
     toggleTaiKhoan(id, currentTaiKhoan) {
         const newTrangThai = currentTaiKhoan === false ? true : false; // Chuyển đổi trạng thái
         taikhoanservice.updateTaiKhoanTrangThai({ trangThai: newTrangThai }, id).then((res) => {
             let taiKhoanCapNhat = res.data;
             this.setState(prevState => ({
-                taiKhoan: prevState.taiKhoan.map(tk =>
+                nhanVienQuyen2: prevState.nhanVienQuyen2.map(tk =>
                     tk.id === taiKhoanCapNhat.id ? taiKhoanCapNhat : tk
                 )
             }));
         });
     }
     render() {
+        const { nhanVienQuyen2, itemsPerPage, currentPage } = this.state;
+
+        // Calculate the start and end indexes for the current page
+        const startIndex = (currentPage - 1) * itemsPerPage;
+        const endIndex = startIndex + itemsPerPage;
+        const currentItems = nhanVienQuyen2.slice(startIndex, endIndex);
         return (
             <div>
                 <div className="pagetitle">
@@ -403,7 +474,7 @@ class TaiKhoanComponent extends Component {
 
 
                                         <div className="card-body">
-                                            <h5 className="card-title">Color <span>| </span></h5>
+                                            <h5 className="card-title">Danh sách quản lý <span>| </span></h5>
 
                                             <table className="table table-borderless datatable">
                                                 <thead>
@@ -414,64 +485,55 @@ class TaiKhoanComponent extends Component {
                                                     <th>Ngày cập nhật</th>
                                                     <th>Ảnh</th>
                                                     <th>Trạng thái</th>
-                                                    <th>Thông tin</th>
+                                                    <th>Thông tin người dùng</th>
                                                     <th>Action</th>
                                                 </tr>
                                                 </thead>
                                                 <tbody>
-                                                {
-                                                    this.state.taiKhoan.map(
-                                                        tk =>
-                                                            <tr key={tk.id}>
-                                                                <td>{tk.username}</td>
-                                                                <td>{tk.email}</td>
-                                                                <td>{tk.ngayTao}</td>
-                                                                <td>{tk.ngayCapNhat}</td>
 
-                                                                <td>
-                                                                    {tk.anh && <img src={`/niceadmin/img/${tk.anh}`} width="100px" height="100px" />}
+                                                {currentItems.map((tk, index) => (
+                                                    <tr key={tk.id}>
+                                                        <td>{tk.username}</td>
+                                                        <td>{tk.email}</td>
+                                                        <td>{tk.ngayTao}</td>
+                                                        <td>{tk.ngayCapNhat}</td>
+                                                        {/*<td>*/}
+                                                        {/*    {tk.anh && <img src={`/niceadmin/img/${tk.anh}`} width="100px" height="100px" />}*/}
 
-                                                                </td>
-                                                                <td><label className="switch">
-                                                                    <input
-                                                                        type="checkbox"
-                                                                        checked={tk.trangThai === true}
-                                                                        onChange={() => this.toggleTaiKhoan(tk.id, tk.trangThai)}
-                                                                    />
+                                                        {/*</td>*/}
 
-                                                                    <span className="slider round"></span>
-                                                                </label></td>
-                                                                {/*<td>{tk.thongTinNguoiDung.ten}</td>*/}
-                                                                <td>
-                                                                    {/*<button onClick={() => this.delete(tk.id)} className='btn btn-danger'>Xóa</button>*/}
-                                                                    <button onClick={() => this.detail(tk.id)} className='btn btn-primary'>Chi tiết</button>
-                                                                </td>
-                                                            </tr>
-                                                    )
-                                                }
+                                                        <td><label className="switch">
+                                                            <input
+                                                                type="checkbox"
+                                                                checked={tk.trangThai === true}
+                                                                onChange={() => this.toggleTaiKhoan(tk.id, tk.trangThai)}
+                                                            />
+
+                                                            <span className="slider round"></span>
+                                                        </label></td>
+
+                                                        {/*<td>  <button onClick={() => this.delete(tk.id)} className='btn btn-danger'>Delete</button>  </td>*/}
+                                                       <td> <button onClick={() => this.detail(tk.id)} className='btn btn-primary'>Detail</button></td>
+
+                                                    </tr>
+                                                ))}
+
+
                                                 </tbody>
-
-
                                             </table>
-                                            <ReactPaginate
-                                                previousLabel={"<"}
-                                                nextLabel={">"}
-                                                breakLabel={"..."}
-                                                breakClassName={"page-item"}
-                                                breakLinkClassName={"page-link"}
-                                                pageClassName={"page-item"}
-                                                pageLinkClassName={"page-link"}
-                                                previousClassName={"page-item"}
-                                                previousLinkClassName={"page-link"}
-                                                nextClassName={"page-item"}
-                                                nextLinkClassName={"page-link"}
-                                                pageCount={this.state.pageCount}
-                                                marginPagesDisplayed={2}
-                                                pageRangeDisplayed={5}
-                                                onPageChange={this.handlePageClick}
-                                                containerClassName={"pagination justify-content-center"} // added justify-content-center for center alignment
-                                                activeClassName={"active"}
-                                            />
+                                            {/* Pagination component */}
+                                            <ul className="pagination justify-content-center">
+                                                {Array.from({ length: Math.ceil(nhanVienQuyen2.length / itemsPerPage) }, (_, i) => (
+                                                    <li key={i} className={`page-item ${i + 1 === currentPage ? 'active' : ''}`}>
+                                                        <button
+                                                            className="page-link"
+                                                            onClick={() => this.handlePageChange(i + 1)}
+                                                        >
+                                                            {i + 1}
+                                                        </button>
+                                                    </li>
+                                                ))}
+                                            </ul>
                                         </div>
                                     </div>
 
@@ -538,15 +600,14 @@ class TaiKhoanComponent extends Component {
                                                 </div>
                                                 <div>
                                                     Ảnh :
-                                                    <label  className={`form-control ${this.state.errorUpdate.anh? 'is-invalid' : ''}`} name="anh" style={{}} value={this.state.taiKhoanUpdate.anh} ></label>
-                                                    <input className={`form-control ${this.state.errorUpdate.anh? 'is-invalid' : ''}`} type={"file"}   onChange={this.thayDoiAnhUpdate} />
+                                                    <input className={`form-control ${this.state.errorUpdate.anh? 'is-invalid' : ''}`} name="anh" style={{}} value={this.state.taiKhoanUpdate.anh} onChange={this.thayDoiAnhUpdate} />
                                                     {this.state.errorUpdate.anh && <div className="text-danger">{this.state.errorUpdate.anh}</div>}
 
                                                 </div>
                                                 <div className='form-group'>
-                                                    <label><span style={{color: "red"}}>*</span>Trạng thái</label>
+                                                    <label>Trạng thái</label>
                                                     <select name="trangThai" id="trangThai" value={this.state.taiKhoanUpdate.trangThai} className={`form-control ${this.state.errorUpdate.trangThai ? 'is-invalid' : ''}`} onChange={this.thayDoiTrangThaiUpdate}>
-                                                        <option value="">Chọn trạng thái</option>
+                                                        <option value=''>Chọn trạng thái</option>
                                                         <option value="true">Hoạt động</option>
                                                         <option value="false">Không hoạt động</option>
                                                     </select>
@@ -577,12 +638,25 @@ class TaiKhoanComponent extends Component {
                                                     {this.state.errorAdd.password && <div className="text-danger">{this.state.errorAdd.password}</div>}
 
                                                 </div>
+                                                {/*<div>*/}
+                                                {/*    Ảnh :*/}
+
+                                                {/*    <input className={`form-control ${this.state.errorAdd.anh ? 'is-invalid' : ''}`} type={"file"}  name="anh"  style={{}} value={this.state.taiKhoanAdd.anh} onChange={this.thayDoiAnhAdd} />*/}
+                                                {/*    {this.state.errorAdd.anh && <div className="text-danger">{this.state.errorAdd.anh}</div>}*/}
+
+                                                {/*</div>*/}
                                                 <div>
-                                                    Ảnh :
-
-                                                    <input className={`form-control ${this.state.errorAdd.anh ? 'is-invalid' : ''}`} type={"file"}  name="anh"  style={{}} value={this.state.taiKhoanAdd.anh} onChange={this.thayDoiAnhAdd} />
-                                                    {this.state.errorAdd.anh && <div className="text-danger">{this.state.errorAdd.anh}</div>}
-
+                                                    <input
+                                                        type="file"
+                                                        accept="image/*"
+                                                        onChange={this.handleUpload}
+                                                    />
+                                                    <img
+                                                        src={this.state.anh}
+                                                        alt="Image Preview"
+                                                        width="100"
+                                                        height="100"
+                                                    />
                                                 </div>
                                                 <div className='form-group'>
                                                     <label>Trạng thái</label>
@@ -625,4 +699,5 @@ class TaiKhoanComponent extends Component {
         );
     }
 }
-export default TaiKhoanComponent;
+
+export default QuanLyComponent;

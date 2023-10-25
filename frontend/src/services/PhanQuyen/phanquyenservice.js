@@ -16,7 +16,7 @@ class phanquyenservice {
     getQuyen(){
         return axios.get(API_BASE_URL_QUYEN_INDEX);
     }
-    createPhanQuyen(phanQuyen) {
+    addPhanQuyen(phanQuyen) {
         return axios.post(API_API_BASE_URL_SAVE, phanQuyen)
     }
 
