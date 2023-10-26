@@ -79,4 +79,9 @@ public class MauSacServiceImpl implements MauSacService {
 //
 //        }
     }
+
+    @Override
+    public boolean isMauSacNameUnique(String name) {
+        return mauSacRepository.existsMauSacByTen(name);
+    }
 }

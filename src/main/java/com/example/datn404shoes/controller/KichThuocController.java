@@ -13,6 +13,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -20,6 +22,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:3000")
@@ -53,9 +56,19 @@ public class KichThuocController {
 
     @PostMapping("add")
     public ResponseEntity<?> themMoi(Model model,
-                                     @RequestBody KichThuoc kichThuoc
+                                     @RequestBody KichThuoc kichThuoc, BindingResult bindingResult
     ) {
-        return ResponseEntity.ok(kichThuocService.add(kichThuoc));
+        if (bindingResult.hasErrors()) {
+            List<FieldError> errors = bindingResult.getFieldErrors();
+            String errorMessage = errors.stream().map(error -> error.getDefaultMessage()).collect(Collectors.joining(", "));
+
+            return ResponseEntity.badRequest().body(errorMessage);
+        } else if (kichThuocService.isKichThuocNameUnique(kichThuoc.getGiaTri())) {
+            System.out.println("Đã trùng");
+            return ResponseEntity.badRequest().body("Kích thước đã tồn tại.");
+        } else {
+            return ResponseEntity.ok(kichThuocService.add(kichThuoc));
+        }
     }
 
     @PutMapping("update/{idud}")

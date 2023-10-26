@@ -53,4 +53,9 @@ public class XuatXuServiceimpl implements XuatXuService {
     public XuatXu getOne(Long id) {
         return repository.findById(id).get();
     }
+
+    @Override
+    public boolean isXuatXuNameUnique(String name) {
+        return repository.existsXuatXuByTen(name);
+    }
 }

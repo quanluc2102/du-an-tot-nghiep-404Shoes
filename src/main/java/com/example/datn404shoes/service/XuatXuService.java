@@ -20,4 +20,6 @@ public interface XuatXuService {
     Page<XuatXu> getAll(Pageable pageable);
 
     XuatXu getOne(Long id);
+    boolean isXuatXuNameUnique(String name);
+
 }

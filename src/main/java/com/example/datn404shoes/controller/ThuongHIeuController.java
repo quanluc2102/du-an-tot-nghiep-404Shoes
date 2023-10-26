@@ -9,10 +9,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:3000")
@@ -32,9 +35,19 @@ public class ThuongHIeuController {
     }
     @PostMapping("add")
     public ResponseEntity<?> add(Model model,
-                                 @RequestBody ThuongHieu thuongHieu) {
+                                 @RequestBody ThuongHieu thuongHieu, BindingResult bindingResult) {
 
-        return ResponseEntity.ok(serviceimpl.add(thuongHieu));
+        if (bindingResult.hasErrors()) {
+            List<FieldError> errors = bindingResult.getFieldErrors();
+            String errorMessage = errors.stream().map(error -> error.getDefaultMessage()).collect(Collectors.joining(", "));
+
+            return ResponseEntity.badRequest().body(errorMessage);
+        } else if (serviceimpl.isThuongHieuNameUnique(thuongHieu.getTen())) {
+            System.out.println("Đã trùng");
+            return ResponseEntity.badRequest().body("Tên thương hiệu đã tồn tại.");
+        } else {
+            return ResponseEntity.ok(serviceimpl.add(thuongHieu));
+        }
     }
 
     @DeleteMapping("delete/{id}")

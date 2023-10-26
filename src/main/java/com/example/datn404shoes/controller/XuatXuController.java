@@ -10,11 +10,15 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:3000")
@@ -42,9 +46,19 @@ public class XuatXuController {
 
     @PostMapping("add")
     public ResponseEntity<?> themMoi(Model model,
-                                     @RequestBody XuatXu xuatXu
+                                     @RequestBody XuatXu xuatXu, BindingResult bindingResult
     ) {
-        return ResponseEntity.ok(xuatXuServiceimpl.add(xuatXu));
+        if (bindingResult.hasErrors()) {
+            List<FieldError> errors = bindingResult.getFieldErrors();
+            String errorMessage = errors.stream().map(error -> error.getDefaultMessage()).collect(Collectors.joining(", "));
+
+            return ResponseEntity.badRequest().body(errorMessage);
+        } else if (xuatXuServiceimpl.isXuatXuNameUnique(xuatXu.getTen())) {
+            System.out.println("Đã trùng");
+            return ResponseEntity.badRequest().body("Tên xuất xứ đã tồn tại.");
+        } else {
+            return ResponseEntity.ok(xuatXuServiceimpl.add(xuatXu));
+        }
     }
 
     @PutMapping("update/{idud}")

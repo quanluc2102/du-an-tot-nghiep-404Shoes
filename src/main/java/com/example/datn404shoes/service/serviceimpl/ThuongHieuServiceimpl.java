@@ -53,4 +53,9 @@ public class ThuongHieuServiceimpl implements ThuongHieuService {
     public ThuongHieu getOne(Long id) {
         return repository.findById(id).get();
     }
+
+    @Override
+    public boolean isThuongHieuNameUnique(String name) {
+        return repository.existsThuongHieuByTen(name);
+    }
 }

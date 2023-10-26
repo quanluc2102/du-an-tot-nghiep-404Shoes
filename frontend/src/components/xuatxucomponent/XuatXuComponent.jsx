@@ -124,7 +124,7 @@ class XuatXuComponent extends Component {
         }).catch(error => {
             // Log the error or handle it as needed
             console.error("Update request error:", error);
-            toast.error("Lỗi: " + error.message); // Hiển thị lỗi bằng Toast
+            toast.error("Lỗi: " + error.data); // Hiển thị lỗi bằng Toast
         });
     }
 

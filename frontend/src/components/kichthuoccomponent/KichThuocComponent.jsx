@@ -114,15 +114,16 @@ class KichThuocComponent extends Component {
                 this.setState(prevState => ({
                     kichThuoc: [...prevState.kichThuoc, kichThuocMoi]
                 }));
-            } else {
+            }  else {
                 // Xử lý khi có lỗi
                 const errorMessage = res.data || "Có lỗi xảy ra khi thêm danh mục.";
-                alert("lỗi" + errorMessage) // Hiển thị lỗi bằng Toast
+                toast.error("Lỗi: " + errorMessage); // Hiển thị lỗi bằng Toast
                 console.log(errorMessage);
             }
         }).catch(error => {
             // Log the error or handle it as needed
             console.error("Update request error:", error);
+            toast.error("Lỗi: " + error.data); // Hiển thị lỗi bằng Toast
         });
 
     }

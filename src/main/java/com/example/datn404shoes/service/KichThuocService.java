@@ -28,4 +28,7 @@ public interface KichThuocService {
     Page<KichThuoc> findAll(Pageable pageable);
 
     void imPortExcel(MultipartFile file);
+
+    boolean isKichThuocNameUnique(Integer name);
+
 }

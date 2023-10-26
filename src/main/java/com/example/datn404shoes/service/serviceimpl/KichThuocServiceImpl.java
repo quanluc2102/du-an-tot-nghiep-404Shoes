@@ -81,4 +81,9 @@ public class KichThuocServiceImpl implements KichThuocService {
 
         }
     }
+
+    @Override
+    public boolean isKichThuocNameUnique(Integer name) {
+        return kichThuocRepository.existsKichThuocByGiaTri(name);
+    }
 }
