@@ -16,7 +16,7 @@ class ThongTinComponent extends Component {
                 ten: '',
                 diaChi: '',
                 sdt: '',
-                CCCD: '',
+                cccd: '',
                 gioiTinh: '',
                 ngaySinh: '',
                 // ngayCapNhat: '',
@@ -26,7 +26,7 @@ class ThongTinComponent extends Component {
                 ten: '',
                 diaChi: '',
                 sdt: '',
-                CCCD: '',
+                cccd: '',
                 gioiTinh: '',
                 ngaySinh: '',
                 // ngayCapNhat: '',
@@ -35,7 +35,7 @@ class ThongTinComponent extends Component {
                 ten: '',
                 diaChi: '',
                 sdt: '',
-                CCCD: '',
+                cccd: '',
                 gioiTinh: '',
                 ngaySinh: '',
                 // ngayCapNhat: '',
@@ -44,7 +44,7 @@ class ThongTinComponent extends Component {
                 ten: '',
                 diaChi: '',
                 sdt: '',
-                CCCD: '',
+                cccd: '',
                 gioiTinh: '',
                 ngaySinh: '',
                 // ngayCapNhat: '',
@@ -58,13 +58,13 @@ class ThongTinComponent extends Component {
         this.thayDoiDiaChiAdd = this.thayDoiDiaChiAdd.bind(this);
         this.thayDoiSdtAdd = this.thayDoiSdtAdd.bind(this);
         this.thayDoiGioiTinhAdd = this.thayDoiGioiTinhAdd.bind(this);
-        this.thayDoiCCCDAdd = this.thayDoiCCCDAdd.bind(this);
+        this.thayDoicccdAdd = this.thayDoicccdAdd.bind(this);
         this.thayDoiNgaySinhAdd = this.thayDoiNgaySinhAdd.bind(this);
         this.thayDoiTenUpdate = this.thayDoiTenUpdate.bind(this);
         this.thayDoiDiaChiUpdate = this.thayDoiDiaChiUpdate.bind(this);
         this.thayDoiSdtUpdate = this.thayDoiSdtUpdate.bind(this);
         this.thayDoiGioiTinhUpdate = this.thayDoiGioiTinhUpdate.bind(this);
-        this.thayDoiCCCDUpdate = this.thayDoiCCCDUpdate.bind(this);
+        this.thayDoicccdUpdate = this.thayDoicccdUpdate.bind(this);
         this.thayDoiNgaySinhUpdate = this.thayDoiNgaySinhUpdate.bind(this);
     }
 
@@ -120,7 +120,7 @@ class ThongTinComponent extends Component {
             ten: this.state.thongTinAdd.ten,
             diaChi: this.state.thongTinAdd.diaChi,
             sdt: this.state.thongTinAdd.sdt,
-            CCCD: this.state.thongTinAdd.CCCD,
+            cccd: this.state.thongTinAdd.cccd,
             gioiTinh: this.state.thongTinAdd.gioiTinh,
             ngaySinh: this.state.thongTinAdd.ngaySinh,
 
@@ -157,20 +157,20 @@ class ThongTinComponent extends Component {
             this.setState({ errorsAdd: { ...this.state.errorsAdd, sdt: "" } });
         }
         //
-        if (!this.state.thongTinAdd.CCCD.trim()) {
-            this.setState({ errorsAdd: { ...this.state.errorsAdd, CCCD: "CCCD không được bỏ trống!" } });
+        if (!this.state.thongTinAdd.cccd.trim()) {
+            this.setState({ errorsAdd: { ...this.state.errorsAdd, cccd: "cccd không được bỏ trống!" } });
             return;
-        } else if (!/^\d{12}$/.test(this.state.thongTinAdd.CCCD)) {
-            this.setState({ errorsAdd: { ...this.state.errorsAdd, CCCD: "CCCD phải gồm 12 chữ số!" } });
+        } else if (!/^\d{12}$/.test(this.state.thongTinAdd.cccd)) {
+            this.setState({ errorsAdd: { ...this.state.errorsAdd, cccd: "cccd phải gồm 12 chữ số!" } });
             return;
-        } else if (parseInt(this.state.thongTinAdd.CCCD, 10) <= 0) {
-            this.setState({ errorsAdd: { ...this.state.errorsAdd, CCCD: "CCCD phải là số lớn hơn 0!" } });
+        } else if (parseInt(this.state.thongTinAdd.cccd, 10) <= 0) {
+            this.setState({ errorsAdd: { ...this.state.errorsAdd, cccd: "cccd phải là số lớn hơn 0!" } });
             return;
-        } else if (/\./.test(this.state.thongTinAdd.CCCD)) {
-            this.setState({ errorsAdd: { ...this.state.errorsAdd, CCCD: "CCCD không được là số thập phân!" } });
+        } else if (/\./.test(this.state.thongTinAdd.cccd)) {
+            this.setState({ errorsAdd: { ...this.state.errorsAdd, cccd: "cccd không được là số thập phân!" } });
             return;
         } else {
-            this.setState({ errorsAdd: { ...this.state.errorsAdd, CCCD: "" } });
+            this.setState({ errorsAdd: { ...this.state.errorsAdd, cccd: "" } });
         }
 ///
         if (!this.state.thongTinAdd.gioiTinh.trim()) {
@@ -224,7 +224,7 @@ class ThongTinComponent extends Component {
             ten: this.state.thongTinUpdate.ten,
             diaChi: this.state.thongTinUpdate.diaChi,
             sdt: this.state.thongTinUpdate.sdt,
-            CCCD: this.state.thongTinUpdate.CCCD,
+            cccd: this.state.thongTinUpdate.cccd,
             gioiTinh: this.state.thongTinUpdate.gioiTinh,
             ngaySinh: this.state.thongTinUpdate.ngaySinh, }
         console.log('nsx' + JSON.stringify(thongTin));
@@ -262,20 +262,20 @@ class ThongTinComponent extends Component {
             this.setState({ errorsUpdate: { ...this.state.errorsUpdate, sdt: "" } });
         }
         //
-        if (!this.state.thongTinUpdate.CCCD.trim()) {
-            this.setState({ errorsUpdate: { ...this.state.errorsUpdate, CCCD: "CCCD không được bỏ trống!" } });
+        if (!this.state.thongTinUpdate.cccd.trim()) {
+            this.setState({ errorsUpdate: { ...this.state.errorsUpdate, cccd: "cccd không được bỏ trống!" } });
             return;
-        } else if (!/^\d{12}$/.test(this.state.thongTinUpdate.CCCD)) {
-            this.setState({ errorsUpdate: { ...this.state.errorsUpdate, CCCD: "CCCD phải gồm 12 chữ số!" } });
+        } else if (!/^\d{12}$/.test(this.state.thongTinUpdate.cccd)) {
+            this.setState({ errorsUpdate: { ...this.state.errorsUpdate, cccd: "cccd phải gồm 12 chữ số!" } });
             return;
-        } else if (parseInt(this.state.thongTinUpdate.CCCD, 10) <= 0) {
-            this.setState({ errorsUpdate: { ...this.state.errorsUpdate, CCCD: "CCCD phải là số lớn hơn 0!" } });
+        } else if (parseInt(this.state.thongTinUpdate.cccd, 10) <= 0) {
+            this.setState({ errorsUpdate: { ...this.state.errorsUpdate, cccd: "cccd phải là số lớn hơn 0!" } });
             return;
-        } else if (/\./.test(this.state.thongTinUpdate.CCCD)) {
-            this.setState({ errorsUpdate: { ...this.state.errorsUpdate, CCCD: "CCCD không được là số thập phân!" } });
+        } else if (/\./.test(this.state.thongTinUpdate.cccd)) {
+            this.setState({ errorsUpdate: { ...this.state.errorsUpdate, cccd: "cccd không được là số thập phân!" } });
             return;
         } else {
-            this.setState({ errorsUpdate: { ...this.state.errorsUpdate, CCCD: "" } });
+            this.setState({ errorsUpdate: { ...this.state.errorsUpdate, cccd: "" } });
         }
 ///
         if (!this.state.thongTinUpdate.gioiTinh.trim()) {
@@ -341,11 +341,11 @@ class ThongTinComponent extends Component {
             }
         }));
     }
-    thayDoiCCCDAdd = (event) => {
+    thayDoicccdAdd = (event) => {
         this.setState(prevState => ({
             thongTinAdd: {
                 ...prevState.thongTinAdd,
-                CCCD: event.target.value
+                cccd: event.target.value
             }
         }));
     }
@@ -391,11 +391,11 @@ class ThongTinComponent extends Component {
             }
         }));
     }
-    thayDoiCCCDUpdate = (event) => {
+    thayDoicccdUpdate = (event) => {
         this.setState(prevState => ({
             thongTinUpdate: {
                 ...prevState.thongTinUpdate,
-                CCCD: event.target.value
+                cccd: event.target.value
             }
         }));
     }
@@ -449,7 +449,7 @@ class ThongTinComponent extends Component {
                                                     <th>Tên</th>
                                                     <th>Địa chỉ</th>
                                                     <th>SDT</th>
-                                                    <th>CCCD</th>
+                                                    <th>Căn cước</th>
                                                     <th>Giới tính</th>
                                                     <th>Ngày sinh</th>
                                                     <th>Ngày Cập nhật</th>
@@ -464,7 +464,7 @@ class ThongTinComponent extends Component {
                                                                 <td>{tt.ten}</td>
                                                                 <td>{tt.diaChi}</td>
                                                                 <td>{tt.sdt}</td>
-                                                                <td>{tt.CCCD}</td>
+                                                                <td>{tt.cccd}</td>
                                                                 <td>{tt.gioiTinh === 0 ? "Nam" : tt.gioiTinh === 1 ? "Nữ" : "Khác"}</td>
                                                                 <td>{tt.ngaySinh}</td>
                                                                 <td>{tt.ngayCapNhat}</td>
@@ -578,17 +578,33 @@ class ThongTinComponent extends Component {
                                                 <div>
                                                     Giới tính :
                                                     <label>
-                                                        <input type="radio" name="gioiTinh" value="0" checked={this.state.thongTinUpdate.gioiTinh === "0"} onChange={this.thayDoiGioiTinhUpdate}
+                                                        <input
+                                                            type="radio"
+                                                            name="gioiTinh"
+                                                            value="0"
+                                                            checked={this.state.thongTinUpdate.gioiTinh === 0}
+                                                            onChange={this.thayDoiGioiTinhUpdate}
                                                         /> Nam
                                                     </label>
                                                     <label>
-                                                        <input type="radio" name="gioiTinh" value="1" checked={this.state.thongTinUpdate.gioiTinh === "1"} onChange={this.thayDoiGioiTinhUpdate}
+                                                        <input
+                                                            type="radio"
+                                                            name="gioiTinh"
+                                                            value="1"
+                                                            checked={this.state.thongTinUpdate.gioiTinh === 1}
+                                                            onChange={this.thayDoiGioiTinhUpdate}
                                                         /> Nữ
                                                     </label>
                                                     <label>
-                                                        <input type="radio" name="gioiTinh" value="2" checked={this.state.thongTinUpdate.gioiTinh === "2"} onChange={this.thayDoiGioiTinhUpdate}
+                                                        <input
+                                                            type="radio"
+                                                            name="gioiTinh"
+                                                            value="2"
+                                                            checked={this.state.thongTinUpdate.gioiTinh === 2}
+                                                            onChange={this.thayDoiGioiTinhUpdate}
                                                         /> Khác
                                                     </label>
+
                                                     {this.state.errorsUpdate.gioiTinh && (<div className="text-danger">{this.state.errorsUpdate.gioiTinh}</div>)}
                                                 </div>
                                                 <div>
@@ -602,10 +618,10 @@ class ThongTinComponent extends Component {
                                                     {this.state.errorsUpdate.ngaySinh && <div className="text-danger">{this.state.errorsUpdate.ngaySinh}</div>}
                                                 </div>
                                                 <div>
-                                                    CCCD:
+                                                    cccd:
                                                     <div>
-                                                     <span className={`form-control ${this.state.errorsUpdate.CCCD ? 'is-invalid' : ''}`}>
-                                                         {this.state.thongTinUpdate.CCCD}
+                                                     <span className={`form-control ${this.state.errorsUpdate.cccd ? 'is-invalid' : ''}`}>
+                                                         {this.state.thongTinUpdate.cccd}
                                                          </span>
                                                     </div>
 
@@ -619,14 +635,14 @@ class ThongTinComponent extends Component {
                                         <div className="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
                                             <form>
                                                 <div>
-                                                    CCCD :
+                                                    cccd :
                                                     <input
-                                                        className={`form-control ${this.state.errorsAdd.CCCD ? 'is-invalid' : ''}`}
-                                                        name="CCCD"
-                                                        onChange={this.thayDoiCCCDAdd}
-                                                        value={this.state.thongTinAdd.CCCD}
+                                                        className={`form-control ${this.state.errorsAdd.cccd ? 'is-invalid' : ''}`}
+                                                        name="cccd"
+                                                        onChange={this.thayDoicccdAdd}
+                                                        value={this.state.thongTinAdd.cccd}
                                                     />
-                                                    {this.state.errorsAdd.CCCD && <div className="text-danger">{this.state.errorsAdd.CCCD}</div>}
+                                                    {this.state.errorsAdd.cccd && <div className="text-danger">{this.state.errorsAdd.cccd}</div>}
                                                 </div>
                                                 <div>
                                                     Tên :
@@ -661,15 +677,15 @@ class ThongTinComponent extends Component {
                                                 <div>
                                                     Giới tính :
                                                     <label>
-                                                        <input type="radio" name="gioiTinh" value="0" checked={this.state.thongTinAdd.gioiTinh === "0"} onChange={this.thayDoiGioiTinhAdd}
+                                                        <input type="radio" name="gioiTinh"  checked={this.state.thongTinAdd.gioiTinh === "0"} onChange={this.thayDoiGioiTinhAdd}
                                                         /> Nam
                                                     </label>
                                                     <label>
-                                                        <input type="radio" name="gioiTinh" value="1" checked={this.state.thongTinAdd.gioiTinh === "1"} onChange={this.thayDoiGioiTinhAdd}
+                                                        <input type="radio" name="gioiTinh"  checked={this.state.thongTinAdd.gioiTinh === "1"} onChange={this.thayDoiGioiTinhAdd}
                                                         /> Nữ
                                                     </label>
                                                     <label>
-                                                        <input type="radio" name="gioiTinh" value="2" checked={this.state.thongTinAdd.gioiTinh === "2"} onChange={this.thayDoiGioiTinhAdd}
+                                                        <input type="radio" name="gioiTinh" checked={this.state.thongTinAdd.gioiTinh === "2"} onChange={this.thayDoiGioiTinhAdd}
                                                         /> Khác
                                                     </label>
                                                     {this.state.errorsAdd.gioiTinh && (<div className="text-danger">{this.state.errorsAdd.gioiTinh}</div>)}
