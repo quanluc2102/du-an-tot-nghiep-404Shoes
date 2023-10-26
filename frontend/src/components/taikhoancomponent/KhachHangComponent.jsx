@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import taikhoanservice from "../../services/taikhoanservice/taikhoanservice";
 import ReactPaginate from 'react-paginate';
+import {toast} from "react-toastify";
 
 
 class QuanLyComponent extends Component {
@@ -110,7 +111,7 @@ class QuanLyComponent extends Component {
     }
     add = (e) => {
         e.preventDefault();
-        let taiKhoan = {
+        let nhanVienQuyen3 = {
             username: this.state.taiKhoanAdd.username,
             email: this.state.taiKhoanAdd.email,
             // ngayTao: this.state.taiKhoanAdd.ngayTao,
@@ -120,7 +121,7 @@ class QuanLyComponent extends Component {
             trangThai: this.state.taiKhoanAdd.trangThai
         }
         ///username
-        const existingUser = this.state.taiKhoan.find(user => user.username === taiKhoan.username);
+        const existingUser = this.state.nhanVienQuyen3.find(user => user.username === nhanVienQuyen3.username);
         if (existingUser) {
             this.setState({ errorAdd: { ...this.state.errorAdd, username: "Username đã tồn tại!" } });
             return;
@@ -135,7 +136,7 @@ class QuanLyComponent extends Component {
             this.setState({ errorAdd: { ...this.state.errorAdd, username: "" } });
         }
 ////email
-        const existingEmail = this.state.taiKhoan.find(user => user.email === taiKhoan.email);
+        const existingEmail = this.state.nhanVienQuyen3.find(user => user.email === nhanVienQuyen3.email);
         if (existingEmail) {
             this.setState({ errorAdd: { ...this.state.errorAdd, email: "Email đã tồn tại!" } });
             return;
@@ -183,13 +184,14 @@ class QuanLyComponent extends Component {
         }
 
 
-        taikhoanservice.addKhachHang(taiKhoan).then((res) => {
+        taikhoanservice.addKhachHang(nhanVienQuyen3).then((res) => {
             if (res.status === 200) {
                 // Xử lý khi thêm thành công
                 let taiKhoanMoi = res.data;
                 this.setState(prevState => ({
-                    taiKhoan: [...prevState.taiKhoan, taiKhoanMoi]
+                    nhanVienQuyen3: [...prevState.nhanVienQuyen3, taiKhoanMoi]
                 }));
+                toast.success("Thêm thành công!");
             } else {
                 // Xử lý khi có lỗi
                 const errorMessage = res.data || "Có lỗi xảy ra khi thêm danh mục.";
@@ -206,7 +208,7 @@ class QuanLyComponent extends Component {
     }
     update = (e) => {
         e.preventDefault();
-        let taiKhoan = {
+        let nhanVienQuyen3 = {
             username: this.state.taiKhoanUpdate.username,
             email: this.state.taiKhoanUpdate.email,
             // ngayTao: this.state.taiKhoanUpdate.ngayTao,
@@ -215,25 +217,25 @@ class QuanLyComponent extends Component {
             anh: this.state.taiKhoanUpdate.anh,
             trangThai: this.state.taiKhoanUpdate.trangThai }
 
-        console.log('nsx' + JSON.stringify(taiKhoan));
+        console.log('nsx' + JSON.stringify(nhanVienQuyen3));
         let id = this.state.taiKhoanUpdate.id;
         ///username
-        const existingUser = this.state.taiKhoan.find(user => user.username === taiKhoan.username);
-        if (existingUser) {
-            this.setState({ errorUpdate: { ...this.state.errorUpdate, username: "Username đã tồn tại!" } });
-            return;
-        } else if (!this.state.taiKhoanUpdate.username) {
-            this.setState({ errorUpdate: { ...this.state.errorUpdate, username: "username không được bỏ trống!" } });
-            return;
-        } else if (!isNaN(this.state.taiKhoanUpdate.username)) {
-            this.setState({ errorUpdate: { ...this.state.errorUpdate, username: "username phải là chữ!" } });
-            return;
-        }
-        else {
-            this.setState({ errorUpdate: { ...this.state.errorUpdate, username: "" } });
-        }
+        // const existingUser = this.state.taiKhoan.find(user => user.username === taiKhoan.username);
+        // if (existingUser) {
+        //     this.setState({ errorUpdate: { ...this.state.errorUpdate, username: "Username đã tồn tại!" } });
+        //     return;
+        // } else if (!this.state.taiKhoanUpdate.username) {
+        //     this.setState({ errorUpdate: { ...this.state.errorUpdate, username: "username không được bỏ trống!" } });
+        //     return;
+        // } else if (!isNaN(this.state.taiKhoanUpdate.username)) {
+        //     this.setState({ errorUpdate: { ...this.state.errorUpdate, username: "username phải là chữ!" } });
+        //     return;
+        // }
+        // else {
+        //     this.setState({ errorUpdate: { ...this.state.errorUpdate, username: "" } });
+        // }
 ////email
-        const existingEmail = this.state.taiKhoan.find(user => user.email === taiKhoan.email);
+        const existingEmail = this.state.nhanVienQuyen3.find(user => user.email === nhanVienQuyen3.email);
         if (existingEmail) {
             this.setState({ errorUpdate: { ...this.state.errorUpdate, email: "Email đã tồn tại!" } });
             return;
@@ -279,13 +281,14 @@ class QuanLyComponent extends Component {
         else {
             this.setState({ errorUpdate: { ...this.state.errorUpdate, trangThai: "" } });
         }
-        taikhoanservice.updateKhachHang(taiKhoan, this.state.taiKhoanUpdate.id).then((res) => {
+        taikhoanservice.updateKhachHang(nhanVienQuyen3, this.state.taiKhoanUpdate.id).then((res) => {
             let taiKhoanCapNhat = res.data; // Giả sử API trả về đối tượng vừa được cập nhật
             this.setState(prevState => ({
                 nhanVienQuyen3: prevState.nhanVienQuyen3.map(tk =>
                     tk.id === taiKhoanCapNhat.id ? taiKhoanCapNhat : tk
                 )
             }));
+            toast.success("Sửa thành công!");
         }).catch(error => {
             // Log the error or handle it as needed
             console.error("Update request error:", error);
@@ -439,7 +442,7 @@ class QuanLyComponent extends Component {
 
 
                                         <div className="card-body">
-                                            <h5 className="card-title">Danh sách quản lý <span>| </span></h5>
+                                            <h5 className="card-title">Danh sách khách hàng <span>| </span></h5>
 
                                             <table className="table table-borderless datatable">
                                                 <thead>
@@ -450,13 +453,13 @@ class QuanLyComponent extends Component {
                                                     <th>Ngày cập nhật</th>
                                                     <th>Ảnh</th>
                                                     <th>Trạng thái</th>
-                                                    <th>Thông tin người dùng</th>
+                                                    {/*<th>Thông tin người dùng</th>*/}
                                                     <th>Action</th>
                                                 </tr>
                                                 </thead>
                                                 <tbody>
 
-                                                {currentItems.map((tk, index) => (
+                                                {this.state.nhanVienQuyen3.map(tk => (
                                                     <tr key={tk.id}>
                                                         <td>{tk.username}</td>
                                                         <td>{tk.email}</td>
@@ -546,9 +549,12 @@ class QuanLyComponent extends Component {
                                             <form>
 
                                                 <div>
-                                                    UserName :
-                                                    <input className={`form-control ${this.state.errorUpdate.username ? 'is-invalid' : ''}`} name="username" style={{}} value={this.state.taiKhoanUpdate.username} onChange={this.thayDoiUsernameUpdate} />
-                                                    {this.state.errorUpdate.username && <div className="text-danger">{this.state.errorUpdate.username}</div>}
+                                                    UserName:
+                                                    <div>
+                                                     <span className={`form-control ${this.state.errorUpdate.username ? 'is-invalid' : ''}`}>
+                                                         {this.state.taiKhoanUpdate.username}
+                                                         </span>
+                                                    </div>
 
                                                 </div>
                                                 <div>

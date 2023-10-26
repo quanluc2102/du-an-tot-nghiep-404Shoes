@@ -26,12 +26,16 @@ public class ThongTinNguoiDung {
 
     @Column(name = "ten")
     private String ten;
+
     @Column(name = "cccd")
     private String CCCD;
+
     @Column(name = "gioi_tinh")
     private int gioiTinh;
+
     @Column(name = " ngay_sinh")
     private Date ngaySinh;
+
     @Column(name = "ngay_cap_nhat")
     private Date ngayCapNhat;
 

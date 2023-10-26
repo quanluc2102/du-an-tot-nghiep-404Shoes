@@ -17,8 +17,10 @@ public class Quyen {
     @Id
     @Column(name = "id", nullable = false)
     private long id;
+
     @Column(name = "ten")
     private String ten;
+
     @Column(name = "trang_thai")
     private Boolean trangThai;
     //
