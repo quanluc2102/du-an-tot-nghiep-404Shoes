@@ -9,10 +9,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class SanPhamChiTietRequest {
 
-    private long sanPhamId;
+    private long sanPham;
+    private long mauSac;
 
-    private long kichThuocMauSacId;
-
+    private long kichThuoc;
     private Integer soLuong;
 
     private Integer trangThai;

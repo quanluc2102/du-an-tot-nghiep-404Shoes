@@ -1,31 +1,37 @@
 import React, {Component} from 'react';
 import SanPhamService from "../../services/sanphamservice/SanPhamService";
-import Select from 'react-select';
+import "./SanPhamCss.css";
 import axios from "axios";
-class SanPhamAddComponnent extends Component {
+
+class ChiTietComponent extends Component {
     constructor(props) {
         super(props);
         this.state={
             files:null,
-            selectedOptionMS:null,
-            selectedOptionKT:null,
-            listKichThuoc:[],
-            listMauSac:[],
+            listSPA:[],
+            listSPCT:[],
             listThuongHieu:[],
             listXuatXu:[],
             listDanhMuc:[],
             sanPham:{
+                id:this.props.match.params.id,
                 ten:'',
                 giaNhap:'',
                 giaBan:'',
                 giamGia:'',
                 moTa:'',
-                thuongHieuId:'',
-                xuatXuId:'',
-                danhMucId:''
+                thuongHieu:'',
+                xuatXu:'',
+                danhMuc:''
             },
         };
-        this.add=this.add.bind(this);
+        this.detail=this.detail.bind(this);
+        this.deleteAnh=this.deleteAnh.bind(this);
+        this.updateQuality=this.updateQuality.bind(this);
+        this.min=this.min.bind(this);
+        this.plus=this.plus.bind(this);
+        this.changeSL=this.changeSL.bind(this);
+        this.update=this.update.bind(this);
         this.fileSelectedHandler=this.fileSelectedHandler.bind(this);
         this.handleUpload=this.handleUpload.bind(this);
         this.saveFileToPublic=this.saveFileToPublic.bind(this);
@@ -37,12 +43,75 @@ class SanPhamAddComponnent extends Component {
         this.thayDoiThuongHieuAdd=this.thayDoiThuongHieuAdd.bind(this);
         this.thayDoiXuatXuAdd=this.thayDoiXuatXuAdd.bind(this);
         this.thayDoiDanhMucAdd=this.thayDoiDanhMucAdd.bind(this);
+
     }
-    add = (e)=>{
+    detail(id) {
+        window.location.href = (`/sanphamchitietdetail/${id}`);
+    }
+    componentDidMount() {
+        SanPhamService.getDanhMuc().then((res)=>{
+            this.setState({listDanhMuc:res.data})
+        })
+        SanPhamService.getThuongHieu().then((res)=>{
+            this.setState({listThuongHieu:res.data})
+        })
+        SanPhamService.getXuatXu().then((res)=>{
+            this.setState({listXuatXu:res.data})
+        })
+        SanPhamService.getSanPhamById(this.state.sanPham.id).then((res)=>{
+            this.setState({sanPham:res.data});
+        })
+        SanPhamService.getSanPhamAnhByIdSP(this.state.sanPham.id).then((res)=>{
+            this.setState({listSPA:res.data});
+        })
+        SanPhamService.getSanPhamCTByIdSP(this.state.sanPham.id).then((res)=>{
+            this.setState({listSPCT:res.data});
+        })
+    }
+    deleteAnh = (id)=>{
+        SanPhamService.deleteAnh(id).then((res)=>{
+            this.setState({listSPA : this.state.listSPA.filter(listSPA=>listSPA.id!==id)});
+        })
+    }
+    min = (productId)=>{
+        const updatedProducts = this.state.listSPCT.map(product =>
+            product.id === productId ? { ...product, soLuong : Math.max(0,product.soLuong-1)} : product
+        );
+        // Update state with the new array
+        this.setState({ listSPCT: updatedProducts });
+        console.log(this.state.listSPCT[0].soLuong);
+    }
+    plus = (productId)=>{
+        const updatedProducts = this.state.listSPCT.map(product =>
+            product.id === productId ? { ...product, soLuong : product.soLuong+1} : product
+        );
+
+        // Update state with the new array
+        this.setState({ listSPCT: updatedProducts });
+        console.log(this.state.listSPCT[0].soLuong);
+    }
+    changeSL = ()=>{
+        console.log(this.state.listSPCT[0].soLuong);
+    }
+    updateQuality = (productId,newQuality) => {
+        // Create a new array with the updated quality for the specified product
+        const updatedProducts = this.state.listSPCT.map(product =>
+            product.id === productId ? { ...product, soLuong: Math.max(0,newQuality) } : product
+        );
+
+        // Update state with the new array
+        this.setState({ listSPCT: updatedProducts });
+        console.log(this.state.listSPCT[0].soLuong);
+    };
+    update = (e)=>{
         e.preventDefault();
         let listFile = [];
-        for(let i=0;i<this.state.files.length;i++){
-            listFile.push(this.state.files[i].name);
+        if(this.state.files.length!=0){
+            for(let i=0;i<this.state.files.length;i++){
+                listFile.push(this.state.files[i].name);
+            }
+        }else{
+            listFile =[];
         }
         var sanPham = {files:listFile,
             ten: this.state.sanPham.ten,
@@ -50,9 +119,9 @@ class SanPhamAddComponnent extends Component {
             giaBan:this.state.sanPham.giaBan,
             giamGia:this.state.sanPham.giamGia,
             moTa:this.state.sanPham.moTa ,
-            thuongHieuId:this.state.sanPham.thuongHieuId,
-            xuatXuId:this.state.sanPham.xuatXuId,
-            danhMucId:this.state.sanPham.danhMucId,
+            thuongHieuId:this.state.sanPham.thuongHieu,
+            xuatXuId:this.state.sanPham.xuatXu,
+            danhMucId:this.state.sanPham.danhMuc,
             listMauSac: this.state.selectedOptionMS,
             listKichThuoc :this.state.selectedOptionKT
         }
@@ -111,11 +180,14 @@ class SanPhamAddComponnent extends Component {
         // } else {
         //     this.setState({ errorAdd: { ...this.state.errorAdd, moTa: "" } });
         // }
-
         this.handleUpload();
-        SanPhamService.addSanPham(sanPham).then((res)=>{
+        SanPhamService.updateSanPhamChiTiet(this.state.listSPCT).then((res)=>{
+
+        })
+        SanPhamService.updateSanPham(this.state.sanPham.id,sanPham).then((res)=>{
             window.location.href = (`/index`);
         })
+
     }
     fileSelectedHandler = (e) => {
         this.setState({ files: [ ...e.target.files] })
@@ -209,7 +281,7 @@ class SanPhamAddComponnent extends Component {
             prevState=>({
                 sanPham:{
                     ...prevState.sanPham,
-                    danhMucId:event.target.value
+                    danhMuc:event.target.value
                 }
             })
         );
@@ -219,7 +291,7 @@ class SanPhamAddComponnent extends Component {
             prevState=>({
                 sanPham:{
                     ...prevState.sanPham,
-                    thuongHieuId:event.target.value
+                    thuongHieu:event.target.value
                 }
             })
         );
@@ -229,47 +301,40 @@ class SanPhamAddComponnent extends Component {
             prevState=>({
                 sanPham:{
                     ...prevState.sanPham,
-                    xuatXuId:event.target.value
+                    xuatXu:event.target.value
                 }
             })
         );
         console.log(`Option selected:`, this.state.selectedOptionMS)
     }
-    handleChangeMS = (selectedOptionMS) => {
-        this.setState({ selectedOptionMS }, () =>
-            console.log(`Option selected:`, this.state.selectedOptionMS)
-        );
+    boxStyle = {
+        position: 'relative',
+        border: '1px solid #ccc',
+        float:'left',
+        padding: '10px',
+        margin: '20px',
+        width: '150px',
+        height: '150px',
+        overflow: 'hidden', // Đảm bảo hình ảnh không tràn ra khỏi box
     };
-    handleChangeKT = (selectedOptionKT) => {
-        this.setState({ selectedOptionKT }, () =>
-            console.log(`Option selected:`, this.state.selectedOptionKT)
-        );
+    imageStyle = {
+        width: '100%', // Hình ảnh chiếm toàn bộ chiều rộng của box
+        height: '100%', // Tính tỷ lệ chiều cao tự động
     };
-    componentDidMount() {
-        SanPhamService.getDanhMuc().then((res)=>{
-            this.setState({listDanhMuc:res.data})
-        })
-        SanPhamService.getKichThuocAdd().then((res)=>{
-            this.setState({listKichThuoc:res.data})
-        })
-        SanPhamService.getMauSacAdd().then((res)=>{
-            this.setState({listMauSac:res.data});
-        })
-        SanPhamService.getThuongHieu().then((res)=>{
-            this.setState({listThuongHieu:res.data})
-        })
-        SanPhamService.getXuatXu().then((res)=>{
-            this.setState({listXuatXu:res.data})
-        })
-    }
-
+    deleteButtonStyle = {
+        position: 'absolute',
+        top: '5px',
+        right: '5px',
+        padding: '5px 10px',
+        backgroundColor: '#ff0000',
+        color: '#fff',
+        border: 'none',
+        cursor: 'pointer',
+    };
     render() {
-        const { selectedOptionMS } = this.state;
-        const { selectedOptionKT } = this.state;
         return (
+
             <div className="col-lg-12">
-
-
                 <div className="card">
 
                     <div className="card-body">
@@ -277,34 +342,75 @@ class SanPhamAddComponnent extends Component {
                         <div className="tab-pane fade show active" id="home" role="tabpanel"
                              aria-labelledby="home-tab">
                             <form>
+                                {/*<div style={{marginLeft:"30px"}}>*/}
+                                {/*    Ảnh đã có :*/}
+                                {/*    {*/}
+                                {/*        this.state.listSPA.map(*/}
+                                {/*            sp =>*/}
+                                {/*                <img key={sp.id} src={'/niceadmin/img/'+sp.anh} width={100} height={100} style={{marginLeft:20}}/>*/}
+
+                                {/*        )*/}
+                                {/*    }*/}
+                                {/*    <br/>*/}
+                                {/*    Chọn ảnh :*/}
+                                {/*    <input className="form-control" name="files" type="file" multiple={true} />*/}
+                                {/*</div>*/}
+                                Ảnh đã có :
                                 <div style={{marginLeft:"30px"}}>
-                                    Chọn ảnh :
+
+                                    {
+                                        this.state.listSPA.map(
+                                            sp =>
+                                                <div key={sp.id} style={this.boxStyle}>
+                                                    <button style={this.deleteButtonStyle} onClick={()=>this.deleteAnh(sp.id)}>
+                                                        X
+                                                    </button>
+                                                    <img
+                                                        src={'/niceadmin/img/'+ sp.anh}// Thay đổi đường dẫn hình ảnh của bạn ở đây
+                                                        alt={"Hình ảnh"}
+                                                        style={this.imageStyle}
+                                                    />
+                                                </div>
+                                        )
+                                    }
+                                    <br/>
+                                    <br/>
+                                    <br/>
+
+                                    <br/>
+                                    <br/>
+                                    <br/>
+                                    <br/>
+                                    <br/>
+                                    <label style={{float:"none"}}>Chọn ảnh :</label>
+
                                     <input className="form-control" name="files" type="file" multiple={true} onChange={this.fileSelectedHandler}/>
+                                    <br/>
                                 </div>
                                 <div style={{marginLeft:"30px"}}>
                                     Tên :
-                                    <input className="form-control" type="text" onChange={this.thayDoiTenAdd}/>
+                                    <input className="form-control" defaultValue={this.state.sanPham.ten} type="text" onChange={this.thayDoiTenAdd}/>
                                 </div>
                                 <br/>
                                 <div style={{marginLeft:"30px"}}>
                                     Giá nhập :
-                                    <input className="form-control" type="text" onChange={this.thayDoiGiaNhapAdd}/>
+                                    <input className="form-control" defaultValue={this.state.sanPham.giaNhap} type="text" onChange={this.thayDoiGiaNhapAdd}/>
                                 </div>
                                 <br/>
                                 <div style={{marginLeft:"30px"}}>
                                     Giá bán :
-                                    <input className="form-control" type="text" onChange={this.thayDoiGiaBanAdd}/>
+                                    <input className="form-control" defaultValue={this.state.sanPham.giaBan} type="text" onChange={this.thayDoiGiaBanAdd}/>
                                 </div>
                                 <br/>
                                 <div style={{marginLeft:"30px"}}>
                                     Giảm giá :
-                                    <input className="form-control" type="text" onChange={this.thayDoiGiamGiaAdd}/>
+                                    <input className="form-control" defaultValue={this.state.sanPham.giamGia} type="text" onChange={this.thayDoiGiamGiaAdd}/>
                                 </div>
                                 <br/>
 
                                 <div className="col-lg-3" style={{marginLeft:"30px",display:"inline-block"}}>
                                     <label>Thuong hiệu : </label>
-                                    <select className="form-control" onChange={this.thayDoiThuongHieuAdd}>
+                                    <select className="form-control" defaultValue={this.state.sanPham.thuongHieu.id} onChange={this.thayDoiThuongHieuAdd}>
                                         {this.state.listThuongHieu.map(
                                             sp =>
                                                 <option key={sp.id} value={sp.id}>{sp.ten}</option>
@@ -313,7 +419,7 @@ class SanPhamAddComponnent extends Component {
                                 </div>
                                 <div className="col-lg-3" style={{marginLeft:"115px",display:"inline-block"}}>
                                     <label>Xuất xứ : </label>
-                                    <select className="form-control" onChange={this.thayDoiXuatXuAdd}>
+                                    <select className="form-control" defaultValue={this.state.sanPham.xuatXu.id} onChange={this.thayDoiXuatXuAdd}>
                                         {this.state.listXuatXu.map(
                                             sp =>
                                                 <option key={sp.id} value={sp.id}>{sp.ten}</option>
@@ -322,7 +428,7 @@ class SanPhamAddComponnent extends Component {
                                 </div>
                                 <div className="col-lg-3" style={{marginLeft:"115px",display:"inline-block"}}>
                                     <label>Danh mục : </label>
-                                    <select className="form-control" onChange={this.thayDoiDanhMucAdd}>
+                                    <select className="form-control" defaultValue={this.state.sanPham.danhMuc.id} onChange={this.thayDoiDanhMucAdd}>
                                         {this.state.listDanhMuc.map(
                                             sp =>
                                                 <option key={sp.id} value={sp.id}>{sp.ten}</option>
@@ -334,7 +440,7 @@ class SanPhamAddComponnent extends Component {
                                 <br/>
                                 <div style={{marginLeft:"30px"}}>
                                     Mô tả :
-                                    <textarea className="form-control" onChange={this.thayDoiMoTaAdd}/>
+                                    <textarea className="form-control" defaultValue={this.state.sanPham.moTa} onChange={this.thayDoiMoTaAdd}/>
                                 </div>
                                 <br/>
                             </form>
@@ -343,65 +449,66 @@ class SanPhamAddComponnent extends Component {
                     </div>
 
                 </div>
-
                 <div className="card">
 
                     <div className="card-body">
                         <h5 className="card-title">Thông tin chi tiết</h5>
-                        <div className="tab-pane fade show active" id="home" role="tabpanel"
-                             aria-labelledby="home-tab">
-                            <form>
-                                <div className="col-lg-5" style={{marginLeft:"30px",display:"inline-block"}}>
-                                    <label>Kích thước : </label>
-                                    {/*<select className="form-control">*/}
-                                    {/*    {this.state.listKichThuoc.map(*/}
-                                    {/*        sp =>*/}
-                                    {/*            <option key={sp.id} value={sp.id}>{sp.ten}</option>*/}
-                                    {/*    )}*/}
-                                    {/*</select>*/}
-                                    <Select
-                                        isMulti
-                                        value={selectedOptionKT}
-                                        onChange={this.handleChangeKT}
-                                        options={this.state.listKichThuoc}
-                                        className="basic-multi-select"
-                                        classNamePrefix="select"
-                                    />
-                                </div>
-                                <div className="col-lg-5" style={{marginLeft:"120px",display:"inline-block"}} >
-                                    <label>Màu sắc : </label>
-                                    {/*<select className="form-control"  >*/}
-                                    {/*    {this.state.listMauSac.map(*/}
-                                    {/*        sp =>*/}
-                                    {/*            <option key={sp.id} value={sp.id}>{sp.ten}</option>*/}
-                                    {/*    )}*/}
-                                    {/*</select>*/}
-                                    <Select
-                                        isMulti
-                                        value={selectedOptionMS}
-                                        onChange={this.handleChangeMS}
-                                        options={this.state.listMauSac}
-                                        className="basic-multi-select"
-                                        classNamePrefix="select"
-                                    />
-                                </div>
-                                <br/>
-                                <br/>
-                            </form>
-                        </div>
+                        <table className="table table-borderless datatable">
+                            <thead>
+                            <tr>
+                                <th>Màu sắc</th>
+                                <th>Kích thước</th>
+                                <th>Số lượng</th>
+                                <th>Trạng thái</th>
+                                <th>Action</th>
+                            </tr>
+                            </thead>
+                            {/* </tr>
+                                                    <tr>
+                                                        <td>${mau.id}</td>
+                                                        <td>${mau.name}</td>
 
+                                                        <td>
+                                                            <a href="/color/delete/${mau.id}" className="btn btn-danger" onclick="return confirm('Bạn chắc chắn có muốn xóa??')" style="text-decoration: none;color: white"><i className='bx bx-trash'></i></a>
+                                                            <a href="/color/detail/${mau.id}" className="btn btn-success" style="text-decoration: none;color: white; margin-top: 5px" ><i className='bi bi-arrow-repeat'></i></a>
+                                                        </td>
+                                                    </tr> */}
+                            <tbody>
+                            {
+                                this.state.listSPCT.map(
+                                    sp =>
+                                        <tr key={sp.id}>
+                                            <td>{sp.mauSac.ten}</td>
+                                            <td>{sp.kichThuoc.giaTri}</td>
+                                            <td>
+                                            <button type={"button"} onClick={()=>this.min(sp.id)} >-</button>
+                                            <input type={"number"} id="soLuong" value={sp.soLuong} onChange={(e)=>this.updateQuality(sp.id, e.target.value)}/>
+                                            <button type={"button"} onClick={()=>this.plus(sp.id)}>+</button>
+
+                                            </td>
+                                            <td>{sp.trangThai===1?"HD":"Ko HD"}</td>
+                                            <td>
+                                                <button onClick={()=>this.detail(sp.id)} className='btn btn-primary'>Chi tiết</button>
+                                            </td>
+                                        </tr>
+                                )
+                            }
+                            </tbody>
+
+
+                        </table>
                     </div>
 
                 </div>
+
                 <div className="card-body">
-                    <button className="btn btn-warning bi bi-floppy" style={{float:"right",marginRight:20}} onClick={this.add}></button>
+                    <button className="btn btn-warning bi bi-floppy" style={{float:"right",marginRight:20}} onClick={this.update}></button>
                     <button className="btn btn-info bi bi-house" style={{float:"right",marginRight:10}}></button>
                 </div>
 
             </div>
-
         );
     }
 }
 
-export default SanPhamAddComponnent;
+export default ChiTietComponent;

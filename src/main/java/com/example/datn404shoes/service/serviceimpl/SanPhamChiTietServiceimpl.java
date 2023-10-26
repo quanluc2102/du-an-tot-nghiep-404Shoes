@@ -1,5 +1,7 @@
 package com.example.datn404shoes.service.serviceimpl;
 
+import com.example.datn404shoes.entity.KichThuoc;
+import com.example.datn404shoes.entity.MauSac;
 import com.example.datn404shoes.entity.SanPham;
 import com.example.datn404shoes.entity.SanPhamChiTiet;
 import com.example.datn404shoes.repository.SanPhamChiTietRepository;
@@ -58,7 +60,9 @@ public class SanPhamChiTietServiceimpl implements SanPhamChiTietService {
         SanPhamChiTiet a = repo.findById(id).orElse(null);
         a.setTrangThai(spct.getTrangThai());
         a.setNgayCapNhat(Date.valueOf(LocalDate.now()));
-        a.setSanPham(SanPham.builder().id(spct.getSanPhamId()).build());
+        a.setKichThuoc(KichThuoc.builder().id(spct.getKichThuoc()).build());
+        a.setMauSac(MauSac.builder().id(spct.getMauSac()).build());
+        a.setSanPham(SanPham.builder().id(spct.getSanPham()).build());
         a.setSoLuong(spct.getSoLuong());
         repo.save(a);
         return a;

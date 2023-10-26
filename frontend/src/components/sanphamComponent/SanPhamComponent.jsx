@@ -73,7 +73,7 @@ class SanPhamComponent extends Component {
         let selected = data.selected; // Trang được chọn từ react-paginate
         this.loadPageData(selected);
     };
-    
+
     componentDidMount(pageNumber){
         SanPhamService.getSanPham(pageNumber).then(res => {
             this.setState({
@@ -400,7 +400,7 @@ class SanPhamComponent extends Component {
                             <div className="row">
                                 <div className="col-12">
                                     <div className="card recent-sales overflow-auto">
-                                            <button className="btn btn-primary col-lg-4" onClick={this.formAdd}> Add</button>
+                                        <button className="btn btn-primary col-lg-4" onClick={this.formAdd}> Add</button>
                                     </div>
 
 
@@ -410,7 +410,7 @@ class SanPhamComponent extends Component {
 
                         </div>
 
-                        <div className="col-lg-8">
+                        <div className="col-lg-12">
                             <div className="row">
                                 <div className="col-12">
                                     <div className="card recent-sales overflow-auto">
@@ -426,6 +426,9 @@ class SanPhamComponent extends Component {
                                                     <th>Giá nhập</th>
                                                     <th>Giá bán</th>
                                                     <th>Giảm giá</th>
+                                                    <th>Danh mục</th>
+                                                    <th>Thương hiệu</th>
+                                                    <th>Xuất xứ</th>
                                                     <th>Mô tả</th>
                                                     <th>Trạng thái</th>
                                                     <th>Action</th>
@@ -450,6 +453,9 @@ class SanPhamComponent extends Component {
                                                                 <td>{sp.giaNhap}</td>
                                                                 <td>{sp.giaBan}</td>
                                                                 <td>{sp.giamGia}</td>
+                                                                <td>{sp.danhMuc.ten}</td>
+                                                                <td>{sp.thuongHieu.ten}</td>
+                                                                <td>{sp.xuatXu.ten}</td>
                                                                 <td>{sp.moTa}</td>
                                                                 <td>{sp.trangThai===1?"HD":"Ko HD"}</td>
                                                                 <td>
@@ -490,135 +496,6 @@ class SanPhamComponent extends Component {
 
                             </div>
 
-                        </div>
-
-
-                        <div className="col-lg-4">
-
-
-                            <div className="card">
-
-                                <div className="card-body">
-                                    <h5 className="card-title">Sửa <span>| xx</span></h5>
-
-                                    <ul className="nav nav-tabs" id="myTab" role="tablist">
-                                        <li className="nav-item" role="presentation">
-                                            <button className="nav-link active" id="home-tab" data-bs-toggle="tab"
-                                                    data-bs-target="#home" type="button" role="tab" aria-controls="home"
-                                                    aria-selected="true">Edit
-                                            </button>
-                                        </li>
-                                        <li className="nav-item" role="presentation">
-                                            <button className="nav-link" id="profile-tab" data-bs-toggle="tab"
-                                                    data-bs-target="#profile" type="button" role="tab" aria-controls="profile"
-                                                    aria-selected="false">Add new
-                                            </button>
-                                        </li>
-                                        <li className="nav-item" role="presentation">
-                                            <button className="nav-link" id="contact-tab" data-bs-toggle="tab"
-                                                    data-bs-target="#contact" type="button" role="tab" aria-controls="contact"
-                                                    aria-selected="false">Detail
-                                            </button>
-                                        </li>
-                                    </ul>
-
-
-                                    <div className="tab-content pt-2" id="myTabContent">
-                                        <div className="tab-pane fade show active" id="home" role="tabpanel"
-                                             aria-labelledby="home-tab">
-                                            <form>
-                                                <div>
-                                                    Tên :
-                                                    <input className={`form-control ${this.state.errorUpdate.ten ? 'is-invalid' : ''}`} name="ten" value={this.state.sanPhamUpdate.ten} onChange={this.thayDoiTenUpdate}/>
-                                                    {this.state.errorUpdate.ten && <div className="text-danger">{this.state.errorUpdate.ten}</div>}
-                                                </div>
-                                                <div>
-                                                    Giá nhập :
-                                                    <input className={`form-control ${this.state.errorUpdate.giaNhap ? 'is-invalid' : ''}`} name="giaNhap" value={this.state.sanPhamUpdate.giaNhap} onChange={this.thayDoiGiaNhapUpdate}/>
-                                                    {this.state.errorUpdate.giaNhap && <div className="text-danger">{this.state.errorUpdate.giaNhap}</div>}
-                                                </div>
-                                                <div>
-                                                    Giá bán :
-                                                    <input className={`form-control ${this.state.errorUpdate.giaBan ? 'is-invalid' : ''}`} name="giaBan" value={this.state.sanPhamUpdate.giaBan} onChange={this.thayDoiGiaBanUpdate}/>
-                                                    {this.state.errorUpdate.giaBan && <div className="text-danger">{this.state.errorUpdate.giaBan}</div>}
-                                                </div>
-                                                <div>
-                                                    Giảm giá :
-                                                    <input className={`form-control ${this.state.errorUpdate.giamGia ? 'is-invalid' : ''}`} name="giamGia" value={this.state.sanPhamUpdate.giamGia} onChange={this.thayDoiGiamGiaUpdate}/>
-                                                    {this.state.errorUpdate.giamGia && <div className="text-danger">{this.state.errorUpdate.giamGia}</div>}
-                                                </div>
-                                                <div>
-                                                    Mô tả :
-                                                    <input className={`form-control ${this.state.errorUpdate.moTa ? 'is-invalid' : ''}`} name="moTa" value={this.state.sanPhamUpdate.moTa} onChange={this.thayDoiMoTaUpdate}/>
-                                                    {this.state.errorUpdate.moTa && <div className="text-danger">{this.state.errorUpdate.moTa}</div>}
-                                                </div>
-                                                <div className='form-group'>
-                                                    <label>Trạng thái</label>
-                                                    <select name="trangThai" id="trangThai" value={this.state.sanPhamUpdate.trangThai} className="form-control" onChange={this.thayDoiTrangThaiUpdate}>
-                                                        <option value="1">Còn</option>
-                                                        <option value="0">Ko còn</option>
-                                                    </select>
-                                                </div>
-                                                <input type="submit" className="btn btn-primary" value="Update" style={{marginTop: '10px'}} onClick={this.update}/>
-                                            </form>
-                                        </div>
-
-                                        <div className="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-                                            <form>
-                                                <div>
-                                                    Tên :
-                                                    <input className={`form-control ${this.state.errorAdd.ten ? 'is-invalid' : ''}`} name="ten" onChange={this.thayDoiTenAdd}/>
-                                                    {this.state.errorAdd.ten && <div className="text-danger">{this.state.errorAdd.ten}</div>}
-                                                </div>
-                                                <div>
-                                                    Giá nhập :
-                                                    <input className={`form-control ${this.state.errorAdd.giaNhap ? 'is-invalid' : ''}`} name="giaNhap" onChange={this.thayDoiGiaNhapAdd}/>
-                                                    {this.state.errorAdd.giaNhap && <div className="text-danger">{this.state.errorAdd.giaNhap}</div>}
-                                                </div>
-                                                <div>
-                                                    Giá bán :
-                                                    <input className={`form-control ${this.state.errorAdd.giaBan ? 'is-invalid' : ''}`} name="giaBan"  onChange={this.thayDoiGiaBanAdd}/>
-                                                    {this.state.errorAdd.giaBan && <div className="text-danger">{this.state.errorAdd.giaBan}</div>}
-                                                </div>
-                                                <div>
-                                                    Giảm giá :
-                                                    <input className={`form-control ${this.state.errorAdd.giamGia ? 'is-invalid' : ''}`} name="giamGia" onChange={this.thayDoiGiamGiaAdd}/>
-                                                    {this.state.errorAdd.giamGia && <div className="text-danger">{this.state.errorAdd.giamGia}</div>}
-                                                </div>
-                                                <div>
-                                                    Mô tả :
-                                                    <input className={`form-control ${this.state.errorAdd.moTa ? 'is-invalid' : ''}`} name="moTa"  onChange={this.thayDoiMoTaAdd}/>
-                                                    {this.state.errorAdd.moTa && <div className="text-danger">{this.state.errorAdd.moTa}</div>}
-                                                </div>
-                                                <div className='form-group'>
-                                                    <label>Trạng thái</label>
-                                                    <select name="trangThai" id="trangThai" className="form-control" onChange={this.thayDoiTrangThaiAdd}>
-                                                        <option value="1">Còn</option>
-                                                        <option value="0">Ko còn</option>
-                                                    </select>
-                                                </div>
-                                                <input type="submit" className="btn btn-primary" value="Update" style={{marginTop: '10px'}} onClick={this.add}/>
-                                            </form>
-                                        </div>
-
-
-                                        <div className="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
-                                            <form className="row g-3"  method="get">
-                                                <div className="form-group">
-                                                    {/* ID : ${mau.id} */}
-                                                </div>
-                                                <div className="form-group">
-                                                    {/* Name : ${mau.name} */}
-                                                </div>
-
-                                            </form>
-                                        </div>
-                                    </div>
-
-
-                                </div>
-
-                            </div>
                         </div>
 
 

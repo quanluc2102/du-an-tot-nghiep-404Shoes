@@ -42,11 +42,15 @@ public class SanPhamAnhController {
 
         return sanPhamAnhServiceimpl.getAllAnh(id);
     }
-
+    @DeleteMapping("delete/{id}")
+    public ResponseEntity<?> delete(@PathVariable("id") long id){
+        sanPhamAnhServiceimpl.delete(id);
+        return ResponseEntity.ok(id);
+    }
     @PostMapping(value = "add", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> upload(
-                         @RequestParam("files") MultipartFile[] files,
-                         @RequestParam("sanPham") Long id) {
+            @RequestParam("files") MultipartFile[] files,
+            @RequestParam("sanPham") Long id) {
         String message = "";
         try {
             List<String> fileNames = new ArrayList<>();

@@ -53,7 +53,11 @@ public class KichThuocController {
 //        model.addAttribute("view", "/kich_thuoc/kich_thuoc_add.jsp");
 //        return "admin/index";
 //    }
+    @GetMapping("index1")
+    public List<KichThuoc> index2(Model model) {
 
+        return repository.findAll();
+    }
     @PostMapping("add")
     public ResponseEntity<?> themMoi(Model model,
                                      @RequestBody KichThuoc kichThuoc, BindingResult bindingResult

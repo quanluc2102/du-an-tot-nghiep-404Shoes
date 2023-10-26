@@ -3,6 +3,7 @@ package com.example.datn404shoes.controller;
 import com.example.datn404shoes.entity.*;
 import com.example.datn404shoes.helper.SanPhamExcelSave;
 import com.example.datn404shoes.helper.SanPhamExport;
+import com.example.datn404shoes.repository.SanPhamAnhRespository;
 import com.example.datn404shoes.repository.SanPhamChiTietRepository;
 import com.example.datn404shoes.repository.SanPhamRespository;
 import com.example.datn404shoes.request.SanPhamRequest;
@@ -36,13 +37,21 @@ public class SanPhamController {
     @Autowired
     SanPhamServiceimpl sanPhamServiceimpl;
     @Autowired
+    SanPhamRespository sanPhamRespository;
+    @Autowired
     SanPhamAnhServiceimpl sanPhamAnhServiceimpl;
     @Autowired
     SanPhamChiTietRepository sanPhamChiTietRepository;
+    @Autowired
+    SanPhamAnhRespository sanPhamAnhRespository;
     private final Path root = Paths.get("frontend/src/img");
     @GetMapping("index")
     public Page<SanPham> index(Pageable pageable){
         return sanPhamServiceimpl.getAllPhanTrang(pageable);
+    }
+    @GetMapping("index1")
+    public List<SanPham> index1(){
+        return sanPhamServiceimpl.getAll();
     }
     @PostMapping("add")
 //    public SanPham add(@RequestBody SanPham sanPham){
@@ -85,6 +94,17 @@ public class SanPhamController {
         }
         return a;
     }
+    @GetMapping("detail_spa/{id}")
+    public ResponseEntity<?> detailSPA(@PathVariable("id") Long id) {
+
+        return ResponseEntity.ok(sanPhamAnhRespository.getAllAnh(id));
+    }
+
+    @GetMapping("detail_spct/{id}")
+    public ResponseEntity<?> detailSPCT(@PathVariable("id") Long id) {
+
+        return ResponseEntity.ok(sanPhamChiTietRepository.getAllSPCT(id));
+    }
     @DeleteMapping("delete/{id}")
     public ResponseEntity<?> delete(@PathVariable("id") long id){
         sanPhamServiceimpl.delete(id);
@@ -97,12 +117,28 @@ public class SanPhamController {
 
         return ResponseEntity.ok(sanPhamServiceimpl.getOne(id));
     }
+
     @PutMapping("update/{id}")
     public ResponseEntity<?> update(Model model,
-                         @PathVariable("id") long id,
-                         @RequestBody SanPham sanPham){
-
-        return ResponseEntity.ok(sanPhamServiceimpl.update(id,sanPham));
+                                    @PathVariable("id") long id, @RequestBody SanPhamRequest sanPham){
+        SanPham a = sanPhamServiceimpl.getOne(id);
+        a.setTen(sanPham.getTen());
+        a.setGiamGia(sanPham.getGiamGia());
+        a.setGiaBan(sanPham.getGiaBan());
+        a.setGiaNhap(sanPham.getGiaNhap());
+        a.setMoTa(sanPham.getMoTa());
+        a.setNgayCapNhat(java.sql.Date.valueOf(LocalDate.now()));
+        a.setDanhMuc(DanhMuc.builder().id(sanPham.getDanhMucId()).build());
+        a.setXuatXu(XuatXu.builder().id(sanPham.getXuatXuId()).build());
+        a.setThuongHieu(ThuongHieu.builder().id(sanPham.getThuongHieuId()).build());
+        sanPhamRespository.save(a);
+        for(String file : sanPham.getFiles()){
+            SanPhamAnh spa = new SanPhamAnh();
+            spa.setAnh(file);
+            spa.setSanPham(a);
+            sanPhamAnhServiceimpl.save(spa);
+        }
+        return ResponseEntity.ok(a);
     }
 
     @PostMapping( value = "import", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)

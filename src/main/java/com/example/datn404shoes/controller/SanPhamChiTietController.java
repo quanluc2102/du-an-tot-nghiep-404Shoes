@@ -2,6 +2,7 @@ package com.example.datn404shoes.controller;
 
 import com.example.datn404shoes.entity.SanPham;
 import com.example.datn404shoes.entity.SanPhamChiTiet;
+import com.example.datn404shoes.repository.SanPhamChiTietRepository;
 import com.example.datn404shoes.request.SanPhamChiTietRequest;
 import com.example.datn404shoes.service.serviceimpl.SanPhamChiTietServiceimpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +21,8 @@ import java.util.Map;
 public class SanPhamChiTietController {
     @Autowired
     SanPhamChiTietServiceimpl serviceimpl;
-
+    @Autowired
+    SanPhamChiTietRepository repository;
     @GetMapping("index")
     public ResponseEntity<?> index(Pageable pageable) {
         return ResponseEntity.ok(serviceimpl.getAllPhanTrang(pageable));
@@ -52,5 +54,12 @@ public class SanPhamChiTietController {
                                     @RequestBody SanPhamChiTietRequest spct) {
 
         return ResponseEntity.ok(serviceimpl.update(id, spct));
+    }
+
+    @PutMapping("updateAll")
+    public ResponseEntity<?> updateAll(Model model,
+                                       @RequestBody List<SanPhamChiTiet> list) {
+
+        return ResponseEntity.ok(repository.saveAll(list));
     }
 }

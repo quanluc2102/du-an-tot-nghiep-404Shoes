@@ -46,6 +46,12 @@ public class MauSacController {
         }
         return ResponseEntity.ok(list);
     }
+
+    @GetMapping("index1")
+    public List<MauSac> index2(Model model) {
+
+        return repository.findAll();
+    }
 //    @GetMapping("create")
 //    public String create(Model model) {
 //        model.addAttribute("view", "/mau_sac/mau_sac_add.jsp");
