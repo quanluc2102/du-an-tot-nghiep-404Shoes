@@ -60,14 +60,14 @@ public class SanPhamController {
 //    }
     public SanPham add(@RequestBody SanPhamRequest sanPham){
         SanPham a = new SanPham();
+        a.setMa(sanPham.getMa());
         a.setTen(sanPham.getTen());
-        a.setGiamGia(sanPham.getGiamGia());
-        a.setGiaBan(sanPham.getGiaBan());
-        a.setGiaNhap(sanPham.getGiaNhap());
+        a.setDonGia(sanPham.getDonGia());
         a.setMoTa(sanPham.getMoTa());
         a.setTrangThai(1);
         a.setNgayCapNhat(java.sql.Date.valueOf(LocalDate.now()));
         a.setNgayTao(java.sql.Date.valueOf(LocalDate.now()));
+        a.setAnh(sanPham.getFiles().get(0));
         a.setDanhMuc(DanhMuc.builder().id(sanPham.getDanhMucId()).build());
         a.setXuatXu(XuatXu.builder().id(sanPham.getXuatXuId()).build());
         a.setThuongHieu(ThuongHieu.builder().id(sanPham.getThuongHieuId()).build());
@@ -122,10 +122,9 @@ public class SanPhamController {
     public ResponseEntity<?> update(Model model,
                                     @PathVariable("id") long id, @RequestBody SanPhamRequest sanPham){
         SanPham a = sanPhamServiceimpl.getOne(id);
+        a.setMa(sanPham.getMa());
         a.setTen(sanPham.getTen());
-        a.setGiamGia(sanPham.getGiamGia());
-        a.setGiaBan(sanPham.getGiaBan());
-        a.setGiaNhap(sanPham.getGiaNhap());
+        a.setDonGia(sanPham.getDonGia());
         a.setMoTa(sanPham.getMoTa());
         a.setNgayCapNhat(java.sql.Date.valueOf(LocalDate.now()));
         a.setDanhMuc(DanhMuc.builder().id(sanPham.getDanhMucId()).build());

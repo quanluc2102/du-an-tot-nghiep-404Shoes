@@ -41,10 +41,9 @@ public class SanPhamServiceimpl implements SanPhamService {
     @Override
     public SanPham update(Long id, SanPham sp) {
         SanPham a = sanPhamRespository.findById(id).orElse(null);
+        a.setMa(sp.getMa());
         a.setTen(sp.getTen());
-        a.setGiaBan(sp.getGiaBan());
-        a.setGiaNhap(sp.getGiaNhap());
-        a.setGiamGia(sp.getGiamGia());
+        a.setDonGia(sp.getDonGia());
         a.setMoTa(sp.getMoTa());
         a.setNgayCapNhat(Date.valueOf(LocalDate.now()));
         sanPhamRespository.save(a);

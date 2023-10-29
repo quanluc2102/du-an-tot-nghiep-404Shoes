@@ -17,10 +17,9 @@ import java.util.List;
 @AllArgsConstructor
 public class SanPhamRequest {
     private List<String> files;
+    private String ma;
     private String ten;
-    private double giaNhap;
-    private double giaBan;
-    private Float giamGia;
+    private double donGia;
     private String moTa;
     private long thuongHieuId;
     private long xuatXuId;
