@@ -1,8 +1,12 @@
 ﻿
+drop database ShopShoe
+go
 create database ShopShoe
 go
 use ShopShoe
 go
+
+
 
 
 
@@ -14,10 +18,9 @@ CREATE TABLE thong_tin_nguoi_dung (
                                       sdt NVARCHAR(255) NOT NULL,
                                       ten NVARCHAR(255) NOT NULL,
                                       cccd nvarchar(12),
-
                                       gioi_tinh int  not null,
                                       ngay_cap_nhat DATETIME,
-                                      
+
 );
 CREATE TABLE tai_khoan (
                            id BIGINT PRIMARY KEY IDENTITY(1,1),
@@ -28,8 +31,8 @@ CREATE TABLE tai_khoan (
                            password NVARCHAR(255) NOT NULL,
                            anh NVARCHAR(255),
                            trang_thai BIT NOT NULL,
-						   thong_tin_nguoi_dung_id BIGINT,
-                                      FOREIGN KEY (thong_tin_nguoi_dung_id) REFERENCES thong_tin_nguoi_dung(id)
+                           thong_tin_nguoi_dung_id BIGINT,
+                           FOREIGN KEY (thong_tin_nguoi_dung_id) REFERENCES thong_tin_nguoi_dung(id)
 );
 -- Create vai_tro table
 CREATE TABLE quyen (
@@ -89,25 +92,25 @@ CREATE TABLE thuong_hieu (
 
 CREATE Table xuat_xu(
                         id BIGINT PRIMARY Key IDENTITY(1,1),
-                        ten NVARCHAR(255),
-                        trang_thai INT
+                        ten NVARCHAR(255)NOT NULL,
+                        trang_thai INT NOT NULL
 );
 
 
 -- Create san_pham table
 CREATE TABLE san_pham (
                           id BIGINT PRIMARY KEY IDENTITY(1,1),
+                          ma_san_pham nvarchar(255) NOT NULL,
                           ngay_tao DATE NOT NULL,
-                          gia_nhap float NOT NULL,
                           ten NVARCHAR(255) NOT NULL,
-                          gia_ban float NOT NULL,
+                          don_gia float NOT NULL,
                           trang_thai INT NOT NULL,
                           ngay_cap_nhat DATETIME,
                           mo_ta NVARCHAR(255) NOT NULL,
-                          giam_gia FLOAT NOT NULL,
                           thuong_hieu bigInt not null,
                           xuat_xu bigint not null,
                           danh_muc bigint not null,
+                          anh_bia nvarchar(255),
                           FOREIGN KEY (thuong_hieu) REFERENCES thuong_hieu(id),
                           FOREIGN KEY (xuat_xu) REFERENCES xuat_xu(id),
                           FOREIGN KEY (danh_muc) REFERENCES danh_muc(id)
@@ -133,10 +136,10 @@ CREATE TABLE san_pham_chi_tiet (
 CREATE TABLE khuyen_mai (
                             id BIGINT PRIMARY KEY IDENTITY(1,1),
                             ma nvarchar(225) not null,
-                            ten VARCHAR(255) NOT NULL,
-                            mo_ta VARCHAR(255),
-                            bat_dau DATE NOT NULL,
-                            ket_thuc DATE NOT NULL,
+                            ten NVARCHAR(255) NOT NULL,
+                            mo_ta NVARCHAR(255),
+                            bat_dau DATETIME NOT NULL,
+                            ket_thuc DATETIME NOT NULL,
                             giam_gia FLOAT NOT NULL,
                             kieu_khuyen_mai INT NOT NULL,
                             dieu_kien float not null,
@@ -146,6 +149,7 @@ CREATE TABLE khuyen_mai (
 --hoa don
 CREATE TABLE hoa_don (
                          id BIGINT PRIMARY KEY IDENTITY(1,1),
+                         ma_hoa_don NVARCHAR(255) NOT NULL,
                          ngay_tao DATE NOT NULL,
                          ghi_chu NVARCHAR(255),
                          ngay_cap_nhat DATETIME,
@@ -166,7 +170,6 @@ CREATE TABLE hoa_don (
                          hoa_don_khuyen_mai bigint,
                          FOREIGN KEY (hoa_don_khuyen_mai) REFERENCES khuyen_mai(id),
                          FOREIGN KEY (tai_khoan_id) REFERENCES tai_khoan(id),
-
                          FOREIGN KEY (thanh_toan_id) REFERENCES thanh_toan(id)
 );
 
@@ -178,7 +181,6 @@ CREATE TABLE gio_hang (
                           tong_tien FLOAT,
                           trang_thai INT NOT NULL,
                           tai_khoan_id BIGINT,
-
                           FOREIGN KEY (tai_khoan_id) REFERENCES tai_khoan(id),
 
 );
@@ -186,7 +188,6 @@ CREATE TABLE gio_hang (
 CREATE TABLE hoa_don_chi_tiet (
                                   id BIGINT PRIMARY KEY IDENTITY(1,1),
                                   ghi_chu NVARCHAR(255),
-
                                   so_luong INT NOT NULL,
                                   hoa_don_id BIGINT,
                                   san_pham_chi_tiet_id BIGINT,
@@ -218,10 +219,6 @@ CREATE TABLE gio_hang_chi_tiet (
 
 
 -- Create hoa_don_khuyen_mai table
-
-
-
-SELECT * FROM THONG_TIN_NGUOI_DUNG
 
 
 
@@ -265,13 +262,13 @@ VALUES
 
 
 INSERT INTO [dbo].[xuat_xu]
-           ([ten],[trang_thai])
-     VALUES
-           (N'Trung quốc',1),
-		   (N'Việt Nam',1),
-		   (N'Mỹ',1),
-		   (N'Pháp',1),
-		   (N'Nhật',1);
+([ten],[trang_thai])
+VALUES
+    (N'Trung quốc',1),
+    (N'Việt Nam',1),
+    (N'Mỹ',1),
+    (N'Pháp',1),
+    (N'Nhật',1);
 
 
 INSERT INTO quyen (ten, trang_thai)
@@ -354,11 +351,11 @@ VALUES
 
 
 
-INSERT INTO san_pham (ngay_tao, gia_nhap, ten, gia_ban, trang_thai, ngay_cap_nhat, mo_ta,giam_gia,thuong_hieu,xuat_xu,danh_muc)
+INSERT INTO san_pham (ma_san_pham,ngay_tao, don_gia, ten, trang_thai, ngay_cap_nhat, mo_ta,thuong_hieu,xuat_xu,danh_muc,anh_bia)
 VALUES
-(GETDATE(), 2000000, N'Giày Thể Thao Nam Adidas Mens Courtphase Trainers', 2100000, 1, GETDATE(), N'Sản phẩm tốt',0,2,2,3),
-(GETDATE(), 2100000, N'Giày Thể Thao Adidas Stan Smith Shoes', 178000, 1, GETDATE(), N'Sản phẩm tốt',0,2,2,1),
-(GETDATE(), 4500000, N'Giày Thể Thao Nike Air Force 1 High Green White', 150000, 1, GETDATE(), N'Sản phẩm tốt',0,1,3,1)
+('SP001',GETDATE(),1800000, N'Giày Thể Thao Nam Adidas Mens Courtphase Trainers', 1, GETDATE(), N'Sản phẩm tốt',2,2,3,'anh1.jpg'),
+('SP002',GETDATE(),2600000, N'Giày Thể Thao Adidas Stan Smith Shoes', 1, GETDATE(), N'Sản phẩm tốt',2,2,1,'anh1.jpg'),
+('SP003',GETDATE(),3200000, N'Giày Thể Thao Nike Air Force 1 High Green White', 1, GETDATE(), N'Sản phẩm tốt',1,3,1,'anh1.jpg')
 
 
 
@@ -382,10 +379,10 @@ VALUES
     (2, 'anh5.jpg');
 
 
-INSERT INTO hoa_don (ngay_tao, ghi_chu, ngay_cap_nhat, trang_thai, tai_khoan_id, thanh_toan_id,kieu_hoa_don,tong_tien,phi_ship,tien_giam,tong_tien_sau_giam,ten,sdt,email,thanh_pho,quan_huyen,phuong_xa)
+INSERT INTO hoa_don (ma_hoa_don,ngay_tao, ghi_chu, ngay_cap_nhat, trang_thai, tai_khoan_id, thanh_toan_id,kieu_hoa_don,tong_tien,phi_ship,tien_giam,tong_tien_sau_giam,ten,sdt,email,thanh_pho,quan_huyen,phuong_xa)
 VALUES
-(GETDATE(), N'Khách hàng yêu cầu bọc', GETDATE(), 1, 1, 1,1,0,20000,30000,10000,N'Lương Văn Mai','0362460679','thieutttt01@gmail.com',N'Hà Nội',N'Đông Anh',N'Vân NộI'),
-(GETDATE(), N'Hỏa tốc', GETDATE(), 1, 2, 2,1,0,20000,30000,10000,N'Kiều Minh Quang','0362460679','thieutttt02@gmail.com',N'Hà Nội',N'Đông Anh',N'Vân NộI')
+('HD001',GETDATE(), N'Khách hàng yêu cầu bọc', GETDATE(), 1, 1, 1,1,0,20000,30000,10000,N'Lương Văn Mai','0362460679','thieutttt01@gmail.com',N'Hà Nội',N'Đông Anh',N'Vân NộI'),
+('HD002',GETDATE(), N'Hỏa tốc', GETDATE(), 1, 2, 2,1,0,20000,30000,10000,N'Kiều Minh Quang','0362460679','thieutttt02@gmail.com',N'Hà Nội',N'Đông Anh',N'Vân NộI')
 
 
     INSERT INTO gio_hang (ngay_tao, ghi_chu, ngay_cap_nhat, trang_thai, tai_khoan_id,tong_tien)
@@ -425,11 +422,11 @@ VALUES
 INSERT INTO [dbo].[khuyen_mai]
 (ma,[ten],[mo_ta],[bat_dau],[ket_thuc],[giam_gia],[kieu_khuyen_mai],dieu_kien,so_luong,trang_thai)
 VALUES
-    ('KHUYENMAICHAOMUNG',N'KHUYẾN MÃI CHÀO MỪNG NGƯỜI MỚI',N'GIẢM 50K VỚI THÀNH VIÊN MỚI','2023/10/1','2023/10/5',10 ,1,50000,20,1),
-    ('KHUYENMAIPK',N'KHUYẾN MÃI TƯNG BỪNG',N'GIẢM 10K KHI MUA SẢN PHẨM TRÊN 10K','2023/10/1','2023/10/5',10000 ,0,10000,20,1),
-    ('KHUYENMAITHANG10',N'KHUYẾN MÃI THÁNG 10',N'GIẢM 10K KHI MUA SẢN PHẨM TRÊN 15K','2023/10/1','2023/10/5',15000 ,1,100000,20,1),
-    ('KHUYENMAIDEMDONG',N'ĐÔNG KHUYẾN MÃI',N'GIẢM 80K KHI MUA SẢN PHẨM TRÊN 800K','2023/10/10','2023/11/11',10000 ,1,800000,20,1),
-    ('KHUYENMAIBLACKDAY',N'KHUYẾN MÃI NGÀY ĐEN',N'GIẢM 10K KHI MUA SẢN PHẨM TRÊN 10K','2023/09/1','2023/10/5',10 ,1,0,20,1);
+    ('KHUYENMAICHAOMUNG',N'KHUYẾN MÃI CHÀO MỪNG NGƯỜI MỚI',N'GIẢM 50K VỚI THÀNH VIÊN MỚI',GETDATE(),GETDATE(),10 ,1,50000,20,1),
+    ('KHUYENMAIPK',N'KHUYẾN MÃI TƯNG BỪNG',N'GIẢM 10K KHI MUA SẢN PHẨM TRÊN 10K',GETDATE(),GETDATE(),10000 ,0,10000,20,1),
+    ('KHUYENMAITHANG10',N'KHUYẾN MÃI THÁNG 10',N'GIẢM 10K KHI MUA SẢN PHẨM TRÊN 15K',GETDATE(),GETDATE(),15000 ,1,100000,20,1),
+    ('KHUYENMAIDEMDONG',N'ĐÔNG KHUYẾN MÃI',N'GIẢM 80K KHI MUA SẢN PHẨM TRÊN 800K',GETDATE(),GETDATE(),10000 ,1,800000,20,1),
+    ('KHUYENMAIBLACKDAY',N'KHUYẾN MÃI NGÀY ĐEN',N'GIẢM 10K KHI MUA SẢN PHẨM TRÊN 10K',GETDATE(),GETDATE(),10 ,1,0,20,1);
 
 
 INSERT INTO [dbo].[lich_su_hoa_don]
