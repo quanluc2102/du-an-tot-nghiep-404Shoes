@@ -1,5 +1,7 @@
 import React, {Component} from 'react';
 import KhuyenMaiService from "../../services/khuyenmaiservice/KhuyenMaiService";
+import {toast} from "react-toastify";
+import ReactPaginate from "react-paginate";
 
 
 
@@ -8,6 +10,7 @@ class KhuyenMaiComponent extends Component {
         super(props);
         this.state = {
             khuyenMai:[],
+            pageCount: 0,
             khuyenMaiAdd: {
                 ma: '',
                 ten: '',
@@ -97,7 +100,7 @@ class KhuyenMaiComponent extends Component {
     }
     add = (e)=>{
         e.preventDefault();
-
+        let khuyenMai ={ma: this.state.khuyenMaiAdd.ma,ten: this.state.khuyenMaiAdd.ten}
         let giamGia = parseInt(this.state.khuyenMaiAdd.giamGia);
         let soLuong = parseInt(this.state.khuyenMaiAdd.soLuong);
         let  dieuKien = parseInt(this.state.khuyenMaiAdd. dieuKien);
@@ -175,9 +178,27 @@ class KhuyenMaiComponent extends Component {
         } else {
             this.setState({ errorAdd: { ...this.state.errorAdd, soLuong: "" } });
         }
-        KhuyenMaiService.addKhuyenMai(this.state.khuyenMaiAdd).then((res)=>{
-            window.location.href = (`/khuyenmai`);
-        })
+        KhuyenMaiService.createKhuyenMai(khuyenMai).then((res) => {
+            if (res.status === 200) {
+                // Xử lý khi thêm thành công
+                let khuyenMaiMoi = res.data;
+                this.setState(prevState => ({
+                    khuyenMai: [...prevState.khuyenMai, khuyenMaiMoi]
+                }));
+            }  else {
+                // Xử lý khi có lỗi
+                const errorMessage = res.data || "Có lỗi xảy ra khi thêm.";
+                toast.error("Lỗi: " + errorMessage); // Hiển thị lỗi bằng Toast
+                console.log(errorMessage);
+            }
+        }).catch(error => {
+            // Log the error or handle it as needed
+            console.error("Update request error:", error);
+            toast.error("Lỗi: " + error.data); // Hiển thị lỗi bằng Toast
+        });
+        // KhuyenMaiService.addKhuyenMai(this.state.khuyenMaiAdd).then((res)=>{
+        //     window.location.href = (`/khuyenmai`);
+        // })
     }
     update=(e)=>{
         e.preventDefault();
@@ -279,10 +300,18 @@ class KhuyenMaiComponent extends Component {
         } else {
             this.setState({ errorUpdate: { ...this.state.errorUpdate, soLuong: "" } });
         }
-        let id = this.state.khuyenMaiUpdate.id;
-        KhuyenMaiService.updateKhuyenMai(id,khuyenMai).then((res)=>{
-            window.location.href = (`/khuyenMai`);
-        })
+        KhuyenMaiService.updateKhuyenMai(khuyenMai, this.state.mauSacUpdate.id).then((res) => {
+            let khuyenMaiCapNhat = res.data; // Giả sử API trả về đối tượng vừa được cập nhật
+            this.setState(prevState => ({
+                khuyenMia: prevState.khuyenMai.map(km =>
+                    km.id === khuyenMaiCapNhat.id ? khuyenMaiCapNhat : km
+                )
+            }));
+        }).catch(error => {
+            // Log the error or handle it as needed
+            console.error("Update request error:", error);
+        });
+
     }
     detail(id){
         window.location.href = (`/khuyenMaidetail/${id}`);
@@ -596,8 +625,8 @@ class KhuyenMaiComponent extends Component {
                                                 <div className='form-group'>
                                                     <label>Trạng thái</label>
                                                     <select name="trangThai" id="trangThai" className="form-control" onChange={this.thayDoiTrangThaiAdd}>
-                                                        <option value="0">Ngừng hoạt động</option>
-                                                        <option value="1">Hoạt động</option>
+                                                        <option value="0">Đã diễn ra</option>
+                                                        <option value="1">Sắp diễn ra</option>
                                                         <option value="2">Đang diễn ra</option>
                                                     </select>
                                                 </div>

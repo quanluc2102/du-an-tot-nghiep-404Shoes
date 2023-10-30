@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import KhuyenMaiService from "../../services/khuyenmaiservice/KhuyenMaiService";
+import {toast} from "react-toastify";
 
 
 
@@ -7,7 +8,9 @@ class KhuyenMaiComponent extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            id: this.props.match.params.id,
             khuyenMai:[],
+            pageCount: 0,
             khuyenMaiAdd: {
                 ma: '',
                 ten: '',
@@ -140,7 +143,7 @@ class KhuyenMaiComponent extends Component {
 
     add = (e)=>{
         e.preventDefault();
-
+        let khuyenMai ={ma: this.state.khuyenMaiAdd.ma,ten: this.state.khuyenMaiAdd.ten}
         let giamGia = parseInt(this.state.khuyenMaiAdd.giamGia);
         let soLuong = parseInt(this.state.khuyenMaiAdd.soLuong);
         let  dieuKien = parseInt(this.state.khuyenMaiAdd. dieuKien);
@@ -220,9 +223,27 @@ class KhuyenMaiComponent extends Component {
         } else {
             this.setState({ errorAdd: { ...this.state.errorAdd, soLuong: "" } });
         }
-        KhuyenMaiService.addKhuyenMai(this.state.khuyenMaiAdd).then((res)=>{
-            window.location.href = (`/khuyenmai`);
-        })
+        KhuyenMaiService.createKhuyenMai(khuyenMai).then((res) => {
+            if (res.status === 200) {
+                // Xử lý khi thêm thành công
+                let khuyenMaiMoi = res.data;
+                this.setState(prevState => ({
+                    khuyenMai: [...prevState.khuyenMai, khuyenMaiMoi]
+                }));
+            }  else {
+                // Xử lý khi có lỗi
+                const errorMessage = res.data || "Có lỗi xảy ra khi thêm.";
+                toast.error("Lỗi: " + errorMessage); // Hiển thị lỗi bằng Toast
+                console.log(errorMessage);
+            }
+        }).catch(error => {
+            // Log the error or handle it as needed
+            console.error("Update request error:", error);
+            toast.error("Lỗi: " + error.data); // Hiển thị lỗi bằng Toast
+        });
+        // KhuyenMaiService.addKhuyenMai(this.state.khuyenMaiAdd).then((res)=>{
+        //     window.location.href = (`/khuyenmai`);
+        // })
     }
     update=(e)=>{
         e.preventDefault();
@@ -634,8 +655,8 @@ class KhuyenMaiComponent extends Component {
                                                 <div className='form-group'>
                                                     <label>Trạng thái</label>
                                                     <select name="trangThai" id="trangThai" value={this.state.khuyenMaiUpdate.trangThai} className="form-control" onChange={this.thayDoiTrangThaiUpdate}>
-                                                        <option value="1">Hoạt động</option>
-                                                        <option value="0">Ngừng hoạt động</option>
+                                                        <option value="1">Sắp diễn ra</option>
+                                                        <option value="0">Đã diễn ra</option>
                                                         <option value="2">Đang diễn ra</option>
                                                     </select>
                                                 </div>
@@ -643,80 +664,7 @@ class KhuyenMaiComponent extends Component {
                                             </form>
                                         </div>
 
-                                        {/*<div className="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">*/}
-                                        {/*    <form>*/}
-                                        {/*        <div>*/}
-                                        {/*            Mã :*/}
-                                        {/*            <input className={`form-control ${this.state.errorAdd.ma ? 'is-invalid' : ''}`} name="ma" onChange={this.thayDoiMaAdd}/>*/}
-                                        {/*            {this.state.errorAdd.ma && <div className="text-danger">{this.state.errorAdd.ma}</div>}*/}
-                                        {/*        </div>*/}
-                                        {/*        <div>*/}
-                                        {/*            Tên :*/}
-                                        {/*            <input className={`form-control ${this.state.errorAdd.ten ? 'is-invalid' : ''}`} name="ten" onChange={this.thayDoiTenAdd}/>*/}
-                                        {/*            {this.state.errorAdd.ten && <div className="text-danger">{this.state.errorAdd.ten}</div>}*/}
-                                        {/*        </div>*/}
-                                        {/*        <div>*/}
-                                        {/*            Mô tả :*/}
-                                        {/*            <input className={`form-control ${this.state.errorAdd.moTa ? 'is-invalid' : ''}`} name="moTa"  onChange={this.thayDoiMoTaAdd}/>*/}
-                                        {/*            {this.state.errorAdd.moTa && <div className="text-danger">{this.state.errorAdd.moTa}</div>}*/}
-                                        {/*        </div>*/}
-                                        {/*        <div>*/}
-                                        {/*            Bắt đầu :*/}
-                                        {/*            <input className={`form-control ${this.state.errorAdd.batDau ? 'is-invalid' : ''}`} name="batDau" type="date" onChange={this.thayDoiBatDauAdd}/>*/}
-                                        {/*            {this.state.errorAdd.batDau && <div className="text-danger">{this.state.errorAdd.batDau}</div>}*/}
-                                        {/*        </div>*/}
-                                        {/*        <div>*/}
-                                        {/*            Kết thúc :*/}
-                                        {/*            <input className={`form-control ${this.state.errorAdd.ketThuc ? 'is-invalid' : ''}`} name="ketThuc" type="date" onChange={this.thayDoiKetThucAdd}/>*/}
-                                        {/*            {this.state.errorAdd.ketThuc && <div className="text-danger">{this.state.errorAdd.ketThuc}</div>}*/}
-                                        {/*        </div>*/}
-                                        {/*        <div>*/}
-                                        {/*            Giảm giá :*/}
-                                        {/*            <input className={`form-control ${this.state.errorAdd.giamGia ? 'is-invalid' : ''}`} name="giamGia" onChange={this.thayDoiGiamGiaAdd}/>*/}
-                                        {/*            {this.state.errorAdd.giamGia && <div className="text-danger">{this.state.errorAdd.giamGia}</div>}*/}
-                                        {/*        </div>*/}
 
-                                        {/*        <div className='form-group'>*/}
-                                        {/*            <label>Kiểu khuyến mãi</label>*/}
-                                        {/*            <select name="kieuKhuyenMai" id="kieuKhuyenMai" className="form-control" onChange={this.thayDoiKieuKhuyenMaiAdd}>*/}
-                                        {/*                <option value="0">Phần trăm</option>*/}
-                                        {/*                <option value="1">Tiền</option>*/}
-                                        {/*            </select>*/}
-                                        {/*        </div>*/}
-                                        {/*        <div>*/}
-                                        {/*            Điều kiện :*/}
-                                        {/*            <input className={`form-control ${this.state.errorAdd.dieuKien ? 'is-invalid' : ''}`} name="dieuKien" onChange={this.thayDoiDieuKienAdd}/>*/}
-                                        {/*            {this.state.errorAdd.dieuKien && <div className="text-danger">{this.state.errorAdd.dieuKien}</div>}*/}
-                                        {/*        </div>*/}
-                                        {/*        <div>*/}
-                                        {/*           Số lượng :*/}
-                                        {/*            <input className={`form-control ${this.state.errorAdd.soLuong ? 'is-invalid' : ''}`} name="soLuong" onChange={this.thayDoiSoLuongAdd}/>*/}
-                                        {/*            {this.state.errorAdd.soLuong && <div className="text-danger">{this.state.errorAdd.soLuong}</div>}*/}
-                                        {/*        </div>*/}
-                                        {/*        <div className='form-group'>*/}
-                                        {/*            <label>Trạng thái</label>*/}
-                                        {/*            <select name="trangThai" id="trangThai" className="form-control" onChange={this.thayDoiTrangThaiAdd}>*/}
-                                        {/*                <option value="0">Ngừng hoạt động</option>*/}
-                                        {/*                <option value="1">Hoạt động</option>*/}
-                                        {/*                <option value="2">Đang diễn ra</option>*/}
-                                        {/*            </select>*/}
-                                        {/*        </div>*/}
-                                        {/*        <input type="submit" className="btn btn-primary" value="Add" style={{marginTop: '10px'}} onClick={this.add}/>*/}
-                                        {/*    </form>*/}
-                                        {/*</div>*/}
-
-
-                                        {/*<div className="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">*/}
-                                        {/*    <form className="row g-3"  method="get">*/}
-                                        {/*        <div className="form-group">*/}
-                                        {/*            /!* ID : ${mau.id} *!/*/}
-                                        {/*        </div>*/}
-                                        {/*        <div className="form-group">*/}
-                                        {/*            /!* Name : ${mau.name} *!/*/}
-                                        {/*        </div>*/}
-
-                                        {/*    </form>*/}
-                                        {/*</div>*/}
                                     </div>
 
 

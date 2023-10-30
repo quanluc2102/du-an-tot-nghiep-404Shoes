@@ -7,4 +7,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface KhuyenMaiRepository extends JpaRepository<KhuyenMai,Long> {
+    boolean existsKhuyenMaiByTen(String name);
 }

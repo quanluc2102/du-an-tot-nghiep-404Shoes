@@ -1,12 +1,14 @@
 import React, {Component} from 'react';
 import KhuyenMaiService from "../../services/khuyenmaiservice/KhuyenMaiService";
 import ReactPaginate from "react-paginate";
-
+import {toast} from 'react-toastify';
+import moment from 'moment';
 class KhuyenMaiComponents extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            khuyenMai: []
+            khuyenMai: [],
+            pageCount: 0,
         }
         // this.detail = this.detail.bind(this);
     }
@@ -118,17 +120,17 @@ class KhuyenMaiComponents extends Component {
                                                                 <td>{km.ma}</td>
                                                                 <td>{km.ten}</td>
                                                                 <td>{km.moTa}</td>
-                                                                <td>{km.batDau}</td>
-                                                                <td>{km.ketThuc}</td>
+                                                                <td>{moment(km.batDau).format('YYYY-MM-DD HH:mm:ss')}</td>
+                                                                <td>{moment(km.ketThuc).format('YYYY-MM-DD HH:mm:ss')}</td>
                                                                 <td>{km.giamGia}</td>
                                                                 <td>{km.kieuKhuyenMai === 0 ? "Phần trăm" : "Tiền"}</td>
                                                                 <td>{km.dieuKien}</td>
                                                                 <td>{km.soLuong}</td>
-                                                                <td>{km.trangThai === 0 ? "Ngừng hoạt động" : km.trangThai === 1 ? "Hoat dong" : "Dang dien ra"}</td>
+                                                                <td>{km.trangThai === 0 ? "Đã diễn ra" : km.trangThai === 1 ? "Sắp diễn ra" : "Đang diễn ra"}</td>
                                                                 <td>
-                                                                    <button onClick={() => this.delete(km.id)}
-                                                                            className='btn btn-danger'>Xóa
-                                                                    </button>
+                                                                    {/*<button onClick={() => this.delete(km.id)}*/}
+                                                                    {/*        className='btn btn-danger'>Xóa*/}
+                                                                    {/*</button>*/}
                                                                     <button onClick={() => this.detail(km.id)}
                                                                             className='btn btn-primary'>Chi tiết
                                                                     </button>
@@ -136,6 +138,7 @@ class KhuyenMaiComponents extends Component {
                                                             </tr>
                                                     )
                                                 }
+
                                                 </tbody>
 
 

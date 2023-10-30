@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@Service
+
 public interface KhuyenMaiService {
     Page<KhuyenMai> getAll(Pageable pageable);
     KhuyenMai add(KhuyenMai khuyenMai);
@@ -25,4 +25,5 @@ public interface KhuyenMaiService {
 
     Page<KhuyenMai>findAll(Pageable pageable);
     void imPortExcel(MultipartFile file);
+    boolean isKhuyenMaiNameUnique(String name);
 }

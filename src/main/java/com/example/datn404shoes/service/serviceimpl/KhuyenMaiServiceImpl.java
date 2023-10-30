@@ -98,4 +98,10 @@ public class KhuyenMaiServiceImpl implements KhuyenMaiService {
             throw new RuntimeException("fail to store excel data:" + e.getMessage());
         }
     }
+
+
+    @Override
+    public boolean isKhuyenMaiNameUnique(String name) {
+        return khuyenMaiRepository.existsKhuyenMaiByTen(name);
+    }
 }
