@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.sql.Date;
+import java.sql.Timestamp;
 
 @Entity
 @Table(name = "khuyen_mai")
@@ -30,10 +31,10 @@ public class KhuyenMai {
     private String moTa;
 
     @Column(name = "bat_dau")
-    private Date batDau;
+    private Timestamp batDau;
 
     @Column(name = "ket_thuc")
-    private Date ketThuc;
+    private Timestamp ketThuc;
 
     @Column(name = "giam_gia")
     private float giamGia;

@@ -54,12 +54,12 @@ public class KhuyenMaiExcelSave {
                         case 1:
                             km.setMoTa(currentCell.getStringCellValue());
                             break;
-                        case 2:
-                            km.setBatDau((Date) currentCell.getDateCellValue());
-                            break;
-                        case 3:
-                            km.setKetThuc((Date) currentCell.getDateCellValue());
-                            break;
+//                        case 2:
+//                            km.setBatDau((Date) currentCell.getDateCellValue());
+//                            break;
+//                        case 3:
+//                            km.setKetThuc((Date) currentCell.getDateCellValue());
+//                            break;
                         case 4:
                             km.setGiamGia((float) currentCell.getNumericCellValue());
                             break;

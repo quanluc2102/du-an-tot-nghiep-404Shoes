@@ -13,6 +13,8 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.xml.crypto.Data;
 import java.io.IOException;
 import java.sql.Date;
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,12 +33,18 @@ public class KhuyenMaiServiceImpl implements KhuyenMaiService {
     }
 
     @Override
+//    public KhuyenMai add(KhuyenMai khuyenMai) {
+//       khuyenMai.setBatDau(Date.valueOf(LocalDate.now()));
+//       khuyenMai.setKetThuc(Date.valueOf(LocalDate.now()));
+//       return khuyenMaiRepository.save(khuyenMai);
+//    }
     public KhuyenMai add(KhuyenMai khuyenMai) {
-       khuyenMai.setBatDau(Date.valueOf(LocalDate.now()));
-       khuyenMai.setKetThuc(Date.valueOf(LocalDate.now()));
-       return khuyenMaiRepository.save(khuyenMai);
+        Timestamp ngayBatDau = (khuyenMai.getBatDau());
+        Timestamp ngayKetThuc = (khuyenMai.getKetThuc());
+        khuyenMai.setBatDau(ngayBatDau);
+        khuyenMai.setKetThuc(ngayKetThuc);
+        return khuyenMaiRepository.save(khuyenMai);
     }
-
 
     @Override
     public void delete(Long id) {
@@ -56,8 +64,11 @@ public class KhuyenMaiServiceImpl implements KhuyenMaiService {
         khuyenMai.setMa(km.getMa());
         khuyenMai.setTen(km.getTen());
         khuyenMai.setMoTa(km.getMoTa());
-        khuyenMai.setBatDau(Date.valueOf(LocalDate.now()));
-        khuyenMai.setKetThuc(Date.valueOf(LocalDate.now()));
+//        khuyenMai.setBatDau(Date.valueOf(LocalDate.now()));
+//        khuyenMai.setKetThuc(Date.valueOf(LocalDate.now()));
+        Timestamp currentTimestamp = Timestamp.from(Instant.now());
+        khuyenMai.setBatDau(currentTimestamp);
+        khuyenMai.setKetThuc(currentTimestamp);
         khuyenMai.setGiamGia(km.getGiamGia());
         khuyenMai.setKieuKhuyenMai(km.getKieuKhuyenMai());
         khuyenMai.setDieuKien(km.getDieuKien());

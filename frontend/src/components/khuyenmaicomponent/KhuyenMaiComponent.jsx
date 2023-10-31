@@ -108,33 +108,7 @@ class KhuyenMaiComponent extends Component {
 
 
     }
-    // loadPageData(pageNumber){
-    //     KhuyenMaiService.getKhuyenMai(pageNumber).then(res => {
-    //         this.setState({
-    //             khuyenMai: res.data.content, // Dữ liệu trên trang hiện tại
-    //             pageCount: res.data.totalPages, // Tổng số trang
-    //         });
-    //     });
-    // }
-    // handlePageClick = data => {
-    //     let selected = data.selected; // Trang được chọn từ react-paginate
-    //     this.loadPageData(selected);
-    // };
-    // loadKhuyenMaiData(pageNumber) {
-    //     KhuyenMaiService.getKhuyenMai(pageNumber).then(res => {
-    //         this.setState({
-    //             khuyenMai: res.data.content, // Dữ liệu trên trang hiện tại
-    //             pageCount: res.data.totalPages, // Tổng số trang
-    //         });
-    //     });
-    //
-    //     const id = this.props.match.params.id;
-    //     if (id) {
-    //         KhuyenMaiService.getKhuyenMaiById(id).then((res) => {
-    //             this.setState({ khuyenMaiUpdate: res.data });
-    //         });
-    //     }
-    // }
+
     delete(id){
         KhuyenMaiService.deleteKhuyenMai(id).then((res)=>{
         });
@@ -147,11 +121,10 @@ class KhuyenMaiComponent extends Component {
         let giamGia = parseInt(this.state.khuyenMaiAdd.giamGia);
         let soLuong = parseInt(this.state.khuyenMaiAdd.soLuong);
         let  dieuKien = parseInt(this.state.khuyenMaiAdd. dieuKien);
-
-
         const batDau = new Date(this.state.khuyenMaiAdd.batDau);
         const ketThuc = new Date(this.state.khuyenMaiAdd.ketThuc);
         const currentDate = new Date();
+        const kieuKhuyenMai = this.state.khuyenMaiAdd.kieuKhuyenMai;
         if (!this.state.khuyenMaiAdd.ma) {
             this.setState({errorAdd: {...this.state.errorAdd, ma: "Mã không được bỏ trống!"}});
             return;
@@ -201,7 +174,25 @@ class KhuyenMaiComponent extends Component {
         } else if(giamGia < 0) {
             this.setState({ errorAdd: { ...this.state.errorAdd, giamGia: "Giá giảm không được bé hơn 0 !" } });
             return;
-        } else {
+        }
+        else if(giamGia < 0) {
+            this.setState({ errorAdd: { ...this.state.errorAdd, giamGia: "Giá giảm không được bé hơn 0 !" } });
+            return;
+        } else  if (kieuKhuyenMai === '0') { // Nếu là phần trăm
+            const giamGia = parseFloat(this.state.khuyenMaiAdd.giamGia);
+            if (giamGia <= 0 || giamGia > 100) {
+                // Hiển thị lỗi khi giảm giá không hợp lệ
+                this.setState({ errorAdd: { ...this.state.errorAdd, giamGia: "Phần trăm giảm giá phải nằm trong khoảng 1-100!" } });
+                return;
+            }
+        } else if (kieuKhuyenMai === '1') { // Nếu là tiền
+            const giamGia = parseFloat(this.state.khuyenMaiAdd.giamGia);
+            if (giamGia <= 0) {
+                // Hiển thị lỗi khi giảm giá không hợp lệ
+                this.setState({ errorAdd: { ...this.state.errorAdd, giamGia: "Số tiền giảm giá phải lớn hơn 0!" } });
+                return;
+            }
+        }else {
             this.setState({ errorAdd: { ...this.state.errorAdd, giamGia: "" } });
         }
         if (!this.state.khuyenMaiAdd.dieuKien) {
@@ -337,9 +328,17 @@ class KhuyenMaiComponent extends Component {
             this.setState({ errorUpdate: { ...this.state.errorUpdate, soLuong: "" } });
         }
         let id = this.state.khuyenMaiUpdate.id;
-        KhuyenMaiService.updateKhuyenMai(id,khuyenMai).then((res)=>{
-            window.location.href = (`/khuyenMai`);
-        })
+        KhuyenMaiService.updateKhuyenMai(khuyenMai, this.state.mauSacUpdate.id).then((res) => {
+            let khuyenMaiCapNhat = res.data; // Giả sử API trả về đối tượng vừa được cập nhật
+            this.setState(prevState => ({
+                khuyenMai: prevState.khuyenMai.map(km =>
+                    km.id === khuyenMaiCapNhat.id ? khuyenMaiCapNhat : km
+                )
+            }));
+        }).catch(error => {
+            // Log the error or handle it as needed
+            console.error("Update request error:", error);
+        });
     }
     detail(id){
         window.location.href = (`/khuyenMaidetail/${id}`);
