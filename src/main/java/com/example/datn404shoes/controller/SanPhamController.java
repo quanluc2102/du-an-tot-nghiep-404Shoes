@@ -59,8 +59,9 @@ public class SanPhamController {
 //        return sanPhamServiceimpl.add(sanPham);
 //    }
     public SanPham add(@RequestBody SanPhamRequest sanPham){
+        Long list = sanPhamRespository.count();
         SanPham a = new SanPham();
-        a.setMa(sanPham.getMa());
+        a.setMa("SP" + (list+1));
         a.setTen(sanPham.getTen());
         a.setDonGia(sanPham.getDonGia());
         a.setMoTa(sanPham.getMoTa());
@@ -94,6 +95,38 @@ public class SanPhamController {
         }
         return a;
     }
+    @PostMapping("add_spct/{id}")
+//    public SanPham add(@RequestBody SanPham sanPham){
+//
+//        return sanPhamServiceimpl.add(sanPham);
+//    }
+    public ResponseEntity<?> addSPCT(@PathVariable("id") long id,@RequestBody SanPhamRequest sanPham){
+        List<SanPhamChiTiet> list = sanPhamChiTietRepository.getAllSPCT(id);
+        for (MauSacValue ms:sanPham.getListMauSac()){
+            for (KichThuocValue kt:sanPham.getListKichThuoc()){
+                int count = 0;
+                for(int i = 0 ; i <list.size();i++){
+                    if(list.get(i).getMauSac().getId() == ms.getValue() && list.get(i).getKichThuoc().getId() == kt.getValue()){
+                        count++;
+                    }
+                }
+                if(count == 0){
+                    SanPhamChiTiet spct = new SanPhamChiTiet();
+                    spct.setNgayTao(java.sql.Date.valueOf(LocalDate.now()));
+                    spct.setNgayCapNhat(java.sql.Date.valueOf(LocalDate.now()));
+                    spct.setSoLuong(0);
+                    spct.setTrangThai(1);
+                    spct.setMauSac(MauSac.builder().id(ms.getValue()).build());
+                    spct.setKichThuoc(KichThuoc.builder().id(kt.getValue()).build());
+                    spct.setSanPham(SanPham.builder().id(id).build());
+                    sanPhamChiTietRepository.save(spct);
+                }else {
+
+                }
+            }
+        }
+        return ResponseEntity.ok("a");
+    }
     @GetMapping("detail_spa/{id}")
     public ResponseEntity<?> detailSPA(@PathVariable("id") Long id) {
 
@@ -114,15 +147,25 @@ public class SanPhamController {
     }
     @GetMapping("detail/{id}")
     public ResponseEntity<?> detail(@PathVariable("id") long id){
-
-        return ResponseEntity.ok(sanPhamServiceimpl.getOne(id));
+        SanPham a = sanPhamServiceimpl.getOne(id);
+        SanPhamValue b = new SanPhamValue();
+        b.setAnh(a.getAnh());
+        b.setMa(a.getMa());
+        b.setDanhMuc(a.getDanhMuc().getId());
+        b.setDonGia(a.getDonGia());
+        b.setTen(a.getTen());
+        b.setMoTa(a.getMoTa());
+        b.setThuongHieu(a.getThuongHieu().getId());
+        b.setTrangThai(a.getTrangThai());
+        b.setXuatXu(a.getXuatXu().getId());
+        return ResponseEntity.ok(b);
     }
 
     @PutMapping("update/{id}")
     public ResponseEntity<?> update(Model model,
                                     @PathVariable("id") long id, @RequestBody SanPhamRequest sanPham){
+        System.out.println(sanPham.getFiles());
         SanPham a = sanPhamServiceimpl.getOne(id);
-        a.setMa(sanPham.getMa());
         a.setTen(sanPham.getTen());
         a.setDonGia(sanPham.getDonGia());
         a.setMoTa(sanPham.getMoTa());
@@ -131,6 +174,7 @@ public class SanPhamController {
         a.setXuatXu(XuatXu.builder().id(sanPham.getXuatXuId()).build());
         a.setThuongHieu(ThuongHieu.builder().id(sanPham.getThuongHieuId()).build());
         sanPhamRespository.save(a);
+
         for(String file : sanPham.getFiles()){
             SanPhamAnh spa = new SanPhamAnh();
             spa.setAnh(file);

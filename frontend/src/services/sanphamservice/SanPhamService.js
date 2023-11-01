@@ -7,6 +7,8 @@ const BASE_URL_Anh_DETAIL = "http://localhost:8080/san_pham/detail_spa";
 const BASE_URL_ADD = "http://localhost:8080/san_pham/add";
 const BASE_URL_DELETE = "http://localhost:8080/san_pham/delete";
 const BASE_URL_SPA_DELETE = "http://localhost:8080/san_pham_anh/delete";
+const BASE_URL_SPCT_ADD = "http://localhost:8080/san_pham/add_spct";
+const BASE_URL_SPCT_DELETE = "http://localhost:8080/san_pham_chi_tiet/delete1";
 const BASE_URL_SPCT_UPDATE = "http://localhost:8080/san_pham_chi_tiet/updateAll";
 const BASE_URL_UPDATE = "http://localhost:8080/san_pham/update";
 const BASE_URL_KICHTHUOC_INDEX = "http://localhost:8080/kich_thuoc/index1";
@@ -21,7 +23,6 @@ class SanPhamService{
     getSanPham(pageNumber){
         return axios.get(BASE_URL_INDEX+`?page=${pageNumber}&size=5`);
     }
-
     getKichThuoc(){
         return axios.get(BASE_URL_KICHTHUOC_INDEX);
     }
@@ -76,6 +77,12 @@ class SanPhamService{
     }
     updateSanPhamChiTiet(listSPCT){
         return axios.put(BASE_URL_SPCT_UPDATE,listSPCT);
+    }
+    deleteSanPhamChiTiet(id){
+        return axios.delete(BASE_URL_SPCT_DELETE+"/"+id);
+    }
+    addSanPhamChiTiet(id,sanPham){
+        return axios.post(BASE_URL_SPCT_ADD+"/"+id,sanPham);
     }
 }
 export default new SanPhamService();

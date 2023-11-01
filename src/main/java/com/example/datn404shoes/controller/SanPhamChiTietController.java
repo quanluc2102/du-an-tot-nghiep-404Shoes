@@ -42,6 +42,14 @@ public class SanPhamChiTietController {
         return ResponseEntity.ok(response);
     }
 
+    @DeleteMapping("delete1/{id}")
+    public ResponseEntity<?> delete1(@PathVariable("id") Long id) {
+        repository.deleteById(id);
+        Map<String, Boolean> response = new HashMap<>();
+        response.put("Delete", Boolean.TRUE);
+        return ResponseEntity.ok(response);
+    }
+
     @GetMapping("detail/{id}")
     public ResponseEntity<?> detail(@PathVariable("id") Long id) {
 

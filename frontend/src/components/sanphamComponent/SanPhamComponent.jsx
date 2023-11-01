@@ -68,7 +68,6 @@ class SanPhamComponent extends Component {
             });
         });
     }
-
     handlePageClick = data => {
         let selected = data.selected; // Trang được chọn từ react-paginate
         this.loadPageData(selected);
@@ -422,10 +421,10 @@ class SanPhamComponent extends Component {
                                             <table className="table table-borderless datatable">
                                                 <thead>
                                                 <tr>
+                                                    <th>Ảnh</th>
+                                                    <th>Mã</th>
                                                     <th>Tên</th>
-                                                    <th>Giá nhập</th>
-                                                    <th>Giá bán</th>
-                                                    <th>Giảm giá</th>
+                                                    <th>Giá</th>
                                                     <th>Danh mục</th>
                                                     <th>Thương hiệu</th>
                                                     <th>Xuất xứ</th>
@@ -449,10 +448,10 @@ class SanPhamComponent extends Component {
                                                     this.state.sanPham.map(
                                                         sp =>
                                                             <tr key={sp.id}>
+                                                                <td><img src={'/niceadmin/img/'+ sp.anh} height={100} width={100}/></td>
+                                                                <td>{sp.ma}</td>
                                                                 <td>{sp.ten}</td>
-                                                                <td>{sp.giaNhap}</td>
-                                                                <td>{sp.giaBan}</td>
-                                                                <td>{sp.giamGia}</td>
+                                                                <td>{sp.donGia}</td>
                                                                 <td>{sp.danhMuc.ten}</td>
                                                                 <td>{sp.thuongHieu.ten}</td>
                                                                 <td>{sp.xuatXu.ten}</td>

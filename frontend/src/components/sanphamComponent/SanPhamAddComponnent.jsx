@@ -16,9 +16,7 @@ class SanPhamAddComponnent extends Component {
             listDanhMuc:[],
             sanPham:{
                 ten:'',
-                giaNhap:'',
-                giaBan:'',
-                giamGia:'',
+                donGia:'',
                 moTa:'',
                 thuongHieuId:'',
                 xuatXuId:'',
@@ -30,9 +28,7 @@ class SanPhamAddComponnent extends Component {
         this.handleUpload=this.handleUpload.bind(this);
         this.saveFileToPublic=this.saveFileToPublic.bind(this);
         this.thayDoiTenAdd=this.thayDoiTenAdd.bind(this);
-        this.thayDoiGiaNhapAdd=this.thayDoiGiaNhapAdd.bind(this);
-        this.thayDoiGiaBanAdd=this.thayDoiGiaBanAdd.bind(this);
-        this.thayDoiGiamGiaAdd=this.thayDoiGiamGiaAdd.bind(this);
+        this.thayDoiDonGiaAdd=this.thayDoiDonGiaAdd.bind(this);
         this.thayDoiMoTaAdd=this.thayDoiMoTaAdd.bind(this);
         this.thayDoiThuongHieuAdd=this.thayDoiThuongHieuAdd.bind(this);
         this.thayDoiXuatXuAdd=this.thayDoiXuatXuAdd.bind(this);
@@ -156,36 +152,12 @@ class SanPhamAddComponnent extends Component {
         this.setState({errorAdd:errorAdd});
         console.log(this.state.files)
     }
-    thayDoiGiaNhapAdd=(event)=>{
+    thayDoiDonGiaAdd=(event)=>{
         this.setState(
             prevState=>({
                 sanPham:{
                     ...prevState.sanPham,
-                    giaNhap:event.target.value
-                }
-            })
-        );
-        let errorAdd = {...this.state.errorAdd,giaNhap:""};
-        this.setState({errorAdd:errorAdd});
-    }
-    thayDoiGiaBanAdd=(event)=>{
-        this.setState(
-            prevState=>({
-                sanPham:{
-                    ...prevState.sanPham,
-                    giaBan:event.target.value
-                }
-            })
-        );
-        let errorAdd = {...this.state.errorAdd,giaBan:""};
-        this.setState({errorAdd:errorAdd});
-    }
-    thayDoiGiamGiaAdd=(event)=>{
-        this.setState(
-            prevState=>({
-                sanPham:{
-                    ...prevState.sanPham,
-                    giamGia:event.target.value
+                    donGia:event.target.value
                 }
             })
         );
@@ -287,18 +259,8 @@ class SanPhamAddComponnent extends Component {
                                 </div>
                                 <br/>
                                 <div style={{marginLeft:"30px"}}>
-                                    Giá nhập :
-                                    <input className="form-control" type="text" onChange={this.thayDoiGiaNhapAdd}/>
-                                </div>
-                                <br/>
-                                <div style={{marginLeft:"30px"}}>
-                                    Giá bán :
-                                    <input className="form-control" type="text" onChange={this.thayDoiGiaBanAdd}/>
-                                </div>
-                                <br/>
-                                <div style={{marginLeft:"30px"}}>
-                                    Giảm giá :
-                                    <input className="form-control" type="text" onChange={this.thayDoiGiamGiaAdd}/>
+                                    Đơn giá :
+                                    <input className="form-control" type="text" onChange={this.thayDoiDonGiaAdd}/>
                                 </div>
                                 <br/>
 
