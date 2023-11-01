@@ -251,7 +251,7 @@ class SanPhamAddComponnent extends Component {
                             <form>
                                 <div style={{marginLeft:"30px"}}>
                                     Chọn ảnh :
-                                    <input className="form-control" name="files" type="file" multiple={true} onChange={this.fileSelectedHandler}/>
+                                    <input className="form-control" name="files" type="file" multiple={true} onChange={this.fileSelectedHandler} accept="image/*"/>
                                 </div>
                                 <div style={{marginLeft:"30px"}}>
                                     Tên :
