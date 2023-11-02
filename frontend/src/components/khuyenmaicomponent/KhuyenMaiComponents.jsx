@@ -67,13 +67,6 @@ class KhuyenMaiComponents extends Component {
             <div>
                 <div className="pagetitle">
                     <h1>Khuyến mãi</h1>
-                    <nav>
-                        <ol className="breadcrumb">
-                            <li className="breadcrumb-item"><a href="index.html">Home</a></li>
-                            <li className="breadcrumb-item active">Overview</li>
-                            <li className="breadcrumb-item active">Khuyến mãi</li>
-                        </ol>
-                    </nav>
                 </div>
 
 
@@ -123,7 +116,7 @@ class KhuyenMaiComponents extends Component {
                                                                 <td>{moment(km.batDau).format('YYYY-MM-DD HH:mm:ss')}</td>
                                                                 <td>{moment(km.ketThuc).format('YYYY-MM-DD HH:mm:ss')}</td>
                                                                 <td>{km.giamGia}</td>
-                                                                <td>{km.kieuKhuyenMai === 0 ? "Phần trăm" : "Tiền"}</td>
+                                                                <td>{km.kieuKhuyenMai === 0 ? "Phần trăm" : km.kieuKhuyenMai === 1 ? " Tiền" : "Chọn kiểu khuyến mãi"}</td>
                                                                 <td>{km.dieuKien}</td>
                                                                 <td>{km.soLuong}</td>
                                                                 <td>{km.trangThai === 0 ? "Đã diễn ra" : km.trangThai === 1 ? "Sắp diễn ra" : "Đang diễn ra"}</td>

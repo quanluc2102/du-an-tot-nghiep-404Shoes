@@ -64,11 +64,10 @@ public class KhuyenMaiServiceImpl implements KhuyenMaiService {
         khuyenMai.setMa(km.getMa());
         khuyenMai.setTen(km.getTen());
         khuyenMai.setMoTa(km.getMoTa());
-//        khuyenMai.setBatDau(Date.valueOf(LocalDate.now()));
-//        khuyenMai.setKetThuc(Date.valueOf(LocalDate.now()));
-        Timestamp currentTimestamp = Timestamp.from(Instant.now());
-        khuyenMai.setBatDau(currentTimestamp);
-        khuyenMai.setKetThuc(currentTimestamp);
+        Timestamp ngayBatDau = (khuyenMai.getBatDau());
+        Timestamp ngayKetThuc = (khuyenMai.getKetThuc());
+        khuyenMai.setBatDau(ngayBatDau);
+        khuyenMai.setKetThuc(ngayKetThuc);
         khuyenMai.setGiamGia(km.getGiamGia());
         khuyenMai.setKieuKhuyenMai(km.getKieuKhuyenMai());
         khuyenMai.setDieuKien(km.getDieuKien());

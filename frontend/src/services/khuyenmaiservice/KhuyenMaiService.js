@@ -32,5 +32,10 @@ class KhuyenMaiService {
         console.log(id);
         return axios.put(API_UPDATE_URL+"/"+id,khuyenMai);
     }
+    // updateKhuyenMai(khuyenMaiUpdate, id) {
+    //     return axios.put(`http://localhost:8080/khuyen_mai/update/${id}`, khuyenMaiUpdate);
+    // }
+
+
 }
 export  default new KhuyenMaiService();

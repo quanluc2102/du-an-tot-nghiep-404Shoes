@@ -82,12 +82,12 @@ class KhuyenMaiComponent extends Component {
             errorAdd.giamGia = "Giảm giá không hợp lệ!";
         }
 
-        if (kieuKhuyenMai === '0') { // Phần trăm
+        if (kieuKhuyenMai === '1') { // Phần trăm
             const giamGiaValue = parseFloat(giamGia);
             if (giamGiaValue <= 0 || giamGiaValue > 100) {
                 errorAdd.giamGia = "Phần trăm giảm giá phải nằm trong khoảng 1-100!";
             }
-        } else if (kieuKhuyenMai === '1') { // Tiền
+        } else if (kieuKhuyenMai === '2') { // Tiền
             const giamGiaValue = parseFloat(giamGia);
             if (giamGiaValue <= 0) {
                 errorAdd.giamGia = "Số tiền giảm giá phải lớn hơn 0!";
@@ -155,13 +155,6 @@ class KhuyenMaiComponent extends Component {
             <div>
                 <div className="pagetitle">
                     <h1>Khuyến mãi</h1>
-                    <nav>
-                        <ol className="breadcrumb">
-                            <li className="breadcrumb-item"><a href="index.html">Home</a></li>
-                            <li className="breadcrumb-item active">Overview</li>
-                            <li className="breadcrumb-item active">Khuyến mãi</li>
-                        </ol>
-                    </nav>
                 </div>
                 <section className="section dashboard">
                     <div className="row">
@@ -195,18 +188,20 @@ class KhuyenMaiComponent extends Component {
                                             <input className={`form-control ${this.state.errorAdd.ketThuc ? 'is-invalid' : ''}`} name="ketThuc" type="datetime-local" onChange={this.thayDoiTruongAdd}/>
                                             {this.state.errorAdd.ketThuc && <div className="text-danger">{this.state.errorAdd.ketThuc}</div>}
                                         </div>
+                                        <div className='form-group'>
+                                            <label>Kiểu khuyến mãi</label>
+                                            <select name="kieuKhuyenMai" id="kieuKhuyenMai" className="form-control" onChange={this.thayDoiTruongAdd}>
+                                                <option value="2">Chọn kiểu khuyến mãi</option>
+                                                <option value="0">Phần trăm</option>
+                                                <option value="1">Tiền</option>
+                                            </select>
+                                        </div>
                                         <div>
                                             Giảm giá :
                                             <input className={`form-control ${this.state.errorAdd.giamGia ? 'is-invalid' : ''}`} name="giamGia" onChange={this.thayDoiTruongAdd}/>
                                             {this.state.errorAdd.giamGia && <div className="text-danger">{this.state.errorAdd.giamGia}</div>}
                                         </div>
-                                        <div className='form-group'>
-                                            <label>Kiểu khuyến mãi</label>
-                                            <select name="kieuKhuyenMai" id="kieuKhuyenMai" className="form-control" onChange={this.thayDoiTruongAdd}>
-                                                <option value="0">Phần trăm</option>
-                                                <option value="1">Tiền</option>
-                                            </select>
-                                        </div>
+
                                         <div>
                                             Điều kiện :
                                             <input className={`form-control ${this.state.errorAdd.dieuKien ? 'is-invalid' : ''}`} name="dieuKien" onChange={this.thayDoiTruongAdd}/>
