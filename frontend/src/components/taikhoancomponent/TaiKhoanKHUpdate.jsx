@@ -25,7 +25,6 @@ class TaiKhoanKHUpdate extends Component {
                 diaChi: '',
                 sdt: '',
                 ten: '',
-                cccd: null,
                 gioiTinh: '',
                 ngaySinh: '',
             },
@@ -33,7 +32,6 @@ class TaiKhoanKHUpdate extends Component {
                 diaChi: '',
                 sdt: '',
                 ten: '',
-                cccd: '',
                 gioiTinh: '',
                 ngaySinh: '',
                 username: '',
@@ -53,7 +51,6 @@ class TaiKhoanKHUpdate extends Component {
         this.thayDoiNGaySinhUpdate = this.thayDoiNGaySinhUpdate.bind(this);
         this.thayDoiUsernameUpdate = this.thayDoiUsernameUpdate.bind(this);
         this.thayDoiAnhUpdate = this.thayDoiAnhUpdate.bind(this);
-        this.thayDoiCCCDUpdate = this.thayDoiCCCDUpdate.bind(this);
         this.thayDoiEmailUpdate = this.thayDoiEmailUpdate.bind(this);
     }
 
@@ -292,14 +289,6 @@ class TaiKhoanKHUpdate extends Component {
 
                                             {this.state.errorUpdate.sdt &&
                                             <div className="text-danger">{this.state.errorUpdate.sdt}</div>}
-                                        </div>
-                                        <div>
-                                            CCCD :
-                                            <input
-                                                className={`form-control ${this.state.errorUpdate.cccd ? 'is-invalid' : ''}`}
-                                                style={{}}
-                                                name="cccd" value={this.state.nguoiDungUpdate && this.state.nguoiDungUpdate.cccd ? this.state.nguoiDungUpdate.cccd : ''}
-                                                disabled />
                                         </div>
                                         <div>
                                             Giới tính :

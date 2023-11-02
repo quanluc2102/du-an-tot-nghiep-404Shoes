@@ -28,7 +28,6 @@ class TaiKhoanKHComponent extends Component {
                 diaChi: '',
                 sdt: '',
                 ten: '',
-                cccd: '',
                 gioiTinh: '',
                 ngaySinh: '',
             },
@@ -44,7 +43,6 @@ class TaiKhoanKHComponent extends Component {
                 diaChi: '',
                 sdt: '',
                 ten: '',
-                cccd: '',
                 gioiTinh: '',
                 ngaySinh: '',
                 username: '',
@@ -56,7 +54,6 @@ class TaiKhoanKHComponent extends Component {
                 diaChi: '',
                 sdt: '',
                 ten: '',
-                cccd: '',
                 gioiTinh: '',
                 ngaySinh: '',
                 username: '',
@@ -76,7 +73,6 @@ class TaiKhoanKHComponent extends Component {
         this.thayDoiNGaySinhAdd = this.thayDoiNGaySinhAdd.bind(this);
         this.thayDoiUsernameAdd = this.thayDoiUsernameAdd.bind(this);
         this.thayDoiAnhAdd = this.thayDoiAnhAdd.bind(this);
-        this.thayDoiCCCDAdd = this.thayDoiCCCDAdd.bind(this);
         this.thayDoiEmailAdd = this.thayDoiEmailAdd.bind(this);
     }
 
@@ -581,17 +577,6 @@ class TaiKhoanKHComponent extends Component {
                                             />
                                             {this.state.errorAdd.diaChi &&
                                             <div className="text-danger">{this.state.errorAdd.diaChi}</div>}
-                                        </div>
-                                        <div>
-                                            CCCD :
-                                            <input
-                                                className={`form-control ${this.state.errorAdd.cccd ? 'is-invalid' : ''}`}
-                                                name="cccd" style={{}}
-                                                onChange={this.thayDoiCCCDAdd}
-                                                value={this.state.nguoiDungAdd.cccd}/>
-
-                                            {this.state.errorAdd.cccd &&
-                                            <div className="text-danger">{this.state.errorAdd.cccd}</div>}
                                         </div>
                                         <div>
                                             SDT :
