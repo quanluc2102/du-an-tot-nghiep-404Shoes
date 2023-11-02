@@ -3,8 +3,10 @@ package com.example.datn404shoes.repository;
 
 //import com.poly.duanbangiay.entity.TaiKhoan;
 import com.example.datn404shoes.entity.TaiKhoan;
+import com.example.datn404shoes.entity.ThongTinNguoiDung;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -36,4 +38,8 @@ public interface TaiKhoanResponsitory extends JpaRepository<TaiKhoan,Long> {
             "WHERE q.id = 4")
     List<TaiKhoan> findNhanVienByQuyenId4();
 
+
+
+//    @Query(value = "SELECT * FROM tai_khoan WHERE thong_tin_nguoi_dung_id = id;",nativeQuery = true)
+//    public List<TaiKhoan> getAllTaiKhoan(@Param("id") long id);
 }

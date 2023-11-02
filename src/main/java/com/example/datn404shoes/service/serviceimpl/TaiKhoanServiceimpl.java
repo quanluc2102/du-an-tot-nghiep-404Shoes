@@ -59,12 +59,13 @@ public class TaiKhoanServiceimpl implements TaiKhoanService {
     @Override
     public TaiKhoan update(Long id, TaiKhoan taiKhoan) {
         TaiKhoan tk = getOne(id);
-        tk.setUsername(taiKhoan.getUsername());
+//        tk.setUsername(taiKhoan.getUsername());
         tk.setEmail(taiKhoan.getEmail());
         tk.setNgayCapNhat(Date.valueOf(LocalDate.now()));
         tk.setPassword(taiKhoan.getPassword());
         tk.setAnh(taiKhoan.getAnh());
         tk.setTrangThai(taiKhoan.isTrangThai());
+        tk.setThongTinNguoiDung(taiKhoan.getThongTinNguoiDung());
         responsitory.save(taiKhoan);
         return tk;
     }
@@ -118,6 +119,11 @@ public class TaiKhoanServiceimpl implements TaiKhoanService {
 
         return responsitory.findNhanVienByQuyenId4();
     }
+
+//    @Override
+//    public List<TaiKhoan> getAllTaiKhoan(Long id) {
+//        return responsitory.getAllTaiKhoan(id);
+//    }
 
     @Override
     public TaiKhoan getOneBySDT(String sdt) {

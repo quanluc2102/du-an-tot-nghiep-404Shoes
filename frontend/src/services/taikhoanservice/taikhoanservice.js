@@ -26,14 +26,15 @@ class taikhoanservice {
     addTaiKhoan(taiKhoan) {
         return axios.post(API_API_BASE_URL_SAVE, taiKhoan)
     }
-    addQuanLy(taiKhoan) {
-        return axios.post(API_API_BASE_URL_SAVE_QUAN_LY, taiKhoan)
+    addQuanLy(data) {
+        console.log(data)
+        return axios.post(API_API_BASE_URL_SAVE_QUAN_LY, data);
     }
-    addNhanVien(taiKhoan) {
-        return axios.post(API_API_BASE_URL_SAVE_NHAN_VIEN, taiKhoan)
+    addNhanVien(data) {
+        return axios.post(API_API_BASE_URL_SAVE_NHAN_VIEN, data)
     }
-    addKhachHang(taiKhoan) {
-        return axios.post(API_API_BASE_URL_SAVE_KHACH_HANG, taiKhoan)
+    addKhachHang(data) {
+        return axios.post(API_API_BASE_URL_SAVE_KHACH_HANG, data)
     }
     deleteTaiKhoan(id) {
         return axios.delete(API_BASE_URL_DELETE + '/' + id)
@@ -45,6 +46,20 @@ class taikhoanservice {
     getQuanLyById(id) {
         return axios.get(API_BASE_URL_QUAN_LY + "/" + id);
     }
+    getNhanVienById(id) {
+        return axios.get(API_BASE_URL_NHAN_VIEN + "/" + id);
+    }
+    getKhachHangById(id) {
+        return axios.get(API_BASE_URL_KHACH_HANG + "/" + id);
+    }
+    getThongTinByTaiKhoan(taiKhoan) {
+        if (taiKhoan && taiKhoan.thongTinNguoiDung && taiKhoan.thongTinNguoiDung.id) {
+            return axios.get(API_BASE_URL_THONG_TIN + "/" + taiKhoan.thongTinNguoiDung.id);
+        } else {
+            return Promise.reject("Thông tin tài khoản không hợp lệ.");
+        }
+    }
+
     getNhanVien(pageNumber) {
         return axios.get(API_BASE_URL_NHAN_VIEN+`?page=${pageNumber}&size=5`);
     }

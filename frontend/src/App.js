@@ -27,6 +27,12 @@ import QuanLyComponent from "./components/taikhoancomponent/QuanLyComponent";
 import HoaDonChiTietComponents from "./components/hoadonchitietcomponents/HoaDonChiTietComponents";
 import TichDiemPopup from "./components/tichdiemcomponent/TichDiemPopup";
 import ThongTinComponent from "./components/thongtincomponent/ThongTinComponent";
+import TaiKhoanQuanLyComponent from "./components/taikhoancomponent/TaiKhoanQuanLyComponent";
+import TaiKhoanQLUpdate from "./components/taikhoancomponent/TaiKhoanQLUpdate";
+import TaiKhoanNVComponent from "./components/taikhoancomponent/TaiKhoanNVComponent";
+import TaiKhoanNVUpdate from "./components/taikhoancomponent/TaiKhoanNVUpdate";
+import TaiKhoanKHComponent from "./components/taikhoancomponent/TaiKhoanKHComponent";
+import TaiKhoanKHUpdate from "./components/taikhoancomponent/TaiKhoanKHUpdate";
 function App() {
   return (
 
@@ -66,9 +72,12 @@ function App() {
             <Route path='/phanquyen' component={PhanQuyenComment} />
             <Route path='/nhanvien' component={NhanVienComponent} />
             <Route path='/quanly' component={QuanLyComponent} />
-            <Route path='/quanlydetail/:id' component={QuanLyComponent} />
-            <Route path='/nhanviendetail/:id' component={NhanVienComponent} />
-            <Route path='/khachhangdetail/:id' component={KhachHangComponent} />
+            <Route path='/addQuanLy' component={TaiKhoanQuanLyComponent} />
+            <Route path='/addNhanVien' component={TaiKhoanNVComponent} />
+            <Route path='/addKhachHang' component={TaiKhoanKHComponent} />
+            <Route path='/quanlydetail/:id' component={TaiKhoanQLUpdate} />
+            <Route path='/nhanviendetail/:id' component={TaiKhoanNVUpdate} />
+            <Route path='/khachhangdetail/:id' component={TaiKhoanKHUpdate} />
             <Route path='/khachhang' component={KhachHangComponent} />
             <Route path='/thongtindetail/:id' component={ThongTinComponent} />
             <Route path='/thongtin' component={ThongTinComponent} />

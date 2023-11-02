@@ -78,6 +78,15 @@ class ThongTinComponent extends Component {
         }
     }
 
+    thayDoiNgaySinhUpdate = (event) => {
+        // Lấy giá trị ngày sinh từ sự kiện
+        const ngaySinh = event.target.value;
+
+        // Cập nhật ngày sinh trong state
+        const updatedNguoiDung = { ...this.state.nguoiDungUpdate, ngaySinh };
+        this.setState({ nguoiDungUpdate: updatedNguoiDung });
+    };
+
     loadThongTinData(pageNumber) {
         thongtinservice.getThongTin(pageNumber).then(res => {
             this.setState({

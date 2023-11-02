@@ -29,9 +29,6 @@ class thongtinservice {
         console.log(id)
         return axios.put(API_UPDATE_URL + "/" + id, thongTin)
     }
-
-
-
 }
 
 export default new thongtinservice();

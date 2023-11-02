@@ -51,7 +51,7 @@ public class ThongTinNguoiDungServiceimpl implements ThongTinNguoiDungService {
         a.setTen(thongTinNguoiDung.getTen());
         a.setDiaChi(thongTinNguoiDung.getDiaChi());
         a.setSdt(thongTinNguoiDung.getSdt());
-        a.setCCCD(thongTinNguoiDung.getCCCD());
+//        a.setCCCD(thongTinNguoiDung.getCCCD());
         a.setGioiTinh(thongTinNguoiDung.getGioiTinh());
         a.setNgaySinh(thongTinNguoiDung.getNgaySinh());
         a.setNgayCapNhat(thongTinNguoiDung.getNgayCapNhat());

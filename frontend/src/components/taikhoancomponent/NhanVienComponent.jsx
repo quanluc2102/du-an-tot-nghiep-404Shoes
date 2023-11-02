@@ -109,100 +109,11 @@ class NhanVienComponent extends Component {
         }
 
     }
-    add = (e) => {
-        e.preventDefault();
-        let nhanVienQuyen1 = {
-            username: this.state.taiKhoanAdd.username,
-            email: this.state.taiKhoanAdd.email,
-            // ngayTao: this.state.taiKhoanAdd.ngayTao,
-            // ngayCapNhat: this.state.taiKhoanAdd.ngayCapNhat,
-            password: this.state.taiKhoanAdd.password,
-            anh: this.state.taiKhoanAdd.anh,
-            trangThai: this.state.taiKhoanAdd.trangThai
-        }
-        ///username
-        const existingUser = this.state.nhanVienQuyen1.find(user => user.username === nhanVienQuyen1.username);
-        if (existingUser) {
-            this.setState({ errorAdd: { ...this.state.errorAdd, username: "Username đã tồn tại!" } });
-            return;
-        } else if (!this.state.taiKhoanAdd.username) {
-            this.setState({ errorAdd: { ...this.state.errorAdd, username: "username không được bỏ trống!" } });
-            return;
-        } else if (!isNaN(this.state.taiKhoanAdd.username)) {
-            this.setState({ errorAdd: { ...this.state.errorAdd, username: "username phải là chữ!" } });
-            return;
-        }
-        else {
-            this.setState({ errorAdd: { ...this.state.errorAdd, username: "" } });
-        }
-////email
-        const existingEmail = this.state.nhanVienQuyen1.find(user => user.email === nhanVienQuyen1.email);
-        if (existingEmail) {
-            this.setState({ errorAdd: { ...this.state.errorAdd, email: "Email đã tồn tại!" } });
-            return;
-        }else if (!this.state.taiKhoanAdd.email) {
-            this.setState({ errorAdd: { ...this.state.errorAdd, email: "Email không được bỏ trống!" } });
-            return;
-        } else if (!isValidEmail(this.state.taiKhoanAdd.email)) {
-            this.setState({ errorAdd: { ...this.state.errorAdd, email: "Email không hợp lệ!" } });
-            return;
-        } else {
-            this.setState({ errorAdd: { ...this.state.errorAdd, email: "" } });
-        }
-        function isValidEmail(email) {
-            const emailPattern = /^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$/;
-            return emailPattern.test(email);
-        }
-        ///pass
-        if (!this.state.taiKhoanAdd.password) {
-            this.setState({ errorAdd: { ...this.state.errorAdd, password: "Password không thể bỏ trống!" } });
-            return;
-        } else if (/\s/.test(this.state.taiKhoanAdd.password)) {
-            this.setState({ errorAdd: { ...this.state.errorAdd, password: "Password không được chứa khoảng trắng!" } });
-            return;
-        } else if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(this.state.taiKhoanAdd.password)) {
-            this.setState({ errorAdd: { ...this.state.errorAdd, password: "Password phải chứa ít nhất một ký tự đặc biệt!" } });
-            return;
-        } else {
-            this.setState({ errorAdd: { ...this.state.errorAdd, password: "" } });
-        }
-        ///anh
-        if (!this.state.taiKhoanAdd.anh) {
-            this.setState({ errorAdd: { ...this.state.errorAdd, anh: "Ảnh không được bỏ trống!" } });
-            return;
-        }
-        else {
-            this.setState({ errorAdd: { ...this.state.errorAdd, anh: "" } });
-        }
-        //trangthai
-        if (!this.state.taiKhoanAdd.trangThai) {
-            this.setState({errorAdd: { ...this.state.errorAdd, trangThai: "Trạng thái không được bỏ trống!" } });
-            return;
-        }
-        else {
-            this.setState({ errorAdd: { ...this.state.errorAdd, trangThai: "" } });
-        }
+    add(id) {
+        window.location.href = (`/addNhanVien`);
 
-
-        taikhoanservice.addNhanVien(nhanVienQuyen1).then((res) => {
-            if (res.status === 200) {
-                // Xử lý khi thêm thành công
-                let taiKhoanMoi = res.data;
-                this.setState(prevState => ({
-                    nhanVienQuyen1: [...prevState.nhanVienQuyen1, taiKhoanMoi]
-                }));
-                toast.success("Thêm thành công!");
-            } else {
-                // Xử lý khi có lỗi
-                const errorMessage = res.data || "Có lỗi xảy ra khi thêm danh mục.";
-                alert("lỗi" + errorMessage) // Hiển thị lỗi bằng Toast
-                console.log(errorMessage);
-            }
-        }).catch(error => {
-            // Log the error or handle it as needed
-            console.error("Update request error:", error);
-        });
     }
+
     detail(id) {
         window.location.href = (`/nhanviendetail/${id}`);
     }
@@ -426,7 +337,7 @@ class NhanVienComponent extends Component {
                 <section className="section dashboard">
                     <div className="row">
 
-                        <div className="col-lg-8">
+                        <div className="col-lg-12">
                             <div className="row">
                                 <div className="col-12">
                                     <div className="card recent-sales overflow-auto">
@@ -434,7 +345,11 @@ class NhanVienComponent extends Component {
 
                                         <div className="card-body">
                                             <h5 className="card-title">Danh sách nhân viên <span>| </span></h5>
-
+                                            <div style={{display: 'flex', justifyContent: 'flex-end'}}>
+                                                <button onClick={this.add} className='btn btn-success'>
+                                                    Tạo tài khoản
+                                                </button>
+                                            </div>
                                             <table className="table table-borderless datatable">
                                                 <thead>
                                                 <tr>
@@ -460,7 +375,7 @@ class NhanVienComponent extends Component {
                                                             {tk.anh && <img src={`/niceadmin/img/${tk.anh}`} width="100px" height="100px" />}
 
                                                         </td>
-                                                        {/*<td>{tk.trangThai == true ? "Hoạt động" : "Ngừng hoạt động"}</td>*/}
+                                                        <td>{tk.trangThai == true ? "Hoạt động" : "Ngừng hoạt động"}</td>
                                                         <td><label className="switch">
                                                             <input
                                                                 type="checkbox"
@@ -504,141 +419,141 @@ class NhanVienComponent extends Component {
                         </div>
 
 
-                        <div className="col-lg-4">
+                        {/*<div className="col-lg-4">*/}
 
 
-                            <div className="card">
+                        {/*    <div className="card">*/}
 
-                                <div className="card-body">
-                                    <h5 className="card-title">Sửa <span>| xx</span></h5>
+                        {/*        <div className="card-body">*/}
+                        {/*            <h5 className="card-title">Sửa <span>| xx</span></h5>*/}
 
-                                    <ul className="nav nav-tabs" id="myTab" role="tablist">
-                                        <li className="nav-item" role="presentation">
-                                            <button className="nav-link active" id="home-tab" data-bs-toggle="tab"
-                                                    data-bs-target="#home" type="button" role="tab" aria-controls="home"
-                                                    aria-selected="true">Edit
-                                            </button>
-                                        </li>
-                                        <li className="nav-item" role="presentation">
-                                            <button className="nav-link" id="profile-tab" data-bs-toggle="tab"
-                                                    data-bs-target="#profile" type="button" role="tab" aria-controls="profile"
-                                                    aria-selected="false">Add new
-                                            </button>
-                                        </li>
-                                        <li className="nav-item" role="presentation">
-                                            <button className="nav-link" id="contact-tab" data-bs-toggle="tab"
-                                                    data-bs-target="#contact" type="button" role="tab" aria-controls="contact"
-                                                    aria-selected="false">Detail
-                                            </button>
-                                        </li>
-                                    </ul>
-
-
-                                    <div className="tab-content pt-2" id="myTabContent">
-                                        <div className="tab-pane fade show active" id="home" role="tabpanel"
-                                             aria-labelledby="home-tab">
-                                            <form>
-
-                                                <div>
-                                                    UserName:
-                                                    <div>
-                                                     <span className={`form-control ${this.state.errorUpdate.username ? 'is-invalid' : ''}`}>
-                                                         {this.state.taiKhoanUpdate.username}
-                                                         </span>
-                                                    </div>
-
-                                                </div>
-                                                <div>
-                                                    Email :
-                                                    <input className={`form-control ${this.state.errorUpdate.email ? 'is-invalid' : ''}`} name="email" style={{}} value={this.state.taiKhoanUpdate.email} onChange={this.thayDoiEmailUpdate} />
-                                                    {this.state.errorUpdate.email && <div className="text-danger">{this.state.errorUpdate.email}</div>}
-
-                                                </div>
-                                                <div>
-                                                    PassWord :
-                                                    <input className={`form-control ${this.state.errorUpdate.password ? 'is-invalid' : ''}`} name="password"   style={{}} value={this.state.taiKhoanUpdate.password} onChange={this.thayDoiPasswordUpdate} />
-                                                    {this.state.errorUpdate.password && <div className="text-danger">{this.state.errorUpdate.password}</div>}
-
-                                                </div>
-                                                <div>
-                                                    Ảnh :
-                                                    <input className={`form-control ${this.state.errorUpdate.anh? 'is-invalid' : ''}`} name="anh" style={{}} value={this.state.taiKhoanUpdate.anh} onChange={this.thayDoiAnhUpdate} />
-                                                    {this.state.errorUpdate.anh && <div className="text-danger">{this.state.errorUpdate.anh}</div>}
-
-                                                </div>
-                                                <div className='form-group'>
-                                                    <label>Trạng thái</label>
-                                                    <select name="trangThai" id="trangThai" value={this.state.taiKhoanUpdate.trangThai} className={`form-control ${this.state.errorUpdate.trangThai ? 'is-invalid' : ''}`} onChange={this.thayDoiTrangThaiUpdate}>
-                                                        <option value=''>Chọn trạng thái</option>
-                                                        <option value="true">Hoạt động</option>
-                                                        <option value="false">Không hoạt động</option>
-                                                    </select>
-                                                    {this.state.errorUpdate.trangThai && <div className="text-danger">{this.state.errorUpdate.trangThai}</div>}
-                                                </div>
-                                                <input type="submit" className="btn btn-primary" value="Update" style={{ marginTop: '10px' }} onClick={this.update} />
-                                            </form>
-                                        </div>
-
-                                        <div className="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-                                            <form>
-
-                                                <div>
-                                                    UserName :
-                                                    <input className={`form-control ${this.state.errorAdd.username ? 'is-invalid' : ''}`} name="username" style={{}} value={this.state.taiKhoanAdd.username} onChange={this.thayDoiUsernameAdd} />
-                                                    {this.state.errorAdd.username && <div className="text-danger">{this.state.errorAdd.username}</div>}
-
-                                                </div>
-                                                <div>
-                                                    Email :
-                                                    <input className={`form-control ${this.state.errorAdd.email ? 'is-invalid' : ''}`} name="email" style={{}} value={this.state.taiKhoanAdd.email} onChange={this.thayDoiEmailAdd} />
-                                                    {this.state.errorAdd.email && <div className="text-danger">{this.state.errorAdd.email}</div>}
-
-                                                </div>
-                                                <div>
-                                                    PassWord :
-                                                    <input className={`form-control ${this.state.errorAdd.password ? 'is-invalid' : ''}`} name="password"   style={{}} value={this.state.taiKhoanAdd.password} onChange={this.thayDoiPasswordAdd} />
-                                                    {this.state.errorAdd.password && <div className="text-danger">{this.state.errorAdd.password}</div>}
-
-                                                </div>
-                                                <div>
-                                                    Ảnh :
-
-                                                    <input className={`form-control ${this.state.errorAdd.anh ? 'is-invalid' : ''}`} type={"file"}  name="anh"  style={{}} value={this.state.taiKhoanAdd.anh} onChange={this.thayDoiAnhAdd} />
-                                                    {this.state.errorAdd.anh && <div className="text-danger">{this.state.errorAdd.anh}</div>}
-
-                                                </div>
-                                                <div className='form-group'>
-                                                    <label>Trạng thái</label>
-                                                    <select name="trangThai" id="trangThai" className={`form-control ${this.state.errorAdd.trangThai ? 'is-invalid' : ''}`} onChange={this.thayDoiTrangThaiAdd}>
-                                                        <option value=''>Chọn trạng thái</option>
-                                                        <option value="true">Hoạt động</option>
-                                                        <option value="false">Không hoạt động</option>
-                                                    </select>
-                                                    {this.state.errorAdd.trangThai && <div className="text-danger">{this.state.errorAdd.trangThai}</div>}
-                                                </div>
-                                                <input type="submit" className="btn btn-primary" value="Add" style={{ marginTop: '10px' }} onClick={this.add} />
-                                            </form>
-                                        </div>
+                        {/*            <ul className="nav nav-tabs" id="myTab" role="tablist">*/}
+                        {/*                <li className="nav-item" role="presentation">*/}
+                        {/*                    <button className="nav-link active" id="home-tab" data-bs-toggle="tab"*/}
+                        {/*                            data-bs-target="#home" type="button" role="tab" aria-controls="home"*/}
+                        {/*                            aria-selected="true">Edit*/}
+                        {/*                    </button>*/}
+                        {/*                </li>*/}
+                        {/*                <li className="nav-item" role="presentation">*/}
+                        {/*                    <button className="nav-link" id="profile-tab" data-bs-toggle="tab"*/}
+                        {/*                            data-bs-target="#profile" type="button" role="tab" aria-controls="profile"*/}
+                        {/*                            aria-selected="false">Add new*/}
+                        {/*                    </button>*/}
+                        {/*                </li>*/}
+                        {/*                <li className="nav-item" role="presentation">*/}
+                        {/*                    <button className="nav-link" id="contact-tab" data-bs-toggle="tab"*/}
+                        {/*                            data-bs-target="#contact" type="button" role="tab" aria-controls="contact"*/}
+                        {/*                            aria-selected="false">Detail*/}
+                        {/*                    </button>*/}
+                        {/*                </li>*/}
+                        {/*            </ul>*/}
 
 
-                                        <div className="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
-                                            <form className="row g-3" method="get">
-                                                <div className="form-group">
-                                                    {/* ID : ${mau.id} */}
-                                                </div>
-                                                <div className="form-group">
-                                                    {/* Name : ${mau.name} */}
-                                                </div>
+                        {/*            <div className="tab-content pt-2" id="myTabContent">*/}
+                        {/*                <div className="tab-pane fade show active" id="home" role="tabpanel"*/}
+                        {/*                     aria-labelledby="home-tab">*/}
+                        {/*                    <form>*/}
 
-                                            </form>
-                                        </div>
-                                    </div>
+                        {/*                        <div>*/}
+                        {/*                            UserName:*/}
+                        {/*                            <div>*/}
+                        {/*                             <span className={`form-control ${this.state.errorUpdate.username ? 'is-invalid' : ''}`}>*/}
+                        {/*                                 {this.state.taiKhoanUpdate.username}*/}
+                        {/*                                 </span>*/}
+                        {/*                            </div>*/}
+
+                        {/*                        </div>*/}
+                        {/*                        <div>*/}
+                        {/*                            Email :*/}
+                        {/*                            <input className={`form-control ${this.state.errorUpdate.email ? 'is-invalid' : ''}`} name="email" style={{}} value={this.state.taiKhoanUpdate.email} onChange={this.thayDoiEmailUpdate} />*/}
+                        {/*                            {this.state.errorUpdate.email && <div className="text-danger">{this.state.errorUpdate.email}</div>}*/}
+
+                        {/*                        </div>*/}
+                        {/*                        <div>*/}
+                        {/*                            PassWord :*/}
+                        {/*                            <input className={`form-control ${this.state.errorUpdate.password ? 'is-invalid' : ''}`} name="password"   style={{}} value={this.state.taiKhoanUpdate.password} onChange={this.thayDoiPasswordUpdate} />*/}
+                        {/*                            {this.state.errorUpdate.password && <div className="text-danger">{this.state.errorUpdate.password}</div>}*/}
+
+                        {/*                        </div>*/}
+                        {/*                        <div>*/}
+                        {/*                            Ảnh :*/}
+                        {/*                            <input className={`form-control ${this.state.errorUpdate.anh? 'is-invalid' : ''}`} name="anh" style={{}} value={this.state.taiKhoanUpdate.anh} onChange={this.thayDoiAnhUpdate} />*/}
+                        {/*                            {this.state.errorUpdate.anh && <div className="text-danger">{this.state.errorUpdate.anh}</div>}*/}
+
+                        {/*                        </div>*/}
+                        {/*                        <div className='form-group'>*/}
+                        {/*                            <label>Trạng thái</label>*/}
+                        {/*                            <select name="trangThai" id="trangThai" value={this.state.taiKhoanUpdate.trangThai} className={`form-control ${this.state.errorUpdate.trangThai ? 'is-invalid' : ''}`} onChange={this.thayDoiTrangThaiUpdate}>*/}
+                        {/*                                <option value=''>Chọn trạng thái</option>*/}
+                        {/*                                <option value="true">Hoạt động</option>*/}
+                        {/*                                <option value="false">Không hoạt động</option>*/}
+                        {/*                            </select>*/}
+                        {/*                            {this.state.errorUpdate.trangThai && <div className="text-danger">{this.state.errorUpdate.trangThai}</div>}*/}
+                        {/*                        </div>*/}
+                        {/*                        <input type="submit" className="btn btn-primary" value="Update" style={{ marginTop: '10px' }} onClick={this.update} />*/}
+                        {/*                    </form>*/}
+                        {/*                </div>*/}
+
+                        {/*                <div className="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">*/}
+                        {/*                    <form>*/}
+
+                        {/*                        <div>*/}
+                        {/*                            UserName :*/}
+                        {/*                            <input className={`form-control ${this.state.errorAdd.username ? 'is-invalid' : ''}`} name="username" style={{}} value={this.state.taiKhoanAdd.username} onChange={this.thayDoiUsernameAdd} />*/}
+                        {/*                            {this.state.errorAdd.username && <div className="text-danger">{this.state.errorAdd.username}</div>}*/}
+
+                        {/*                        </div>*/}
+                        {/*                        <div>*/}
+                        {/*                            Email :*/}
+                        {/*                            <input className={`form-control ${this.state.errorAdd.email ? 'is-invalid' : ''}`} name="email" style={{}} value={this.state.taiKhoanAdd.email} onChange={this.thayDoiEmailAdd} />*/}
+                        {/*                            {this.state.errorAdd.email && <div className="text-danger">{this.state.errorAdd.email}</div>}*/}
+
+                        {/*                        </div>*/}
+                        {/*                        <div>*/}
+                        {/*                            PassWord :*/}
+                        {/*                            <input className={`form-control ${this.state.errorAdd.password ? 'is-invalid' : ''}`} name="password"   style={{}} value={this.state.taiKhoanAdd.password} onChange={this.thayDoiPasswordAdd} />*/}
+                        {/*                            {this.state.errorAdd.password && <div className="text-danger">{this.state.errorAdd.password}</div>}*/}
+
+                        {/*                        </div>*/}
+                        {/*                        <div>*/}
+                        {/*                            Ảnh :*/}
+
+                        {/*                            <input className={`form-control ${this.state.errorAdd.anh ? 'is-invalid' : ''}`} type={"file"}  name="anh"  style={{}} value={this.state.taiKhoanAdd.anh} onChange={this.thayDoiAnhAdd} />*/}
+                        {/*                            {this.state.errorAdd.anh && <div className="text-danger">{this.state.errorAdd.anh}</div>}*/}
+
+                        {/*                        </div>*/}
+                        {/*                        <div className='form-group'>*/}
+                        {/*                            <label>Trạng thái</label>*/}
+                        {/*                            <select name="trangThai" id="trangThai" className={`form-control ${this.state.errorAdd.trangThai ? 'is-invalid' : ''}`} onChange={this.thayDoiTrangThaiAdd}>*/}
+                        {/*                                <option value=''>Chọn trạng thái</option>*/}
+                        {/*                                <option value="true">Hoạt động</option>*/}
+                        {/*                                <option value="false">Không hoạt động</option>*/}
+                        {/*                            </select>*/}
+                        {/*                            {this.state.errorAdd.trangThai && <div className="text-danger">{this.state.errorAdd.trangThai}</div>}*/}
+                        {/*                        </div>*/}
+                        {/*                        <input type="submit" className="btn btn-primary" value="Add" style={{ marginTop: '10px' }} onClick={this.add} />*/}
+                        {/*                    </form>*/}
+                        {/*                </div>*/}
 
 
-                                </div>
+                        {/*                <div className="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">*/}
+                        {/*                    <form className="row g-3" method="get">*/}
+                        {/*                        <div className="form-group">*/}
+                        {/*                            /!* ID : ${mau.id} *!/*/}
+                        {/*                        </div>*/}
+                        {/*                        <div className="form-group">*/}
+                        {/*                            /!* Name : ${mau.name} *!/*/}
+                        {/*                        </div>*/}
 
-                            </div>
-                        </div>
+                        {/*                    </form>*/}
+                        {/*                </div>*/}
+                        {/*            </div>*/}
+
+
+                        {/*        </div>*/}
+
+
+
 
 
                     </div>

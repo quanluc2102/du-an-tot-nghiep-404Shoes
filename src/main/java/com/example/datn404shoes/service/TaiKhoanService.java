@@ -35,5 +35,7 @@ public interface TaiKhoanService {
 
     List<TaiKhoan> getNhanVienByQuyenId4();
 
+//    List<TaiKhoan> getAllTaiKhoan(Long id);
+
     TaiKhoan getOneBySDT(String sdt);
 }
