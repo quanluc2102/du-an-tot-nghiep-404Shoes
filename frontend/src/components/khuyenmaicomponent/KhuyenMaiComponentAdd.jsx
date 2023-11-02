@@ -54,19 +54,21 @@ class KhuyenMaiComponent extends Component {
             soLuong: '',
         };
 
-        if (!ma.trim()) {
-            errorAdd.ma = "Mã không được bỏ trống!";
+        if (!ma || !ma.trim() || /[\s!@#$%^&*()_+|~=`{}\[\]:";'<>?,.\\/-]+/.test(ma)) {
+            errorAdd.ma = "Mã không được bỏ trống hoặc chứa khoảng trắng hoặc kí tự đặc biệt!";
         }
 
-        if (!ten.trim()) {
-            errorAdd.ten = "Tên không được bỏ trống!";
+        if (!ten || !ten.trim() || /[\s!@#$%^&*()_+|~=`{}\[\]:";'<>?,.\\/-]+/.test(ten)) {
+            errorAdd.ten = "Tên không được bỏ trống hoặc chứa khoảng trắng hoặc kí tự đặc biệt!";
         }
 
-        if (!moTa.trim()) {
-            errorAdd.moTa = "Mô tả không được bỏ trống!";
-        }
 
-        const currentDate = new Date();
+            if (!moTa || !moTa.trim() || moTa.trim() === "") {
+                errorAdd.moTa = "Mô tả không được bỏ trống hoặc chỉ chứa khoảng trắng!";
+            }
+
+
+            const currentDate = new Date();
         const batDauDate = new Date(batDau);
         const ketThucDate = new Date(ketThuc);
 
@@ -78,9 +80,10 @@ class KhuyenMaiComponent extends Component {
             errorAdd.ketThuc = "Ngày kết thúc không hợp lệ!";
         }
 
-        if (!giamGia.trim() || isNaN(parseFloat(giamGia))) {
+        if (!giamGia.trim() || isNaN(parseFloat(giamGia)) || /[a-zA-Z]+/.test(giamGia)) {
             errorAdd.giamGia = "Giảm giá không hợp lệ!";
         }
+
 
         if (kieuKhuyenMai === '1') { // Phần trăm
             const giamGiaValue = parseFloat(giamGia);
@@ -94,13 +97,14 @@ class KhuyenMaiComponent extends Component {
             }
         }
 
-        if (!dieuKien.trim() || isNaN(parseInt(dieuKien)) || parseInt(dieuKien) < 0) {
+        if (!dieuKien.trim() || isNaN(parseInt(dieuKien)) || parseInt(dieuKien) < 0 || /[a-zA-Z]+/.test(dieuKien)) {
             errorAdd.dieuKien = "Điều kiện không hợp lệ!";
         }
 
-        if (!soLuong.trim() || isNaN(parseInt(soLuong)) || parseInt(soLuong) < 0) {
+        if (!soLuong.trim() || isNaN(parseInt(soLuong)) || parseInt(soLuong) < 0 || /[a-zA-Z]+/.test(soLuong)) {
             errorAdd.soLuong = "Số lượng không hợp lệ!";
         }
+
 
         if (Object.values(errorAdd).some((error) => error !== '')) {
             this.setState({ errorAdd });
@@ -163,57 +167,57 @@ class KhuyenMaiComponent extends Component {
                                 <div className="card-body">
                                     <h5 className="card-title">ADD<span>| xx</span></h5>
                                     <form>
-                                        <div>
-                                            Mã :
+                                        <div className='form-group'>
+                                          <label>Mã: <span style={{color: "red"}}>*</span></label>
                                             <input className={`form-control ${this.state.errorAdd.ma ? 'is-invalid' : ''}`} name="ma" onChange={this.thayDoiTruongAdd}/>
                                             {this.state.errorAdd.ma && <div className="text-danger">{this.state.errorAdd.ma}</div>}
                                         </div>
-                                        <div>
-                                            Tên :
+                                        <div className='form-group'>
+                                            <label>Tên: <span style={{color: "red"}}>*</span></label>
                                             <input className={`form-control ${this.state.errorAdd.ten ? 'is-invalid' : ''}`} name="ten" onChange={this.thayDoiTruongAdd}/>
                                             {this.state.errorAdd.ten && <div className="text-danger">{this.state.errorAdd.ten}</div>}
                                         </div>
-                                        <div>
-                                            Mô tả :
+                                        <div className='form-group'>
+                                            <label>Mô tả: <span style={{color: "red"}}>*</span></label>
                                             <input className={`form-control ${this.state.errorAdd.moTa ? 'is-invalid' : ''}`} name="moTa" onChange={this.thayDoiTruongAdd}/>
                                             {this.state.errorAdd.moTa && <div className="text-danger">{this.state.errorAdd.moTa}</div>}
                                         </div>
-                                        <div>
-                                            Bắt đầu :
+                                        <div className='form-group'>
+                                            <label>Bắt đầu: <span style={{color: "red"}}>*</span></label>
                                             <input className={`form-control ${this.state.errorAdd.batDau ? 'is-invalid' : ''}`} name="batDau" type="datetime-local" onChange={this.thayDoiTruongAdd}/>
                                             {this.state.errorAdd.batDau && <div className="text-danger">{this.state.errorAdd.batDau}</div>}
                                         </div>
-                                        <div>
-                                            Kết thúc :
+                                        <div className='form-group'>
+                                            <label>Kết thúc: <span style={{color: "red"}}>*</span></label>
                                             <input className={`form-control ${this.state.errorAdd.ketThuc ? 'is-invalid' : ''}`} name="ketThuc" type="datetime-local" onChange={this.thayDoiTruongAdd}/>
                                             {this.state.errorAdd.ketThuc && <div className="text-danger">{this.state.errorAdd.ketThuc}</div>}
                                         </div>
                                         <div className='form-group'>
-                                            <label>Kiểu khuyến mãi</label>
+                                            <label>Kiểu khuyến mãi <span style={{color: "red"}}>*</span></label>
                                             <select name="kieuKhuyenMai" id="kieuKhuyenMai" className="form-control" onChange={this.thayDoiTruongAdd}>
                                                 <option value="2">Chọn kiểu khuyến mãi</option>
                                                 <option value="0">Phần trăm</option>
                                                 <option value="1">Tiền</option>
                                             </select>
                                         </div>
-                                        <div>
-                                            Giảm giá :
+                                        <div className='form-group'>
+                                            <label>Giảm giá: <span style={{color: "red"}}>*</span></label>
                                             <input className={`form-control ${this.state.errorAdd.giamGia ? 'is-invalid' : ''}`} name="giamGia" onChange={this.thayDoiTruongAdd}/>
                                             {this.state.errorAdd.giamGia && <div className="text-danger">{this.state.errorAdd.giamGia}</div>}
                                         </div>
 
-                                        <div>
-                                            Điều kiện :
+                                        <div className='form-group'>
+                                            <label>Điều kiện: <span style={{color: "red"}}>*</span></label>
                                             <input className={`form-control ${this.state.errorAdd.dieuKien ? 'is-invalid' : ''}`} name="dieuKien" onChange={this.thayDoiTruongAdd}/>
                                             {this.state.errorAdd.dieuKien && <div className="text-danger">{this.state.errorAdd.dieuKien}</div>}
                                         </div>
-                                        <div>
-                                            Số lượng :
+                                        <div className='form-group'>
+                                            <label>Số lượng: <span style={{color: "red"}}>*</span></label>
                                             <input className={`form-control ${this.state.errorAdd.soLuong ? 'is-invalid' : ''}`} name="soLuong" onChange={this.thayDoiTruongAdd}/>
                                             {this.state.errorAdd.soLuong && <div className="text-danger">{this.state.errorAdd.soLuong}</div>}
                                         </div>
                                         <div className='form-group'>
-                                            <label>Trạng thái</label>
+                                            <label>Trạng thái: <span style={{color: "red"}}>*</span></label>
                                             <select name="trangThai" id="trangThai" className="form-control" onChange={this.thayDoiTruongAdd}>
                                                 <option value="0">Đã diễn ra</option>
                                                 <option value="1">Sắp diễn ra</option>

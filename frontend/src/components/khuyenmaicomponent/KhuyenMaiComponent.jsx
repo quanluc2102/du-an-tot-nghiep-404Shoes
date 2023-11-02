@@ -188,59 +188,62 @@ class KhuyenMaiComponent extends Component {
     };
 
     update = (e) => {
+        e.preventDefault(); // Prevent the default form submission
+
         const { khuyenMaiUpdate } = this.state;
-        // const { ma, ten, moTa, batDau, ketThuc, giamGia, kieuKhuyenMai, dieuKien, soLuong, trangThai } =khuyenMaiUpdate;
+        const errorUpdate = { ma: '', ten: '', moTa: '', batDau: '', ketThuc: '', giamGia: '', kieuKhuyenMai: '', dieuKien: '', soLuong: '', trangThai: '' };
+        const currentDate = new Date();
+        const batDauDate = new Date(khuyenMaiUpdate.batDau);
+        const ketThucDate = new Date(khuyenMaiUpdate.ketThuc);
 
-        // Kiểm tra lỗi và thiết lập errorUpdate
-        const errorUpdate = { ma: '', ten: '', moTa: '', batDau: '', ketThuc: '', giamGia: '', kieuKhuyenMai: '', dieuKien: '', soLuong: '' };
-        // const currentDate = new Date();
-        // const batDauDate = new Date(khuyenMaiUpdate.batDau);
-        // const ketThucDate = new Date(khuyenMaiUpdate.ketThuc);
-        //
-        // if (!khuyenMaiUpdate.ma.trim()) {
-        //     errorUpdate.ma = "Mã không được bỏ trống!";
-        // }
-        //
-        // if (!khuyenMaiUpdate.ten.trim()) {
-        //     errorUpdate.ten = "Tên không được bỏ trống!";
-        // }
-        //
-        // if (!khuyenMaiUpdate.moTa.trim()) {
-        //     errorUpdate.moTa = "Mô tả không được bỏ trống!";
-        // }
-        //
-        // if (!khuyenMaiUpdate.batDau || batDauDate < currentDate) {
-        //     errorUpdate.batDau = "Ngày bắt đầu không hợp lệ!";
-        // }
-        //
-        // if (!khuyenMaiUpdate.ketThuc || ketThucDate < batDauDate || ketThucDate < currentDate) {
-        //     errorUpdate.ketThuc = "Ngày kết thúc không hợp lệ!";
-        // }
-        //
-        // if (khuyenMaiUpdate.kieuKhuyenMai === '0' || khuyenMaiUpdate.kieuKhuyenMai === '1') {
-        //     const giamGiaValue = parseFloat(khuyenMaiUpdate.giamGia);
-        //     if (isNaN(giamGiaValue) || (khuyenMaiUpdate.kieuKhuyenMai === '0' && (giamGiaValue <= 0 || giamGiaValue > 100)) || (khuyenMaiUpdate.kieuKhuyenMai === '1' && giamGiaValue <= 0)) {
-        //         errorUpdate.giamGia = "Giảm giá không hợp lệ!";
-        //     }
-        // }
-        //
-        // if (!khuyenMaiUpdate.dieuKien) {
-        //     errorUpdate.dieuKien = "Điều kiện không được bỏ trống!";
-        // }
-        //
-        // if (!khuyenMaiUpdate.soLuong || isNaN(parseInt(khuyenMaiUpdate.soLuong))) {
-        //     errorUpdate.soLuong = "Số lượng không hợp lệ!";
-        // }
+        if (khuyenMaiUpdate.ma !== null && khuyenMaiUpdate.ma.trim() === '') {
+            errorUpdate.ma = "Mã không được bỏ trống!";
+        }
 
-        // Thiết lập errorUpdate vào state
+        if (khuyenMaiUpdate.ten !== null && khuyenMaiUpdate.ten.trim() === '') {
+            errorUpdate.ten = "Tên không được bỏ trống!";
+        }
+
+        if (khuyenMaiUpdate.moTa !== null && khuyenMaiUpdate.moTa.trim() === '') {
+            errorUpdate.moTa = "Mô tả không được bỏ trống!";
+        }
+
+
+        if (!khuyenMaiUpdate.batDau || batDauDate < currentDate) {
+            errorUpdate.batDau = "Ngày bắt đầu không hợp lệ!";
+        }
+
+        if (!khuyenMaiUpdate.ketThuc || ketThucDate < batDauDate || ketThucDate < currentDate) {
+            errorUpdate.ketThuc = "Ngày kết thúc không hợp lệ!";
+        }
+
+        if (khuyenMaiUpdate.kieuKhuyenMai === '0' || khuyenMaiUpdate.kieuKhuyenMai === '1') {
+            const giamGiaValue = parseFloat(khuyenMaiUpdate.giamGia);
+            if (isNaN(giamGiaValue) || (khuyenMaiUpdate.kieuKhuyenMai === '0' && (giamGiaValue <= 0 || giamGiaValue > 100)) || (khuyenMaiUpdate.kieuKhuyenMai === '1' && giamGiaValue <= 0)) {
+                errorUpdate.giamGia = "Giảm giá không hợp lệ!";
+            }
+        }
+
+        if (!khuyenMaiUpdate.dieuKien || khuyenMaiUpdate.dieuKien <= 0) {
+            errorUpdate.dieuKien = "Điều kiện không hợp lệ!";
+        }
+
+
+        if (khuyenMaiUpdate.soLuong < 0 || isNaN(parseInt(khuyenMaiUpdate.soLuong))) {
+            errorUpdate.soLuong = "Số lượng không hợp lệ!";
+        }
+
+
+        // Set the error state
         this.setState({ errorUpdate });
 
-        // Kiểm tra xem có lỗi nào không
+        // Check if there are any validation errors
         if (Object.values(errorUpdate).some((error) => error !== '')) {
             return;
         }
 
         const id = khuyenMaiUpdate.id;
+        // Continue with the update logic
         KhuyenMaiService.updateKhuyenMai(id, khuyenMaiUpdate)
             .then((res) => {
                 if (res.status === 200) {
@@ -254,7 +257,9 @@ class KhuyenMaiComponent extends Component {
                 console.error('Lỗi khi cập nhật khuyến mãi:', error);
                 toast.error('Có lỗi xảy ra khi cập nhật.');
             });
-    }
+    };
+
+
     detail(id) {
         this.props.history.push(`/khuyenMaidetail/${id}`);
     }
