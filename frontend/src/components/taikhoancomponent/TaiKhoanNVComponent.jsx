@@ -529,14 +529,14 @@ class TaiKhoanNVComponent extends Component {
         return (
             <div>
                 <div className="pagetitle">
-                    <h1>Khuyến mãi</h1>
-                    <nav>
-                        <ol className="breadcrumb">
-                            <li className="breadcrumb-item"><a href="index.html">Home</a></li>
-                            <li className="breadcrumb-item active">Overview</li>
-                            <li className="breadcrumb-item active">Tài khoản</li>
-                        </ol>
-                    </nav>
+                    <h1>Tài khoản nhân viên</h1>
+                    {/*<nav>*/}
+                    {/*    <ol className="breadcrumb">*/}
+                    {/*        <li className="breadcrumb-item"><a href="index.html">Home</a></li>*/}
+                    {/*        <li className="breadcrumb-item active">Overview</li>*/}
+                    {/*        <li className="breadcrumb-item active">Tài khoản</li>*/}
+                    {/*    </ol>*/}
+                    {/*</nav>*/}
                 </div>
 
 
@@ -546,7 +546,7 @@ class TaiKhoanNVComponent extends Component {
                             <div className="card">
 
                                 <div className="card-body">
-                                    <h5 className="card-title">ADD<span>| xx</span></h5>
+                                    {/*<h5 className="card-title">ADD<span>| xx</span></h5>*/}
                                     <form>
                                         <div>
                                             Ảnh :

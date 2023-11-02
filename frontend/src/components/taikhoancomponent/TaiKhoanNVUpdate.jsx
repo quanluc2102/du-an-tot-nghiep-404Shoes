@@ -229,13 +229,13 @@ class TaiKhoanNVUpdate extends Component {
         return (
             <div>
                 <div className="pagetitle">
-                    <h1>Tài khoản</h1>
+                    <h1>Cập nhật tài khoản nhân viên</h1>
                     <nav>
-                        <ol className="breadcrumb">
-                            <li className="breadcrumb-item"><a href="index.html">Home</a></li>
-                            <li className="breadcrumb-item active">Overview</li>
-                            <li className="breadcrumb-item active">Quản lý</li>
-                        </ol>
+                        {/*<ol className="breadcrumb">*/}
+                        {/*    <li className="breadcrumb-item"><a href="index.html">Home</a></li>*/}
+                        {/*    <li className="breadcrumb-item active">Overview</li>*/}
+                        {/*    <li className="breadcrumb-item active">Quản lý</li>*/}
+                        {/*</ol>*/}
                     </nav>
                 </div>
 
@@ -246,7 +246,7 @@ class TaiKhoanNVUpdate extends Component {
                             <div className="card">
 
                                 <div className="card-body">
-                                    <h5 className="card-title">ADD<span>| xx</span></h5>
+                                    {/*<h5 className="card-title">ADD<span>| xx</span></h5>*/}
                                     <form>
                                         <div>
                                             Ảnh :

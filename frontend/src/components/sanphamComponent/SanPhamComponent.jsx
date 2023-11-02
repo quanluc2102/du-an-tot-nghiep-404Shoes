@@ -382,13 +382,13 @@ class SanPhamComponent extends Component {
         return (
             <div>
                 <div className="pagetitle">
-                    <h1>Color</h1>
+                    <h1>Quản lý sản phẩm</h1>
                     <nav>
-                        <ol className="breadcrumb">
-                            <li className="breadcrumb-item"><a href="index.html">Home</a></li>
-                            <li className="breadcrumb-item active">Overview</li>
-                            <li className="breadcrumb-item active">Color</li>
-                        </ol>
+                        {/*<ol className="breadcrumb">*/}
+                        {/*    <li className="breadcrumb-item"><a href="index.html">Home</a></li>*/}
+                        {/*    <li className="breadcrumb-item active">Overview</li>*/}
+                        {/*    <li className="breadcrumb-item active">Color</li>*/}
+                        {/*</ol>*/}
                     </nav>
                 </div>
 
@@ -416,7 +416,7 @@ class SanPhamComponent extends Component {
 
 
                                         <div className="card-body">
-                                            <h5 className="card-title">Color <span>| </span></h5>
+                                            <h5 className="card-title">Sản phẩm <span>| </span></h5>
 
                                             <table className="table table-borderless datatable">
                                                 <thead>

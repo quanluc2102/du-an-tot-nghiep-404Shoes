@@ -333,13 +333,13 @@ class QuanLyComponent extends Component {
         return (
             <div>
                 <div className="pagetitle">
-                    <h1>Color</h1>
+                    <h1>Khách hàng</h1>
                     <nav>
-                        <ol className="breadcrumb">
-                            <li className="breadcrumb-item"><a href="index.html">Home</a></li>
-                            <li className="breadcrumb-item active">Overview</li>
-                            <li className="breadcrumb-item active">Color</li>
-                        </ol>
+                        {/*<ol className="breadcrumb">*/}
+                        {/*    <li className="breadcrumb-item"><a href="index.html">Home</a></li>*/}
+                        {/*    <li className="breadcrumb-item active">Overview</li>*/}
+                        {/*    <li className="breadcrumb-item active">Color</li>*/}
+                        {/*</ol>*/}
                     </nav>
                 </div>
 

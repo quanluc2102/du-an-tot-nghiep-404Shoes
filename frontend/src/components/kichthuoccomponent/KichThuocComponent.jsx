@@ -292,7 +292,7 @@ class KichThuocComponent extends Component {
                                                                         <span className="slider round"></span>
                                                                     </label></td>
                                                                     <td>
-                                                                        <button onClick={() => this.delete(kt.id)} className='btn btn-danger'>Xóa</button>
+                                                                        {/*<button onClick={() => this.delete(kt.id)} className='btn btn-danger'>Xóa</button>*/}
                                                                         <button onClick={() => this.detail(kt.id)} className='btn btn-primary'>Chi tiết</button>
                                                                     </td>
                                                                 </tr>
