@@ -32,6 +32,9 @@ public class SanPhamChiTiet {
     @Column(name = "so_luong")
     private Integer soLuong;
 
+    @Column(name = "don_gia")
+    private double donGia;
+
 
     @ManyToOne
     @JoinColumn(name = "kich_thuoc", referencedColumnName = "id", nullable = true)

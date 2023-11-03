@@ -21,8 +21,8 @@ public class TaiKhoan {
     @Column(name = "id")
     private long id;
 
-    @Column(name = "username")
-    private String username;
+    @Column(name = "ma_tai_khoan")
+    private String maTaiKhoan;
 
     @Column(name = "email")
     private String email;

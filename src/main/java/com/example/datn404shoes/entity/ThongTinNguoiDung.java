@@ -18,9 +18,6 @@ public class ThongTinNguoiDung {
     @Column(name = "id")
     private long id;
 
-    @Column(name = "dia_chi")
-    private String diaChi;
-
     @Column(name = "sdt")
     private String sdt;
 
@@ -38,6 +35,5 @@ public class ThongTinNguoiDung {
 
     @Column(name = "ngay_cap_nhat")
     private Date ngayCapNhat;
-
 
 }

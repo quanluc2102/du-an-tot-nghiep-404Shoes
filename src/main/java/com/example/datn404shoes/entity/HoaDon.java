@@ -18,6 +18,9 @@ public class HoaDon {
     @Column(name = "id")
     private Long id;
 
+    @Column(name = "ma_hoa_don")
+    private String maHoaDon;
+
     @Column(name = "ngay_tao")
     private Date ngayTao;
 
@@ -62,13 +65,16 @@ public class HoaDon {
     @Column(name = "email")
     private String email;
 
-    @Column(name = "thanh_pho")
-    private String thanhPho;
+    @Column(name = "dia_chi_cu_the")
+    private String diaChiCuThe;
+
+    @Column(name = "tinh_thanh_pho")
+    private String tinhThanhPho;
 
     @Column(name = "quan_huyen")
     private String quanHuyen;
 
-    @Column(name = "phuong_xa")
-    private String phuongXa;
+    @Column(name = "xa_phuong_thi_tran")
+    private String xaPhuongThiTran;
 
 }

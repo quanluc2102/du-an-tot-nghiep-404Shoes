@@ -25,8 +25,6 @@ public class SanPham {
     private Date ngayTao;
     @Column(name = "ten")
     private String ten;
-    @Column(name = "don_gia")
-    private double donGia;
     @Column(name = "trang_thai")
     private int trangThai;
     @Column(name = "ngay_cap_nhat")
