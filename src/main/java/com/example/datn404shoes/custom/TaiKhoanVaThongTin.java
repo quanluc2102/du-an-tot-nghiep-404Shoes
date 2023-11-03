@@ -5,11 +5,13 @@ import com.example.datn404shoes.entity.ThongTinNguoiDung;
 import lombok.Builder;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 public class TaiKhoanVaThongTin {
     private ThongTinNguoiDung thongTinNguoiDung;
     private TaiKhoan taiKhoan;
-
+    private List<String> files;
     public TaiKhoanVaThongTin() {
         // Hãy tạo các constructor và getter, setter nếu cần thiết
     }

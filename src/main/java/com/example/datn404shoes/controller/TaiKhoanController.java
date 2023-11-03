@@ -107,6 +107,7 @@ public class TaiKhoanController {
 
         var b = thongTinNguoiDungServiceimpl.add(thongTinNguoiDung);
         taiKhoan.setThongTinNguoiDung(b);
+        taiKhoan.setAnh(taiKhoanVaThongTin.getFiles().get(0));
         serviceimpl.add(taiKhoan);
         PhanQuyen phanQuyen = new PhanQuyen();
         phanQuyen.setTaiKhoan(TaiKhoan.builder().id(taiKhoan.getId()).build());

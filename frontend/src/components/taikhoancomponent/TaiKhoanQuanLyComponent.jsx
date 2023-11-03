@@ -12,6 +12,7 @@ class TaiKhoanQuanLyComponent extends Component {
             nhanVienQuyen2: [],
             thongTinNguoiDung: [],
             pageCount: 0,
+            files:null,
             taiKhoanAdd: {
                 username: '',
                 email: '',
@@ -102,10 +103,15 @@ class TaiKhoanQuanLyComponent extends Component {
 
     add = (e) => {
         e.preventDefault();
+        let listFile = [];
+        for(let i=0;i<this.state.files.length;i++){
+            listFile.push(this.state.files[i].name);
+        }
         const { taiKhoanAdd, nguoiDungAdd } = this.state;
         const requestData = {
             taiKhoan: taiKhoanAdd,
             thongTinNguoiDung: nguoiDungAdd,
+            files:listFile,
             //     username: this.state.taiKhoanAdd.username,
             //     email: this.state.taiKhoanAdd.email,
             //     password: this.state.taiKhoanAdd.password,
@@ -406,14 +412,15 @@ class TaiKhoanQuanLyComponent extends Component {
         this.setState({errorAdd: errorAdd});
     }
     thayDoiAnhAdd = (event) => {
-        this.setState(
-            prevState => ({
-                taiKhoanAdd: {
-                    ...prevState.taiKhoanAdd,
-                    anh: event.target.value
-                }
-            })
-        );
+        // this.setState(
+        //     prevState => ({
+        //         taiKhoanAdd: {
+        //             ...prevState.taiKhoanAdd,
+        //             anh: event.target.value
+        //         }
+        //     })
+        // );
+        this.setState({ files: [ ...event.target.files] })
         let errorAdd = {...this.state.errorAdd, anh: ""};
         this.setState({errorAdd: errorAdd});
     }
@@ -557,7 +564,7 @@ class TaiKhoanQuanLyComponent extends Component {
                                             Ảnh :
                                             <input
                                                 className={`form-control ${this.state.errorAdd.anh ? 'is-invalid' : ''}`}
-                                                type={"file"} value={this.state.taiKhoanAdd.anh}
+                                                type="file" value={this.state.taiKhoanAdd.anh}
                                                 onChange={this.thayDoiAnhAdd}/>
                                             {this.state.errorAdd.anh &&
                                             <div className="text-danger">{this.state.errorAdd.anh}</div>}
