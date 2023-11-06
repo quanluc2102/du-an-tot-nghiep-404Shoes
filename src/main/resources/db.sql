@@ -8,7 +8,7 @@ go
 
 
 
-
+select * from san_pham
 
 -- Create thong_tin_nguoi_dung table
 CREATE TABLE thong_tin_nguoi_dung (
@@ -22,17 +22,18 @@ CREATE TABLE thong_tin_nguoi_dung (
 
 
 --thêm bảng địa chỉ giao hàng
-CREATE TABLE dia_chi_giao_hang (
-                                   id BIGINT PRIMARY KEY IDENTITY(1,1),
-                                   ten_nguoi_nhan NVARCHAR(255) NOT NULL,
-                                   so_dien_thoai NVARCHAR(10)NOT NULL,
-                                   dia_chi_cu_the NVARCHAR(255) NOT NULL,
-                                   tinh_thanh_pho NVARCHAR(255) NOT NULL,
-                                   quan_huyen NVARCHAR(255) NOT NULL,
-                                   xa_phuong_thi_tran nvarchar(255)NOT NULL,
-                                   ngay_cap_nhat DATETIME,
-                                   thong_tin_nguoi_dung_id BIGINT,
-                                   FOREIGN KEY (thong_tin_nguoi_dung_id) REFERENCES thong_tin_nguoi_dung(id)
+CREATE TABLE dia_chi (
+                         id BIGINT PRIMARY KEY IDENTITY(1,1),
+                         ten NVARCHAR(255) NOT NULL,
+                         so_dien_thoai NVARCHAR(10)NOT NULL,
+                         dia_chi_cu_the NVARCHAR(255) NOT NULL,
+                         tinh_thanh_pho NVARCHAR(255) NOT NULL,
+                         quan_huyen NVARCHAR(255) NOT NULL,
+                         xa_phuong_thi_tran nvarchar(255)NOT NULL,
+                         ngay_cap_nhat DATETIME,
+                         thong_tin_nguoi_dung_id BIGINT,
+                         trang_thai BIT NOT NULL,
+                         FOREIGN KEY (thong_tin_nguoi_dung_id) REFERENCES thong_tin_nguoi_dung(id)
 );
 
 
@@ -188,7 +189,7 @@ CREATE TABLE hoa_don (
                          FOREIGN KEY (tai_khoan_id) REFERENCES tai_khoan(id),
                          FOREIGN KEY (thanh_toan_id) REFERENCES thanh_toan(id)
 );
-
+select * from thong_tin_nguoi_dung
 CREATE TABLE gio_hang (
                           id BIGINT PRIMARY KEY IDENTITY(1,1),
                           ngay_tao DATE NOT NULL,
@@ -360,12 +361,12 @@ VALUES
 
 
 
-INSERT INTO dia_chi_giao_hang(ten_nguoi_nhan, so_dien_thoai, dia_chi_cu_the, tinh_thanh_pho, quan_huyen, xa_phuong_thi_tran,ngay_cap_nhat,thong_tin_nguoi_dung_id)
+INSERT INTO dia_chi(ten, so_dien_thoai, dia_chi_cu_the, tinh_thanh_pho, quan_huyen, xa_phuong_thi_tran,ngay_cap_nhat,thong_tin_nguoi_dung_id,trang_thai)
 VALUES
-( N'Ma Văn Quang', '0967565467', N'SỐ 22', N'Hà Nội',N'Cầu Giấy',N'Xuân Thủy',GETDATE(),1),
-( N'Nguyễn Thị Bích', '0887656545', N'SỐ 33', N'Hà Nội', N'Đống Đa',N'Xuân Thủy',GETDATE(),1),
-( N'Tô GIang', '0887556745', N'SỐ 22',  N'Hà Nội',N'Cầu Giấy',N'Xuân Thủy',GETDATE(),2),
-( N'Xuân Thu', '0887656545', N'SỐ 33',  N'Đống Đa',N'Đống Đa',N'Xuân Thủy',GETDATE(),2)
+( N'Ma Văn Quang', '0967565467', N'SỐ 22', N'Hà Nội',N'Cầu Giấy',N'Xuân Thủy',GETDATE(),1,1),
+( N'Nguyễn Thị Bích', '0887656545', N'SỐ 33', N'Hà Nội', N'Đống Đa',N'Xuân Thủy',GETDATE(),1,1),
+( N'Tô GIang', '0887556745', N'SỐ 22',  N'Hà Nội',N'Cầu Giấy',N'Xuân Thủy',GETDATE(),2,1),
+( N'Xuân Thu', '0887656545', N'SỐ 33',  N'Đống Đa',N'Đống Đa',N'Xuân Thủy',GETDATE(),2,1)
 
 
 
@@ -480,5 +481,5 @@ select * from thanh_toan
 select * from thong_tin_nguoi_dung
 select * from thuong_hieu
 select * from xuat_xu
-select * from dia_chi_giao_hang
+select * from dia_chi
 

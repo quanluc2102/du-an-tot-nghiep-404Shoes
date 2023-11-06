@@ -7,7 +7,7 @@ import java.sql.Date;
 
 
 @Entity
-@Table(name = "dia_chi_giao_hang")
+@Table(name = "dia_chi")
 @Setter
 @Getter
 @NoArgsConstructor
@@ -19,8 +19,8 @@ public class DiaChiGiaoHang {
     @Column(name = "id")
     private long id;
 
-    @Column(name = "ten_nguoi_nhan")
-    private String tenNguoiNhan;
+    @Column(name = "ten")
+    private String ten;
 
     @Column(name = "so_dien_thoai")
     private String sdt;
@@ -39,6 +39,9 @@ public class DiaChiGiaoHang {
 
     @Column(name = "ngay_cap_nhat")
     private Date ngayCapNhat;
+
+    @Column(name = "trang_thai")
+    private Integer trangThai;
 
     @ManyToOne
     @JoinColumn(name = "thong_tin_nguoi_dung_id", referencedColumnName = "id", nullable = true)
