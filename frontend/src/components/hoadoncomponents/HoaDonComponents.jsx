@@ -13,7 +13,7 @@ class HoaDonComponents extends Component {
         }
         // this.detail = this.detail.bind(this);
     }
-    
+
 
     componentDidMount() {
         HoaDonService.getHoaDon().then((res) => {
@@ -44,9 +44,9 @@ class HoaDonComponents extends Component {
                 case "1":
                     return item.trangThai === 1; // Filter for "Đã thanh toán"
                 case "2":
-                    return item.trangThai !== 1; // Filter for "Chưa thanh toán"
+                    return item.trangThai == 2; // Filter for "Chưa thanh toán"
                 case "3":
-                    return item.trangThai !== 1; // Filter for "Chờ"
+                    return item.trangThai == 3; // Filter for "Chờ"
                 default:
                     return searchValues.includes(searchTerm.toLowerCase());
             }
@@ -55,7 +55,7 @@ class HoaDonComponents extends Component {
     detail(id) {
         window.location.href = (`/HoaDonChiTiet/${id}`);
     }
-    
+
     handleSort = (column) => {
         const { hoaDon, sortedColumn, isSortAsc } = this.state;
 
@@ -144,14 +144,18 @@ class HoaDonComponents extends Component {
                                             </div>
                                             <div className="form-check form-check-inline">
                                                 <input
-                                                    type="radio"
+                                                    type=
+                                                    "radio"
                                                     id="filterUnpaid"
-                                                    name="statusFilter"
-                                                    value="2"
+                                                    name=
+                                                    "statusFilter"
+                                                    value=
+                                                    "2" // Unique value for "Chưa thanh toán"
                                                     checked={this.state.searchTerm === "2"}
                                                     onChange={() => this.handleStatusFilter("2")}
                                                     className="form-check-input"
                                                 />
+
                                                 <label htmlFor="filterUnpaid" className="form-check-label">Chưa thanh toán</label>
                                             </div>
                                             <div className="form-check form-check-inline">
@@ -159,8 +163,8 @@ class HoaDonComponents extends Component {
                                                     type="radio"
                                                     id="filterPending"
                                                     name="statusFilter"
-                                                    value="3"
-                                                    checked={this.state.searchTerm === "3"}
+                                                    value="3" // Unique value for "Chờ"
+                                                    checked={this.state.searchTerm === 3}
                                                     onChange={() => this.handleStatusFilter("3")}
                                                     className="form-check-input"
                                                 />
@@ -203,8 +207,8 @@ class HoaDonComponents extends Component {
                                                                     <td>{hoaDon && hoaDon.sdt !== null ? hoaDon.sdt : "Khách lẻ"}</td>
                                                                     <td>{hoaDon.ngayTao}</td>
                                                                     <td>{hoaDon.ngayCapNhat}</td>
-                                                                    <td style={{ color: getStatusColor(hoaDon.trangThai) }}>
-                                                                        {getStatusText(hoaDon.trangThai)}
+                                                                    <td style={{ color: this.getStatusColor(hoaDon.trangThai) }}>
+                                                                        {this.getStatusText(hoaDon.trangThai)}
                                                                     </td>
                                                                     <td>{hoaDon.ghiChu}</td>
                                                                     <td>{hoaDon.tongTienSauGiam.toLocaleString()}</td>
