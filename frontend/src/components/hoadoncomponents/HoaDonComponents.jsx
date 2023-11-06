@@ -35,9 +35,9 @@ class HoaDonComponents extends Component {
             // Combine the values of the columns you want to search in
             const searchValues = (
                 (item.ten && item.ten !== null ? item.ten : "Khách lẻ") +
-                (item.maHoaDon) +
+                (item.maHoaDon) +(item.ngayTao)+
                 (item.sdt) +
-                (item.trangThai === 1 ? "Đã thanh toán" : "Chưa thanh toán")
+                (item.trangThai === 1 ? "Đã thanh toán" : item.trangThai === 2 ? "Chưa thanh toán" : "Chờ")
             ).toLowerCase();
 
             switch (searchTerm) {
@@ -55,10 +55,10 @@ class HoaDonComponents extends Component {
     detail(id) {
         window.location.href = (`/HoaDonChiTiet/${id}`);
     }
-handleDetailClick = (id) => {
-    // Redirect to the detail page or perform any other action you need
-    window.location.href = `/HoaDonChiTiet/${id}`;
-}
+    handleDetailClick = (id) => {
+        // Redirect to the detail page or perform any other action you need
+        window.location.href = `/HoaDonChiTiet/${id}`;
+    }
     handleSort = (column) => {
         const { hoaDon, sortedColumn, isSortAsc } = this.state;
 
@@ -114,76 +114,76 @@ handleDetailClick = (id) => {
 
 
                 <section className="section dashboard">
-    <div className="row">
-        <div className="col-lg-13">
-            <div className="row">
-                <div className="col-13">
-                    <div className="card recent-sales overflow-auto">
-                        <br />
-                        <br />
-                        <div className="col-13">
+                    <div className="row">
+                        <div className="col-lg-13">
                             <div className="row">
-                                <div className="col-6 container">
-                                    <form className="search-form d-flex align-items-center">
-                                        <input type="text" name="query" placeholder="Tìm kiếm" title="Enter search keyword" value={this.state.searchTerm} onChange={this.handleSearch} />
-                                    </form>
-                                </div>
-                                <div className="col-6">
-                                    <div className="form-check form-check-inline">
-                                        <input
-                                            type="radio"
-                                            id="filterAll"
-                                            name="statusFilter"
-                                            value=""
-                                            checked={this.state.searchTerm === ""}
-                                            onChange={() => this.handleStatusFilter("")}
-                                            className="form-check-input"
-                                        />
-                                        <label htmlFor="filterAll" className="form-check-label">Tất cả</label>
-                                    </div>
-                                    <div className="form-check form-check-inline">
-                                        <input
-                                            type="radio"
-                                            id="filterPaid"
-                                            name="statusFilter"
-                                            value="1"
-                                            checked={this.state.searchTerm === "1"}
-                                            onChange={() => this.handleStatusFilter("1")}
-                                            className="form-check-input"
-                                        />
-                                        <label htmlFor="filterPaid" className="form-check-label">Đã thanh toán</label>
-                                    </div>
-                                    <div className="form-check form-check-inline">
-                                        <input
-                                            type="radio"
-                                            id="filterUnpaid"
-                                            name="statusFilter"
-                                            value="2"
-                                            checked={this.state.searchTerm === "2"}
-                                            onChange={() => this.handleStatusFilter("2")}
-                                            className="form-check-input"
-                                        />
-                                        <label htmlFor="filterUnpaid" className="form-check-label">Chưa thanh toán</label>
-                                    </div>
-                                    <div className="form-check form-check-inline">
-                                        <input
-                                            type="radio"
-                                            id="filterPending"
-                                            name="statusFilter"
-                                            value="3"
-                                            checked={this.state.searchTerm === "3"}
-                                            onChange={() => this.handleStatusFilter("3")}
-                                            className="form-check-input"
-                                        />
-                                        <label htmlFor="filterPending" className="form-check-label">Chờ</label>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="card-body">
-                            <h5 className="card-title">Hóa đơn <span>|</span></h5>
-                            <table className="table table-borderless datatable">
-                            <thead>
+                                <div className="col-13">
+                                    <div className="card recent-sales overflow-auto">
+                                        <br />
+                                        <br />
+                                        <div className="col-13">
+                                            <div className="row">
+                                                <div className="col-6 container">
+                                                    <form className="search-form d-flex align-items-center">
+                                                        <input type="text" name="query" placeholder="Tìm kiếm" title="Enter search keyword" value={this.state.searchTerm} onChange={this.handleSearch} />
+                                                    </form>
+                                                </div>
+                                                <div className="col-6">
+                                                    <div className="form-check form-check-inline">
+                                                        <input
+                                                            type="radio"
+                                                            id="filterAll"
+                                                            name="statusFilter"
+                                                            value=""
+                                                            checked={this.state.searchTerm === ""}
+                                                            onChange={() => this.handleStatusFilter("")}
+                                                            className="form-check-input"
+                                                        />
+                                                        <label htmlFor="filterAll" className="form-check-label">Tất cả</label>
+                                                    </div>
+                                                    <div className="form-check form-check-inline">
+                                                        <input
+                                                            type="radio"
+                                                            id="filterPaid"
+                                                            name="statusFilter"
+                                                            value="1"
+                                                            checked={this.state.searchTerm === "1"}
+                                                            onChange={() => this.handleStatusFilter("1")}
+                                                            className="form-check-input"
+                                                        />
+                                                        <label htmlFor="filterPaid" className="form-check-label">Đã thanh toán</label>
+                                                    </div>
+                                                    <div className="form-check form-check-inline">
+                                                        <input
+                                                            type="radio"
+                                                            id="filterUnpaid"
+                                                            name="statusFilter"
+                                                            value="2"
+                                                            checked={this.state.searchTerm === "2"}
+                                                            onChange={() => this.handleStatusFilter("2")}
+                                                            className="form-check-input"
+                                                        />
+                                                        <label htmlFor="filterUnpaid" className="form-check-label">Chưa thanh toán</label>
+                                                    </div>
+                                                    <div className="form-check form-check-inline">
+                                                        <input
+                                                            type="radio"
+                                                            id="filterPending"
+                                                            name="statusFilter"
+                                                            value="3"
+                                                            checked={this.state.searchTerm === "3"}
+                                                            onChange={() => this.handleStatusFilter("3")}
+                                                            className="form-check-input"
+                                                        />
+                                                        <label htmlFor="filterPending" className="form-check-label">Chờ</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="card-body">
+                                            <h5 className="card-title">Hóa đơn <span>|</span></h5>
+                                            <table className="table table-borderless datatable">
+                                                <thead>
                                                     <tr>
                                                         <th>STT</th>
                                                         <th>Mã Hóa Đơn</th>
@@ -203,7 +203,7 @@ handleDetailClick = (id) => {
                                                         this.filteredData().map(
                                                             (hoaDon, index) =>
                                                                 <tr key={hoaDon.id}>
-                                                                    
+
                                                                     <td>{index + 1}</td>
                                                                     <td>{hoaDon.maHoaDon}</td>
                                                                     <td>{hoaDon.taiKhoan.maTaiKhoan}</td>
@@ -223,14 +223,14 @@ handleDetailClick = (id) => {
                                                         )
                                                     }
                                                 </tbody>
-                            </table>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
+                </section>
 
             </div>
         );

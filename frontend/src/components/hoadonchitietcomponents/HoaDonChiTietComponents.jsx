@@ -175,7 +175,7 @@ class HoaDonChiTietComponents extends Component {
                                                     </thead>
                                                     <tbody>
                                                         {this.state.hoaDonChiTiet.map((hoaDonChiTiet, index) => {
-                                                            total += hoaDonChiTiet.sanPhamChiTiet.sanPham.donGia * hoaDonChiTiet.soLuong; // Cộng dồn tổng
+                                                            total += hoaDonChiTiet.sanPhamChiTiet.donGia * hoaDonChiTiet.soLuong; // Cộng dồn tổng
 
                                                             return (
                                                                 <tr key={hoaDonChiTiet.id}>
@@ -189,15 +189,15 @@ class HoaDonChiTietComponents extends Component {
                                                                         />
                                                                     </td>
                                                                     <td>{hoaDonChiTiet.sanPhamChiTiet.sanPham.ten}</td>
-                                                                    <td>{hoaDonChiTiet.sanPhamChiTiet.sanPham.donGia}</td>
-                                                                    <td>{hoaDonChiTiet.sanPhamChiTiet.sanPham.donGia * hoaDonChiTiet.soLuong}</td>
+                                                                    <td>{hoaDonChiTiet.sanPhamChiTiet.donGia.toLocaleString()} VNĐ</td>
+                                                                    <td>{(hoaDonChiTiet.sanPhamChiTiet.donGia * hoaDonChiTiet.soLuong).toLocaleString()} VNĐ</td>
                                                                 </tr>
                                                             );
                                                         })}
                                                     </tbody>
                                                 </table>
                                                 <div className="text-right mt-3">
-                                                    <label>Tổng: {total.toLocaleString()}</label>
+                                                    <label>Tổng: {total.toLocaleString()} VNĐ</label>
                                                 </div>
                                             </div>
                                         </div>
