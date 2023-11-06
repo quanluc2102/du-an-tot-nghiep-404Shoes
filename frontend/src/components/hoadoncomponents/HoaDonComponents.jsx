@@ -1,22 +1,97 @@
 import React, { Component } from 'react';
 import HoaDonService from '../../services/hoadonservice/HoaDonService';
 import "../hoadoncomponents/HoadonCss.css"
-
+import _ from 'lodash'; // Import lodash
 class HoaDonComponents extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            hoaDon: []
+            hoaDon: [],
+            sortedColumn: null,
+            isSortAsc: true,
+            searchTerm: '', // Initialize searchTerm
         }
         // this.detail = this.detail.bind(this);
     }
+    
+
     componentDidMount() {
         HoaDonService.getHoaDon().then((res) => {
             this.setState({ hoaDon: res.data })
         });
     }
+    handleSearch = (event) => {
+        this.setState({ searchTerm: event.target.value });
+    }
+    handleStatusFilter = (filterValue) => {
+        this.setState({ searchTerm: filterValue });
+    }
+
+    // Phương thức này trả về dữ liệu đã được lọc dựa trên giá trị tìm kiếm
+    filteredData = () => {
+        const { hoaDon, searchTerm } = this.state;
+
+        return _.filter(hoaDon, (item) => {
+            // Combine the values of the columns you want to search in
+            const searchValues = (
+                (item.ten && item.ten !== null ? item.ten : "Khách lẻ") +
+                (item.maHoaDon) +
+                (item.sdt) +
+                (item.trangThai === 1 ? "Đã thanh toán" : "Chưa thanh toán")
+            ).toLowerCase();
+
+            switch (searchTerm) {
+                case "1":
+                    return item.trangThai === 1; // Filter for "Đã thanh toán"
+                case "2":
+                    return item.trangThai !== 1; // Filter for "Chưa thanh toán"
+                case "3":
+                    return item.trangThai !== 1; // Filter for "Chờ"
+                default:
+                    return searchValues.includes(searchTerm.toLowerCase());
+            }
+        });
+    }
     detail(id) {
         window.location.href = (`/HoaDonChiTiet/${id}`);
+    }
+    
+    handleSort = (column) => {
+        const { hoaDon, sortedColumn, isSortAsc } = this.state;
+
+        // Sắp xếp dữ liệu theo cột được chọn
+        const sortedData = _.orderBy(hoaDon, [column], [isSortAsc ? 'asc' : 'desc']);
+
+        this.setState({
+            hoaDon: sortedData,
+            sortedColumn: column,
+            isSortAsc: !isSortAsc
+        });
+    }
+    getStatusColor = (status) => {
+        switch (status) {
+            case 1:
+                return 'green'; // Đã hoàn thành (màu xanh)
+            case 2:
+                return 'red'; // Chưa thanh toán (màu đỏ)
+            case 3:
+                return 'yellow'; // Chờ (màu vàng)
+            default:
+                return 'black'; // Default color (or another color of your choice)
+        }
+    }
+
+    getStatusText = (status) => {
+        switch (status) {
+            case 1:
+                return 'Đã hoàn thành';
+            case 2:
+                return 'Chưa thanh toán';
+            case 3:
+                return 'Chờ';
+            default:
+                return 'Không xác định'; // Default text (or another text of your choice)
+        }
     }
 
     render() {
@@ -38,22 +113,78 @@ class HoaDonComponents extends Component {
                 <section className="section dashboard">
                     <div className="row">
 
-                        <div className="col-lg-8">
+                        <div className="col-lg-14">
                             <div className="row">
                                 <div className="col-12">
                                     <div className="card recent-sales overflow-auto">
-
-
+                                        <div className="col-12">
+                                            <div className="form-check form-check-inline">
+                                                <input
+                                                    type="radio"
+                                                    id="filterAll"
+                                                    name="statusFilter"
+                                                    value=""
+                                                    checked={this.state.searchTerm === ""}
+                                                    onChange={() => this.handleStatusFilter("")}
+                                                    className="form-check-input"
+                                                />
+                                                <label htmlFor="filterAll" className="form-check-label">Tất cả</label>
+                                            </div>
+                                            <div className="form-check form-check-inline">
+                                                <input
+                                                    type="radio"
+                                                    id="filterPaid"
+                                                    name="statusFilter"
+                                                    value="1"
+                                                    checked={this.state.searchTerm === "1"}
+                                                    onChange={() => this.handleStatusFilter("1")}
+                                                    className="form-check-input"
+                                                />
+                                                <label htmlFor="filterPaid" className="form-check-label">Đã thanh toán</label>
+                                            </div>
+                                            <div className="form-check form-check-inline">
+                                                <input
+                                                    type="radio"
+                                                    id="filterUnpaid"
+                                                    name="statusFilter"
+                                                    value="2"
+                                                    checked={this.state.searchTerm === "2"}
+                                                    onChange={() => this.handleStatusFilter("2")}
+                                                    className="form-check-input"
+                                                />
+                                                <label htmlFor="filterUnpaid" className="form-check-label">Chưa thanh toán</label>
+                                            </div>
+                                            <div className="form-check form-check-inline">
+                                                <input
+                                                    type="radio"
+                                                    id="filterPending"
+                                                    name="statusFilter"
+                                                    value="3"
+                                                    checked={this.state.searchTerm === "3"}
+                                                    onChange={() => this.handleStatusFilter("3")}
+                                                    className="form-check-input"
+                                                />
+                                                <label htmlFor="filterPending" className="form-check-label">Chờ</label>
+                                            </div>
+                                        </div>
+                                        <div className="col-4">
+                                            <form className="search-form d-flex align-items-center" >
+                                                <input type="text" name="query" placeholder="Tìm kiếm" title="Enter search keyword" value={this.state.searchTerm} onChange={this.handleSearch} />
+                                            </form>
+                                        </div>
                                         <div className="card-body">
                                             <h5 className="card-title">Hóa đơn <span>| </span></h5>
 
                                             <table className="table table-borderless datatable">
                                                 <thead>
                                                     <tr>
-                                                        <th>ID</th>
+                                                        <th>STT</th>
+                                                        <th>Mã Hóa Đơn</th>
+                                                        <th>Mã Nhân Viên</th>
                                                         <th>Tên Khách Hàng</th>
-                                                        <th>Ngày Tạo</th>
-                                                        <th>Ngày cập nhật</th>
+                                                        <th>SĐT Khách Hàng</th>
+                                                        <th onClick={() => this.handleSort('ngayTao')}>Ngày Mua {this.renderSortIcon('ngayTao')}</th>
+                                                        <th onClick={() => this.handleSort('ngayCapNhat')}>Ngày cập nhật {this.renderSortIcon('ngayCapNhat')}</th>
                                                         <th>Thạng thái</th>
                                                         <th>Ghi chú</th>
                                                         <th>Khách Phải Trả</th>
@@ -62,19 +193,22 @@ class HoaDonComponents extends Component {
                                                 </thead>
                                                 <tbody>
                                                     {
-                                                        this.state.hoaDon.map(
-                                                            hoaDon =>
+                                                        this.filteredData().map(
+                                                            (hoaDon, index) =>
                                                                 <tr key={hoaDon.id}>
-                                                                    <td>{hoaDon.id}</td>
-                                                                    <td>{hoaDon.ten}</td>
+                                                                    <td>{index + 1}</td>
+                                                                    <td>{hoaDon.maHoaDon}</td>
+                                                                    <td>{hoaDon.taiKhoan.maTaiKhoan}</td>
+                                                                    <td>{hoaDon && hoaDon.ten !== null ? hoaDon.ten : "Khách lẻ"}</td>
+                                                                    <td>{hoaDon && hoaDon.sdt !== null ? hoaDon.sdt : "Khách lẻ"}</td>
                                                                     <td>{hoaDon.ngayTao}</td>
                                                                     <td>{hoaDon.ngayCapNhat}</td>
-                                                                    <td style={{ color: hoaDon.trangThai === 1 ? 'green' : 'red' }}>
-                                                                        {hoaDon.trangThai === 1 ? "Đã thanh toán" : "Chưa thanh toán"}
+                                                                    <td style={{ color: getStatusColor(hoaDon.trangThai) }}>
+                                                                        {getStatusText(hoaDon.trangThai)}
                                                                     </td>
                                                                     <td>{hoaDon.ghiChu}</td>
-                                                                    <td>{hoaDon.tongTienSauGiam}</td>
-                                                                    <td><a  onClick={() => this.detail(hoaDon.id)}><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAAAXNSR0IArs4c6QAAAi1JREFUSEvF10vITVEUwPHflzL0yjvJQBETGRBFpIgJMTEzUEQGyiMywEQpFMUAmRuIGUqEZMDAK0mEMpBXiBGhpX20ne+e795zz823Jve271r7v9djr7Vvn0GSvkHiagceiVmYidEdHvI9HuEePlXZVIEn4hjWdAirUjuLLYjD/COtwDNwBRMaQgvzF1iC+PwrZfBk3MWYpHEOJ3C15iECFJ6uSnYBnZN7XgZfwMqkvB2HawLL6nuxLy2exMZCIQeHt6/SD5GbtQ2hhfklLMN3RLF+ix9y8HqcTtpRyfdrgofjcwubpbic1lfgYhm8GweSwhD8rAGOQryV6uFQyW4UPqS1rThaBkcuIifl9Xb8oXiAaUlxT+ZAYfsrfdlf5DwPdTfgIrybcTxt/hrTi1ymtZ6CY/Mb2IUz2ITwaG75zqJn4IBex9jk0QacwoiKNtkTcOQyoOOy5Edvnp2uTKuaaAyeipsYn+3+BAvxboAqbASegttdQOM8XYMDGp5Oyrx6hvltPG10nSKsd1pAF+BNu0ve5DotwrUM8BLzakC7DnUODmh4Gk2iUxmW9fBtONJpy4y7GUMj5DHedkpMeouzeb4a5zsF1+T0U4/JFBPqRxqLX/8H+CB2pqNEZ4sO90eaDomqaMQrJl4by5PC89TDi/FYCW4a3tz+aQp18brp53FMl3jY9VJiau3Ax/Kmeahjtq5DvBiaSFT9w/R0+lK1Ubt/Ek0OMKDtoIF/AxLsgR+5iHZvAAAAAElFTkSuQmCC"/></a></td>
+                                                                    <td>{hoaDon.tongTienSauGiam.toLocaleString()}</td>
+                                                                    <td><a onClick={() => this.detail(hoaDon.id)}><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAAAXNSR0IArs4c6QAAAi1JREFUSEvF10vITVEUwPHflzL0yjvJQBETGRBFpIgJMTEzUEQGyiMywEQpFMUAmRuIGUqEZMDAK0mEMpBXiBGhpX20ne+e795zz823Jve271r7v9djr7Vvn0GSvkHiagceiVmYidEdHvI9HuEePlXZVIEn4hjWdAirUjuLLYjD/COtwDNwBRMaQgvzF1iC+PwrZfBk3MWYpHEOJ3C15iECFJ6uSnYBnZN7XgZfwMqkvB2HawLL6nuxLy2exMZCIQeHt6/SD5GbtQ2hhfklLMN3RLF+ix9y8HqcTtpRyfdrgofjcwubpbic1lfgYhm8GweSwhD8rAGOQryV6uFQyW4UPqS1rThaBkcuIifl9Xb8oXiAaUlxT+ZAYfsrfdlf5DwPdTfgIrybcTxt/hrTi1ymtZ6CY/Mb2IUz2ITwaG75zqJn4IBex9jk0QacwoiKNtkTcOQyoOOy5Edvnp2uTKuaaAyeipsYn+3+BAvxboAqbASegttdQOM8XYMDGp5Oyrx6hvltPG10nSKsd1pAF+BNu0ve5DotwrUM8BLzakC7DnUODmh4Gk2iUxmW9fBtONJpy4y7GUMj5DHedkpMeouzeb4a5zsF1+T0U4/JFBPqRxqLX/8H+CB2pqNEZ4sO90eaDomqaMQrJl4by5PC89TDi/FYCW4a3tz+aQp18brp53FMl3jY9VJiau3Ax/Kmeahjtq5DvBiaSFT9w/R0+lK1Ubt/Ek0OMKDtoIF/AxLsgR+5iHZvAAAAAElFTkSuQmCC" /></a></td>
 
 
                                                                 </tr>
@@ -105,6 +239,13 @@ class HoaDonComponents extends Component {
                 </section>
             </div>
         );
+    }
+    renderSortIcon(column) {
+        const { sortedColumn, isSortAsc } = this.state;
+        if (sortedColumn === column) {
+            return isSortAsc ? <i className="fa fa-sort-asc"></i> : <i className="fa fa-sort-desc"></i>;
+        }
+        return null;
     }
 }
 

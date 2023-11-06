@@ -3,6 +3,8 @@ package com.example.datn404shoes.controller;
 import com.example.datn404shoes.entity.HoaDon;
 import com.example.datn404shoes.entity.TaiKhoan;
 import com.example.datn404shoes.entity.ThanhToan;
+import com.example.datn404shoes.repository.PhanQuyenRepository;
+import com.example.datn404shoes.repository.SanPhamChiTietRepository;
 import com.example.datn404shoes.repository.TaiKhoanRepository;
 import com.example.datn404shoes.repository.ThanhToanRepository;
 import com.example.datn404shoes.service.serviceimpl.HoaDonImpl;
@@ -22,9 +24,23 @@ public class HoaDonController {
     ThanhToanRepository thanhToanRepository;
 @Autowired
     TaiKhoanRepository taiKhoanRepository;
+@Autowired
+    SanPhamChiTietRepository sanPhamChiTietRepository;
+    @Autowired
+    PhanQuyenRepository phanQuyenRepository;
     @GetMapping("hien-thi")
     public ResponseEntity<?> hienThi(Model model){
         return ResponseEntity.ok(hoaDonImpl.getAll());
+    }
+    @GetMapping("hien-thi-taiKhoanKH/{id}")
+    public ResponseEntity<?> hienThiKH(Model model, @PathVariable("id") Long id){
+        ;
+        return ResponseEntity.ok(phanQuyenRepository.findPhanQuyenByQuyenId(id));
+    }
+    @GetMapping("hien-SPCT")
+    public ResponseEntity<?> hienThiSPChiTiet(Model model, @PathVariable("id") Long id){
+        ;
+        return ResponseEntity.ok(phanQuyenRepository.findPhanQuyenByQuyenId(id));
     }
 //    @PostMapping("create")
 //    public  ResponseEntity<?> create(Model model,@RequestBody HoaDon hoaDon){
