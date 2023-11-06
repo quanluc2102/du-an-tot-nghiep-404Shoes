@@ -11,5 +11,5 @@ import java.util.List;
 
 @Repository
 public interface PhanQuyenRepository extends JpaRepository<PhanQuyen,Long> {
-
+   List<PhanQuyen> findPhanQuyenByQuyenId(Long idQuyen);
 }
