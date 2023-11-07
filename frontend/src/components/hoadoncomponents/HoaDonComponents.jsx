@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import HoaDonService from '../../services/hoadonservice/HoaDonService';
 import "../hoadoncomponents/HoadonCss.css"
 import _ from 'lodash'; // Import lodash
+import ReactPaginate from 'react-paginate';
 class HoaDonComponents extends Component {
     constructor(props) {
         super(props)
@@ -9,19 +10,31 @@ class HoaDonComponents extends Component {
             hoaDon: [],
             sortedColumn: null,
             isSortAsc: true,
-            searchTerm: '', // Initialize searchTerm
+            searchTerm: '',
+            currentPage: 0, // Trang hiện tại
+            perPage: 3, // Số mục trên mỗi trang// Initialize searchTerm
         }
         // this.detail = this.detail.bind(this);
     }
-
+    handlePageClick = (data) => {
+        this.setState({ currentPage: data.selected });
+    }
 
     componentDidMount() {
         HoaDonService.getHoaDon().then((res) => {
             this.setState({ hoaDon: res.data })
         });
+        const storedSearchTerm = localStorage.getItem('searchTerm');
+        if (storedSearchTerm) {
+            this.setState({ searchTerm: storedSearchTerm });
+        }
     }
     handleSearch = (event) => {
-        this.setState({ searchTerm: event.target.value });
+        const searchTerm = event.target.value;
+        this.setState({ searchTerm });
+
+        // Lưu trạng thái tìm kiếm vào localStorage
+        localStorage.setItem('searchTerm', searchTerm);
     }
     handleStatusFilter = (filterValue) => {
         this.setState({ searchTerm: filterValue });
@@ -35,7 +48,7 @@ class HoaDonComponents extends Component {
             // Combine the values of the columns you want to search in
             const searchValues = (
                 (item.ten && item.ten !== null ? item.ten : "Khách lẻ") +
-                (item.maHoaDon) +(item.ngayTao)+
+                (item.maHoaDon) + (item.ngayTao) +
                 (item.sdt) +
                 (item.trangThai === 1 ? "Đã thanh toán" : item.trangThai === 2 ? "Chưa thanh toán" : "Chờ")
             ).toLowerCase();
@@ -96,8 +109,17 @@ class HoaDonComponents extends Component {
                 return 'Không xác định'; // Default text (or another text of your choice)
         }
     }
-
+    handleSearchFocus = () => {
+        // Đặt trang hiện tại về 0 để nhảy về trang đầu tiên
+        this.setState({ currentPage: 0 });
+    }
     render() {
+        const searchTerm = localStorage.getItem('searchTerm') || this.state.searchTerm;
+
+        const { currentPage, perPage } = this.state;
+        const hoaDonList = this.filteredData();
+        const offset = currentPage * perPage;
+        const currentHoaDonList = hoaDonList.slice(offset, offset + perPage);
         return (
 
             <div>
@@ -124,9 +146,15 @@ class HoaDonComponents extends Component {
                                         <div className="col-13">
                                             <div className="row">
                                                 <div className="col-6 container">
-                                                    <form className="search-form d-flex align-items-center">
-                                                        <input type="text" name="query" placeholder="Tìm kiếm" title="Enter search keyword" value={this.state.searchTerm} onChange={this.handleSearch} />
-                                                    </form>
+                                                <input
+    type="text"
+    name="query"
+    placeholder="Tìm kiếm"
+    title="Enter search keyword"
+    value={searchTerm}
+    onChange={this.handleSearch}
+    onFocus={this.handleSearchFocus} // Thêm sự kiện onFocus
+/>
                                                 </div>
                                                 <div className="col-6">
                                                     <div className="form-check form-check-inline">
@@ -200,7 +228,7 @@ class HoaDonComponents extends Component {
                                                 </thead>
                                                 <tbody>
                                                     {
-                                                        this.filteredData().map(
+                                                        currentHoaDonList.map(
                                                             (hoaDon, index) =>
                                                                 <tr key={hoaDon.id}>
 
@@ -224,6 +252,14 @@ class HoaDonComponents extends Component {
                                                     }
                                                 </tbody>
                                             </table>
+                                            <ReactPaginate
+                                                pageCount={Math.ceil(hoaDonList.length / perPage)}
+                                                pageRangeDisplayed={5}
+                                                marginPagesDisplayed={2}
+                                                onPageChange={this.handlePageClick}
+                                                containerClassName={'pagination'}
+                                                activeClassName={'active'}
+                                            />
                                         </div>
                                     </div>
                                 </div>
