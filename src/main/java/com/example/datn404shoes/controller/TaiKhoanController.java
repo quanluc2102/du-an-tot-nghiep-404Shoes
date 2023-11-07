@@ -108,6 +108,7 @@ public class TaiKhoanController {
         var b = thongTinNguoiDungServiceimpl.add(thongTinNguoiDung);
         taiKhoan.setThongTinNguoiDung(b);
         taiKhoan.setAnh(taiKhoanVaThongTin.getFiles().get(0));
+//        taiKhoan.setAnh(taiKhoanVaThongTin.getFile().get(0));
         serviceimpl.add(taiKhoan);
         PhanQuyen phanQuyen = new PhanQuyen();
         phanQuyen.setTaiKhoan(TaiKhoan.builder().id(taiKhoan.getId()).build());
@@ -117,34 +118,37 @@ public class TaiKhoanController {
         return ResponseEntity.ok(serviceimpl.add(taiKhoan));
     }
 
-       @PutMapping("updateQuanLy/{id}")
-       public ResponseEntity<?> updateQuanLy(@RequestBody TaiKhoanVaThongTin taiKhoanVaThongTin,
-                                             @PathVariable("id") Long id) {
-    ThongTinNguoiDung thongTinNguoiDung = taiKhoanVaThongTin.getThongTinNguoiDung();
-    TaiKhoan taiKhoan = taiKhoanVaThongTin.getTaiKhoan();
-
-
-    thongTinNguoiDung.setId(thongTinNguoiDung.getId()); // Assuming id is the ID of the ThongTinNguoiDung to update
-    thongTinNguoiDungServiceimpl.update(thongTinNguoiDung.getId(),thongTinNguoiDung); // Update ThongTinNguoiDung
-    taiKhoan.setId(id);
-    serviceimpl.update(id,taiKhoan);
-
-    // Update or add PhanQuyen (assuming you want to update or add a new PhanQuyen)
-    PhanQuyen phanQuyen = new PhanQuyen();
-    phanQuyen.setTaiKhoan(TaiKhoan.builder().id(id).build()); // Use the existing Quan Ly ID
-    phanQuyen.setQuyen(Quyen.builder().id(2).build()); // Assuming ID 2 represents "Quan Ly" role
-    phanQuyenServiceimpl.add(phanQuyen); // You should have an update method for PhanQuyen
-
-    return ResponseEntity.ok("Update successful"); // You can return a success message or other appropriate response.
-}
-    @PostMapping("addNhanVien")
-    public ResponseEntity<?> addNhanVien(Model model,
-                                       @RequestBody TaiKhoanVaThongTin taiKhoanVaThongTin) {
+    @PutMapping("updateQuanLy/{id}")
+    public ResponseEntity<?> updateQuanLy(@RequestBody TaiKhoanVaThongTin taiKhoanVaThongTin,
+                                          @PathVariable("id") Long id) {
         ThongTinNguoiDung thongTinNguoiDung = taiKhoanVaThongTin.getThongTinNguoiDung();
         TaiKhoan taiKhoan = taiKhoanVaThongTin.getTaiKhoan();
 
+
+        thongTinNguoiDung.setId(thongTinNguoiDung.getId()); // Assuming id is the ID of the ThongTinNguoiDung to update
+        thongTinNguoiDungServiceimpl.update(thongTinNguoiDung.getId(),thongTinNguoiDung); // Update ThongTinNguoiDung
+        taiKhoan.setId(id);
+        serviceimpl.update(id,taiKhoan);
+
+        // Update or add PhanQuyen (assuming you want to update or add a new PhanQuyen)
+        PhanQuyen phanQuyen = new PhanQuyen();
+        phanQuyen.setTaiKhoan(TaiKhoan.builder().id(id).build()); // Use the existing Quan Ly ID
+        phanQuyen.setQuyen(Quyen.builder().id(2).build()); // Assuming ID 2 represents "Quan Ly" role
+        phanQuyenServiceimpl.add(phanQuyen); // You should have an update method for PhanQuyen
+
+        return ResponseEntity.ok("Update successful"); // You can return a success message or other appropriate response.
+    }
+    @PostMapping("addNhanVien")
+    public ResponseEntity<?> addNhanVien(Model model,
+                                         @RequestBody TaiKhoanVaThongTin taiKhoanVaThongTin) {
+        ThongTinNguoiDung thongTinNguoiDung = taiKhoanVaThongTin.getThongTinNguoiDung();
+        TaiKhoan taiKhoan = taiKhoanVaThongTin.getTaiKhoan();
+         Long list = taiKhoanRepository.count();
+         taiKhoan.setMaTaiKhoan("NV" + (list + 1));
+         taiKhoan.setTrangThai(true);
         var b = thongTinNguoiDungServiceimpl.add(thongTinNguoiDung);
         taiKhoan.setThongTinNguoiDung(b);
+        taiKhoan.setAnh(taiKhoanVaThongTin.getFiles().get(0));
         serviceimpl.add(taiKhoan);
         PhanQuyen phanQuyen = new PhanQuyen();
         phanQuyen.setTaiKhoan(TaiKhoan.builder().id(taiKhoan.getId()).build());
@@ -156,7 +160,7 @@ public class TaiKhoanController {
 
     @PutMapping("updateNhanVien/{id}")
     public ResponseEntity<?> updateNhanVien(@RequestBody TaiKhoanVaThongTin taiKhoanVaThongTin,
-                                          @PathVariable("id") Long id) {
+                                            @PathVariable("id") Long id) {
         ThongTinNguoiDung thongTinNguoiDung = taiKhoanVaThongTin.getThongTinNguoiDung();
         TaiKhoan taiKhoan = taiKhoanVaThongTin.getTaiKhoan();
 
@@ -176,12 +180,14 @@ public class TaiKhoanController {
     }
     @PostMapping("addKhachHang")
     public ResponseEntity<?> addKhachHang(Model model,
-                                       @RequestBody TaiKhoanVaThongTin taiKhoanVaThongTin) {
+                                          @RequestBody TaiKhoanVaThongTin taiKhoanVaThongTin) {
+
         ThongTinNguoiDung thongTinNguoiDung = taiKhoanVaThongTin.getThongTinNguoiDung();
         TaiKhoan taiKhoan = taiKhoanVaThongTin.getTaiKhoan();
 
         var b = thongTinNguoiDungServiceimpl.add(thongTinNguoiDung);
         taiKhoan.setThongTinNguoiDung(b);
+
         serviceimpl.add(taiKhoan);
         PhanQuyen phanQuyen = new PhanQuyen();
         phanQuyen.setTaiKhoan(TaiKhoan.builder().id(taiKhoan.getId()).build());
@@ -193,7 +199,7 @@ public class TaiKhoanController {
 
     @PutMapping("updateKhachHang/{id}")
     public ResponseEntity<?> updateKhacHang(@RequestBody TaiKhoanVaThongTin taiKhoanVaThongTin,
-                                          @PathVariable("id") Long id) {
+                                            @PathVariable("id") Long id) {
         ThongTinNguoiDung thongTinNguoiDung = taiKhoanVaThongTin.getThongTinNguoiDung();
         TaiKhoan taiKhoan = taiKhoanVaThongTin.getTaiKhoan();
 

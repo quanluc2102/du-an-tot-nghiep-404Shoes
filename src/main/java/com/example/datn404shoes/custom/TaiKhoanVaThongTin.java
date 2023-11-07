@@ -1,5 +1,6 @@
 package com.example.datn404shoes.custom;
 
+import com.example.datn404shoes.entity.DiaChi;
 import com.example.datn404shoes.entity.TaiKhoan;
 import com.example.datn404shoes.entity.ThongTinNguoiDung;
 import lombok.Builder;
@@ -23,6 +24,7 @@ public class TaiKhoanVaThongTin {
     public void setThongTinNguoiDung(ThongTinNguoiDung thongTinNguoiDung) {
         this.thongTinNguoiDung = thongTinNguoiDung;
     }
+
 
     public TaiKhoan getTaiKhoan() {
         return taiKhoan;
