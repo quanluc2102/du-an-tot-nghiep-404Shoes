@@ -32,20 +32,27 @@ public class KhuyenMaiController {
     KhuyenMaiRepository repository;
 
     @GetMapping("index")
-    public ResponseEntity<?> index(Model model, Pageable pageable){
-        return ResponseEntity.ok(khuyenMaiServiceImpl.getAll(pageable));
+    public ResponseEntity<?> index(Model model, Pageable pageable,
+                                   @RequestParam(name = "searchValue", required = false) String searchValue,
+                                   @RequestParam(name = "filterType", required = false) String filterType) {
+        return ResponseEntity.ok(khuyenMaiServiceImpl.getAll(pageable, searchValue, filterType));
+    }
+
+    @GetMapping("indexAll")
+    public ResponseEntity<?> indexAll(Model model) {
+        return ResponseEntity.ok(khuyenMaiServiceImpl.getAllNoPage());
     }
 
     @PostMapping("add")
     public ResponseEntity<?> add(Model model,
-                                 @RequestBody KhuyenMai khuyenMai, BindingResult bindingResult){
+                                 @RequestBody KhuyenMai khuyenMai, BindingResult bindingResult) {
         {
             if (bindingResult.hasErrors()) {
                 List<FieldError> errors = bindingResult.getFieldErrors();
                 String errorMessage = errors.stream().map(error -> error.getDefaultMessage()).collect(Collectors.joining(", "));
 
                 return ResponseEntity.badRequest().body(errorMessage);
-         }
+            }
 //            else if (khuyenMaiServiceImpl.isKhuyenMaiNameUnique(khuyenMai.getMa())) {
 //                System.out.println("Đã trùng");
 //                return ResponseEntity.badRequest().body("Mã  khuyến mãi đã tồn tại.");
@@ -54,26 +61,30 @@ public class KhuyenMaiController {
                 System.out.println("Đã trùng");
                 return ResponseEntity.badRequest().body("Tên khuyến mãi đã tồn tại.");
             } else {
+                khuyenMai.setTrangThai(0);
                 return ResponseEntity.ok(khuyenMaiServiceImpl.add(khuyenMai));
             }
         }
     }
+
     @GetMapping("/delete/{id}")
-    public ResponseEntity<?> delete(@PathVariable("id") Long id){
+    public ResponseEntity<?> delete(@PathVariable("id") Long id) {
         khuyenMaiServiceImpl.delete(id);
-        Map<String,Boolean>respose = new HashMap<>();
-        respose.put("Delete",Boolean.TRUE);
+        Map<String, Boolean> respose = new HashMap<>();
+        respose.put("Delete", Boolean.TRUE);
         return ResponseEntity.ok(respose);
     }
+
     @GetMapping("/detail/{id}")
-    public ResponseEntity<?> detail(@PathVariable("id")Long id){
+    public ResponseEntity<?> detail(@PathVariable("id") Long id) {
         return ResponseEntity.ok(khuyenMaiServiceImpl.findOne(id));
     }
+
     @PutMapping("/update/{id}")
     public ResponseEntity<?> update(Model model,
-                                    @PathVariable("id")Long id,
-                                    @RequestBody KhuyenMai khuyenMai){
-        return ResponseEntity.ok(khuyenMaiServiceImpl.update(id,khuyenMai));
+                                    @PathVariable("id") Long id,
+                                    @RequestBody KhuyenMai khuyenMai) {
+        return ResponseEntity.ok(khuyenMaiServiceImpl.update(id, khuyenMai));
     }
 //    @PostMapping(value = "import", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 //    public String importExecel(@RequestParam("file")MultipartFile file)

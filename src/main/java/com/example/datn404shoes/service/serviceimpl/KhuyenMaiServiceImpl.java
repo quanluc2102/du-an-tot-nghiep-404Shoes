@@ -7,6 +7,7 @@ import com.example.datn404shoes.service.KhuyenMaiService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -26,10 +27,40 @@ public class KhuyenMaiServiceImpl implements KhuyenMaiService {
     @Autowired
     KhuyenMaiRepository khuyenMaiRepository;
 
-    @Override
-    public Page<KhuyenMai> getAll(Pageable pageable) {
+    public Page<KhuyenMai> getAll(Pageable pageable, String searchValue, String filterType) {
+        Specification<KhuyenMai> specification = Specification.where(null);
 
-        return  khuyenMaiRepository.findAll(pageable);
+        if (filterType != null && !filterType.isEmpty()) {
+            if ("percent".equals(filterType)) {
+                specification = specification.and((root, query, criteriaBuilder) ->
+                        criteriaBuilder.equal(root.get("kieuKhuyenMai"), 0)
+                );
+            } else if ("money".equals(filterType)) {
+                specification = specification.and((root, query, criteriaBuilder) ->
+                        criteriaBuilder.equal(root.get("kieuKhuyenMai"), 1)
+                );
+            }
+        }
+
+        if (searchValue != null && !searchValue.isEmpty()) {
+            String likeSearchValue = "%" + searchValue + "%";
+            specification = specification.and((root, query, criteriaBuilder) ->
+                    criteriaBuilder.or(
+                            criteriaBuilder.like(root.get("ma"), likeSearchValue),
+                            criteriaBuilder.like(root.get("ten"), likeSearchValue),
+                            criteriaBuilder.like(root.get("moTa"), likeSearchValue),
+                            criteriaBuilder.like(root.get("dieuKien"), likeSearchValue),
+                            criteriaBuilder.like(root.get("giamGia").as(String.class), likeSearchValue)
+                    )
+            );
+        }
+
+        return khuyenMaiRepository.findAll(specification, pageable);
+    }
+
+    @Override
+    public List<KhuyenMai> getAllNoPage() {
+        return khuyenMaiRepository.findAll();
     }
 
     @Override
@@ -107,6 +138,12 @@ public class KhuyenMaiServiceImpl implements KhuyenMaiService {
             e.printStackTrace();
             throw new RuntimeException("fail to store excel data:" + e.getMessage());
         }
+    }
+
+    @Override
+    public void thayDoiTrangThai(Long id) {
+       KhuyenMai khuyenMai = khuyenMaiRepository.findById(id).get();
+
     }
 
 
