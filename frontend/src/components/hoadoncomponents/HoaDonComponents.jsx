@@ -253,13 +253,15 @@ class HoaDonComponents extends Component {
                                                 </tbody>
                                             </table>
                                             <ReactPaginate
-                                                pageCount={Math.ceil(hoaDonList.length / perPage)}
-                                                pageRangeDisplayed={5}
-                                                marginPagesDisplayed={2}
-                                                onPageChange={this.handlePageClick}
-                                                containerClassName={'pagination'}
-                                                activeClassName={'active'}
-                                            />
+                pageCount={Math.ceil(hoaDonList.length / perPage)}
+                pageRangeDisplayed={5}
+                marginPagesDisplayed={2}
+                onPageChange={this.handlePageClick}
+                containerClassName={'pagination'}
+                activeClassName={'active'}
+                previousLabel={"Previous"} // Customize the labels as needed
+                nextLabel={"Next"}
+            />
                                         </div>
                                     </div>
                                 </div>
