@@ -22,22 +22,30 @@ class KhuyenMaiComponents extends Component {
     }
 
     handleSearch = () => {
-        const {searchQuery, isAutoReloadInProgress} = this.state;
-        // Tìm kiếm trên toàn bộ dữ liệu khuyenMaiAll (không phân trang)
-        if (!isAutoReloadInProgress) {
-            const filteredData = this.state.khuyenMaiAll.filter(km =>
-                km.ma.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                km.ten.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                km.moTa.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                km.giamGia.toString().includes(searchQuery) ||
-                // (discountType === "percent" && km.kieuKhuyenMai === 0) ||
-                // (discountType === "money" && km.kieuKhuyenMai === 1) ||
-                (km.trangThai === 0 ? "Chưa diễn ra" : km.trangThai === 1 ? "Đang diễn ra" : "Đã kết thúc").toLowerCase().includes(searchQuery.toLowerCase())
-            );
+        const { searchQuery, selectedDiscountType, isAutoReloadInProgress } = this.state;
 
-            this.setState({khuyenMai: filteredData});
+        if (!isAutoReloadInProgress) {
+            const filteredData = this.state.khuyenMaiAll.filter(km => {
+                const matchesSearchQuery =
+                    km.ma.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                    km.ten.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                    km.moTa.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                    km.giamGia.toString().includes(searchQuery) ||
+                    (km.trangThai === 0 ? "Chưa diễn ra" : km.trangThai === 1 ? "Đang diễn ra" : "Đã kết thúc").toLowerCase().includes(searchQuery.toLowerCase());
+
+                if (selectedDiscountType === "percent") {
+                    return matchesSearchQuery && km.kieuKhuyenMai === 0;
+                } else if (selectedDiscountType === "money") {
+                    return matchesSearchQuery && km.kieuKhuyenMai === 1;
+                } else {
+                    return matchesSearchQuery;
+                }
+            });
+
+            this.setState({ khuyenMai: filteredData });
         }
     }
+
 
     handleSearchChange = (e) => {
         const searchQuery = e.target.value;
@@ -74,14 +82,14 @@ class KhuyenMaiComponents extends Component {
         }, 1000);
     }
 
-    componentWillUnmount() {
-        // Xóa interval khi component unmount để tránh rò rỉ bộ nhớ
-        clearInterval(this.apiRefreshInterval);
-    }
+    // componentWillUnmount() {
+    //     // Xóa interval khi component unmount để tránh rò rỉ bộ nhớ
+    //     clearInterval(this.apiRefreshInterval);
+    // }
 
     loadAllData() {
-        const {searchQuery, discountType, currentPage} = this.state;
-        KhuyenMaiService.getKhuyenMaiAll(searchQuery, discountType)
+        const { searchQuery, selectedDiscountType, currentPage } = this.state;
+        KhuyenMaiService.getKhuyenMaiAll(searchQuery, selectedDiscountType)
             .then((res) => {
                 const filteredData = res.data;
                 this.setState({
@@ -92,6 +100,7 @@ class KhuyenMaiComponents extends Component {
                 this.loadPageData(currentPage);
             });
     }
+
 
     callApiWithSearchQuery = (searchQuery, discountType) => {
         KhuyenMaiService.getKhuyenMaiAll(searchQuery, discountType)
@@ -104,7 +113,7 @@ class KhuyenMaiComponents extends Component {
                 // After getting the data, apply the search query filter and pagination
                 this.handleSearch();
             });
-    }
+    };
 
 
     loadPageData(selectedPage) {
@@ -120,6 +129,14 @@ class KhuyenMaiComponents extends Component {
             currentPage: selectedPage,
         });
     }
+
+    handleDiscountTypeChange = (e) => {
+        const selectedDiscountType = e.target.value;
+        this.setState({ selectedDiscountType }, () => {
+            // Call the API with the updated discount type
+            this.callApiWithSearchQuery(this.state.searchQuery, selectedDiscountType);
+        });
+    };
 
 
     detail(id) {
@@ -147,36 +164,39 @@ class KhuyenMaiComponents extends Component {
                                             <div style={{display: 'flex', justifyContent: 'flex-end'}}>
                                                 <div>
                                                     <div className="radio-buttons">
-                                                        <label>
-                                                            <input
-                                                                type="radio"
-                                                                name="discountType"
-                                                                value="all"
-                                                                checked={this.state.discountType === "all"}
-                                                                onChange={this.handleDiscountTypeChange}
-                                                            />
-                                                            Tất cả
-                                                        </label>
-                                                        <label>
-                                                            <input
-                                                                type="radio"
-                                                                name="discountType"
-                                                                value="percent"
-                                                                checked={this.state.discountType === "percent"}
-                                                                onChange={this.handleDiscountTypeChange}
-                                                            />
-                                                            Phần trăm
-                                                        </label>
-                                                        <label>
-                                                            <input
-                                                                type="radio"
-                                                                name="discountType"
-                                                                value="money"
-                                                                checked={this.state.discountType === "money"}
-                                                                onChange={this.handleDiscountTypeChange}
-                                                            />
-                                                            Tiền
-                                                        </label>
+                                                        <div className="radio-buttons">
+                                                            <label>
+                                                                <input
+                                                                    type="radio"
+                                                                    name="discountType"
+                                                                    value="all"
+                                                                    checked={this.state.selectedDiscountType === "all"} // Update this line
+                                                                    onChange={this.handleDiscountTypeChange}
+                                                                />
+                                                                Tất cả
+                                                            </label>
+                                                            <label>
+                                                                <input
+                                                                    type="radio"
+                                                                    name="discountType"
+                                                                    value="percent"
+                                                                    checked={this.state.selectedDiscountType === "percent"} // Update this line
+                                                                    onChange={this.handleDiscountTypeChange}
+                                                                />
+                                                                Phần trăm
+                                                            </label>
+                                                            <label>
+                                                                <input
+                                                                    type="radio"
+                                                                    name="discountType"
+                                                                    value="money"
+                                                                    checked={this.state.selectedDiscountType === "money"} // Update this line
+                                                                    onChange={this.handleDiscountTypeChange}
+                                                                />
+                                                                Tiền
+                                                            </label>
+                                                        </div>
+
                                                     </div>
                                                     <div className="search-button-container">
                                                         <input

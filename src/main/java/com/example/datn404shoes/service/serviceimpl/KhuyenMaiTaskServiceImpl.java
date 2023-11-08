@@ -19,22 +19,16 @@ public class KhuyenMaiTaskServiceImpl implements KhuyenMaiTaskService {
     public void updatePromotionStatus() {
         List<KhuyenMai> khuyenMaiList = khuyenMaiService.getAllNoPage();
         Timestamp currentTime = new Timestamp(System.currentTimeMillis());
-        System.out.println("hehe:" + currentTime);
+//        System.out.println("hehe:" + currentTime);
         for (KhuyenMai khuyenMai : khuyenMaiList) {
-            System.out.println(khuyenMai.getId());
-            System.out.println(khuyenMai.getTen());
+//            System.out.println(khuyenMai.getId());
+//            System.out.println(khuyenMai.getTen());
 
             if (khuyenMai.getTrangThai() == 0 && khuyenMai.getBatDau().before(currentTime)) {
                 khuyenMai.setTrangThai(1);
                 khuyenMaiService.update(khuyenMai.getId(), khuyenMai);
             } else if (khuyenMai.getTrangThai() == 1 && khuyenMai.getKetThuc().before(currentTime)) {
                 khuyenMai.setTrangThai(2);
-                khuyenMaiService.update(khuyenMai.getId(), khuyenMai);
-            }
-
-// Đổi lại trạng thái thành 0 khi ngày bắt đầu trước thời gian hiện tại
-            if (khuyenMai.getTrangThai() == 0 && khuyenMai.getBatDau().before(currentTime)) {
-                khuyenMai.setTrangThai(0);
                 khuyenMaiService.update(khuyenMai.getId(), khuyenMai);
             }
 

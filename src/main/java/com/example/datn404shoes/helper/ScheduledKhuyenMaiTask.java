@@ -23,7 +23,7 @@ public class ScheduledKhuyenMaiTask {
     @Scheduled(cron = "* * * * * *") // Chạy mỗi giây
     public void updatePromotionStatus() {
         // Gọi service để kiểm tra và cập nhật trạng thái chương trình khuyến mãi
-        logger.info("Cron job is running at: " + LocalDateTime.now());
+//        logger.info("Cron job is running at: " + LocalDateTime.now());
         khuyenMaiTaskService.updatePromotionStatus();
     }
 }
