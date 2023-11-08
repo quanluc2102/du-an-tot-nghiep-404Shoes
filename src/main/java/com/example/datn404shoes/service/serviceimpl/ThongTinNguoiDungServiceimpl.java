@@ -49,7 +49,7 @@ public class ThongTinNguoiDungServiceimpl implements ThongTinNguoiDungService {
     public ThongTinNguoiDung update(Long id, ThongTinNguoiDung thongTinNguoiDung) {
         ThongTinNguoiDung a = getOne(id);
         a.setTen(thongTinNguoiDung.getTen());
-        a.setDiaChi(thongTinNguoiDung.getDiaChi());
+//        a.setDiaChi(thongTinNguoiDung.getDiaChi());
         a.setSdt(thongTinNguoiDung.getSdt());
 //        a.setCCCD(thongTinNguoiDung.getCCCD());
         a.setGioiTinh(thongTinNguoiDung.getGioiTinh());

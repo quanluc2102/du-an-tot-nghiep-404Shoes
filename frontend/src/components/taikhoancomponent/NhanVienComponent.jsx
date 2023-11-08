@@ -15,7 +15,7 @@ class NhanVienComponent extends Component {
 
             nhanVienQuyen1: [],
             taiKhoanAdd: {
-                username: '',
+                maTaiKhoan: '',
                 email: '',
                 // ngayTao: '',
                 // ngayCapNhat: '',
@@ -25,7 +25,7 @@ class NhanVienComponent extends Component {
             },
             taiKhoanUpdate: {
                 id: this.props.match.params.id,
-                username: '',
+                maTaiKhoan: '',
                 email: '',
                 // ngayTao: '',
                 // ngayCapNhat: '',
@@ -34,7 +34,7 @@ class NhanVienComponent extends Component {
                 trangThai: ''
             },
             errorAdd: {
-                username: '',
+                maTaiKhoan: '',
                 email: '',
                 // ngayTao: '',
                 // ngayCapNhat: '',
@@ -43,7 +43,7 @@ class NhanVienComponent extends Component {
                 trangThai: ''
             },
             errorUpdate: {
-                username: '',
+                maTaiKhoan: '',
                 email: '',
                 // ngayTao: '',
                 // ngayCapNhat: '',
@@ -120,7 +120,7 @@ class NhanVienComponent extends Component {
     update = (e) => {
         e.preventDefault();
         let nhanVienQuyen1 = {
-            username: this.state.taiKhoanUpdate.username,
+            maTaiKhoan: this.state.taiKhoanUpdate.maTaiKhoan,
             email: this.state.taiKhoanUpdate.email,
             // ngayTao: this.state.taiKhoanUpdate.ngayTao,
             // ngayCapNhat: this.state.taiKhoanUpdate.ngayCapNhat,
@@ -303,7 +303,7 @@ class NhanVienComponent extends Component {
     }
 
     toggleTaiKhoan(id, currentTaiKhoan) {
-        const newTrangThai = currentTaiKhoan === false ? true : false; // Chuyển đổi trạng thái
+        const newTrangThai = currentTaiKhoan === true ? false : true; // Chuyển đổi trạng thái
         taikhoanservice.updateTaiKhoanTrangThai({ trangThai: newTrangThai }, id).then((res) => {
             let taiKhoanCapNhat = res.data;
             this.setState(prevState => ({
@@ -353,7 +353,7 @@ class NhanVienComponent extends Component {
                                             <table className="table table-borderless datatable">
                                                 <thead>
                                                 <tr>
-                                                    <th>Username</th>
+                                                    <th>Mã NV</th>
                                                     <th>Email</th>
                                                     <th>Ngày tạo</th>
                                                     <th>Ngày cập nhật</th>
@@ -367,10 +367,10 @@ class NhanVienComponent extends Component {
 
                                                 {currentItems.map((tk, index) => (
                                                     <tr key={tk.id}>
-                                                        <td>{tk.username}</td>
+                                                        <td>{tk.maTaiKhoan}</td>
                                                         <td>{tk.email}</td>
                                                         <td>{tk.ngayTao}</td>
-                                                        <td>{tk.ngayCapNhat}</td>
+                                                        {/*<td>{tk.ngayCapNhat}</td>*/}
                                                         <td>
                                                             {tk.anh && <img src={`/niceadmin/img/${tk.anh}`} width="100px" height="100px" />}
 

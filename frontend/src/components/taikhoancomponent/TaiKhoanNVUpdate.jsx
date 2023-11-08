@@ -13,7 +13,7 @@ class TaiKhoanNVUpdate extends Component {
             pageCount: 0,
             taiKhoanUpdate: {
                 id: this.props.match.params.id,
-                username: '',
+                maTaiKhoan: '',
                 email: '',
                 password: '',
                 anh: '',
@@ -34,7 +34,7 @@ class TaiKhoanNVUpdate extends Component {
                 cccd: '',
                 gioiTinh: '',
                 ngaySinh: '',
-                username: '',
+                maTaiKhoan: '',
                 email: '',
                 password: '',
                 anh: ''
@@ -355,13 +355,13 @@ class TaiKhoanNVUpdate extends Component {
                                         <div>
                                             UserName :
                                             <input
-                                                className={`form-control ${this.state.errorUpdate.username ? 'is-invalid' : ''}`}
+                                                className={`form-control ${this.state.errorUpdate.maTaiKhoan ? 'is-invalid' : ''}`}
                                                 style={{}}
-                                                name="username" value={this.state.taiKhoanUpdate && this.state.taiKhoanUpdate.username ? this.state.taiKhoanUpdate.username : ''}
+                                                name="maTaiKhoan" value={this.state.taiKhoanUpdate && this.state.taiKhoanUpdate.maTaiKhoan ? this.state.taiKhoanUpdate.maTaiKhoan : ''}
                                                 onChange={this.thayDoiUsernameUpdate}  disabled />
 
-                                            {this.state.errorUpdate.username &&
-                                            <div className="text-danger">{this.state.errorUpdate.username}</div>}
+                                            {this.state.errorUpdate.maTaiKhoan &&
+                                            <div className="text-danger">{this.state.errorUpdate.maTaiKhoan}</div>}
                                         </div>
                                         <div>
                                             PassWord :

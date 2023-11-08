@@ -1,25 +1,29 @@
 import React, {Component} from 'react';
-
 import taikhoanservice from "../../services/taikhoanservice/taikhoanservice";
 import {toast} from "react-toastify";
-
-
+import axios from "axios";
+import $ from 'jquery';
 
 class TaiKhoanNVComponent extends Component {
+
     constructor(props) {
         super(props);
         this.state = {
             nhanVienQuyen1: [],
             thongTinNguoiDung: [],
+            provinces: [],  // Stores the list of provinces
+            districts: [],  // Stores the list of districts
+            wards: [],      // Stores the list of wards
             pageCount: 0,
+            files:null,
             taiKhoanAdd: {
-                username: '',
+                maTaiKhoan: '',
                 email: '',
                 password: '',
                 anh: ''
             },
             taiKhoanUpdate: {
-                username: '',
+                maTaiKhoan: '',
                 email: '',
                 password: '',
                 anh: ''
@@ -47,7 +51,7 @@ class TaiKhoanNVComponent extends Component {
                 cccd: '',
                 gioiTinh: '',
                 ngaySinh: '',
-                username: '',
+                maTaiKhoan: '',
                 email: '',
                 password: '',
                 anh: ''
@@ -59,7 +63,7 @@ class TaiKhoanNVComponent extends Component {
                 cccd: '',
                 gioiTinh: '',
                 ngaySinh: '',
-                username: '',
+                maTaiKhoan: '',
                 email: '',
                 password: '',
                 anh: ''
@@ -73,10 +77,63 @@ class TaiKhoanNVComponent extends Component {
         this.thayDoiGioiTinhAdd = this.thayDoiGioiTinhAdd.bind(this);
         this.thayDoiPassAdd = this.thayDoiPassAdd.bind(this);
         this.thayDoiNGaySinhAdd = this.thayDoiNGaySinhAdd.bind(this);
-        this.thayDoiUsernameAdd = this.thayDoiUsernameAdd.bind(this);
+        this.thayDoiMaNVAdd = this.thayDoiMaNVAdd.bind(this);
         this.thayDoiAnhAdd = this.thayDoiAnhAdd.bind(this);
         this.thayDoiCCCDAdd = this.thayDoiCCCDAdd.bind(this);
         this.thayDoiEmailAdd = this.thayDoiEmailAdd.bind(this);
+
+
+        // const host = "https://provinces.open-api.vn/api/";
+        // var callAPI = (api) => {
+        //     return axios.get(api)
+        //         .then((response) => {
+        //             renderData(response.data, "city");
+        //         });
+        // }
+        // callAPI('https://provinces.open-api.vn/api/?depth=1');
+        // var callApiDistrict = (api) => {
+        //     return axios.get(api)
+        //         .then((response) => {
+        //             renderData(response.data.districts, "district");
+        //         });
+        // }
+        // var callApiWard = (api) => {
+        //     return axios.get(api)
+        //         .then((response) => {
+        //             renderData(response.data.wards, "ward");
+        //         });
+        // }
+        //
+        // var renderData = (array, select) => {
+        //     let row = ' <option disable value="">Chọn</option>';
+        //     array.forEach(element => {
+        //         row += `<option data-id="${element.code}" value="${element.name}">${element.name}</option>`
+        //     });
+        //     document.querySelector("#" + select).innerHTML = row
+        // }
+        //
+        // $("#city").change(() => {
+        //     callApiDistrict(host + "p/" + $("#city").find(':selected').data('id') + "?depth=2");
+        //     printResult();
+        // });
+        // $("#district").change(() => {
+        //     callApiWard(host + "d/" + $("#district").find(':selected').data('id') + "?depth=2");
+        //     printResult();
+        // });
+        // $("#ward").change(() => {
+        //     printResult();
+        // })
+        //
+        // var printResult = () => {
+        //     if ($("#district").find(':selected').data('id') != "" && $("#city").find(':selected').data('id') != "" &&
+        //         $("#ward").find(':selected').data('id') != "") {
+        //         let result = $("#city option:selected").text() +
+        //             " | " + $("#district option:selected").text() + " | " +
+        //             $("#ward option:selected").text();
+        //         $("#result").text(result)
+        //     }
+        //
+        // }
     }
 
     componentDidMount() {
@@ -97,10 +154,15 @@ class TaiKhoanNVComponent extends Component {
 
     add = (e) => {
         e.preventDefault();
+        let listFile = [];
+        for(let i=0;i<this.state.files.length;i++){
+            listFile.push(this.state.files[i].name);
+        }
         const { taiKhoanAdd, nguoiDungAdd } = this.state;
         const requestData = {
             taiKhoan: taiKhoanAdd,
             thongTinNguoiDung: nguoiDungAdd,
+            files:listFile,
             //     username: this.state.taiKhoanAdd.username,
             //     email: this.state.taiKhoanAdd.email,
             //     password: this.state.taiKhoanAdd.password,
@@ -351,16 +413,16 @@ class TaiKhoanNVComponent extends Component {
         let errorAdd = {...this.state.errorAdd, ngaySinh: ""};
         this.setState({errorAdd: errorAdd});
     }
-    thayDoiUsernameAdd = (event) => {
+    thayDoiMaNVAdd = (event) => {
         this.setState(
             prevState => ({
                 taiKhoanAdd: {
                     ...prevState.taiKhoanAdd,
-                    username: event.target.value
+                    maTaiKhoan: event.target.value
                 }
             })
         );
-        let errorAdd = {...this.state.errorAdd, username: ""};
+        let errorAdd = {...this.state.errorAdd, maTaiKhoan: ""};
         this.setState({errorAdd: errorAdd});
     }
 
@@ -405,138 +467,77 @@ class TaiKhoanNVComponent extends Component {
             prevState => ({
                 taiKhoanAdd: {
                     ...prevState.taiKhoanAdd,
-                    anh: event.target.value
-                }
+                    anh: event.target.value                }
             })
         );
+        this.setState({ files: [ ...event.target.files] })
         let errorAdd = {...this.state.errorAdd, anh: ""};
         this.setState({errorAdd: errorAdd});
     }
-    // thayDoiMaUpdate=(event)=>{
-    //     this.setState(
-    //         prevState=>({
-    //             khuyenMaiUpdate:{
-    //                 ...prevState.khuyenMaiUpdate,
-    //                 ma:event.target.value
-    //             }
-    //         })
-    //     );
-    //     let errorUpdate = {...this.state.errorUpdate,ma:""};
-    //     this.setState({errorUpdate:errorUpdate});
-    // }
-    // thayDoiTenUpdate=(event)=>{
-    //     this.setState(
-    //         prevState=>({
-    //             khuyenMaiUpdate:{
-    //                 ...prevState.khuyenMaiUpdate,
-    //                 ten:event.target.value
-    //             }
-    //         })
-    //     );
-    //     let errorUpdate = {...this.state.errorUpdate,ten:""};
-    //     this.setState({errorUpdate:errorUpdate});
-    // }
-    // thayDoiMoTaUpdate=(event)=>{
-    //     this.setState(
-    //         prevState=>({
-    //             khuyenMaiUpdate:{
-    //                 ...prevState.khuyenMaiUpdate,
-    //                 moTa:event.target.value
-    //             }
-    //         })
-    //     );
-    //     let errorUpdate = {...this.state.errorUpdate,moTa:""};
-    //     this.setState({errorUpdate:errorUpdate});
-    // }
-    // thayDoiBatDauUpdate=(event)=>{
-    //     this.setState(
-    //         prevState=>({
-    //             khuyenMaiUpdate:{
-    //                 ...prevState.khuyenMaiUpdate,
-    //                 batDau:event.target.value
-    //             }
-    //         })
-    //     );
-    //     let errorUpdate = {...this.state.errorUpdate,batDau:""};
-    //     this.setState({errorUpdate:errorUpdate});
-    // }
-    // thayDoiKetThucUpdate=(event)=>{
-    //     this.setState(
-    //         prevState=>({
-    //             khuyenMaiUpdate:{
-    //                 ...prevState.khuyenMaiUpdate,
-    //                 ketThuc:event.target.value
-    //             }
-    //         })
-    //     );
-    //     let errorUpdate = {...this.state.errorUpdate,ketThuc:""};
-    //     this.setState({errorUpdate:errorUpdate});
-    // }
-    // thayDoiGiamGiaUpdate=(event)=>{
-    //     this.setState(
-    //         prevState=>({
-    //             khuyenMaiUpdate:{
-    //                 ...prevState.khuyenMaiUpdate,
-    //                 giamGia:event.target.value
-    //             }
-    //         })
-    //     );
-    //     let errorUpdate = {...this.state.errorUpdate,giamGia:""};
-    //     this.setState({errorUpdate:errorUpdate});
-    // }
-    //
-    // thayDoiKieuKhuyenMaiUpdate=(event)=>{
-    //     this.setState(
-    //         prevState=>({
-    //             khuyenMaiUpdate:{
-    //                 ...prevState.khuyenMaiUpdate,
-    //                 kieuKhuyenMai:event.target.value
-    //             }
-    //         })
-    //     );
-    // }
-    // thayDoiDieuKienUpdate=(event)=>{
-    //     this.setState(
-    //         prevState=>({
-    //             khuyenMaiUpdate:{
-    //                 ...prevState.khuyenMaiUpdate,
-    //                 dieuKien:event.target.value
-    //             }
-    //         })
-    //     );
-    // }
-    // thayDoiSoLuongUpdate=(event)=>{
-    //     this.setState(
-    //         prevState=>({
-    //             khuyenMaiUpdate:{
-    //                 ...prevState.khuyenMaiUpdate,
-    //                 soLuong:event.target.value
-    //             }
-    //         })
-    //     );
-    // }
-    // thayDoiTrangThaiUpdate=(event)=>{
-    //     this.setState(
-    //         prevState=>({
-    //             khuyenMaiUpdate:{
-    //                 ...prevState.khuyenMaiUpdate,
-    //                 trangThai:event.target.value
-    //             }
-    //         })
-    //     );
-    // }
+
     render() {
+        const host = "https://provinces.open-api.vn/api/";
+        var callAPI = (api) => {
+            return axios.get(api)
+                .then((response) => {
+                    renderData(response.data, "city");
+                });
+        }
+        callAPI('https://provinces.open-api.vn/api/?depth=1');
+        var callApiDistrict = (api) => {
+            return axios.get(api)
+                .then((response) => {
+                    renderData(response.data.districts, "district");
+                });
+        }
+        var callApiWard = (api) => {
+            return axios.get(api)
+                .then((response) => {
+                    renderData(response.data.wards, "ward");
+                });
+        }
+
+        var renderData = (array, select) => {
+            let row = ' <option disable value="">Chọn</option>';
+            array.forEach(element => {
+                row += `<option data-id="${element.code}" value="${element.name}">${element.name}</option>`
+            });
+            document.querySelector("#" + select).innerHTML = row
+        }
+
+        $("#city").change(() => {
+            callApiDistrict(host + "p/" + $("#city").find(':selected').data('id') + "?depth=2");
+            printResult();
+        });
+        $("#district").change(() => {
+            callApiWard(host + "d/" + $("#district").find(':selected').data('id') + "?depth=2");
+            printResult();
+        });
+        $("#ward").change(() => {
+            printResult();
+        })
+
+        var printResult = () => {
+            if ($("#district").find(':selected').data('id') != "" && $("#city").find(':selected').data('id') != "" &&
+                $("#ward").find(':selected').data('id') != "") {
+                let result = $("#city option:selected").text() +
+                    " | " + $("#district option:selected").text() + " | " +
+                    $("#ward option:selected").text();
+                $("#result").text(result)
+            }
+
+        }
         return (
             <div>
                 <div className="pagetitle">
-                    <h1>Tài khoản nhân viên</h1>
-                    {/*<nav>*/}
-                    {/*    <ol className="breadcrumb">*/}
-                    {/*        <li className="breadcrumb-item"><a href="index.html">Home</a></li>*/}
-                    {/*        <li className="breadcrumb-item active">Overview</li>*/}
-                    {/*        <li className="breadcrumb-item active">Tài khoản</li>*/}
-                    {/*    </ol>*/}
-                    {/*</nav>*/}
+                    <h1>Khuyến mãi</h1>
+                    <nav>
+                        <ol className="breadcrumb">
+                            <li className="breadcrumb-item"><a href="index.html">Home</a></li>
+                            <li className="breadcrumb-item active">Overview</li>
+                            <li className="breadcrumb-item active">Tài khoản</li>
+                        </ol>
+                    </nav>
                 </div>
 
 
@@ -546,13 +547,13 @@ class TaiKhoanNVComponent extends Component {
                             <div className="card">
 
                                 <div className="card-body">
-                                    {/*<h5 className="card-title">ADD<span>| xx</span></h5>*/}
+                                    <h5 className="card-title">ADD<span>| xx</span></h5>
                                     <form>
                                         <div>
                                             Ảnh :
                                             <input
-                                                className={`form-control ${this.state.errorAdd.anh ? 'is-invalid' : ''}`}
-                                                type={"file"} value={this.state.taiKhoanAdd.anh}
+                                                className={`form-control ${this.state.errorAdd.anh ? 'is-invalid' : ''}`}                                                type={"file"} value={this.state.taiKhoanAdd.anh}
+                                                type="file" value={this.state.taiKhoanAdd.anh}
                                                 onChange={this.thayDoiAnhAdd}/>
                                             {this.state.errorAdd.anh &&
                                             <div className="text-danger">{this.state.errorAdd.anh}</div>}
@@ -568,15 +569,31 @@ class TaiKhoanNVComponent extends Component {
                                         </div>
                                         <div>
                                             Địa chỉ:
-                                            <input
-                                                className={`form-control ${this.state.errorAdd.diaChi ? 'is-invalid' : ''}`}
-                                                name="diaChi"
-                                                onChange={this.thayDoiDiaChiAdd}
-                                                value={this.state.nguoiDungAdd.diaChi} // Make sure the value is set
-                                            />
-                                            {this.state.errorAdd.diaChi &&
-                                            <div className="text-danger">{this.state.errorAdd.diaChi}</div>}
+                                            <select id="city">
+                                                <option value="" selected>Chọn tỉnh thành</option>
+                                            </select>
+
+                                            <select id="district">
+                                                <option value="" selected>Chọn quận huyện</option>
+                                            </select>
+
+                                            <select id="ward">
+                                                <option value="" selected>Chọn phường xã</option>
+                                            </select>
                                         </div>
+                                            <div>
+                                                <label>Số nhà/Thôn :</label>
+                                                <input
+                                                    className={`form-control ${this.state.errorAdd.cccd ? 'is-invalid' : ''}`}
+                                                    name="cccd" style={{}}
+                                                    onChange={this.thayDoiCCCDAdd}
+                                                    value={this.state.nguoiDungAdd.cccd}/>
+
+                                                {this.state.errorAdd.cccd &&
+                                                <div className="text-danger">{this.state.errorAdd.cccd}</div>}
+                                            </div>
+
+
                                         <div>
                                             CCCD :
                                             <input
@@ -640,15 +657,15 @@ class TaiKhoanNVComponent extends Component {
                                             {this.state.errorAdd.email &&
                                             <div className="text-danger">{this.state.errorAdd.email}</div>}
                                         </div>
-                                        <div>
-                                            UserName :
-                                            <input
-                                                className={`form-control ${this.state.errorAdd.username ? 'is-invalid' : ''}`}
-                                                name="username" value={this.state.taiKhoanAdd.username}
-                                                onChange={this.thayDoiUsernameAdd}/>
-                                            {this.state.errorAdd.username &&
-                                            <div className="text-danger">{this.state.errorAdd.username}</div>}
-                                        </div>
+                                        {/*<div>*/}
+                                        {/*    Mã NV :*/}
+                                        {/*    <input*/}
+                                        {/*        className={`form-control ${this.state.errorAdd.maTaiKhoan ? 'is-invalid' : ''}`}*/}
+                                        {/*        name="maTaiKhoan" value={this.state.taiKhoanAdd.maTaiKhoan}*/}
+                                        {/*        onChange={this.thayDoiUsernameAdd}/>*/}
+                                        {/*    {this.state.errorAdd.maTaiKhoan &&*/}
+                                        {/*    <div className="text-danger">{this.state.errorAdd.maTaiKhoan}</div>}*/}
+                                        {/*</div>*/}
                                         <div>
                                             PassWord :
                                             <input
