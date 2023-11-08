@@ -151,7 +151,7 @@ class KhuyenMaiComponents extends Component {
         return (
             <div>
                 <div className="pageTitle">
-                    <h1>Quản lý Khuyến mãi</h1>
+                    <h4>Quản lý phiếu giảm giá</h4>
                 </div>
                 <section className="section dashboard">
                     <div className="row">
@@ -160,7 +160,7 @@ class KhuyenMaiComponents extends Component {
                                 <div className="col-12">
                                     <div className="card recent-sales overflow-auto">
                                         <div className="card-body">
-                                            <h5 className="card-title">Khuyến mãi <span>| </span></h5>
+                                            <h5 className="card-title">Phiếu giảm giá<span> </span></h5>
                                             <div style={{display: 'flex', justifyContent: 'flex-end'}}>
                                                 <div>
                                                     <div className="radio-buttons">

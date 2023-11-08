@@ -297,7 +297,7 @@ class KhuyenMaiComponent extends Component {
         return (
             <div>
                 <div className="pagetitle">
-                    <h1>Khuyến mãi</h1>
+                    <h1>Sửa phiếu giảm giá</h1>
                 </div>
 
                 <section className="section dashboard">
@@ -306,7 +306,7 @@ class KhuyenMaiComponent extends Component {
                             <div className="card">
                                 <div className="card-body">
                                     <h5 className="card-title">
-                                        Sửa <span>| xx</span>
+                                         <span></span>
                                     </h5>
 
                                     <div className="tab-content pt-2" id="myTabContent">
