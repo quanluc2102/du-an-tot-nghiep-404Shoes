@@ -48,8 +48,8 @@ class HoaDonComponents extends Component {
             // Combine the values of the columns you want to search in
             const searchValues = (
                 (item.ten && item.ten !== null ? item.ten : "Khách lẻ") +
-                (item.maHoaDon) + (item.ngayTao) +
-                (item.sdt) +
+                (item.maHoaDon) + (item.ngayTao) +(item.ghiChu)+
+                (item.sdt) +(item.taiKhoan.maTaiKhoan)+
                 (item.trangThai === 4 ? "Hoàn thành" : item.trangThai === 0 ? "Chờ duyệt": item.trangThai === 1 ? "Duyệt" : item.trangThai === 2 ? "Đang chờ đơn vị vận chuyển" : item.trangThai === 3 ? "Đang giao": "Chờ")
             ).toLowerCase();
 
@@ -258,7 +258,7 @@ class HoaDonComponents extends Component {
                                                         <th onClick={() => this.handleSort('ngayCapNhat')}>Ngày cập nhật {this.renderSortIcon('ngayCapNhat')}</th>
                                                         <th>Thạng thái</th>
                                                         <th>Ghi chú</th>
-                                                        <th>Khách Phải Trả</th>
+                                                        <th onClick={() => this.handleSort('tongTienSauGiam')}>Khách Phải Trả {this.renderSortIcon('tongTienSauGiam')}</th>
                                                         <th>Action</th>
                                                     </tr>
                                                 </thead>
