@@ -58,40 +58,41 @@ class HoaDonChiTietComponents extends Component {
     };
 
     getCircleColor(trangThai) {
-        switch (trangThai) {
-            case 1:
-                return 'green'; // Duyệt
-            case 2:
-                return 'blue'; // Đóng gói
-            case 3:
-                return 'orange';  // Xuất kho
-            case 4:
-                return 'yellow'; // Hoàn thành
-            default:
-                return '#555'; // Trạng thái mặc định
+        if (trangThai === 1) {
+            return 'gray'; // Chờ duyệt
+        } else if (trangThai === 4) {
+            return 'green'; // Duyệt
+        } else if (trangThai === 3) {
+            return 'blue'; // Đóng gói
+        } else if (trangThai === 3) {
+            return 'orange'; // Xuất kho
+        } else if (trangThai === 2) {
+            return 'yellow'; // Hoàn thành
+        } else {
+            return '#555'; // Trạng thái mặc định
         }
     }
 
     getCircleBackgroundColor(trangThai) {
-        switch (trangThai) {
-            case 1:
-                return '#e0e0e0'; // Màu mặc định
-            case 2:
-                return '#e0e0e0'; // Màu mặc định
-            case 3:
-                return '#e0e0e0';  // Màu mặc định
-            case 4:
-                return '#e0e0e0'; // Màu mặc định
-            default:
-                return 'white'; // Màu nền mặc định (thay đổi theo ý muốn)
+        if (trangThai === 1) {
+            return 'gray'; // Chờ duyệt
+        } else if (trangThai === 2) {
+            return 'green'; // Duyệt
+        } else if (trangThai === 3) {
+            return 'blue'; // Đóng gói
+        } else if (trangThai === 4) {
+            return 'orange'; // Xuất kho
+        } else if (trangThai === 5) {
+            return 'yellow'; // Hoàn thành
+        } else {
+            return '#e0e0e0'; // Màu mặc định
         }
     }
-
     render() {
         let total = 0;
 
         return (
-            
+
             <div>
                 <div className="pagetitle">
                     <h1>Hóa đơn</h1>
@@ -105,54 +106,56 @@ class HoaDonChiTietComponents extends Component {
                 </div>
 
                 <div>
-            {/* ... Các phần mã khác ở đây ... */}
-            <div>
-            {/* ... Các phần mã khác ở đây ... */}
+                    {/* ... Các phần mã khác ở đây ... */}
+                    <div>
+                        {/* ... Các phần mã khác ở đây ... */}
 
-            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                {Array.from(Array(4).keys()).map((index) => {
-                    const trangThai = index + 1;
-                    const isActive = this.state.hoaDon.trangThai >= trangThai;
+                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                            {Array.from(Array(5).keys()).map((index) => {
+                                const trangThai = index + 1;
+                                const isActive = this.state.hoaDon.trangThai >= trangThai;
 
-                    return (
-                        <div style={{ textAlign: 'center', flex: 1 }} key={trangThai}>
-                            <div
-                                style={{
-                                    width: '40px',
-                                    height: '40px',
-                                    backgroundColor: isActive ? 'green' : '#e0e0e0',
-                                    borderRadius: '50%',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    fontWeight: 'bold',
-                                    fontSize: '18px',
-                                    color: isActive ? 'white' : '#555',
-                                    margin: '0 auto 10px',
-                                }}
-                            >
-                                {trangThai}
-                            </div>
-                            <div style={{ fontWeight: 'bold', fontSize: '14px' }}>
-                                {trangThai === 1 ? 'Duyệt' : trangThai === 2 ? 'Đóng gói' : trangThai === 3 ? 'Xuất kho' : 'Hoàn thành'}
-                            </div>
+                                return (
+                                    <div style={{ textAlign: 'center', flex: 1 }} key={trangThai}>
+                                        <div
+                                            style={{
+                                                width: '40px',
+                                                height: '40px',
+                                                backgroundColor: trangThai === 1 ? 'gray' : isActive ? 'green' : '#e0e0e0',
+                                                borderRadius: '50%',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                fontWeight: 'bold',
+                                                fontSize: '18px',
+                                                color: isActive ? 'white' : '#555',
+                                                margin: '0 auto 10px',
+                                            }}
+                                        >
+                                            {trangThai}
+                                        </div>
+                                        <div style={{ fontWeight: 'bold', fontSize: '14px' }}>
+                                            {trangThai === 1 ? 'Chờ duyệt' : trangThai === 2 ? 'Duyệt' : trangThai === 3 ? 'Đang chờ đơn vị vận chuyển ' : trangThai === 4 ? 'Đang giao' : trangThai === 5 ? 'Hoàn thành' : "Chờ duyệt"}
+                                        </div>
+                                    </div>
+                                );
+                            })}
                         </div>
-                    );
-                })}
-            </div>
-            
-            {/* Kết nối các ô trạng thái bằng các đường kẻ */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '10px' }}>
-                <div style={{ flex: 1, height: '10px', backgroundColor: this.state.hoaDon.trangThai >= 2 ? 'green' : '#e0e0e0' }}></div>
-                <div style={{ flex: 1, height: '10px', backgroundColor: this.state.hoaDon.trangThai >= 3 ? 'green' : '#e0e0e0' }}></div>
-                <div style={{ flex: 1, height: '10px', backgroundColor: this.state.hoaDon.trangThai >= 4 ? 'green' : '#e0e0e0' }}></div>
-            </div>
 
-            {/* ... Các phần mã khác tiếp tục ở đây ... */}
-        </div>
-        </div>
+                        {/* Kết nối các ô trạng thái bằng các đường kẻ */}
+                        <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '10px' }}>
+                            <div style={{ flex: 1, height: '10px', backgroundColor: this.state.hoaDon.trangThai == 1 ? 'e0e0e0' :this.state.hoaDon.trangThai >= 2 ? 'green':'#e0e0e0' }}></div>
+                            <div style={{ flex: 1, height: '10px', backgroundColor: this.state.hoaDon.trangThai >= 2 ? 'green' : '#e0e0e0' }}></div>
+                            <div style={{ flex: 1, height: '10px', backgroundColor: this.state.hoaDon.trangThai >= 3 ? 'green' : '#e0e0e0' }}></div>
+                            <div style={{ flex: 1, height: '10px', backgroundColor: this.state.hoaDon.trangThai >= 4 ? 'green' : '#e0e0e0' }}></div>
+                            <div style={{ flex: 1, height: '10px', backgroundColor: this.state.hoaDon.trangThai >= 5 ? 'green' : '#e0e0e0' }}></div>
+                        </div>
+
+                        {/* ... Các phần mã khác tiếp tục ở đây ... */}
+                    </div>
+                </div>
                 <br />
-               
+
                 <section className="section dashboard">
                     <div className="row">
                         <div className="col-lg-8">
@@ -282,7 +285,7 @@ class HoaDonChiTietComponents extends Component {
                                                     <h10 className="nav-link">
                                                         Người mua: {this.state.hoaDon?.ten}</h10>
                                                     <h10 className="nav-link">
-                                                        Địa chỉ: {this.state.hoaDon?.phuongXa}, {this.state.hoaDon?.quanHuyen}, {this.state.hoaDon?.thanhPho}</h10>
+                                                        Địa chỉ: {this.state.hoaDon?.xaPhuongThiTran}, {this.state.hoaDon?.quanHuyen}, {this.state.hoaDon?.tinhThanhPho}</h10>
                                                     <h10 className="nav-link">
                                                         Số điện thoại: {this.state.hoaDon?.sdt}</h10>
                                                     <h10 className="nav-link">
@@ -318,8 +321,8 @@ class HoaDonChiTietComponents extends Component {
 
                 </section>
                 <div>
-  
-</div>
+
+                </div>
             </div>
         );
     }

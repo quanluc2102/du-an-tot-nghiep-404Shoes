@@ -50,16 +50,20 @@ class HoaDonComponents extends Component {
                 (item.ten && item.ten !== null ? item.ten : "Khách lẻ") +
                 (item.maHoaDon) + (item.ngayTao) +
                 (item.sdt) +
-                (item.trangThai === 1 ? "Đã thanh toán" : item.trangThai === 2 ? "Chưa thanh toán" : "Chờ")
+                (item.trangThai === 4 ? "Hoàn thành" : item.trangThai === 0 ? "Chờ duyệt": item.trangThai === 1 ? "Duyệt" : item.trangThai === 2 ? "Đang chờ đơn vị vận chuyển" : item.trangThai === 3 ? "Đang giao": "Chờ")
             ).toLowerCase();
 
             switch (searchTerm) {
-                case "1":
-                    return item.trangThai === 1; // Filter for "Đã thanh toán"
-                case "2":
-                    return item.trangThai == 2; // Filter for "Chưa thanh toán"
+                case "5":
+                    return item.trangThai == 5; // Filter for "Đã thanh toán"
                 case "3":
-                    return item.trangThai == 3; // Filter for "Chờ"
+                    return item.trangThai == 3; // Filter for "Chưa thanh toán"
+                case "4":
+                    return item.trangThai == 4; // Filter for "Chờ"
+                case "2":
+                    return item.trangThai == 2; 
+                case "1":
+                    return item.trangThai == 1; 
                 default:
                     return searchValues.includes(searchTerm.toLowerCase());
             }
@@ -86,25 +90,33 @@ class HoaDonComponents extends Component {
     }
     getStatusColor = (status) => {
         switch (status) {
-            case 1:
+            case 5:
                 return 'green'; // Đã hoàn thành (màu xanh)
-            case 2:
-                return 'red'; // Chưa thanh toán (màu đỏ)
             case 3:
-                return 'yellow'; // Chờ (màu vàng)
+                return 'yellow'; // Chưa thanh toán (màu đỏ)
+            case 4:
+                return 'blue'; // Chờ (màu vàng)
+            case 2:
+                return 'red'; // Chờ (màu vàng)
+            case 1:
+                return 'black'; // Chờ (màu vàng)
             default:
-                return 'black'; // Default color (or another color of your choice)
+                return 'white'; // Default color (or another color of your choice)
         }
     }
 
     getStatusText = (status) => {
         switch (status) {
             case 1:
-                return 'Đã hoàn thành';
+                return 'Chờ Duyệt';
             case 2:
-                return 'Chưa thanh toán';
+                return 'Duyệt';
             case 3:
-                return 'Chờ';
+                return 'Đang chờ đơn vị vận chuyển';
+            case 4:
+                return 'Đang giao';
+            case 5:
+                return 'Hoàn thành';
             default:
                 return 'Không xác định'; // Default text (or another text of your choice)
         }
@@ -145,7 +157,7 @@ class HoaDonComponents extends Component {
                                         <br />
                                         <div className="col-13">
                                             <div className="row">
-                                                <div className="col-6 container">
+                                                <div className="col-3 container">
                                                 <input
     type="text"
     name="query"
@@ -156,7 +168,7 @@ class HoaDonComponents extends Component {
     onFocus={this.handleSearchFocus} // Thêm sự kiện onFocus
 />
                                                 </div>
-                                                <div className="col-6">
+                                                <div className="col-7">
                                                     <div className="form-check form-check-inline">
                                                         <input
                                                             type="radio"
@@ -174,12 +186,24 @@ class HoaDonComponents extends Component {
                                                             type="radio"
                                                             id="filterPaid"
                                                             name="statusFilter"
-                                                            value="1"
+                                                            value="4"
                                                             checked={this.state.searchTerm === "1"}
                                                             onChange={() => this.handleStatusFilter("1")}
                                                             className="form-check-input"
                                                         />
-                                                        <label htmlFor="filterPaid" className="form-check-label">Đã thanh toán</label>
+                                                        <label htmlFor="filterPaid" className="form-check-label">Chờ duyệt</label>
+                                                    </div>
+                                                    <div className="form-check form-check-inline">
+                                                        <input
+                                                            type="radio"
+                                                            id="filterPaid"
+                                                            name="statusFilter"
+                                                            value="4"
+                                                            checked={this.state.searchTerm === "2"}
+                                                            onChange={() => this.handleStatusFilter("2")}
+                                                            className="form-check-input"
+                                                        />
+                                                        <label htmlFor="filterPaid" className="form-check-label">Duyệt</label>
                                                     </div>
                                                     <div className="form-check form-check-inline">
                                                         <input
@@ -187,11 +211,11 @@ class HoaDonComponents extends Component {
                                                             id="filterUnpaid"
                                                             name="statusFilter"
                                                             value="2"
-                                                            checked={this.state.searchTerm === "2"}
-                                                            onChange={() => this.handleStatusFilter("2")}
+                                                            checked={this.state.searchTerm === "3"}
+                                                            onChange={() => this.handleStatusFilter("3")}
                                                             className="form-check-input"
                                                         />
-                                                        <label htmlFor="filterUnpaid" className="form-check-label">Chưa thanh toán</label>
+                                                        <label htmlFor="filterUnpaid" className="form-check-label">Đang chờ đơn vị vận chuyển</label>
                                                     </div>
                                                     <div className="form-check form-check-inline">
                                                         <input
@@ -199,11 +223,23 @@ class HoaDonComponents extends Component {
                                                             id="filterPending"
                                                             name="statusFilter"
                                                             value="3"
-                                                            checked={this.state.searchTerm === "3"}
-                                                            onChange={() => this.handleStatusFilter("3")}
+                                                            checked={this.state.searchTerm === "4"}
+                                                            onChange={() => this.handleStatusFilter("4")}
                                                             className="form-check-input"
                                                         />
-                                                        <label htmlFor="filterPending" className="form-check-label">Chờ</label>
+                                                        <label htmlFor="filterPending" className="form-check-label">Đang giao</label>
+                                                    </div>
+                                                    <div className="form-check form-check-inline">
+                                                        <input
+                                                            type="radio"
+                                                            id="filterPending"
+                                                            name="statusFilter"
+                                                            value="3"
+                                                            checked={this.state.searchTerm === "5"}
+                                                            onChange={() => this.handleStatusFilter("5")}
+                                                            className="form-check-input"
+                                                        />
+                                                        <label htmlFor="filterPending" className="form-check-label">Hoàn thành</label>
                                                     </div>
                                                 </div>
                                             </div>
