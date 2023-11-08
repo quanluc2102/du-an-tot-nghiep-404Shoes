@@ -12,18 +12,25 @@ import java.util.Optional;
 
 
 public interface KhuyenMaiService {
-    Page<KhuyenMai> getAll(Pageable pageable);
+    Page<KhuyenMai> getAll(Pageable pageable, String searchValue, String filterType);
+
+    List<KhuyenMai> getAllNoPage();
+
     KhuyenMai add(KhuyenMai khuyenMai);
 
     void delete(Long id);
 
-    KhuyenMai update(Long id,KhuyenMai km);
+    KhuyenMai update(Long id, KhuyenMai km);
 
-    Optional<KhuyenMai>detail(Long id);
+    Optional<KhuyenMai> detail(Long id);
 
     KhuyenMai findOne(Long id);
 
-    Page<KhuyenMai>findAll(Pageable pageable);
+    Page<KhuyenMai> findAll(Pageable pageable);
+
     void imPortExcel(MultipartFile file);
+
+    void thayDoiTrangThai(Long id);
+
     boolean isKhuyenMaiNameUnique(String name);
 }
