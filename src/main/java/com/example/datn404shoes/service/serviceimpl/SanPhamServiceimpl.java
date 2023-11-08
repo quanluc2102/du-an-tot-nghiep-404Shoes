@@ -43,7 +43,6 @@ public class SanPhamServiceimpl implements SanPhamService {
         SanPham a = sanPhamRespository.findById(id).orElse(null);
         a.setMa(sp.getMa());
         a.setTen(sp.getTen());
-        a.setDonGia(sp.getDonGia());
         a.setMoTa(sp.getMoTa());
         a.setNgayCapNhat(Date.valueOf(LocalDate.now()));
         sanPhamRespository.save(a);

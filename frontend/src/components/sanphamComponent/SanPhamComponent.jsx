@@ -1,99 +1,39 @@
 import React, {Component} from 'react';
 import SanPhamService from "../../services/sanphamservice/SanPhamService";
 import ReactPaginate from 'react-paginate';
-
+import './ChonAnh.css';
 class SanPhamComponent extends Component {
     constructor(props) {
         super(props);
         this.state = {
             sanPham:[],
-            pageCount: 0,
-            sanPhamAdd:{
-                ten : '',
-                giaNhap : '',
-                giaBan : '',
-                giamGia : '',
-                moTa : '',
-                trangThai:''},
-            sanPhamUpdate:{
-                id:this.props.match.params.id,
-                ten : '',
-                giaNhap : '',
-                giaBan : '',
-                giamGia : '',
-                moTa : '',
-                trangThai:''
-            },errorAdd: {
-                ten : '',
-                giaNhap : '',
-                giaBan : '',
-                giamGia : '',
-                moTa : '',
-                trangThai:''
-            },
-            errorUpdate: {
-                ten : '',
-                giaNhap : '',
-                giaBan : '',
-                giamGia : '',
-                moTa : '',
-                trangThai:''
-            }
+            pageCount: 0
         }
-
-        this.add=this.add.bind(this);
         this.formAdd=this.formAdd.bind(this);
         this.delete=this.delete.bind(this);
-        this.update=this.update.bind(this);
         this.detail=this.detail.bind(this);
-        this.thayDoiTenAdd=this.thayDoiTenAdd.bind(this);
-        this.thayDoiGiaNhapAdd=this.thayDoiGiaNhapAdd.bind(this);
-        this.thayDoiGiaBanAdd=this.thayDoiGiaBanAdd.bind(this);
-        this.thayDoiGiamGiaAdd=this.thayDoiGiamGiaAdd.bind(this);
-        this.thayDoiMoTaAdd=this.thayDoiMoTaAdd.bind(this);
-        this.thayDoiTrangThaiAdd=this.thayDoiTrangThaiAdd.bind(this);
-        this.thayDoiTenUpdate=this.thayDoiTenUpdate.bind(this);
-        this.thayDoiGiaNhapUpdate=this.thayDoiGiaNhapUpdate.bind(this);
-        this.thayDoiGiaBanUpdate=this.thayDoiGiaBanUpdate.bind(this);
-        this.thayDoiGiamGiaUpdate=this.thayDoiGiamGiaUpdate.bind(this);
-        this.thayDoiMoTaUpdate=this.thayDoiMoTaUpdate.bind(this);
-        this.thayDoiTrangThaiUpdate=this.thayDoiTrangThaiUpdate.bind(this);
     }
 
     loadPageData(pageNumber) {
         SanPhamService.getSanPham(pageNumber).then(res => {
             this.setState({
-                sanPham: res.data.content, // Dữ liệu trên trang hiện tại
-                pageCount: res.data.totalPages, // Tổng số trang
+                sanPham: res.data.content,
+                pageCount: res.data.totalPages,
             });
         });
     }
     handlePageClick = data => {
-        let selected = data.selected; // Trang được chọn từ react-paginate
+        let selected = data.selected
         this.loadPageData(selected);
     };
 
     componentDidMount(pageNumber){
         SanPhamService.getSanPham(pageNumber).then(res => {
             this.setState({
-                sanPham: res.data.content, // Dữ liệu trên trang hiện tại
-                pageCount: res.data.totalPages, // Tổng số trang
+                sanPham: res.data.content,
+                pageCount: res.data.totalPages,
             });
         });
-        const id = this.props.match.params.id;
-        if (id) {
-            SanPhamService.getSanPhamById(this.state.sanPhamUpdate.id).then((res)=>{
-                // this.setState(this.state.sanPhamUpdate.ten=sanPham1.ten,
-                //     this.state.sanPhamUpdate.giaNhap=sanPham1.giaNhap,
-                //     this.state.sanPhamUpdate.giaBan=sanPham1.giaBan,
-                //     this.state.sanPhamUpdate.giamGia=sanPham1.giamGia,
-                //     this.state.sanPhamUpdate.trangThai=sanPham1.trangThai,
-                //     this.state.sanPhamUpdate.moTa=sanPham1.moTa)
-                this.setState({sanPhamUpdate:res.data});
-            })
-        }
-
-
     }
     formAdd(){
         window.location.href=(`/sanpham/formadd`);
@@ -103,280 +43,8 @@ class SanPhamComponent extends Component {
         });
         window.location.href = (`/index`);
     }
-    add = (e)=>{
-        e.preventDefault();
-
-
-        let giaNhap = parseInt(this.state.sanPhamAdd.giaNhap);
-        let giaBan = parseInt(this.state.sanPhamAdd.giaBan);
-        let giamGia = parseInt(this.state.sanPhamAdd.giamGia);
-
-        if (!this.state.sanPhamAdd.ten.trim()) {
-            this.setState({errorAdd: {...this.state.errorAdd, ten: "Tên không được bỏ trống!"}});
-            return;
-        } else {
-            this.setState({ errorAdd: { ...this.state.errorAdd, ten: "" } });
-        }
-
-
-        if (!this.state.sanPhamAdd.giaNhap.trim()) {
-            this.setState({errorAdd: {...this.state.errorAdd, giaNhap: "Giá nhập không được bỏ trống!"}});
-            return;
-        } else if(giaNhap < 0) {
-            this.setState({ errorAdd: { ...this.state.errorAdd, giaNhap: "Giá nhập không được bé hơn 0 !" } });
-            return;
-        } else {
-            this.setState({ errorAdd: { ...this.state.errorAdd, giaNhap: "" } });
-        }
-
-        if (!this.state.sanPhamAdd.giaBan.trim()) {
-            this.setState({errorAdd: {...this.state.errorAdd, giaBan: "Giá bán không được bỏ trống!"}});
-            return;
-        } else if(giaBan < 0) {
-            this.setState({ errorAdd: { ...this.state.errorAdd, giaBan: "Giá bán không được bé hơn 0 !" } });
-            return;
-        } else if(giaBan < giaNhap) {
-            this.setState({ errorAdd: { ...this.state.errorAdd, giaBan: "Giá bán không được bé hơn Giá nhập !" } });
-            return;
-        } else {
-            this.setState({ errorAdd: { ...this.state.errorAdd, giaBan: "" } });
-        }
-
-        if (!this.state.sanPhamAdd.giamGia.trim()) {
-            this.setState({errorAdd: {...this.state.errorAdd, giamGia: "Giá giảm không được bỏ trống!"}});
-            return;
-        } else if(giamGia < 0) {
-            this.setState({ errorAdd: { ...this.state.errorAdd, giamGia: "Giá giảm không được bé hơn 0 !" } });
-            return;
-        } else if(giamGia > giaBan) {
-            this.setState({ errorAdd: { ...this.state.errorAdd, giamGia: "Giá giảm không được lớn hơn Giá bán !" } });
-            return;
-        } else {
-            this.setState({ errorAdd: { ...this.state.errorAdd, giamGia: "" } });
-        }
-
-        if (!this.state.sanPhamAdd.moTa.trim()) {
-            this.setState({errorAdd: {...this.state.errorAdd, moTa: "moTa không được bỏ trống!"}});
-            return;
-        } else {
-            this.setState({ errorAdd: { ...this.state.errorAdd, moTa: "" } });
-        }
-
-        SanPhamService.addSanPham(this.state.sanPhamAdd).then((res)=>{
-            window.location.href = (`/index`);
-        })
-    }
-    update=(e)=>{
-        e.preventDefault();
-        var sanPham = {ten: this.state.sanPhamUpdate.ten,
-            trangThai: this.state.sanPhamUpdate.trangThai,
-            giamGia:this.state.sanPhamUpdate.giamGia,
-            giaBan:this.state.sanPhamUpdate.giaBan,
-            giaNhap:this.state.sanPhamUpdate.giaNhap,
-            moTa:this.state.sanPhamUpdate.moTa }
-        console.log('nsx' + JSON.stringify(sanPham));
-
-        let giaNhap = parseInt(sanPham.giaNhap);
-        let giaBan = parseInt(sanPham.giaBan);
-        let giamGia = parseInt(sanPham.giamGia);
-
-        if (!this.state.sanPhamUpdate.ten.trim()) {
-            this.setState({errorUpdate: {...this.state.errorUpdate, ten: "Tên không được bỏ trống!"}});
-            return;
-        } else {
-            this.setState({ errorUpdate: { ...this.state.errorUpdate, ten: "" } });
-        }
-
-        if (!this.state.sanPhamUpdate.giaNhap.trim()) {
-            this.setState({errorUpdate: {...this.state.errorUpdate, giaNhap: "Giá nhập không được bỏ trống!"}});
-            return;
-        } else if(giaNhap < 0) {
-            this.setState({ errorUpdate: { ...this.state.errorUpdate, giaNhap: "Giá nhập không được bé hơn 0 !" } });
-            return;
-        } else {
-            this.setState({ errorUpdate: { ...this.state.errorUpdate, giaNhap: "" } });
-        }
-
-        if (!this.state.sanPhamUpdate.giaBan.trim()) {
-            this.setState({errorUpdate: {...this.state.errorUpdate, giaBan: "Giá bán không được bỏ trống!"}});
-            return;
-        } else if(giaBan < 0) {
-            this.setState({ errorUpdate: { ...this.state.errorUpdate, giaBan: "Giá bán không được bé hơn 0 !" } });
-            return;
-        } else if(giaBan < giaNhap) {
-            this.setState({ errorUpdate: { ...this.state.errorUpdate, giaBan: "Giá bán không được bé hơn Giá nhập !" } });
-            return;
-        } else {
-            this.setState({ errorUpdate: { ...this.state.errorUpdate, giaBan: "" } });
-        }
-
-        if (!this.state.sanPhamUpdate.giamGia.trim()) {
-            this.setState({errorUpdate: {...this.state.errorUpdate, giamGia: "Giá giảm không được bỏ trống!"}});
-            return;
-        } else if(giamGia < 0) {
-            this.setState({ errorUpdate: { ...this.state.errorUpdate, giamGia: "Giá giảm không được bé hơn 0 !" } });
-            return;
-        } else if(giamGia > giaBan) {
-            this.setState({ errorUpdate: { ...this.state.errorUpdate, giamGia: "Giá giảm không được lớn hơn Giá bán !" } });
-            return;
-        } else {
-            this.setState({ errorUpdate: { ...this.state.errorUpdate, giamGia: "" } });
-        }
-
-        if (!this.state.sanPhamUpdate.moTa.trim()) {
-            this.setState({errorUpdate: {...this.state.errorUpdate, moTa: "Mô tả không được bỏ trống!"}});
-            return;
-        } else {
-            this.setState({ errorUpdate: { ...this.state.errorUpdate, moTa: "" } });
-        }
-
-        let id = this.state.sanPhamUpdate.id;
-        SanPhamService.updateSanPham(id,sanPham).then((res)=>{
-            window.location.href = (`/index`);
-        })
-    }
     detail(id){
         window.location.href = (`/detail/${id}`);
-    }
-    thayDoiTenAdd=(event)=>{
-        this.setState(
-            prevState=>({
-                sanPhamAdd:{
-                    ...prevState.sanPhamAdd,
-                    ten:event.target.value
-                }
-            })
-        );
-        let errorAdd = {...this.state.errorAdd,ten:""};
-        this.setState({errorAdd:errorAdd});
-    }
-    thayDoiGiaNhapAdd=(event)=>{
-        this.setState(
-            prevState=>({
-                sanPhamAdd:{
-                    ...prevState.sanPhamAdd,
-                    giaNhap:event.target.value
-                }
-            })
-        );
-        let errorAdd = {...this.state.errorAdd,giaNhap:""};
-        this.setState({errorAdd:errorAdd});
-    }
-    thayDoiGiaBanAdd=(event)=>{
-        this.setState(
-            prevState=>({
-                sanPhamAdd:{
-                    ...prevState.sanPhamAdd,
-                    giaBan:event.target.value
-                }
-            })
-        );
-        let errorAdd = {...this.state.errorAdd,giaBan:""};
-        this.setState({errorAdd:errorAdd});
-    }
-    thayDoiGiamGiaAdd=(event)=>{
-        this.setState(
-            prevState=>({
-                sanPhamAdd:{
-                    ...prevState.sanPhamAdd,
-                    giamGia:event.target.value
-                }
-            })
-        );
-        let errorAdd = {...this.state.errorAdd,giamGia:""};
-        this.setState({errorAdd:errorAdd});
-    }
-    thayDoiMoTaAdd=(event)=>{
-        this.setState(
-            prevState=>({
-                sanPhamAdd:{
-                    ...prevState.sanPhamAdd,
-                    moTa:event.target.value
-                }
-            })
-        );
-        let errorAdd = {...this.state.errorAdd,moTa:""};
-        this.setState({errorAdd:errorAdd});
-    }
-    thayDoiTrangThaiAdd=(event)=>{
-        this.setState(
-            prevState=>({
-                sanPhamAdd:{
-                    ...prevState.sanPhamAdd,
-                    trangThai:event.target.value
-                }
-            })
-        );
-    }
-    thayDoiTenUpdate=(event)=>{
-        this.setState(
-            prevState=>({
-                sanPhamUpdate:{
-                    ...prevState.sanPhamUpdate,
-                    ten:event.target.value
-                }
-            })
-        );
-        let errorUpdate = {...this.state.errorUpdate,ten:""};
-        this.setState({errorUpdate:errorUpdate});
-    }
-    thayDoiGiaNhapUpdate=(event)=>{
-        this.setState(
-            prevState=>({
-                sanPhamUpdate:{
-                    ...prevState.sanPhamUpdate,
-                    giaNhap:event.target.value
-                }
-            })
-        );
-        let errorUpdate = {...this.state.errorUpdate,giaNhap:""};
-        this.setState({errorUpdate:errorUpdate});
-    }
-    thayDoiGiaBanUpdate=(event)=>{
-        this.setState(
-            prevState=>({
-                sanPhamUpdate:{
-                    ...prevState.sanPhamUpdate,
-                    giaBan:event.target.value
-                }
-            })
-        );
-        let errorUpdate = {...this.state.errorUpdate,giaBan:""};
-        this.setState({errorUpdate:errorUpdate});
-    }
-    thayDoiGiamGiaUpdate=(event)=>{
-        this.setState(
-            prevState=>({
-                sanPhamUpdate:{
-                    ...prevState.sanPhamUpdate,
-                    giamGia:event.target.value
-                }
-            })
-        );
-        let errorUpdate = {...this.state.errorUpdate,giamGia:""};
-        this.setState({errorUpdate:errorUpdate});
-    }
-    thayDoiMoTaUpdate=(event)=>{
-        this.setState(
-            prevState=>({
-                sanPhamUpdate:{
-                    ...prevState.sanPhamUpdate,
-                    moTa:event.target.value
-                }
-            })
-        );
-        let errorUpdate = {...this.state.errorUpdate,moTa:""};
-        this.setState({errorUpdate:errorUpdate});
-    }
-    thayDoiTrangThaiUpdate=(event)=>{
-        this.setState(
-            prevState=>({
-                sanPhamUpdate:{
-                    ...prevState.sanPhamUpdate,
-                    trangThai:event.target.value
-                }
-            })
-        );
     }
     render() {
         return (
@@ -384,11 +52,6 @@ class SanPhamComponent extends Component {
                 <div className="pagetitle">
                     <h1>Quản lý sản phẩm</h1>
                     <nav>
-                        {/*<ol className="breadcrumb">*/}
-                        {/*    <li className="breadcrumb-item"><a href="index.html">Home</a></li>*/}
-                        {/*    <li className="breadcrumb-item active">Overview</li>*/}
-                        {/*    <li className="breadcrumb-item active">Color</li>*/}
-                        {/*</ol>*/}
                     </nav>
                 </div>
 
@@ -413,18 +76,15 @@ class SanPhamComponent extends Component {
                             <div className="row">
                                 <div className="col-12">
                                     <div className="card recent-sales overflow-auto">
-
-
                                         <div className="card-body">
                                             <h5 className="card-title">Sản phẩm <span>| </span></h5>
 
                                             <table className="table table-borderless datatable">
                                                 <thead>
-                                                <tr>
+                                                <tr className="tr1">
                                                     <th>Ảnh</th>
                                                     <th>Mã</th>
                                                     <th>Tên</th>
-                                                    <th>Giá</th>
                                                     <th>Danh mục</th>
                                                     <th>Thương hiệu</th>
                                                     <th>Xuất xứ</th>
@@ -433,25 +93,16 @@ class SanPhamComponent extends Component {
                                                     <th>Action</th>
                                                 </tr>
                                                 </thead>
-                                                {/* </tr>
-                                                    <tr>
-                                                        <td>${mau.id}</td>
-                                                        <td>${mau.name}</td>
 
-                                                        <td>
-                                                            <a href="/color/delete/${mau.id}" className="btn btn-danger" onclick="return confirm('Bạn chắc chắn có muốn xóa??')" style="text-decoration: none;color: white"><i className='bx bx-trash'></i></a>
-                                                            <a href="/color/detail/${mau.id}" className="btn btn-success" style="text-decoration: none;color: white; margin-top: 5px" ><i className='bi bi-arrow-repeat'></i></a>
-                                                        </td>
-                                                    </tr> */}
                                                 <tbody>
+
                                                 {
                                                     this.state.sanPham.map(
                                                         sp =>
                                                             <tr key={sp.id}>
-                                                                <td><img src={'/niceadmin/img/'+ sp.anh} height={100} width={100}/></td>
+                                                                <td><img src={`/niceadmin/img/`+sp.anh} alt={sp.anh} style={{ width: '100px', height: '100px' ,margin:10,objectFit: 'cover',objectPosition: 'center'}}/></td>
                                                                 <td>{sp.ma}</td>
                                                                 <td>{sp.ten}</td>
-                                                                <td>{sp.donGia}</td>
                                                                 <td>{sp.danhMuc.ten}</td>
                                                                 <td>{sp.thuongHieu.ten}</td>
                                                                 <td>{sp.xuatXu.ten}</td>

@@ -26,4 +26,5 @@ public class SanPhamRequest {
     private long danhMucId;
     private List<MauSacValue> listMauSac;
     private List<KichThuocValue> listKichThuoc;
+    private List<SPCTRequest> listSPCT;
 }

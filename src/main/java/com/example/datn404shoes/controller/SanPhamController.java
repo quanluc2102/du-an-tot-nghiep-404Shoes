@@ -6,6 +6,7 @@ import com.example.datn404shoes.helper.SanPhamExport;
 import com.example.datn404shoes.repository.SanPhamAnhRespository;
 import com.example.datn404shoes.repository.SanPhamChiTietRepository;
 import com.example.datn404shoes.repository.SanPhamRespository;
+import com.example.datn404shoes.request.SPCTRequest;
 import com.example.datn404shoes.request.SanPhamRequest;
 import com.example.datn404shoes.service.serviceimpl.SanPhamAnhServiceimpl;
 import com.example.datn404shoes.service.serviceimpl.SanPhamServiceimpl;
@@ -63,7 +64,6 @@ public class SanPhamController {
         SanPham a = new SanPham();
         a.setMa("SP" + (list+1));
         a.setTen(sanPham.getTen());
-        a.setDonGia(sanPham.getDonGia());
         a.setMoTa(sanPham.getMoTa());
         a.setTrangThai(1);
         a.setNgayCapNhat(java.sql.Date.valueOf(LocalDate.now()));
@@ -73,19 +73,31 @@ public class SanPhamController {
         a.setXuatXu(XuatXu.builder().id(sanPham.getXuatXuId()).build());
         a.setThuongHieu(ThuongHieu.builder().id(sanPham.getThuongHieuId()).build());
         sanPhamServiceimpl.add(a);
-        for (MauSacValue ms:sanPham.getListMauSac()){
-            for (KichThuocValue kt:sanPham.getListKichThuoc()){
-                SanPhamChiTiet spct = new SanPhamChiTiet();
-                spct.setNgayTao(java.sql.Date.valueOf(LocalDate.now()));
-                spct.setNgayCapNhat(java.sql.Date.valueOf(LocalDate.now()));
-                spct.setSoLuong(0);
-                spct.setTrangThai(1);
-                spct.setMauSac(MauSac.builder().id(ms.getValue()).build());
-                spct.setKichThuoc(KichThuoc.builder().id(kt.getValue()).build());
-                spct.setSanPham(a);
-                sanPhamChiTietRepository.save(spct);
-            }
-
+//        for (MauSacValue ms:sanPham.getListMauSac()){
+//            for (KichThuocValue kt:sanPham.getListKichThuoc()){
+//                SanPhamChiTiet spct = new SanPhamChiTiet();
+//                spct.setNgayTao(java.sql.Date.valueOf(LocalDate.now()));
+//                spct.setNgayCapNhat(java.sql.Date.valueOf(LocalDate.now()));
+//                spct.setSoLuong(0);
+//                spct.setTrangThai(1);
+//                spct.setMauSac(MauSac.builder().id(ms.getValue()).build());
+//                spct.setKichThuoc(KichThuoc.builder().id(kt.getValue()).build());
+//                spct.setSanPham(a);
+//                sanPhamChiTietRepository.save(spct);
+//            }
+//
+//        }
+        for(SPCTRequest spct:sanPham.getListSPCT()){
+            SanPhamChiTiet sanPhamChiTiet = new SanPhamChiTiet();
+            sanPhamChiTiet.setSanPham(a);
+            sanPhamChiTiet.setNgayTao(java.sql.Date.valueOf(LocalDate.now()));
+            sanPhamChiTiet.setNgayCapNhat(java.sql.Date.valueOf(LocalDate.now()));
+            sanPhamChiTiet.setMauSac(MauSac.builder().id(spct.getMauSac().getValue()).build());
+            sanPhamChiTiet.setKichThuoc(KichThuoc.builder().id(spct.getKichThuoc().getValue()).build());
+            sanPhamChiTiet.setSoLuong(spct.getSoLuong());
+            sanPhamChiTiet.setDonGia(spct.getGia());
+            sanPhamChiTiet.setTrangThai(1);
+            sanPhamChiTietRepository.save(sanPhamChiTiet);
         }
         for(String file : sanPham.getFiles()){
             SanPhamAnh spa = new SanPhamAnh();
@@ -152,7 +164,6 @@ public class SanPhamController {
         b.setAnh(a.getAnh());
         b.setMa(a.getMa());
         b.setDanhMuc(a.getDanhMuc().getId());
-        b.setDonGia(a.getDonGia());
         b.setTen(a.getTen());
         b.setMoTa(a.getMoTa());
         b.setThuongHieu(a.getThuongHieu().getId());
@@ -167,14 +178,13 @@ public class SanPhamController {
         System.out.println(sanPham.getFiles());
         SanPham a = sanPhamServiceimpl.getOne(id);
         a.setTen(sanPham.getTen());
-        a.setDonGia(sanPham.getDonGia());
         a.setMoTa(sanPham.getMoTa());
         a.setNgayCapNhat(java.sql.Date.valueOf(LocalDate.now()));
         a.setDanhMuc(DanhMuc.builder().id(sanPham.getDanhMucId()).build());
         a.setXuatXu(XuatXu.builder().id(sanPham.getXuatXuId()).build());
         a.setThuongHieu(ThuongHieu.builder().id(sanPham.getThuongHieuId()).build());
         sanPhamRespository.save(a);
-
+        System.out.println(sanPham.getFiles().toArray());
         for(String file : sanPham.getFiles()){
             SanPhamAnh spa = new SanPhamAnh();
             spa.setAnh(file);

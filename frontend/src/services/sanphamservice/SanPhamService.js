@@ -23,13 +23,6 @@ class SanPhamService{
     getSanPham(pageNumber){
         return axios.get(BASE_URL_INDEX+`?page=${pageNumber}&size=5`);
     }
-    getKichThuoc(){
-        return axios.get(BASE_URL_KICHTHUOC_INDEX);
-    }
-
-    getMauSac(){
-        return axios.get(BASE_URL_MAUSAC_INDEX);
-    }
 
     getKichThuocAdd(){
         return axios.get(BASE_URL_KICHTHUOCADD_INDEX);

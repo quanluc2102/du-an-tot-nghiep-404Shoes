@@ -71,11 +71,11 @@ public class SanPhamExcelSave {
                             break;
 
                         case 2:
-                            tutorial.setDonGia(currentCell.getNumericCellValue());
+//                            tutorial.setDonGia(currentCell.getNumericCellValue());
                             break;
 
                         case 3:
-                            tutorial.setDonGia(currentCell.getNumericCellValue());
+//                            tutorial.setDonGia(currentCell.getNumericCellValue());
                             break;
 
                         case 4:

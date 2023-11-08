@@ -79,8 +79,6 @@ public class SanPhamExport {
             createCell(row, columnCount++, String.valueOf(user.getNgayTao()), style);
             createCell(row, columnCount++, String.valueOf(user.getNgayCapNhat()), style);
 //            createCell(row, columnCount++, user.getSoLuong(), style);
-            createCell(row, columnCount++, String.valueOf(user.getDonGia()), style);
-            createCell(row, columnCount++, String.valueOf(user.getDonGia()), style);
             createCell(row, columnCount++, user.getMoTa(), style);
             createCell(row, columnCount++, user.getTrangThai(), style);
 
