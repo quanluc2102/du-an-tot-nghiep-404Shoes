@@ -1,7 +1,7 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import KhuyenMaiService from "../../services/khuyenmaiservice/KhuyenMaiService";
 import ReactPaginate from "react-paginate";
-import { toast } from 'react-toastify';
+import {toast} from 'react-toastify';
 import moment from 'moment';
 import './KhuyenMaiComponentStyle.css';
 
@@ -16,35 +16,41 @@ class KhuyenMaiComponents extends Component {
             searchQuery: "",
             currentPage: 0,
             debounceTimeout: null,
+            isAutoReloadInProgress: false, // Add this line
+
         };
     }
 
     handleSearch = () => {
-        const { searchQuery, discountType } = this.state;
+        const {searchQuery, isAutoReloadInProgress} = this.state;
         // Tìm kiếm trên toàn bộ dữ liệu khuyenMaiAll (không phân trang)
-        const filteredData = this.state.khuyenMaiAll.filter(km =>
-            km.ma.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            km.ten.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            km.moTa.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            km.giamGia.toString().includes(searchQuery) ||
-            (discountType === "percent" && km.kieuKhuyenMai === 0) ||
-            (discountType === "money" && km.kieuKhuyenMai === 1) ||
-            (km.trangThai === 0 ? "Chưa diễn ra" : km.trangThai === 1 ? "Đang diễn ra" : "Đã kết thúc").toLowerCase().includes(searchQuery.toLowerCase())
-        );
+        if (!isAutoReloadInProgress) {
+            const filteredData = this.state.khuyenMaiAll.filter(km =>
+                km.ma.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                km.ten.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                km.moTa.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                km.giamGia.toString().includes(searchQuery) ||
+                // (discountType === "percent" && km.kieuKhuyenMai === 0) ||
+                // (discountType === "money" && km.kieuKhuyenMai === 1) ||
+                (km.trangThai === 0 ? "Chưa diễn ra" : km.trangThai === 1 ? "Đang diễn ra" : "Đã kết thúc").toLowerCase().includes(searchQuery.toLowerCase())
+            );
 
-        this.setState({ khuyenMai: filteredData });
+            this.setState({khuyenMai: filteredData});
+        }
     }
 
     handleSearchChange = (e) => {
         const searchQuery = e.target.value;
-        this.setState({ searchQuery }, () => {
+        this.setState({searchQuery}, () => {
             if (searchQuery === "") {
-                this.loadPageData(0); // Reset trang về 0 khi thực hiện tìm kiếm
+                this.loadPageData(0); // Reset page to 0 when clearing the search query
             } else {
-                this.handleSearch();
+                // Call the API with the updated search query
+                this.callApiWithSearchQuery(searchQuery, this.state.discountType);
             }
         });
     }
+
 
     handlePageClick = data => {
         let selected = data.selected;
@@ -54,9 +60,17 @@ class KhuyenMaiComponents extends Component {
     componentDidMount() {
         this.loadAllData(); // Load dữ liệu ban đầu
 
-        // Thiết lập một interval để gọi lại API mỗi 5 phút (300000 miligiây)
-        this.apiRefreshInterval = setInterval(() => {
-            this.loadAllData();
+        // Set isAutoReloadInProgress to true
+        this.setState({isAutoReloadInProgress: true});
+
+        // Reset the search query
+        this.setState({searchQuery: ""});
+
+        this.loadAllData(); // Load data with the searchQuery reset
+
+        // After 1 second, set isAutoReloadInProgress back to false
+        setTimeout(() => {
+            this.setState({isAutoReloadInProgress: false});
         }, 1000);
     }
 
@@ -66,7 +80,7 @@ class KhuyenMaiComponents extends Component {
     }
 
     loadAllData() {
-        const { searchQuery, discountType, currentPage } = this.state;
+        const {searchQuery, discountType, currentPage} = this.state;
         KhuyenMaiService.getKhuyenMaiAll(searchQuery, discountType)
             .then((res) => {
                 const filteredData = res.data;
@@ -79,10 +93,23 @@ class KhuyenMaiComponents extends Component {
             });
     }
 
+    callApiWithSearchQuery = (searchQuery, discountType) => {
+        KhuyenMaiService.getKhuyenMaiAll(searchQuery, discountType)
+            .then((res) => {
+                const filteredData = res.data;
+                this.setState({
+                    khuyenMaiAll: filteredData,
+                });
+
+                // After getting the data, apply the search query filter and pagination
+                this.handleSearch();
+            });
+    }
+
 
     loadPageData(selectedPage) {
-        const { searchQuery, discountType, khuyenMaiAll } = this.state;
-        const itemsPerPage = 10; // Số mục trên mỗi trang
+        const {searchQuery, discountType, khuyenMaiAll} = this.state;
+        const itemsPerPage = 5; // Số mục trên mỗi trang
         const startIdx = selectedPage * itemsPerPage;
         const endIdx = startIdx + itemsPerPage;
         const paginatedData = khuyenMaiAll.slice(startIdx, endIdx); // Lấy dữ liệu cho trang hiện tại
@@ -93,8 +120,6 @@ class KhuyenMaiComponents extends Component {
             currentPage: selectedPage,
         });
     }
-
-
 
 
     detail(id) {
@@ -119,7 +144,7 @@ class KhuyenMaiComponents extends Component {
                                     <div className="card recent-sales overflow-auto">
                                         <div className="card-body">
                                             <h5 className="card-title">Khuyến mãi <span>| </span></h5>
-                                            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                                            <div style={{display: 'flex', justifyContent: 'flex-end'}}>
                                                 <div>
                                                     <div className="radio-buttons">
                                                         <label>
@@ -197,7 +222,8 @@ class KhuyenMaiComponents extends Component {
                                                             <td>{km.soLuong}</td>
                                                             <td>{km.trangThai === 0 ? "Chưa diễn ra" : km.trangThai === 1 ? "Đang diễn ra" : "Đã kết thúc"}</td>
                                                             <td>
-                                                                <button onClick={() => this.detail(km.id)} className='btn btn-primary'>
+                                                                <button onClick={() => this.detail(km.id)}
+                                                                        className='btn btn-primary'>
                                                                     Chi tiết
                                                                 </button>
                                                             </td>

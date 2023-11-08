@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import KhuyenMaiService from '../../services/khuyenmaiservice/KhuyenMaiService';
 import { toast } from 'react-toastify';
+import "./KhuyenMaiComponentStyle.css"
 
 class KhuyenMaiComponent extends Component {
     constructor(props) {
@@ -37,6 +38,10 @@ class KhuyenMaiComponent extends Component {
 
     add = (e) => {
         e.preventDefault();
+        const confirmed = window.confirm('Bạn có chắc chắn muốn thêm khuyến mãi?');
+        if (!confirmed) {
+            return; // Người dùng bấm "Cancel", không thực hiện thêm
+        }
         const { khuyenMaiAdd } = this.state;
         const {
             ma,
@@ -71,8 +76,8 @@ class KhuyenMaiComponent extends Component {
             errorAdd.ma = 'Mã không được bỏ trống hoặc chứa khoảng trắng hoặc kí tự đặc biệt!';
         }
 
-        if (!ten || !ten.trim() || /[\s!@#$%^&*()_+|~=`{}\[\]:";'<>?,.\\/-]+/.test(ten)) {
-            errorAdd.ten = 'Tên không được bỏ trống hoặc chứa khoảng trắng hoặc kí tự đặc biệt!';
+        if (!ten || !ten.trim() || !/^[a-zA-Z\sàáảãạăắằẳẵặâấầẩẫậèéẹêềếểễệđìíỉĩịòóỏõọôồốổỗộơờớởỡợùúủũụưừứửữựỳýỷỹỵÀÁẢÃẠĂẮẰẲẴẶÂẤẦẨẪẬÈÉẺẼẸÊỀẾỂỄỆĐÌÍỈĨỊÒÓỎÕỌÔỒỐỔỖỘƠỜỚỞỠỢÙÚỦŨỤƯỪỨỬỮỰỲÝỶỸỴ]+$/.test(ten)) {
+            errorAdd.ten = 'Tên không được bỏ trống hoặc chứa kí tự đặc biệt!';
         }
 
         if (!moTa || !moTa.trim() || moTa.trim() === '') {

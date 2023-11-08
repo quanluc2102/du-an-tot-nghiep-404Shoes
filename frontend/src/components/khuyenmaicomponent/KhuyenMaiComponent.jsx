@@ -1,7 +1,7 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import KhuyenMaiService from '../../services/khuyenmaiservice/KhuyenMaiService';
-import { toast } from 'react-toastify';
-
+import {toast} from 'react-toastify';
+import "./KhuyenMaiComponentStyle.css"
 class KhuyenMaiComponent extends Component {
     constructor(props) {
         super(props);
@@ -59,7 +59,6 @@ class KhuyenMaiComponent extends Component {
         };
 
 
-
         this.handleFieldChange = this.handleFieldChange.bind(this);
         this.add = this.add.bind(this);
         this.update = this.update.bind(this);
@@ -70,7 +69,18 @@ class KhuyenMaiComponent extends Component {
         if (id) {
             KhuyenMaiService.getKhuyenMaiById(id)
                 .then((res) => {
-                    const { ma, ten, moTa, batDau, ketThuc, giamGia, kieuKhuyenMai, dieuKien, soLuong, trangThai } = res.data;
+                    const {
+                        ma,
+                        ten,
+                        moTa,
+                        batDau,
+                        ketThuc,
+                        giamGia,
+                        kieuKhuyenMai,
+                        dieuKien,
+                        soLuong,
+                        trangThai
+                    } = res.data;
 
                     const batDauDate = new Date(batDau);
                     const ketThucDate = new Date(ketThuc);
@@ -134,7 +144,7 @@ class KhuyenMaiComponent extends Component {
 
     add = (e) => {
         e.preventDefault();
-        const { khuyenMaiAdd } = this.state;
+        const {khuyenMaiAdd} = this.state;
         const {
             ma,
             ten,
@@ -176,7 +186,7 @@ class KhuyenMaiComponent extends Component {
                     this.setState((prevState) => ({
                         khuyenMai: [...prevState.khuyenMai, khuyenMaiMoi],
                     }));
-                    window.location.href =('/khuyenmai');
+                    window.location.href = ('/khuyenmai');
                 } else {
                     toast.error('Có lỗi xảy ra khi thêm.');
                 }
@@ -189,20 +199,35 @@ class KhuyenMaiComponent extends Component {
 
     update = (e) => {
         e.preventDefault(); // Prevent the default form submission
-
-        const { khuyenMaiUpdate } = this.state;
-        const errorUpdate = { ma: '', ten: '', moTa: '', batDau: '', ketThuc: '', giamGia: '', kieuKhuyenMai: '', dieuKien: '', soLuong: '', trangThai: '' };
+        const confirmed = window.confirm('Bạn có chắc chắn muốn chỉnh sửa khuyến mãi này?');
+        if (!confirmed) {
+            return; // Người dùng bấm "Cancel", không thực hiện thêm
+        }
+        const {khuyenMaiUpdate} = this.state;
+        const errorUpdate = {
+            ma: '',
+            ten: '',
+            moTa: '',
+            batDau: '',
+            ketThuc: '',
+            giamGia: '',
+            kieuKhuyenMai: '',
+            dieuKien: '',
+            soLuong: '',
+            trangThai: ''
+        };
         const currentDate = new Date();
         const batDauDate = new Date(khuyenMaiUpdate.batDau);
         const ketThucDate = new Date(khuyenMaiUpdate.ketThuc);
 
-        if (khuyenMaiUpdate.ma !== null && khuyenMaiUpdate.ma.trim() === '') {
-            errorUpdate.ma = "Mã không được bỏ trống!";
+        if (!khuyenMaiUpdate.ma || !khuyenMaiUpdate.ma.trim() || /[\s!@#$%^&*()_+|~=`{}\[\]:";'<>?,.\\/-]+/.test(khuyenMaiUpdate.ma)) {
+            errorUpdate.ma = 'Mã không được bỏ trống hoặc chứa khoảng trắng hoặc kí tự đặc biệt!';
         }
 
-        if (khuyenMaiUpdate.ten !== null && khuyenMaiUpdate.ten.trim() === '') {
-            errorUpdate.ten = "Tên không được bỏ trống!";
+        if (!khuyenMaiUpdate.ten || !khuyenMaiUpdate.ten.trim() || !/^[a-zA-Z\sàáảãạăắằẳẵặâấầẩẫậèéẹêềếểễệđìíỉĩịòóỏõọôồốổỗộơờớởỡợùúủũụưừứửữựỳýỷỹỵÀÁẢÃẠĂẮẰẲẴẶÂẤẦẨẪẬÈÉẺẼẸÊỀẾỂỄỆĐÌÍỈĨỊÒÓỎÕỌÔỒỐỔỖỘƠỜỚỞỠỢÙÚỦŨỤƯỪỨỬỮỰỲÝỶỸỴ]+$/.test(khuyenMaiUpdate.ten)) {
+            errorUpdate.ten = 'Tên không được bỏ trống hoặc chứa kí tự đặc biệt!';
         }
+
 
         if (khuyenMaiUpdate.moTa !== null && khuyenMaiUpdate.moTa.trim() === '') {
             errorUpdate.moTa = "Mô tả không được bỏ trống!";
@@ -211,10 +236,14 @@ class KhuyenMaiComponent extends Component {
 
         if (!khuyenMaiUpdate.batDau || batDauDate < currentDate) {
             errorUpdate.batDau = "Ngày bắt đầu không hợp lệ!";
+        } else {
+            khuyenMaiUpdate.batDau = batDauDate.toISOString();
         }
 
         if (!khuyenMaiUpdate.ketThuc || ketThucDate < batDauDate || ketThucDate < currentDate) {
             errorUpdate.ketThuc = "Ngày kết thúc không hợp lệ!";
+        } else {
+            khuyenMaiUpdate.ketThuc = ketThucDate.toISOString();
         }
 
         if (khuyenMaiUpdate.kieuKhuyenMai === '0' || khuyenMaiUpdate.kieuKhuyenMai === '1') {
@@ -235,7 +264,7 @@ class KhuyenMaiComponent extends Component {
 
 
         // Set the error state
-        this.setState({ errorUpdate });
+        this.setState({errorUpdate});
 
         // Check if there are any validation errors
         if (Object.values(errorUpdate).some((error) => error !== '')) {
@@ -281,40 +310,45 @@ class KhuyenMaiComponent extends Component {
                                     </h5>
 
                                     <div className="tab-content pt-2" id="myTabContent">
-                                        <div className="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                                        <div className="tab-pane fade show active" id="home" role="tabpanel"
+                                             aria-labelledby="home-tab">
                                             <form>
                                                 <div>
-                                                    Mã:
+                                                    Mã<span style={{ color: 'red' }}>*</span><span className="small-text"> (Không được chứa các ký tự đặc biệt)</span>:
+
                                                     <input
                                                         className={`form-control ${this.state.errorUpdate.ma ? 'is-invalid' : ''}`}
                                                         name="ma"
                                                         value={this.state.khuyenMaiUpdate.ma}
                                                         onChange={(e) => this.handleFieldChange(e, 'khuyenMaiUpdate')}
                                                     />
-                                                    {this.state.errorUpdate.ma && <div className="text-danger">{this.state.errorUpdate.ma}</div>}
+                                                    {this.state.errorUpdate.ma &&
+                                                    <div className="text-danger">{this.state.errorUpdate.ma}</div>}
                                                 </div>
                                                 <div>
-                                                    Tên:
+                                                    Tên:<span style={{ color: 'red' }}>*</span>
                                                     <input
                                                         className={`form-control ${this.state.errorUpdate.ten ? 'is-invalid' : ''}`}
                                                         name="ten"
                                                         value={this.state.khuyenMaiUpdate.ten}
                                                         onChange={(e) => this.handleFieldChange(e, 'khuyenMaiUpdate')}
                                                     />
-                                                    {this.state.errorUpdate.ten && <div className="text-danger">{this.state.errorUpdate.ten}</div>}
+                                                    {this.state.errorUpdate.ten &&
+                                                    <div className="text-danger">{this.state.errorUpdate.ten}</div>}
                                                 </div>
                                                 <div>
-                                                    Mô tả:
+                                                    Mô tả:<span style={{ color: 'red' }}>*</span>
                                                     <input
                                                         className={`form-control ${this.state.errorUpdate.moTa ? 'is-invalid' : ''}`}
                                                         name="moTa"
                                                         value={this.state.khuyenMaiUpdate.moTa}
                                                         onChange={(e) => this.handleFieldChange(e, 'khuyenMaiUpdate')}
                                                     />
-                                                    {this.state.errorUpdate.moTa && <div className="text-danger">{this.state.errorUpdate.moTa}</div>}
+                                                    {this.state.errorUpdate.moTa &&
+                                                    <div className="text-danger">{this.state.errorUpdate.moTa}</div>}
                                                 </div>
                                                 <div>
-                                                    Bắt đầu:
+                                                    Bắt đầu:<span style={{ color: 'red' }}>*</span>
                                                     <input
                                                         className={`form-control ${this.state.errorUpdate.batDau ? 'is-invalid' : ''}`}
                                                         name="batDau"
@@ -322,10 +356,11 @@ class KhuyenMaiComponent extends Component {
                                                         value={this.state.khuyenMaiUpdate.batDau}
                                                         onChange={(e) => this.handleFieldChange(e, 'khuyenMaiUpdate')}
                                                     />
-                                                    {this.state.errorUpdate.batDau && <div className="text-danger">{this.state.errorUpdate.batDau}</div>}
+                                                    {this.state.errorUpdate.batDau &&
+                                                    <div className="text-danger">{this.state.errorUpdate.batDau}</div>}
                                                 </div>
                                                 <div>
-                                                    Kết thúc:
+                                                    Kết thúc:<span style={{ color: 'red' }}>*</span>
                                                     <input
                                                         className={`form-control ${this.state.errorUpdate.ketThuc ? 'is-invalid' : ''}`}
                                                         name="ketThuc"
@@ -333,20 +368,22 @@ class KhuyenMaiComponent extends Component {
                                                         value={this.state.khuyenMaiUpdate.ketThuc}
                                                         onChange={(e) => this.handleFieldChange(e, 'khuyenMaiUpdate')}
                                                     />
-                                                    {this.state.errorUpdate.ketThuc && <div className="text-danger">{this.state.errorUpdate.ketThuc}</div>}
+                                                    {this.state.errorUpdate.ketThuc &&
+                                                    <div className="text-danger">{this.state.errorUpdate.ketThuc}</div>}
                                                 </div>
                                                 <div>
-                                                    Giảm giá:
+                                                    Giảm giá<span className="small-text"> (Nhập sao cho phù hợp với kiểu khuyến mãi đã chọn (lớn hơn 0 và nhỏ hơn 100 nếu là kiểu phần trăm))</span>:<span style={{ color: 'red' }}>*</span>
                                                     <input
                                                         className={`form-control ${this.state.errorUpdate.giamGia ? 'is-invalid' : ''}`}
                                                         name="giamGia"
                                                         value={this.state.khuyenMaiUpdate.giamGia}
                                                         onChange={(e) => this.handleFieldChange(e, 'khuyenMaiUpdate')}
                                                     />
-                                                    {this.state.errorUpdate.giamGia && <div className="text-danger">{this.state.errorUpdate.giamGia}</div>}
+                                                    {this.state.errorUpdate.giamGia &&
+                                                    <div className="text-danger">{this.state.errorUpdate.giamGia}</div>}
                                                 </div>
                                                 <div className="form-group">
-                                                    <label>Kiểu khuyến mãi</label>
+                                                    <label>Kiểu khuyến mãi <span style={{ color: 'red' }}>*</span> </label>
                                                     <select
                                                         name="kieuKhuyenMai"
                                                         id="kieuKhuyenMai"
@@ -358,48 +395,53 @@ class KhuyenMaiComponent extends Component {
                                                         <option value="0">Phần trăm</option>
                                                         <option value="1">Tiền</option>
                                                     </select>
-                                                    {this.state.errorUpdate.kieuKhuyenMai && <div className="text-danger">{this.state.errorUpdate.kieuKhuyenMai}</div>}
+                                                    {this.state.errorUpdate.kieuKhuyenMai && <div
+                                                        className="text-danger">{this.state.errorUpdate.kieuKhuyenMai}</div>}
                                                 </div>
                                                 <div>
-                                                    Điều kiện:
+                                                    Điều kiện<span className="small-text"> (Nhập tổng tiền tối thiểu hóa đơn để áp dụng khuyến mãi này )</span>:<span style={{ color: 'red' }}>*</span>
                                                     <input
                                                         className={`form-control ${this.state.errorUpdate.dieuKien ? 'is-invalid' : ''}`}
                                                         name="dieuKien"
                                                         value={this.state.khuyenMaiUpdate.dieuKien}
                                                         onChange={(e) => this.handleFieldChange(e, 'khuyenMaiUpdate')}
                                                     />
-                                                    {this.state.errorUpdate.dieuKien && <div className="text-danger">{this.state.errorUpdate.dieuKien}</div>}
+                                                    {this.state.errorUpdate.dieuKien && <div
+                                                        className="text-danger">{this.state.errorUpdate.dieuKien}</div>}
                                                 </div>
                                                 <div>
-                                                    Số lượng:
+                                                    Số lượng:<span style={{ color: 'red' }}>*</span>
                                                     <input
                                                         className={`form-control ${this.state.errorUpdate.soLuong ? 'is-invalid' : ''}`}
                                                         name="soLuong"
                                                         value={this.state.khuyenMaiUpdate.soLuong}
                                                         onChange={(e) => this.handleFieldChange(e, 'khuyenMaiUpdate')}
                                                     />
-                                                    {this.state.errorUpdate.soLuong && <div className="text-danger">{this.state.errorUpdate.soLuong}</div>}
+                                                    {this.state.errorUpdate.soLuong &&
+                                                    <div className="text-danger">{this.state.errorUpdate.soLuong}</div>}
                                                 </div>
-                                                <div className="form-group">
-                                                    <label>Trạng thái</label>
-                                                    <select
-                                                        name="trangThai"
-                                                        id="trangThai"
-                                                        value={this.state.khuyenMaiUpdate.trangThai}
-                                                        className={`form-control ${this.state.errorUpdate.trangThai ? 'is-invalid' : ''}`}
-                                                        onChange={(e) => this.handleFieldChange(e, 'khuyenMaiUpdate')}
-                                                    >
-                                                        <option value="">Chọn trạng thái</option>
-                                                        <option value="1">Sắp diễn ra</option>
-                                                        <option value="0">Đã diễn ra</option>
-                                                        <option value="2">Đang diễn ra</option>
-                                                    </select>
-                                                    {this.state.errorUpdate.trangThai && <div className="text-danger">{this.state.errorUpdate.trangThai}</div>}
-                                                </div>
+                                                {/*<div className="form-group">*/}
+                                                {/*    <label>Trạng thái</label>*/}
+                                                {/*    <select*/}
+                                                {/*        name="trangThai"*/}
+                                                {/*        id="trangThai"*/}
+                                                {/*        value={this.state.khuyenMaiUpdate.trangThai}*/}
+                                                {/*        className={`form-control ${this.state.errorUpdate.trangThai ? 'is-invalid' : ''}`}*/}
+                                                {/*        onChange={(e) => this.handleFieldChange(e, 'khuyenMaiUpdate')}*/}
+                                                {/*    >*/}
+                                                {/*        <option value="">Chọn trạng thái</option>*/}
+                                                {/*        <option value="1">Sắp diễn ra</option>*/}
+                                                {/*        <option value="0">Đã diễn ra</option>*/}
+                                                {/*        <option value="2">Đang diễn ra</option>*/}
+                                                {/*    </select>*/}
+                                                {/*    {this.state.errorUpdate.trangThai && <div className="text-danger">{this.state.errorUpdate.trangThai}</div>}*/}
+                                                {/*</div>*/}
 
-                                                <button className="btn btn-primary" style={{ marginTop: '10px' }} onClick={this.update}>
+                                                <button className="btn btn-primary" style={{marginTop: '10px'}}
+                                                        onClick={this.update}>
                                                     Update
-                                                </button>                                            </form>
+                                                </button>
+                                            </form>
                                         </div>
                                     </div>
                                 </div>

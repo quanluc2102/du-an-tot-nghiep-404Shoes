@@ -19,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -84,6 +85,10 @@ public class KhuyenMaiController {
     public ResponseEntity<?> update(Model model,
                                     @PathVariable("id") Long id,
                                     @RequestBody KhuyenMai khuyenMai) {
+        Timestamp currentTime = new Timestamp(System.currentTimeMillis());
+        if (khuyenMai.getBatDau().after(currentTime)){
+            khuyenMai.setTrangThai(0);
+        }
         return ResponseEntity.ok(khuyenMaiServiceImpl.update(id, khuyenMai));
     }
 //    @PostMapping(value = "import", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
