@@ -230,18 +230,32 @@ public class TaiKhoanController {
         ThongTinNguoiDung thongTinNguoiDung = taiKhoanVaThongTin.getThongTinNguoiDung();
         TaiKhoan taiKhoan = taiKhoanVaThongTin.getTaiKhoan();
 
+        Long list = taiKhoanRepository.count();
+        taiKhoan.setMaTaiKhoan("KH" + (list + 1));
         var b = thongTinNguoiDungServiceimpl.add(thongTinNguoiDung);
+        taiKhoan.setTrangThai(true);
+        String employeeName = thongTinNguoiDung.getTen(); // Replace this with the actual name
         taiKhoan.setThongTinNguoiDung(b);
-
+        taiKhoan.setAnh(taiKhoanVaThongTin.getFiles().get(0));
         serviceimpl.add(taiKhoan);
+        DiaChi diaChi = new DiaChi();
+        diaChi.setTen(b.getTen());
+        diaChi.setSdt(b.getSdt());
+        diaChi.setThongTinNguoiDung(b);
+        diaChi.setTrangThai(0);
+        diaChi.setDiaChiCuThe(taiKhoanVaThongTin.getDiaChiCuThe());
+        diaChi.setTinhThanhPho(taiKhoanVaThongTin.getTinhThanhPho());
+        diaChi.setQuanHuyen(taiKhoanVaThongTin.getQuanHuyen());
+        diaChi.setXaPhuongThiTran(taiKhoanVaThongTin.getXaPhuongThiTran());
+        diaChiServiceimpl.add(diaChi);
         PhanQuyen phanQuyen = new PhanQuyen();
         phanQuyen.setTaiKhoan(TaiKhoan.builder().id(taiKhoan.getId()).build());
-        phanQuyen.setQuyen(Quyen.builder().id(3).build());
+        phanQuyen.setQuyen(quyenServiceimpl.findOne(Long.valueOf(3)));
+//        phanQuyen.setQuyen(Quyen.builder().id(3).build());
         phanQuyenServiceimpl.add(phanQuyen);
-
+        taiKhoan.setPassword("");
         return ResponseEntity.ok(serviceimpl.add(taiKhoan));
     }
-
     @PutMapping("updateKhachHang/{id}")
     public ResponseEntity<?> updateKhacHang(@RequestBody TaiKhoanVaThongTin taiKhoanVaThongTin,
                                             @PathVariable("id") Long id) {

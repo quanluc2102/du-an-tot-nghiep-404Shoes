@@ -88,7 +88,7 @@ public class TaiKhoanServiceimpl implements TaiKhoanService {
     @Override
     public TaiKhoan thayDoiTrangThai(Long id, TaiKhoan taiKhoan) {
         TaiKhoan taiKhoan1 = responsitory.findById(id).get();
-        taiKhoan1.setUsername(taiKhoan.getUsername());
+//        taiKhoan1.setUsername(taiKhoan.getUsername());
         taiKhoan1.setEmail(taiKhoan.getEmail());
         taiKhoan1.setNgayCapNhat(Date.valueOf(LocalDate.now()));
         taiKhoan1.setPassword(taiKhoan.getPassword());
