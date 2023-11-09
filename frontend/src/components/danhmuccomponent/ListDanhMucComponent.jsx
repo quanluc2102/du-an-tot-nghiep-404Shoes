@@ -91,6 +91,10 @@ class ListDanhMucComponent extends Component {
 
     add = (e) => {
         e.preventDefault();
+        const confirmed = window.confirm('Bạn có chắc chắn muốn thêm danh mục?');
+        if (!confirmed) {
+            return; // Người dùng bấm "Cancel", không thực hiện thêm
+        }
         let danhMuc = {ten: this.state.danhMucAdd.ten, trangThai: this.state.danhMucAdd.trangThai}
 
         if (!this.state.danhMucAdd.ten.trim()) {
@@ -146,6 +150,10 @@ class ListDanhMucComponent extends Component {
     }
     update = (e) => {
         e.preventDefault();
+        const confirmed = window.confirm('Bạn có chắc chắn muốn sửa danh mục?');
+        if (!confirmed) {
+            return; // Người dùng bấm "Cancel", không thực hiện thêm
+        }
         let danhMuc = {ten: this.state.danhMucUpdate.ten, trangThai: this.state.danhMucUpdate.trangThai}
         console.log('nsx' + JSON.stringify(danhMuc));
         let id = this.state.danhMucUpdate.id;
@@ -224,6 +232,10 @@ class ListDanhMucComponent extends Component {
 
 
     toggleDanhMuc(id, currentTrangThai) {
+        const confirmed = window.confirm('Bạn có chắc chắn muốn thay đổi trạng thái?');
+        if (!confirmed) {
+            return; // Người dùng bấm "Cancel", không thực hiện thêm
+        }
         const newTrangThai = currentTrangThai === 0 ? 1 : 0; // Chuyển đổi trạng thái
         danhmucservice.updateDanhMucTrangThai({trangThai: newTrangThai}, id).then((res) => {
             let danhMucCapNhat = res.data;

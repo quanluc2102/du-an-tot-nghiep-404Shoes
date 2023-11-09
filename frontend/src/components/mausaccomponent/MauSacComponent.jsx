@@ -91,6 +91,10 @@ class MauSacComponent extends Component {
 
     add = (e) => {
         e.preventDefault();
+        const confirmed = window.confirm('Bạn có chắc chắn muốn thêm màu sắc?');
+        if (!confirmed) {
+            return; // Người dùng bấm "Cancel", không thực hiện thêm
+        }
         let mauSac = {ten: this.state.mauSacAdd.ten, trangThai: this.state.mauSacAdd.trangThai}
 
         if (!this.state.mauSacAdd.ten) {
@@ -133,6 +137,10 @@ class MauSacComponent extends Component {
     }
     update = (e) => {
         e.preventDefault();
+        const confirmed = window.confirm('Bạn có chắc chắn muốn sửa màu sắc?');
+        if (!confirmed) {
+            return; // Người dùng bấm "Cancel", không thực hiện thêm
+        }
         let mauSac = {ten: this.state.mauSacUpdate.ten, trangThai: this.state.mauSacUpdate.trangThai}
         console.log('nsx' + JSON.stringify(mauSac));
         let id = this.state.mauSacUpdate.id;
@@ -234,6 +242,10 @@ class MauSacComponent extends Component {
     }
 
     toggleMauSac(id, currentTrangThai) {
+        const confirmed = window.confirm('Bạn có chắc chắn muốn thay đổi trạng thái?');
+        if (!confirmed) {
+            return; // Người dùng bấm "Cancel", không thực hiện thêm
+        }
         const newTrangThai = currentTrangThai === 0 ? 1 : 0; // Chuyển đổi trạng thái
         mausacservice.updateMauSacTrangThai({trangThai: newTrangThai}, id).then((res) => {
             let mauSacCapNhat = res.data;

@@ -86,6 +86,10 @@ class XuatXuComponent extends Component {
     }
     add = (e) => {
         e.preventDefault();
+        const confirmed = window.confirm('Bạn có chắc chắn muốn thêm xuất xứ?');
+        if (!confirmed) {
+            return; // Người dùng bấm "Cancel", không thực hiện thêm
+        }
         if (!this.state.xuatXuAdd.ten.trim()) {
             this.setState({ errorsAdd: { ...this.state.errorsAdd, ten: "Tên không được bỏ trống!" } });
             return;
@@ -117,7 +121,7 @@ class XuatXuComponent extends Component {
 
             } else {
                 // Xử lý khi có lỗi
-                const errorMessage = res.data || "Có lỗi xảy ra khi thêm danh mục.";
+                const errorMessage = res.data || "Có lỗi xảy ra khi thêm xuất xứ.";
                 toast.error("Lỗi: " + errorMessage); // Hiển thị lỗi bằng Toast
                 console.log(errorMessage);
             }
@@ -130,6 +134,10 @@ class XuatXuComponent extends Component {
 
     update = (e) => {
         e.preventDefault();
+        const confirmed = window.confirm('Bạn có chắc chắn muốn sửa xuất xứ?');
+        if (!confirmed) {
+            return; // Người dùng bấm "Cancel", không thực hiện thêm
+        }
         let xuatXu = { giaTri: this.state.xuatXuUpdate.giaTri, ten: this.state.xuatXuUpdate.ten, trangThai: this.state.xuatXuUpdate.trangThai }
         console.log('nsx' + JSON.stringify(xuatXu));
         let id = this.state.xuatXuUpdate.id;
@@ -205,6 +213,10 @@ class XuatXuComponent extends Component {
     }
 
     toggleXuatXu(id, currentTrangThai) {
+        const confirmed = window.confirm('Bạn có chắc chắn muốn thay đổi trạng thái?');
+        if (!confirmed) {
+            return; // Người dùng bấm "Cancel", không thực hiện thêm
+        }
         const newTrangThai = currentTrangThai === 0 ? 1 : 0; // Chuyển đổi trạng thái
         xuatxuservice.updateXuatXuTrangThai({ trangThai: newTrangThai }, id).then((res) => {
             let xuatXuCapNhat = res.data;

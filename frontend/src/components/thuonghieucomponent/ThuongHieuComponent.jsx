@@ -85,6 +85,11 @@ class ThuongHieuComponent extends Component {
     }
     add = (e) => {
         e.preventDefault();
+        const confirmed = window.confirm('Bạn có chắc chắn muốn thêm thương hiệu?');
+        if (!confirmed) {
+            return; // Người dùng bấm "Cancel", không thực hiện thêm
+        }
+        e.preventDefault();
         let thuongHieu = { ten: this.state.thuongHieuAdd.ten, trangThai: this.state.thuongHieuAdd.trangThai }
 
         if (!this.state.thuongHieuAdd.ten) {
@@ -115,7 +120,7 @@ class ThuongHieuComponent extends Component {
                 }));
             } else {
                 // Xử lý khi có lỗi
-                const errorMessage = res.data || "Có lỗi xảy ra khi thêm danh mục.";
+                const errorMessage = res.data || "Có lỗi xảy ra khi thêm thương hiệu.";
                 toast.error("Lỗi: " + errorMessage); // Hiển thị lỗi bằng Toast
                 console.log(errorMessage);
             }
@@ -127,6 +132,10 @@ class ThuongHieuComponent extends Component {
 
     }
     update = (e) => {
+        const confirmed = window.confirm('Bạn có chắc chắn muốn sửa thương hiệu?');
+        if (!confirmed) {
+            return; // Người dùng bấm "Cancel", không thực hiện thêm
+        }
         e.preventDefault();
         let thuongHieu = { giaTri: this.state.thuongHieuUpdate.giaTri, ten: this.state.thuongHieuUpdate.ten, trangThai: this.state.thuongHieuUpdate.trangThai }
         console.log('nsx' + JSON.stringify(thuongHieu));
@@ -211,6 +220,10 @@ class ThuongHieuComponent extends Component {
     }
 
     toggleThuongHieu(id, currentTrangThai) {
+        const confirmed = window.confirm('Bạn có chắc chắn muốn thay đổi trạng thái?');
+        if (!confirmed) {
+            return; // Người dùng bấm "Cancel", không thực hiện thêm
+        }
         const newTrangThai = currentTrangThai === 0 ? 1 : 0; // Chuyển đổi trạng thái
         thuonghieuservice.updateThuongHieuTrangThai({ trangThai: newTrangThai }, id).then((res) => {
             let thuongHieuCapNhat = res.data;

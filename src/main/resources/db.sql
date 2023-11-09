@@ -8,7 +8,7 @@ go
 
 
 
-select * from san_pham
+
 
 -- Create thong_tin_nguoi_dung table
 CREATE TABLE thong_tin_nguoi_dung (
@@ -253,6 +253,16 @@ CREATE TABLE lich_su_hoa_don(
                                 FOREIGN KEY (nguoi_nhan) REFERENCES tai_khoan(id),
                                 FOREIGN KEY (khuyen_mai) REFERENCES khuyen_mai(id)
 );
+
+CREATE TABLE hoa_don_khuyen_mai (
+                                    id BIGINT PRIMARY KEY IDENTITY(1,1),
+                                    hoa_don_id BIGINT,
+                                    khuyen_mai_id BIGINT,
+                                    FOREIGN KEY (hoa_don_id) REFERENCES hoa_don(id),
+                                    FOREIGN KEY (khuyen_mai_id) REFERENCES khuyen_mai(id)
+);
+
+
 use ShopShoe
 
     INSERT INTO thong_tin_nguoi_dung ( ngay_sinh, sdt, ten,cccd,gioi_tinh, ngay_cap_nhat)
@@ -464,6 +474,7 @@ VALUES
 
 
 select * from danh_muc
+select * from hoa_don_khuyen_mai
 select * from gio_hang
 select * from gio_hang_chi_tiet
 select * from hoa_don
