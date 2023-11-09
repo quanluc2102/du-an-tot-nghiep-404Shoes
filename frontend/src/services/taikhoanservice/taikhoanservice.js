@@ -1,6 +1,8 @@
 import axios from 'axios';
 const API_BASE_URL = "http://localhost:8080/tai_khoan/index";
+const API_BASE_URL_DETAIL = "http://localhost:8080/tai_khoan/nhanviendetail";
 const API_BASE_URL_THONG_TIN = "http://localhost:8080/thong_tin/index";
+const API_BASE_URL_DIA_CHI = "http://localhost:8080/dia_chi/index";
 const API_BASE_URL_NHAN_VIEN = "http://localhost:8080/tai_khoan/nhan-vien-quyen-1";
 const API_BASE_URL_QUAN_LY = "http://localhost:8080/tai_khoan/nhan-vien-quyen-2";
 const API_BASE_URL_KHACH_HANG = "http://localhost:8080/tai_khoan/nhan-vien-quyen-3";
@@ -60,7 +62,16 @@ class taikhoanservice {
     getKhachHangById(id) {
         return axios.get(API_BASE_URL_KHACH_HANG + "/" + id);
     }
-
+    getDiaChiByTaiKhoan(diaChi){
+        if (diaChi && diaChi.thongTinNguoiDung && diaChi.thongTinNguoiDung.id) {
+            return axios.get(API_BASE_URL_DIA_CHI + "/" + diaChi.thongTinNguoiDung.id);
+        } else {
+            return Promise.reject("Thông tin tài khoản không hợp lệ.");
+        }
+    }
+    getDiaChiById(id){
+        return axios.get(API_BASE_URL_DETAIL +"/"+id);
+    }
     getThongTinByTaiKhoan(taiKhoan) {
         if (taiKhoan && taiKhoan.thongTinNguoiDung && taiKhoan.thongTinNguoiDung.id) {
             return axios.get(API_BASE_URL_THONG_TIN + "/" + taiKhoan.thongTinNguoiDung.id);
@@ -68,7 +79,13 @@ class taikhoanservice {
             return Promise.reject("Thông tin tài khoản không hợp lệ.");
         }
     }
-
+    // getDiaChiByTaiKhoan(taiKhoanvaThongTin) {
+    //     if (taiKhoanvaThongTin && taiKhoanvaThongTin.diaChi && taiKhoanvaThongTin.diaChi.id) {
+    //         return axios.get(API_BASE_URL_THONG_TIN + "/" + taiKhoan.thongTinNguoiDung.id);
+    //     } else {
+    //         return Promise.reject("Thông tin tài khoản không hợp lệ.");
+    //     }
+    // }
     getNhanVien(pageNumber) {
         return axios.get(API_BASE_URL_NHAN_VIEN + `?page=${pageNumber}&size=5`);
     }

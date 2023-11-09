@@ -38,8 +38,15 @@ public interface TaiKhoanResponsitory extends JpaRepository<TaiKhoan,Long> {
             "WHERE q.id = 4")
     List<TaiKhoan> findNhanVienByQuyenId4();
 
+    TaiKhoan findByEmail(String email);
 
 
 //    @Query(value = "SELECT * FROM tai_khoan WHERE thong_tin_nguoi_dung_id = id;",nativeQuery = true)
 //    public List<TaiKhoan> getAllTaiKhoan(@Param("id") long id);
+
+    @Query("SELECT tk.anh, ttn.ten, dc.tinhThanhPho, dc.quanHuyen, dc.xaPhuongThiTran, dc.diaChiCuThe, dc.sdt, ttn.gioiTinh, ttn.ngaySinh, tk.email, tk.password " +
+            "FROM ThongTinNguoiDung ttn " +
+            "JOIN DiaChi dc ON ttn.id = dc.thongTinNguoiDung.id " +
+            "JOIN TaiKhoan tk ON ttn.id = tk.thongTinNguoiDung.id")
+    List<Object[]> findByIdAll(Long id);
 }

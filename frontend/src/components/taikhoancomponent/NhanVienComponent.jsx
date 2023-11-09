@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import taikhoanservice from "../../services/taikhoanservice/taikhoanservice";
 import ReactPaginate from 'react-paginate';
 import {toast} from "react-toastify";
+import thongtinservice from "../../services/thongtinservice/thongtinservice";
 
 
 class NhanVienComponent extends Component {
@@ -12,7 +13,8 @@ class NhanVienComponent extends Component {
             taiKhoan: [],
             itemsPerPage: 5, // Number of items to display per page
             currentPage: 1,   // Current page
-
+            filterStatus: 'all',
+            searchValue: '',
             nhanVienQuyen1: [],
             taiKhoanAdd: {
                 maTaiKhoan: '',
@@ -54,18 +56,8 @@ class NhanVienComponent extends Component {
         }
         this.add = this.add.bind(this);
         // this.delete = this.delete.bind(this);
-        this.update = this.update.bind(this);
+        //   this.handleSearch=this.handleSearch.bind(this);
         this.detail = this.detail.bind(this);
-        this.thayDoiUsernameAdd = this.thayDoiUsernameAdd.bind(this);
-        this.thayDoiEmailAdd = this.thayDoiEmailAdd.bind(this);
-        this.thayDoiPasswordAdd = this.thayDoiPasswordAdd.bind(this);
-        this.thayDoiAnhAdd = this.thayDoiAnhAdd.bind(this);
-        this.thayDoiTrangThaiAdd = this.thayDoiTrangThaiAdd.bind(this);
-        // this.thayDoiUsernameUpdate = this.thayDoiUsernameUpdate.bind(this);
-        this.thayDoiEmailUpdate = this.thayDoiEmailUpdate.bind(this);
-        this.thayDoiPasswordUpdate = this.thayDoiPasswordUpdate.bind(this);
-        this.thayDoiAnhUpdate = this.thayDoiAnhUpdate.bind(this);
-        this.thayDoiTrangThaiUpdate = this.thayDoiTrangThaiUpdate.bind(this);
 
     }
     loadQuanLyData(pageNumber) {
@@ -117,190 +109,6 @@ class NhanVienComponent extends Component {
     detail(id) {
         window.location.href = (`/nhanviendetail/${id}`);
     }
-    update = (e) => {
-        e.preventDefault();
-        let nhanVienQuyen1 = {
-            maTaiKhoan: this.state.taiKhoanUpdate.maTaiKhoan,
-            email: this.state.taiKhoanUpdate.email,
-            // ngayTao: this.state.taiKhoanUpdate.ngayTao,
-            // ngayCapNhat: this.state.taiKhoanUpdate.ngayCapNhat,
-            password: this.state.taiKhoanUpdate.password,
-            anh: this.state.taiKhoanUpdate.anh,
-            trangThai: this.state.taiKhoanUpdate.trangThai }
-
-        console.log('nsx' + JSON.stringify(nhanVienQuyen1));
-        let id = this.state.taiKhoanUpdate.id;
-        ///username
-        // const existingUser = this.state.nhanVienQuyen1.find(user => user.username === nhanVienQuyen1.username);
-        // if (existingUser) {
-        //     this.setState({ errorUpdate: { ...this.state.errorUpdate, username: "Username đã tồn tại!" } });
-        //     return;
-        // } else if (!this.state.taiKhoanUpdate.username) {
-        //     this.setState({ errorUpdate: { ...this.state.errorUpdate, username: "username không được bỏ trống!" } });
-        //     return;
-        // } else if (!isNaN(this.state.taiKhoanUpdate.username)) {
-        //     this.setState({ errorUpdate: { ...this.state.errorUpdate, username: "username phải là chữ!" } });
-        //     return;
-        // }
-        // else {
-        //     this.setState({ errorUpdate: { ...this.state.errorUpdate, username: "" } });
-        // }
-////email
-        const existingEmail = this.state.nhanVienQuyen1.find(user => user.email === nhanVienQuyen1.email);
-        if (existingEmail) {
-            this.setState({ errorUpdate: { ...this.state.errorUpdate, email: "Email đã tồn tại!" } });
-            return;
-        }else if (!this.state.taiKhoanUpdate.email) {
-            this.setState({ errorUpdate: { ...this.state.errorUpdate, email: "Email không được bỏ trống!" } });
-            return;
-        } else if (!isValidEmail(this.state.taiKhoanUpdate.email)) {
-            this.setState({ errorUpdate: { ...this.state.errorUpdate, email: "Email không hợp lệ!" } });
-            return;
-        } else {
-            this.setState({ errorUpdate: { ...this.state.errorUpdate, email: "" } });
-        }
-        function isValidEmail(email) {
-            const emailPattern = /^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$/;
-            return emailPattern.test(email);
-        }
-        ///pass
-        if (!this.state.taiKhoanUpdate.password) {
-            this.setState({errorUpdate: { ...this.state.errorUpdate, password: "Password không thể bỏ trống!" } });
-            return;
-        } else if (/\s/.test(this.state.taiKhoanUpdate.password)) {
-            this.setState({ errorUpdate: { ...this.state.errorUpdate, password: "Password không được chứa khoảng trắng!" } });
-            return;
-        } else if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(this.state.taiKhoanUpdate.password)) {
-            this.setState({ errorUpdate: { ...this.state.errorUpdate, password: "Password phải chứa ít nhất một ký tự đặc biệt!" } });
-            return;
-        } else {
-            this.setState({ errorUpdate: { ...this.state.errorUpdate, password: "" } });
-        }
-        ///anh
-        if (!this.state.taiKhoanUpdate.anh) {
-            this.setState({ errorUpdate: { ...this.state.errorUpdate, anh: "Ảnh không được bỏ trống!" } });
-            return;
-        }
-        else {
-            this.setState({ errorUpdate: { ...this.state.errorUpdate, anh: "" } });
-        }
-        //trangthai
-        if (!this.state.taiKhoanUpdate.trangThai) {
-            this.setState({errorUpdate: { ...this.state.errorUpdate, trangThai: "Trạng thái không được bỏ trống!" } });
-            return;
-        }
-        else {
-            this.setState({ errorUpdate: { ...this.state.errorUpdate, trangThai: "" } });
-        }
-        taikhoanservice.updateNhanVien(nhanVienQuyen1, this.state.taiKhoanUpdate.id).then((res) => {
-            let taiKhoanCapNhat = res.data; // Giả sử API trả về đối tượng vừa được cập nhật
-            this.setState(prevState => ({
-                nhanVienQuyen1: prevState.nhanVienQuyen1.map(tk =>
-                    tk.id === taiKhoanCapNhat.id ? taiKhoanCapNhat : tk
-                )
-            }));
-            toast.success("Sửa thành công!");
-        }).catch(error => {
-            // Log the error or handle it as needed
-            console.error("Update request error:", error);
-        });
-    }
-    thayDoiUsernameAdd = (event) => {
-        this.setState(prevState => ({
-            taiKhoanAdd: {
-                ...prevState.taiKhoanAdd,
-                username: event.target.value
-            }
-        }));
-        let errorAdd = { ...this.state.errorAdd, username: "" };
-        this.setState({ errorAdd: errorAdd });
-    }
-    thayDoiEmailAdd = (event) => {
-        this.setState(prevState => ({
-            taiKhoanAdd: {
-                ...prevState.taiKhoanAdd,
-                email: event.target.value
-            }
-        }));
-        let errorAdd = { ...this.state.errorAdd, email: "" };
-        this.setState({ errorAdd: errorAdd });
-    }
-
-    thayDoiPasswordAdd = (event) => {
-        this.setState(prevState => ({
-            taiKhoanAdd: {
-                ...prevState.taiKhoanAdd,
-                password: event.target.value
-            }
-        }));
-        let errorAdd = { ...this.state.errorAdd, password: "" };
-        this.setState({ errorAdd: errorAdd });
-    }
-    thayDoiAnhAdd = (event) => {
-        this.setState(prevState => ({
-            taiKhoanAdd: {
-                ...prevState.taiKhoanAdd,
-                anh: event.target.value
-            }
-        }));
-        let errorAdd = { ...this.state.errorAdd, anh: "" };
-        this.setState({ errorAdd: errorAdd });
-    }
-
-    thayDoiTrangThaiAdd = (event) => {
-        this.setState(prevState => ({
-            taiKhoanAdd: {
-                ...prevState.taiKhoanAdd,
-                trangThai: event.target.value
-            }
-        }));
-        let errorAdd = { ...this.state.errorAdd, trangThai: "" };
-        this.setState({ errorAdd: errorAdd });
-    }
-    ///////
-
-    thayDoiEmailUpdate = (event) => {
-        this.setState(prevState => ({
-            taiKhoanUpdate: {
-                ...prevState.taiKhoanUpdate,
-                email: event.target.value
-            }
-        }));
-        let errorUpdate = { ...this.state.errorUpdate, email: "" };
-        this.setState({ errorUpdate: errorUpdate });
-    }
-
-    thayDoiPasswordUpdate = (event) => {
-        this.setState(prevState => ({
-            taiKhoanUpdate: {
-                ...prevState.taiKhoanUpdate,
-                password: event.target.value
-            }
-        }));
-        let errorUpdate = { ...this.state.errorUpdate, password: "" };
-        this.setState({ errorUpdate: errorUpdate });
-    }
-    thayDoiAnhUpdate = (event) => {
-        this.setState(prevState => ({
-            taiKhoanUpdate: {
-                ...prevState.taiKhoanUpdate,
-                anh: event.target.value
-            }
-        }));
-        let errorUpdate = { ...this.state.errorUpdate, anh: "" };
-        this.setState({ errorUpdate: errorUpdate });
-    }
-
-    thayDoiTrangThaiUpdate = (event) => {
-        this.setState(prevState => ({
-            taiKhoanUpdate: {
-                ...prevState.taiKhoanUpdate,
-                trangThai: event.target.value
-            }
-        }));
-        let errorUpdate = { ...this.state.errorUpdate, trangThai: "" };
-        this.setState({ errorUpdate: errorUpdate });
-    }
 
     toggleTaiKhoan(id, currentTaiKhoan) {
         const newTrangThai = currentTaiKhoan === true ? false : true; // Chuyển đổi trạng thái
@@ -313,13 +121,54 @@ class NhanVienComponent extends Component {
             }));
         });
     }
-    render() {
-        const {nhanVienQuyen1, itemsPerPage, currentPage } = this.state;
+    handleFilterChange = (event) => {
+        const filterStatus = event.target.value;
+        this.setState({ filterStatus });
+    }
 
-        // Calculate the start and end indexes for the current page
+    handleSearch = (event) => {
+        const searchValue = event.target.value.toLowerCase();
+        this.setState({
+            searchValue,
+            currentPage: 1, // Reset currentPage when searching
+        });
+    };
+
+    render() {
+        const { nhanVienQuyen1, itemsPerPage, currentPage, filterStatus, searchValue } = this.state;
+
+        // Filter employees based on filterStatus
+        const filteredEmployees = nhanVienQuyen1.filter((employee) => {
+            if (filterStatus === 'all') {
+                return true;
+            } else if (filterStatus === 'active') {
+                return employee.trangThai === true;
+            } else {
+                return employee.trangThai === false;
+            }
+        });
+
+        // Apply the search filter on top of other filters
+        const searchFilteredEmployees = filteredEmployees.filter((employee) => {
+            const { maTaiKhoan, email, thongTinNguoiDung } = employee;
+            const maTaiKhoanLowerCase = maTaiKhoan ? maTaiKhoan.toLowerCase() : '';
+            const emailLowerCase = email ? email.toLowerCase() : '';
+            const tenNhanVienLowerCase = thongTinNguoiDung.ten ? thongTinNguoiDung.ten.toLowerCase() : '';
+            const sdtLowerCase = thongTinNguoiDung.sdt ? thongTinNguoiDung.sdt.toLowerCase() : '';
+
+
+            return (
+                maTaiKhoanLowerCase.includes(searchValue) ||
+                emailLowerCase.includes(searchValue) ||
+                sdtLowerCase.includes(searchValue) ||
+                tenNhanVienLowerCase.includes(searchValue)
+            );
+        });
+
         const startIndex = (currentPage - 1) * itemsPerPage;
         const endIndex = startIndex + itemsPerPage;
-        const currentItems = nhanVienQuyen1.slice(startIndex, endIndex);
+        const currentItems = searchFilteredEmployees.slice(startIndex, endIndex);
+
         return (
             <div>
                 <div className="pagetitle">
@@ -350,16 +199,56 @@ class NhanVienComponent extends Component {
                                                     Tạo tài khoản
                                                 </button>
                                             </div>
+                                            <div className="search-container">
+                                                <input
+                                                    type="text"
+                                                    placeholder="Tìm kiếm theo tên, mã, SDT, hoặc email"
+                                                    value={searchValue} // Bind the search input value to the state
+                                                    onChange={this.handleSearch} // Attach the search event handler
+                                                />
+                                            </div>
+                                            <div>
+                                                <input
+                                                    type="radio"
+                                                    id="filterAll"
+                                                    name="filterStatus"
+                                                    value="all"
+                                                    checked={filterStatus === 'all'}
+                                                    onChange={this.handleFilterChange}
+                                                />
+                                                <label htmlFor="filterAll">Tất cả</label>
+                                            </div>
+                                            <div>
+                                                <input
+                                                    type="radio"
+                                                    id="filterActive"
+                                                    name="filterStatus"
+                                                    value="active"
+                                                    checked={filterStatus === 'active'}
+                                                    onChange={this.handleFilterChange}
+                                                />
+                                                <label htmlFor="filterActive">Đang làm</label>
+                                            </div>
+                                            <div>
+                                                <input
+                                                    type="radio"
+                                                    id="filterInactive"
+                                                    name="filterStatus"
+                                                    value="inactive"
+                                                    checked={filterStatus === 'inactive'}
+                                                    onChange={this.handleFilterChange}
+                                                />
+                                                <label htmlFor="filterInactive">Nghỉ việc</label>
+                                            </div>
                                             <table className="table table-borderless datatable">
                                                 <thead>
                                                 <tr>
                                                     <th>Mã NV</th>
                                                     <th>Email</th>
-                                                    <th>Ngày tạo</th>
-                                                    <th>Ngày cập nhật</th>
+                                                    <th>SDT</th>
+                                                    <th>Tên</th>
                                                     <th>Ảnh</th>
                                                     <th>Trạng thái</th>
-                                                    {/*<th>Thông tin người dùng</th>*/}
                                                     <th>Action</th>
                                                 </tr>
                                                 </thead>
@@ -369,13 +258,13 @@ class NhanVienComponent extends Component {
                                                     <tr key={tk.id}>
                                                         <td>{tk.maTaiKhoan}</td>
                                                         <td>{tk.email}</td>
-                                                        <td>{tk.ngayTao}</td>
-                                                        {/*<td>{tk.ngayCapNhat}</td>*/}
+                                                        <td>{tk.thongTinNguoiDung.sdt}</td>
+                                                        <td>{tk.thongTinNguoiDung.ten}</td>
                                                         <td>
                                                             {tk.anh && <img src={`/niceadmin/img/${tk.anh}`} width="100px" height="100px" />}
 
                                                         </td>
-                                                        <td>{tk.trangThai == true ? "Hoạt động" : "Ngừng hoạt động"}</td>
+                                                        <td>{tk.trangThai == true ? "Đang làm" : "Nghỉ việc"}</td>
                                                         <td><label className="switch">
                                                             <input
                                                                 type="checkbox"

@@ -13,6 +13,11 @@ public class TaiKhoanVaThongTin {
     private ThongTinNguoiDung thongTinNguoiDung;
     private TaiKhoan taiKhoan;
     private List<String> files;
+    private String diaChiCuThe;
+    private String tinhThanhPho;
+    private String quanHuyen;
+    private String xaPhuongThiTran;
+//    private DiaChi diaChi;
     public TaiKhoanVaThongTin() {
         // Hãy tạo các constructor và getter, setter nếu cần thiết
     }
@@ -25,6 +30,21 @@ public class TaiKhoanVaThongTin {
         this.thongTinNguoiDung = thongTinNguoiDung;
     }
 
+    public List<String> getFiles() {
+        return files;
+    }
+
+    public void setFiles(List<String> files) {
+        this.files = files;
+    }
+
+//    public DiaChi getDiaChi() {
+//        return diaChi;
+//    }
+//
+//    public void setDiaChi(DiaChi diaChi) {
+//        this.diaChi = diaChi;
+//    }
 
     public TaiKhoan getTaiKhoan() {
         return taiKhoan;
