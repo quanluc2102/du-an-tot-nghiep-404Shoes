@@ -1,0 +1,54 @@
+.admin-container {
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 20px;
+    background: #f4f4f4;
+    border: 1px solid #e0e0e0;
+    border-radius: 5px;
+}
+
+.admin-header {
+    text-align: center;
+    background: #007bff;
+    color: #fff;
+    padding: 10px 0;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+
+.admin-header h1 {
+    margin: 0;
+}
+
+.admin-content {
+    background: #fff;
+    padding: 20px;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+.custom-admin-form .form-group {
+    margin-bottom: 20px;
+}
+
+.custom-admin-form label {
+    font-weight: bold;
+}
+
+.custom-admin-form .gender-radio {
+    display: flex;
+    justify-content: space-between;
+}
+
+.custom-admin-form .btn {
+    width: 100%;
+    padding: 10px;
+    background: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+}
+.gender-radio label.form-check-label:nth-child(2) {
+    margin-left: 5px;
+}
+/* Additional styles can be applied as needed for further enhancement */
