@@ -84,6 +84,10 @@ class KichThuocComponent extends Component {
     }
     add = (e) => {
         e.preventDefault();
+        const confirmed = window.confirm('Bạn có chắc chắn muốn thêm kích thước?');
+        if (!confirmed) {
+            return; // Người dùng bấm "Cancel", không thực hiện thêm
+        }
         let kichThuoc = { giaTri: this.state.kichThuocAdd.giaTri, trangThai: this.state.kichThuocAdd.trangThai }
 
         if (!this.state.kichThuocAdd.giaTri.trim()) {
@@ -116,7 +120,7 @@ class KichThuocComponent extends Component {
                 }));
             }  else {
                 // Xử lý khi có lỗi
-                const errorMessage = res.data || "Có lỗi xảy ra khi thêm danh mục.";
+                const errorMessage = res.data || "Có lỗi xảy ra khi thêm kích thước.";
                 toast.error("Lỗi: " + errorMessage); // Hiển thị lỗi bằng Toast
                 console.log(errorMessage);
             }
@@ -129,6 +133,10 @@ class KichThuocComponent extends Component {
     }
     update = (e) => {
         e.preventDefault();
+        const confirmed = window.confirm('Bạn có chắc chắn muốn sửa kích thước?');
+        if (!confirmed) {
+            return; // Người dùng bấm "Cancel", không thực hiện thêm
+        }
         let kichThuoc = { giaTri: this.state.kichThuocUpdate.giaTri, trangThai: this.state.kichThuocUpdate.trangThai }
         console.log('nsx' + JSON.stringify(kichThuoc));
         // let id = this.state.kichThuocUpdate.id;
@@ -219,6 +227,10 @@ class KichThuocComponent extends Component {
     }
 
     toggleKichThuoc(id, currentTrangThai) {
+        const confirmed = window.confirm('Bạn có chắc chắn muốn thay đổi trạng thái?');
+        if (!confirmed) {
+            return; // Người dùng bấm "Cancel", không thực hiện thêm
+        }
         const newTrangThai = currentTrangThai === 0 ? 1 : 0; // Chuyển đổi trạng thái
         kichthuocservice.updateKichThuocTrangThai({ trangThai: newTrangThai }, id).then((res) => {
             let kichThuocCapNhat = res.data;
