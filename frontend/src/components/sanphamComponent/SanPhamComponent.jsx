@@ -65,9 +65,15 @@ class SanPhamComponent extends Component {
         })
 
         if(e.target.value==="2"){
-            this.setState({
-                sanPham:this.state.listThayThe
-            })
+            SanPhamService.getSanPham(0).then(res => {
+                this.setState({
+                    sanPham: res.data.content,
+                    pageCount: 0,
+                });
+            });
+            // this.setState({
+            //     sanPham:this.state.listThayThe
+            // })
         }else{
             const filteredProducts = this.state.listThayThe.filter(product => {
                 return (
