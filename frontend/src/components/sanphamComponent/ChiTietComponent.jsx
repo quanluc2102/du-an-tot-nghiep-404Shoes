@@ -36,7 +36,9 @@ class ChiTietComponent extends Component {
                 thuongHieuId:'',
                 xuatXuId:'',
                 danhMucId:''
-            },        };
+            },
+        };
+        this.home=this.home.bind(this);
         this.handleShowModal=this.handleShowModal.bind(this);
         this.handleCloseModal=this.handleCloseModal.bind(this);
         this.detail=this.detail.bind(this);
@@ -56,7 +58,9 @@ class ChiTietComponent extends Component {
         this.thayDoiXuatXuAdd=this.thayDoiXuatXuAdd.bind(this);
         this.thayDoiDanhMucAdd=this.thayDoiDanhMucAdd.bind(this);
     }
-
+    home = ()=>{
+        window.location.href = (`/`);
+    }
     handleChangeMS = (selectedOptionMS) => {
         this.setState({ selectedOptionMS }, () =>
             console.log(`Option selected:`, this.state.selectedOptionMS)
@@ -538,7 +542,7 @@ class ChiTietComponent extends Component {
 
                 <div className="card-body">
                     <button className="btn btn-warning bi bi-floppy" style={{float:"right",marginRight:20}} onClick={this.update}></button>
-                    <button className="btn btn-info bi bi-house" style={{float:"right",marginRight:10}}></button>
+                    <button className="btn btn-info bi bi-house" style={{float:"right",marginRight:10}} onClick={this.home}></button>
                 </div>
 
             </div>

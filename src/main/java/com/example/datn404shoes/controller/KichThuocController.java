@@ -4,6 +4,7 @@ package com.example.datn404shoes.controller;
 import com.example.datn404shoes.entity.KichThuoc;
 import com.example.datn404shoes.entity.KichThuoc;
 import com.example.datn404shoes.entity.KichThuocValue;
+import com.example.datn404shoes.entity.MauSac;
 import com.example.datn404shoes.helper.KichThuocExcelSave;
 import com.example.datn404shoes.repository.KichThuocRepository;
 import com.example.datn404shoes.service.serviceimpl.KichThuocServiceImpl;
@@ -41,7 +42,8 @@ public class KichThuocController {
     @GetMapping("index")
     public ResponseEntity<?> index1(Model model) {
         List<KichThuocValue> list = new ArrayList<>();
-        for(KichThuoc b : repository.findAll()){
+        List<KichThuoc> listKT = repository.findAll().stream().filter(kichThuoc -> kichThuoc.getTrangThai()==1).toList();
+        for(KichThuoc b : listKT){
             KichThuocValue a = new KichThuocValue(b.getId(),b.getGiaTri());
             list.add(a);
         }

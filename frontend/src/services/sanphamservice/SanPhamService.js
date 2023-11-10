@@ -1,6 +1,7 @@
 import axios from "axios";
 
 const BASE_URL_INDEX = "http://localhost:8080/san_pham/index";
+const BASE_URL_INDEX_ALL = "http://localhost:8080/san_pham/index1";
 const BASE_URL_DETAIL = "http://localhost:8080/san_pham/detail";
 const BASE_URL_SPCT_DETAIL = "http://localhost:8080/san_pham/detail_spct";
 const BASE_URL_Anh_DETAIL = "http://localhost:8080/san_pham/detail_spa";
@@ -11,8 +12,6 @@ const BASE_URL_SPCT_ADD = "http://localhost:8080/san_pham/add_spct";
 const BASE_URL_SPCT_DELETE = "http://localhost:8080/san_pham_chi_tiet/delete1";
 const BASE_URL_SPCT_UPDATE = "http://localhost:8080/san_pham_chi_tiet/updateAll";
 const BASE_URL_UPDATE = "http://localhost:8080/san_pham/update";
-const BASE_URL_KICHTHUOC_INDEX = "http://localhost:8080/kich_thuoc/index1";
-const BASE_URL_MAUSAC_INDEX = "http://localhost:8080/mau_sac/index1";
 const BASE_URL_KICHTHUOCADD_INDEX = "http://localhost:8080/kich_thuoc/index";
 const BASE_URL_MAUSACADD_INDEX = "http://localhost:8080/mau_sac/index";
 const BASE_URL_DANHMUC_INDEX = "http://localhost:8080/danh_muc/index";
@@ -22,6 +21,10 @@ class SanPhamService{
 
     getSanPham(pageNumber){
         return axios.get(BASE_URL_INDEX+`?page=${pageNumber}&size=5`);
+    }
+
+    getAllSanPham(){
+        return axios.get(BASE_URL_INDEX_ALL);
     }
 
     getKichThuocAdd(){

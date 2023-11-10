@@ -33,6 +33,7 @@ class SanPhamAddComponnent extends Component {
                 danhMucId:''
             },
         };
+        this.home=this.home.bind(this);
         this.add=this.add.bind(this);
         this.fileSelectedHandler=this.fileSelectedHandler.bind(this);
         this.handleUpload=this.handleUpload.bind(this);
@@ -43,7 +44,9 @@ class SanPhamAddComponnent extends Component {
         this.thayDoiXuatXuAdd=this.thayDoiXuatXuAdd.bind(this);
         this.thayDoiDanhMucAdd=this.thayDoiDanhMucAdd.bind(this);
     }
-
+    home = ()=>{
+        window.location.href = (`/`);
+    }
     add = (e)=>{
         e.preventDefault();
         const confirm = window.confirm("Bạn có chắc chắn muốn thêm sản phẩm  này ?");
@@ -110,7 +113,7 @@ class SanPhamAddComponnent extends Component {
         SanPhamService.addSanPham(sanPham).then((res)=>{
             if (res.status=== 200) {
                 setTimeout(() => {
-                    window.location.href = (`/index`);
+                    window.location.href = (`/`);
                 }, 2000);
                 toast.success("Thêm thành công!");
             }else {
@@ -498,7 +501,7 @@ class SanPhamAddComponnent extends Component {
 
                 <div className="card-body">
                     <button className="btn btn-warning bi bi-floppy" style={{float:"right",marginRight:20}} onClick={this.add}></button>
-                    <button className="btn btn-info bi bi-house" style={{float:"right",marginRight:10}}></button>
+                    <button className="btn btn-info bi bi-house" style={{float:"right",marginRight:10}} onClick={this.home}></button>
                 </div>
 
             </div>

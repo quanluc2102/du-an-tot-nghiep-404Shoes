@@ -7,13 +7,80 @@ class SanPhamComponent extends Component {
         super(props);
         this.state = {
             sanPham:[],
+            listThayThe:[],
+            trangThai:'2',
             pageCount: 0
         }
+        this.timKiem=this.timKiem.bind(this);
         this.formAdd=this.formAdd.bind(this);
         this.delete=this.delete.bind(this);
         this.detail=this.detail.bind(this);
+        this.thayDoiTrangThai=this.thayDoiTrangThai.bind(this);
     }
+    timKiem = (e)=>{
+        // var list = this.state.listThayThe.filter(value => value.ten.toLowerCase().includes(e.target.value.toLowerCase()))
+        // this.setState({
+        //     sanPham: list,
+        // });
 
+        if(this.state.trangThai==="2"){
+            const filteredProducts = this.state.listThayThe.filter(product => {
+                return (product.ma.toLowerCase().includes(e.target.value.toLowerCase()) ||
+                        product.ten.toLowerCase().includes(e.target.value.toLowerCase()) ||
+                        product.danhMuc.ten.toLowerCase().includes(e.target.value.toLowerCase()) ||
+                        product.xuatXu.ten.toLowerCase().includes(e.target.value.toLowerCase())||
+                        product.thuongHieu.ten.toLowerCase().includes(e.target.value.toLowerCase())
+                );
+            });
+
+            this.setState({
+                sanPham: filteredProducts
+            });
+        }else{
+            const filteredProducts = this.state.listThayThe.filter(product => {
+                return ( product.trangThai===parseInt(this.state.trangThai)&&
+                    (   product.ma.toLowerCase().includes(e.target.value.toLowerCase()) ||
+                        product.ten.toLowerCase().includes(e.target.value.toLowerCase()) ||
+                        product.danhMuc.ten.toLowerCase().includes(e.target.value.toLowerCase()) ||
+                        product.xuatXu.ten.toLowerCase().includes(e.target.value.toLowerCase())||
+                        product.thuongHieu.ten.toLowerCase().includes(e.target.value.toLowerCase()))
+                );
+            });
+
+            this.setState({
+                sanPham: filteredProducts
+            });
+        }
+
+
+        if(e.target.value.length ===0){
+            this.setState({
+                sanPham:this.state.listThayThe
+            })
+        }
+    }
+    thayDoiTrangThai = (e) => {
+        this.setState({
+            trangThai:e.target.value
+        })
+
+        if(e.target.value==="2"){
+            this.setState({
+                sanPham:this.state.listThayThe
+            })
+        }else{
+            const filteredProducts = this.state.listThayThe.filter(product => {
+                return (
+                    product.trangThai=== parseInt(e.target.value)
+                );
+            });
+
+            this.setState({
+                sanPham: filteredProducts
+            });
+        }
+
+    };
     loadPageData(pageNumber) {
         SanPhamService.getSanPham(pageNumber).then(res => {
             this.setState({
@@ -31,14 +98,23 @@ class SanPhamComponent extends Component {
         SanPhamService.getSanPham(pageNumber).then(res => {
             this.setState({
                 sanPham: res.data.content,
-                pageCount: res.data.totalPages,
+                pageCount: res.data.totalPages
             });
         });
+        SanPhamService.getAllSanPham().then(res=>{
+            this.setState({
+                listThayThe:res.data
+            });
+        })
     }
     formAdd(){
         window.location.href=(`/sanpham/formadd`);
     }
     delete(id){
+        const confirm = window.confirm("Bạn có chắc chắn muốn chuyển trạng thái sản phẩm  này ?");
+        if(!confirm){
+            return;
+        }
         SanPhamService.deleteSanPham(id).then((res)=>{
         });
         window.location.href = (`/index`);
@@ -61,8 +137,23 @@ class SanPhamComponent extends Component {
                         <div className="col-lg-12">
                             <div className="row">
                                 <div className="col-12">
-                                    <div className="card recent-sales overflow-auto">
-                                        <button className="btn btn-primary col-lg-4" onClick={this.formAdd}> Add</button>
+                                    <div className="card ">
+                                        <div className="col-lg-12">
+                                            <h5 className="card-title" style={{margin:10}}>Lọc và tìm kiếm</h5>
+                                            <label style={{margin:10}}>Tìm kiếm</label>
+                                            <br/>
+                                            <input className="col-lg-8" type="search" style={{borderRadius:5,height:38,margin:10}} placeholder="Search" onChange={this.timKiem}/>
+                                            <button className="btn btn-primary " style={{margin:10}} onClick={this.formAdd}> Thêm sản phẩm </button>
+                                            <div>
+                                                <label style={{margin:10}}>Trạng thái</label>
+                                                <label style={{margin:10}}><input type="radio" value="2" name="trangThai" id="trangThai" checked={this.state.trangThai==="2"} onChange={this.thayDoiTrangThai}/> Tất cả</label>
+                                                <label style={{margin:10}}><input type="radio" value="1" name="trangThai" id="trangThai" checked={this.state.trangThai==="1"} onChange={this.thayDoiTrangThai}/> Hoạt động</label>
+                                                <label style={{margin:10}}><input type="radio" value="0" name="trangThai" id="trangThai"  checked={this.state.trangThai==="0"}  onChange={this.thayDoiTrangThai}/> Ngừng hoạt động</label>
+
+
+                                            </div>
+                                        </div>
+
                                     </div>
 
 
@@ -77,7 +168,7 @@ class SanPhamComponent extends Component {
                                 <div className="col-12">
                                     <div className="card recent-sales overflow-auto">
                                         <div className="card-body">
-                                            <h5 className="card-title">Sản phẩm <span>| </span></h5>
+                                            <h5 className="card-title">Danh sách sản phẩm <span>| </span></h5>
 
                                             <table className="table table-borderless datatable">
                                                 <thead>

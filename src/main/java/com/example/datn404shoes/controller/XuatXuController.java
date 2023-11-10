@@ -35,7 +35,7 @@ public class XuatXuController {
     }
     @GetMapping("index")
     public ResponseEntity<?> index1(Model model) {
-        return ResponseEntity.ok(repository.findAll());
+        return ResponseEntity.ok(repository.findAll().stream().filter(xuatXu -> xuatXu.getTrangThai()==1));
     }
 //    @GetMapping("create")
 //    public String addView(Model model) {
