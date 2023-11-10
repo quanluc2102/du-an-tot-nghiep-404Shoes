@@ -9,49 +9,25 @@ class SanPhamComponent extends Component {
             sanPham:[],
             listThayThe:[],
             trangThai:'2',
-            pageCount: 0
+            search:"",
+            pageCount: 0,
+            itemPerPage:5
         }
         this.timKiem=this.timKiem.bind(this);
         this.formAdd=this.formAdd.bind(this);
         this.delete=this.delete.bind(this);
         this.detail=this.detail.bind(this);
         this.thayDoiTrangThai=this.thayDoiTrangThai.bind(this);
+        this.updateListSP = this.updateListSP.bind(this);
+        this.handlePageClick = this.handlePageClick.bind(this);
     }
     timKiem = (e)=>{
         // var list = this.state.listThayThe.filter(value => value.ten.toLowerCase().includes(e.target.value.toLowerCase()))
-        // this.setState({
-        //     sanPham: list,
-        // });
-
-        if(this.state.trangThai==="2"){
-            const filteredProducts = this.state.listThayThe.filter(product => {
-                return (product.ma.toLowerCase().includes(e.target.value.toLowerCase()) ||
-                        product.ten.toLowerCase().includes(e.target.value.toLowerCase()) ||
-                        product.danhMuc.ten.toLowerCase().includes(e.target.value.toLowerCase()) ||
-                        product.xuatXu.ten.toLowerCase().includes(e.target.value.toLowerCase())||
-                        product.thuongHieu.ten.toLowerCase().includes(e.target.value.toLowerCase())
-                );
-            });
-
-            this.setState({
-                sanPham: filteredProducts
-            });
-        }else{
-            const filteredProducts = this.state.listThayThe.filter(product => {
-                return ( product.trangThai===parseInt(this.state.trangThai)&&
-                    (   product.ma.toLowerCase().includes(e.target.value.toLowerCase()) ||
-                        product.ten.toLowerCase().includes(e.target.value.toLowerCase()) ||
-                        product.danhMuc.ten.toLowerCase().includes(e.target.value.toLowerCase()) ||
-                        product.xuatXu.ten.toLowerCase().includes(e.target.value.toLowerCase())||
-                        product.thuongHieu.ten.toLowerCase().includes(e.target.value.toLowerCase()))
-                );
-            });
-
-            this.setState({
-                sanPham: filteredProducts
-            });
-        }
-
+        this.setState({
+            search: e.target.value.toLowerCase()
+        }, () => {
+            this.timKiemMoi();
+        });
 
         if(e.target.value.length ===0){
             this.setState({
@@ -61,23 +37,32 @@ class SanPhamComponent extends Component {
     }
     thayDoiTrangThai = (e) => {
         this.setState({
-            trangThai:e.target.value
+            trangThai:e.target.value}, () => {
+            this.timKiemMoi();
         })
-
-        if(e.target.value==="2"){
-            SanPhamService.getSanPham(0).then(res => {
-                this.setState({
-                    sanPham: res.data.content,
-                    pageCount: 0,
-                });
+    };
+    timKiemMoi(){
+        if(this.state.trangThai==="2"){
+            const filteredProducts = this.state.listThayThe.filter(product => {
+                return (product.ma.toLowerCase().includes(this.state.search) ||
+                    product.ten.toLowerCase().includes(this.state.search) ||
+                    product.danhMuc.ten.toLowerCase().includes(this.state.search) ||
+                    product.xuatXu.ten.toLowerCase().includes(this.state.search)||
+                    product.thuongHieu.ten.toLowerCase().includes(this.state.search)
+                );
             });
-            // this.setState({
-            //     sanPham:this.state.listThayThe
-            // })
+
+            this.setState({
+                sanPham: filteredProducts
+            });
         }else{
             const filteredProducts = this.state.listThayThe.filter(product => {
-                return (
-                    product.trangThai=== parseInt(e.target.value)
+                return ( product.trangThai===parseInt(this.state.trangThai)&&
+                    (   product.ma.toLowerCase().includes(this.state.search) ||
+                        product.ten.toLowerCase().includes(this.state.search) ||
+                        product.danhMuc.ten.toLowerCase().includes(this.state.search) ||
+                        product.xuatXu.ten.toLowerCase().includes(this.state.search)||
+                        product.thuongHieu.ten.toLowerCase().includes(this.state.search))
                 );
             });
 
@@ -85,8 +70,7 @@ class SanPhamComponent extends Component {
                 sanPham: filteredProducts
             });
         }
-
-    };
+    }
     loadPageData(pageNumber) {
         SanPhamService.getSanPham(pageNumber).then(res => {
             this.setState({
@@ -95,23 +79,27 @@ class SanPhamComponent extends Component {
             });
         });
     }
-    handlePageClick = data => {
-        let selected = data.selected
-        this.loadPageData(selected);
+    handlePageClick (data){
+        this.setState({ pageCount: data.selected }, () => {
+            this.updateListSP();
+        });
     };
 
-    componentDidMount(pageNumber){
-        SanPhamService.getSanPham(pageNumber).then(res => {
-            this.setState({
-                sanPham: res.data.content,
-                pageCount: res.data.totalPages
-            });
-        });
+    componentDidMount(){
         SanPhamService.getAllSanPham().then(res=>{
             this.setState({
-                listThayThe:res.data
+                listThayThe:res.data,
+                sanPham:res.data.slice(0,5)
             });
         })
+
+        this.updateListSP();
+    }
+    updateListSP(){
+        const startIndex = this.state.pageCount * this.state.itemPerPage;
+        const endIndex = startIndex + this.state.itemPerPage;
+        const listSP = this.state.listThayThe.slice(startIndex, endIndex);
+        this.setState({ sanPham: listSP });
     }
     formAdd(){
         window.location.href=(`/sanpham/formadd`);
@@ -148,13 +136,13 @@ class SanPhamComponent extends Component {
                                             <h5 className="card-title" style={{margin:10}}>Lọc và tìm kiếm</h5>
                                             <label style={{margin:10}}>Tìm kiếm</label>
                                             <br/>
-                                            <input className="col-lg-8" type="search" style={{borderRadius:5,height:38,margin:10}} placeholder="Search" onChange={this.timKiem}/>
+                                            <input className="col-lg-8" type="search" name="search" style={{borderRadius:5,height:38,margin:10}} placeholder="Search" onChange={this.timKiem}/>
                                             <button className="btn btn-primary " style={{margin:10}} onClick={this.formAdd}> Thêm sản phẩm </button>
                                             <div>
                                                 <label style={{margin:10}}>Trạng thái</label>
                                                 <label style={{margin:10}}><input type="radio" value="2" name="trangThai" id="trangThai" checked={this.state.trangThai==="2"} onChange={this.thayDoiTrangThai}/> Tất cả</label>
                                                 <label style={{margin:10}}><input type="radio" value="1" name="trangThai" id="trangThai" checked={this.state.trangThai==="1"} onChange={this.thayDoiTrangThai}/> Hoạt động</label>
-                                                <label style={{margin:10}}><input type="radio" value="0" name="trangThai" id="trangThai"  checked={this.state.trangThai==="0"}  onChange={this.thayDoiTrangThai}/> Ngừng hoạt động</label>
+                                                <label style={{margin:10}}><input type="radio" value="0" name="trangThai" id="trangThai" checked={this.state.trangThai==="0"}  onChange={this.thayDoiTrangThai}/> Ngừng hoạt động</label>
 
 
                                             </div>
@@ -228,7 +216,7 @@ class SanPhamComponent extends Component {
                                                 previousLinkClassName={"page-link"}
                                                 nextClassName={"page-item"}
                                                 nextLinkClassName={"page-link"}
-                                                pageCount={this.state.pageCount}
+                                                pageCount={Math.ceil(this.state.listThayThe.length / this.state.itemPerPage)}
                                                 marginPagesDisplayed={2}
                                                 pageRangeDisplayed={5}
                                                 onPageChange={this.handlePageClick}

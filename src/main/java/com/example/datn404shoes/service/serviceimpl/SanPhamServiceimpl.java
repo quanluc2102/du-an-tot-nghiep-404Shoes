@@ -58,7 +58,8 @@ public class SanPhamServiceimpl implements SanPhamService {
 
     @Override
     public List<SanPham> getAll() {
-        return sanPhamRespository.findAll();
+        Sort sort=Sort.by(Sort.Direction.DESC,"id");
+        return sanPhamRespository.findAll(sort);
     }
 
     @Override
