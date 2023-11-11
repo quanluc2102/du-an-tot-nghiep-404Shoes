@@ -1,0 +1,38 @@
+.container {
+    display: flex;
+}
+
+.left-column {
+    flex: 1;
+    padding: 20px;
+    border-right: 1px solid #ccc;
+}
+
+.right-column {
+    flex: 1;
+    padding: 20px;
+}
+
+/* Định dạng cho ảnh, username, tên khách hàng */
+.avatar {
+    max-width: 100px;
+    max-height: 100px;
+}
+
+/* Định dạng cho thông tin đăng nhập và tên khách hàng */
+.user-info {
+    margin-top: 10px;
+}
+
+/* Định dạng cho nút thêm địa chỉ mới */
+.add-address-button {
+    display: block;
+    width: 100px;
+    padding: 10px;
+    background-color: #007bff;
+    color: #fff;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 5px;
+    margin-top: 10px;
+}
