@@ -1,115 +1,154 @@
 import React, { Component } from 'react';
-import KhuyenMaiService from "../../services/khuyenmaiservice/KhuyenMaiService";
-import ReactPaginate from "react-paginate";
+import KhuyenMaiService from '../../services/khuyenmaiservice/KhuyenMaiService';
+import ReactPaginate from 'react-paginate';
 import moment from 'moment';
 import './KhuyenMaiComponentStyle.css';
 
 class KhuyenMaiComponents extends Component {
     constructor(props) {
         super(props);
-        this.state = {
-            khuyenMaiAll: [],
-            khuyenMai: [],
-            pageCount: 0,
-            discountType: "all",
-            searchQuery: "",
-            currentPage: 0,
-        };
     }
 
-    handleSearch = () => {
-        const { searchQuery, discountType } = this.state;
-        const filteredData = this.state.khuyenMaiAll.filter(km => {
-            const matchesSearchQuery =
-                km.ma.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                km.ten.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                km.moTa.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                km.giamGia.toString().includes(searchQuery) ||
-                (km.trangThai === 0 ? "Chưa diễn ra" : km.trangThai === 1 ? "Đang diễn ra" : "Đã kết thúc").toLowerCase().includes(searchQuery.toLowerCase());
-
-            if (discountType === "percent") {
-                return matchesSearchQuery && km.kieuKhuyenMai === 0;
-            } else if (discountType === "money") {
-                return matchesSearchQuery && km.kieuKhuyenMai === 1;
-            } else {
-                return matchesSearchQuery;
-            }
-        });
-
-        this.setState({ khuyenMai: filteredData });
-    }
-
-    handleSearchChange = (e) => {
-        const searchQuery = e.target.value;
-        this.setState({ searchQuery }, () => {
-            if (searchQuery === "") {
-                this.loadAllData(); // Load all data when search query is empty
-            } else {
-                this.callApiWithSearchQuery(searchQuery, this.state.discountType);
-            }
-        });
-    }
-
-    handlePageClick = data => {
-        let selected = data.selected;
-        this.loadPageData(selected);
+    state = {
+        khuyenMai: [],
+        listThayThe: [],
+        trangThai: '2',
+        kieuKhuyenMai: '2',
+        search: '',
+        pageCount: 0,
+        itemPerPage: 5,
+        currentSearch: '',
+        currentKieuKhuyenMai: '2',
+        currentTrangThai: '2',
     };
 
     componentDidMount() {
-        this.loadAllData(); // Load all data when the component first mounts
+        this.fetchData();
+        this.setupAutoRefresh();
     }
 
-    loadAllData() {
-        const { searchQuery, discountType, currentPage } = this.state;
-        KhuyenMaiService.getKhuyenMaiAll(searchQuery, discountType)
-            .then((res) => {
-                const filteredData = res.data;
-                this.setState({
-                    khuyenMaiAll: filteredData,
-                });
-                this.loadPageData(currentPage);
+    componentWillUnmount() {
+        clearInterval(this.refreshIntervalId);
+    }
+
+    fetchData = () => {
+        KhuyenMaiService.getKhuyenMaiAll().then((res) => {
+            this.setState({
+                listThayThe: res.data,
             });
-    }
+            this.timKiemMoi();
+        });
+    };
 
-    callApiWithSearchQuery = (searchQuery, discountType) => {
-        KhuyenMaiService.getKhuyenMaiAll(searchQuery, discountType)
-            .then((res) => {
-                const filteredData = res.data;
-                this.setState({
-                    khuyenMaiAll: filteredData,
-                });
-                this.handleSearch();
+    setupAutoRefresh = () => {
+        this.refreshIntervalId = setInterval(this.fetchData, 1000);
+    };
+
+    timKiem = (e) => {
+        this.setState(
+            {
+                search: e.target.value.toLowerCase(),
+            },
+            () => {
+                this.timKiemMoi();
+            }
+        );
+
+        if (e.target.value.length === 0) {
+            this.setState({
+                khuyenMai: this.state.listThayThe,
             });
+        }
+    };
+
+    thayDoiKieuKhuyenMai = (e) => {
+        this.setState(
+            {
+                kieuKhuyenMai: e.target.value,
+            },
+            () => {
+                this.timKiemMoi();
+            }
+        );
+    };
+
+    thayDoiTrangThai = (e) => {
+        this.setState(
+            {
+                trangThai: e.target.value,
+            },
+            () => {
+                this.timKiemMoi();
+            }
+        );
+    };
+
+    timKiemMoi() {
+        if (this.state.kieuKhuyenMai === '2' && this.state.trangThai === '2') {
+            const filteredKhuyenMai = this.state.listThayThe.filter((khuyenMai) => {
+                return (
+                    khuyenMai.ma.toLowerCase().includes(this.state.search) ||
+                    khuyenMai.ten.toLowerCase().includes(this.state.search) ||
+                    khuyenMai.moTa.toLowerCase().includes(this.state.search)
+                );
+            });
+
+            this.setState(
+                {
+                    khuyenMai: filteredKhuyenMai,
+                    currentSearch: this.state.search,
+                    currentKieuKhuyenMai: this.state.kieuKhuyenMai,
+                    currentTrangThai: this.state.trangThai,
+                },
+                () => {
+                    this.updateListKM();
+                }
+            );
+        } else {
+            const filteredKhuyenMai = this.state.listThayThe.filter((khuyenMai) => {
+                return (
+                    khuyenMai.kieuKhuyenMai === parseInt(this.state.kieuKhuyenMai) &&
+                    (khuyenMai.ma.toLowerCase().includes(this.state.search) ||
+                        khuyenMai.ten.toLowerCase().includes(this.state.search) ||
+                        khuyenMai.moTa.toLowerCase().includes(this.state.search)) &&
+                    khuyenMai.trangThai === parseInt(this.state.trangThai)
+                );
+            });
+
+            this.setState(
+                {
+                    khuyenMai: filteredKhuyenMai,
+                    currentSearch: this.state.search,
+                    currentKieuKhuyenMai: this.state.kieuKhuyenMai,
+                    currentTrangThai: this.state.trangThai,
+                },
+                () => {
+                    this.updateListKM();
+                }
+            );
+        }
     }
 
-    loadPageData(selectedPage) {
-        const { searchQuery, discountType, khuyenMaiAll } = this.state;
-        const itemsPerPage = 5;
-        const startIdx = selectedPage * itemsPerPage;
-        const endIdx = startIdx + itemsPerPage;
-        const paginatedData = khuyenMaiAll.slice(startIdx, endIdx);
+    updateListKM() {
+        const startIndex = this.state.pageCount * this.state.itemPerPage;
+        const endIndex = startIndex + this.state.itemPerPage;
+        const listKM = this.state.khuyenMai.slice(startIndex, endIndex);
+        this.setState({ khuyenMai: listKM });
+    }
 
-        this.setState({
-            khuyenMai: paginatedData,
-            pageCount: Math.ceil(khuyenMaiAll.length / itemsPerPage),
-            currentPage: selectedPage,
+    handlePageClick = (data) => {
+        this.setState({ pageCount: data.selected }, () => {
+            this.updateListKM();
         });
-    }
+    };
 
-    handleDiscountTypeChange = (e) => {
-        const discountType = e.target.value;
-        this.setState({ discountType }, () => {
-            this.callApiWithSearchQuery(this.state.searchQuery, discountType);
-        });
-    }
+    detail = (id) => {
+        window.location.href = `/khuyenMaiDetail/${id}`;
+    };
 
-    detail(id) {
-        window.location.href = (`/khuyenMaiDetail/${id}`);
-    }
-
-    add() {
-        window.location.href = (`/khuyenMaiAdd`);
-    }
+    add = () => {
+        window.location.href = `/khuyenMaiAdd`;
+    };
 
     render() {
         return (
@@ -126,49 +165,98 @@ class KhuyenMaiComponents extends Component {
                                         <div className="card-body">
                                             <h5 className="card-title">Phiếu giảm giá</h5>
                                             <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                                                <div>
-                                                    <div className="radio-buttons">
-                                                        <label>
+                                                <div className="col-lg-12">
+                                                    <h5 className="card-title" style={{ margin: 10 }}>
+                                                        Lọc và tìm kiếm
+                                                    </h5>
+                                                    <label style={{ margin: 10 }}>Tìm kiếm</label>
+                                                    <br />
+                                                    <input
+                                                        className="col-lg-8"
+                                                        type="search"
+                                                        name="search"
+                                                        style={{ borderRadius: 5, height: 38, margin: 10 }}
+                                                        placeholder="Search"
+                                                        onChange={this.timKiem}
+                                                    />
+                                                    <button
+                                                        className="btn btn-primary "
+                                                        style={{ margin: 10 }}
+                                                        onClick={this.add}
+                                                    >
+                                                        Thêm khuyến mãi
+                                                    </button>
+                                                    <div>
+                                                        <label style={{ margin: 10 }}>Kiểu khuyến mãi</label>
+                                                        <label style={{ margin: 10 }}>
                                                             <input
                                                                 type="radio"
-                                                                name="discountType"
-                                                                value="all"
-                                                                checked={this.state.discountType === "all"}
-                                                                onChange={this.handleDiscountTypeChange}
-                                                            />
+                                                                value="2"
+                                                                name="kieuKhuyenMai"
+                                                                id="kieuKhuyenMai"
+                                                                checked={this.state.kieuKhuyenMai === '2'}
+                                                                onChange={this.thayDoiKieuKhuyenMai}
+                                                            />{' '}
                                                             Tất cả
                                                         </label>
-                                                        <label>
+                                                        <label style={{ margin: 10 }}>
                                                             <input
                                                                 type="radio"
-                                                                name="discountType"
-                                                                value="percent"
-                                                                checked={this.state.discountType === "percent"}
-                                                                onChange={this.handleDiscountTypeChange}
-                                                            />
-                                                            Phần trăm
-                                                        </label>
-                                                        <label>
-                                                            <input
-                                                                type="radio"
-                                                                name="discountType"
-                                                                value="money"
-                                                                checked={this.state.discountType === "money"}
-                                                                onChange={this.handleDiscountTypeChange}
-                                                            />
+                                                                value="1"
+                                                                name="kieuKhuyenMai"
+                                                                id="kieuKhuyenMai"
+                                                                checked={this.state.kieuKhuyenMai === '1'}
+                                                                onChange={this.thayDoiKieuKhuyenMai}
+                                                            />{' '}
                                                             Tiền
                                                         </label>
+                                                        <label style={{ margin: 10 }}>
+                                                            <input
+                                                                type="radio"
+                                                                value="0"
+                                                                name="kieuKhuyenMai"
+                                                                id="kieuKhuyenMai"
+                                                                checked={this.state.kieuKhuyenMai === '0'}
+                                                                onChange={this.thayDoiKieuKhuyenMai}
+                                                            />{' '}
+                                                            Phần trăm
+                                                        </label>
                                                     </div>
-                                                    <div className="search-button-container">
-                                                        <input
-                                                            type="text"
-                                                            placeholder="Tìm theo Mã, Tên, Mô tả, Giảm giá, Kiểu khuyến mãi, Điều kiện"
-                                                            value={this.state.searchQuery}
-                                                            onChange={this.handleSearchChange}
-                                                        />
-                                                        <button onClick={this.add} className='btn btn-success'>
-                                                            Thêm khuyến mãi
-                                                        </button>
+                                                    <div>
+                                                        <label style={{ margin: 10 }}>Trạng thái</label>
+                                                        <label style={{ margin: 10 }}>
+                                                            <input
+                                                                type="radio"
+                                                                value="2"
+                                                                name="trangThai"
+                                                                id="trangThai"
+                                                                checked={this.state.trangThai === '2'}
+                                                                onChange={this.thayDoiTrangThai}
+                                                            />{' '}
+                                                            Đã kết thúc
+                                                        </label>
+                                                        <label style={{ margin: 10 }}>
+                                                            <input
+                                                                type="radio"
+                                                                value="1"
+                                                                name="trangThai"
+                                                                id="trangThai"
+                                                                checked={this.state.trangThai === '1'}
+                                                                onChange={this.thayDoiTrangThai}
+                                                            />{' '}
+                                                            Đang diễn ra
+                                                        </label>
+                                                        <label style={{ margin: 10 }}>
+                                                            <input
+                                                                type="radio"
+                                                                value="0"
+                                                                name="trangThai"
+                                                                id="trangThai"
+                                                                checked={this.state.trangThai === '0'}
+                                                                onChange={this.thayDoiTrangThai}
+                                                            />{' '}
+                                                            Chưa diễn ra
+                                                        </label>
                                                     </div>
                                                 </div>
                                             </div>
@@ -194,15 +282,38 @@ class KhuyenMaiComponents extends Component {
                                                         <td>{km.ma}</td>
                                                         <td>{km.ten}</td>
                                                         <td>{km.moTa}</td>
-                                                        <td>{moment(km.batDau).format('YYYY-MM-DD HH:mm:ss')}</td>
-                                                        <td>{moment(km.ketThuc).format('YYYY-MM-DD HH:mm:ss')}</td>
+                                                        <td>
+                                                            {moment(km.batDau).format(
+                                                                'YYYY-MM-DD HH:mm:ss'
+                                                            )}
+                                                        </td>
+                                                        <td>
+                                                            {moment(km.ketThuc).format(
+                                                                'YYYY-MM-DD HH:mm:ss'
+                                                            )}
+                                                        </td>
                                                         <td>{km.giamGia}</td>
-                                                        <td>{km.kieuKhuyenMai === 0 ? "Phần trăm" : km.kieuKhuyenMai === 1 ? "Tiền" : "Khuyến mãi khác"}</td>
+                                                        <td>
+                                                            {km.kieuKhuyenMai === 0
+                                                                ? 'Phần trăm'
+                                                                : km.kieuKhuyenMai === 1
+                                                                    ? 'Tiền'
+                                                                    : 'Khuyến mãi khác'}
+                                                        </td>
                                                         <td>{km.dieuKien}</td>
                                                         <td>{km.soLuong}</td>
-                                                        <td>{km.trangThai === 0 ? "Chưa diễn ra" : km.trangThai === 1 ? "Đang diễn ra" : "Đã kết thúc"}</td>
                                                         <td>
-                                                            <button onClick={() => this.detail(km.id)} className='btn btn-primary'>
+                                                            {km.trangThai === 0
+                                                                ? 'Chưa diễn ra'
+                                                                : km.trangThai === 1
+                                                                    ? 'Đang diễn ra'
+                                                                    : 'Đã kết thúc'}
+                                                        </td>
+                                                        <td>
+                                                            <button
+                                                                onClick={() => this.detail(km.id)}
+                                                                className="btn btn-primary"
+                                                            >
                                                                 Chi tiết
                                                             </button>
                                                         </td>
@@ -212,23 +323,28 @@ class KhuyenMaiComponents extends Component {
                                             </table>
                                             <div className="pagination-container">
                                                 <ReactPaginate
-                                                    previousLabel={"<"}
-                                                    nextLabel={">"}
-                                                    breakLabel={"..."}
-                                                    breakClassName={"page-item"}
-                                                    breakLinkClassName={"page-link"}
-                                                    pageClassName={"page-item"}
-                                                    pageLinkClassName={"page-link"}
-                                                    previousClassName={"page-item"}
-                                                    previousLinkClassName={"page-link"}
-                                                    nextClassName={"page-item"}
-                                                    nextLinkClassName={"page-link"}
-                                                    pageCount={this.state.pageCount}
+                                                    previousLabel={'<'}
+                                                    nextLabel={'>'}
+                                                    breakLabel={'...'}
+                                                    breakClassName={'page-item'}
+                                                    breakLinkClassName={'page-link'}
+                                                    pageClassName={'page-item'}
+                                                    pageLinkClassName={'page-link'}
+                                                    previousClassName={'page-item'}
+                                                    previousLinkClassName={'page-link'}
+                                                    nextClassName={'page-item'}
+                                                    nextLinkClassName={'page-link'}
+                                                    pageCount={Math.ceil(
+                                                        this.state.listThayThe.length /
+                                                        this.state.itemPerPage
+                                                    )}
                                                     marginPagesDisplayed={2}
                                                     pageRangeDisplayed={5}
                                                     onPageChange={this.handlePageClick}
-                                                    containerClassName={"pagination justify-content-center"}
-                                                    activeClassName={"active"}
+                                                    containerClassName={
+                                                        'pagination justify-content-center'
+                                                    } // added justify-content-center for center alignment
+                                                    activeClassName={'active'}
                                                 />
                                             </div>
                                         </div>
