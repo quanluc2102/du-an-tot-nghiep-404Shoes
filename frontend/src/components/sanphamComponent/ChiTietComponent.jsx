@@ -503,6 +503,8 @@ class ChiTietComponent extends Component {
                             borderCollapse: 'collapse'}}>
                             <thead>
                             <tr className={this.tr1}>
+                                <th>Mã</th>
+                                <th>Ảnh</th>
                                 <th>Kích thước</th>
                                 <th>Màu sắc</th>
                                 <th>Số lượng </th>
@@ -514,6 +516,8 @@ class ChiTietComponent extends Component {
                             {this.state.listSPCT.map((spct, index) => (
 
                                 <tr key={index} className={this.tr1}>
+                                    <th >{spct.ma}</th>
+                                    <th ><img  src={'/niceadmin/img/'+ spct.anh} alt={spct.anh} style={{ width: '100px', height: '100px' ,margin:10,objectFit: 'cover',objectPosition: 'center'}} /></th>
                                     <th >{spct.kichThuoc.giaTri}</th>
                                     <th >{spct.mauSac.ten}</th>
                                     <th ><input type={"number"} value={spct.soLuong} style={{padding: 10,

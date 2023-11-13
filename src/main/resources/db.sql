@@ -134,6 +134,7 @@ CREATE TABLE san_pham (
 
 CREATE TABLE san_pham_chi_tiet (
                                    id BIGINT PRIMARY KEY IDENTITY(1,1),
+								   ma nvarchar(225),
                                    ngay_tao DATE NOT NULL,
                                    ngay_cap_nhat DATETIME,
                                    trang_thai INT NOT NULL,
@@ -143,6 +144,7 @@ CREATE TABLE san_pham_chi_tiet (
                                    mau_sac BIGINT,
                                    san_pham_id BIGINT,
                                    anh nvarchar(255),
+								   qr nvarchar(255),
     --thêm qr code
                                    FOREIGN KEY (kich_thuoc) REFERENCES kich_thuoc(id),
                                    FOREIGN KEY (mau_sac) REFERENCES mau_sac(id),
@@ -393,13 +395,13 @@ VALUES
 
 
 
-INSERT INTO san_pham_chi_tiet (so_luong, don_gia, ngay_tao, ngay_cap_nhat, trang_thai,kich_thuoc,mau_sac,san_pham_id,anh)
+INSERT INTO san_pham_chi_tiet (ma,so_luong, don_gia, ngay_tao, ngay_cap_nhat, trang_thai,kich_thuoc,mau_sac,san_pham_id,anh,qr)
 VALUES
-    (100,1800000, GETDATE(), GETDATE(), 1,2,3,1,'anh5.jpg'),
-    (20,2600000, GETDATE(), GETDATE(), 1,4,3,1,'anh5.jpg'),
-    (40,3200000, GETDATE(), GETDATE(), 1,3,6,1,'anh5.jpg'),
-    (20,3200000, GETDATE(), GETDATE(), 1,3,3,1,'anh5.jpg'),
-    (30,3200000, GETDATE(), GETDATE(), 1,4,2,1,'anh5.jpg')
+    ('SPCT1',100,1800000, GETDATE(), GETDATE(), 1,2,3,1,'anh5.jpg','SPCT1_QRCode.png'),
+    ('SPCT2',20,2600000, GETDATE(), GETDATE(), 1,4,3,1,'anh5.jpg','SPCT2_QRCode.png'),
+    ('SPCT3',40,3200000, GETDATE(), GETDATE(), 1,3,6,1,'anh5.jpg','SPCT3_QRCode.png'),
+    ('SPCT4',20,3200000, GETDATE(), GETDATE(), 1,3,3,1,'anh5.jpg','SPCT4_QRCode.png'),
+    ('SPCT5',30,3200000, GETDATE(), GETDATE(), 1,4,2,1,'anh5.jpg','SPCT5_QRCode.png')
 
 
 

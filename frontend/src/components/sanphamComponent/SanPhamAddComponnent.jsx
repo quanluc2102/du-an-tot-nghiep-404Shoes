@@ -8,6 +8,7 @@ class SanPhamAddComponnent extends Component {
     constructor(props) {
         super(props);
         this.state={
+            listFileTong:[],
             files:[],
             listSPCT:[],
             selectedOptionMS:null,
@@ -57,6 +58,16 @@ class SanPhamAddComponnent extends Component {
         for(let i=0;i<this.state.files.length;i++){
             listFile.push(this.state.files[i].file.name);
         }
+        if(this.state.listSPCT.length===0){
+
+        }else{
+            for(let i=0;i<this.state.listSPCT.length;i++){
+                const { listSPCT } = this.state;
+                const updatedListSPCT = [...listSPCT];
+                updatedListSPCT[i].anh = this.state.listSPCT[i].anh[0].file.name;
+                this.setState({ listSPCT: updatedListSPCT });
+            }
+        }
         var sanPham = {files:listFile,
             ten: this.state.sanPham.ten,
             moTa:this.state.sanPham.moTa ,
@@ -69,6 +80,7 @@ class SanPhamAddComponnent extends Component {
 
         if (listFile.length === 0) {
             this.setState({error: {...this.state.error, files: "Chọn ít nhất 1 ảnh !"}});
+            console.log('nsx' + JSON.stringify(sanPham));
             return;
         } else {
             this.setState({ error: { ...this.state.error, files: "" } });
@@ -108,14 +120,31 @@ class SanPhamAddComponnent extends Component {
         } else {
             this.setState({ error: { ...this.state.error, moTa: "" } });
         }
-
+        let count = 0;
+        for(let i=0;i<this.state.listSPCT.length;i++){
+            if(this.state.listSPCT[i].anh.length===0){
+                count++;
+            }
+        }
+        if(count>0){
+            return;
+        }else {
+            for(let i=0;i<this.state.listSPCT.length;i++){
+                if(this.state.listSPCT[i].anh.length===0){
+                    const { listSPCT } = this.state;
+                    const updatedListSPCT = [...listSPCT];
+                    updatedListSPCT[i].error = "Bạn cần chọn ít nhất 1 ảnh";
+                }
+            }
+        }
         this.handleUpload();
         SanPhamService.addSanPham(sanPham).then((res)=>{
             if (res.status=== 200) {
                 setTimeout(() => {
-                    window.location.href = (`/`);
-                }, 2000);
+                    this.home();
+                }, 0);
                 toast.success("Thêm thành công!");
+                alert("Thêm thành công")
             }else {
                 const errorMessage = res.data.message || "Có lỗi xảy ra khi thêm sản phẩm.";
                 toast.error("Lỗi: " + errorMessage);
@@ -129,24 +158,24 @@ class SanPhamAddComponnent extends Component {
         const selectedFiles = e.target.files;
         const selectedImagesArray = Array.from(selectedFiles).map(file => ({file,URL: URL.createObjectURL(file),}));
         this.setState({ files: [ ...this.state.files,...selectedImagesArray] })
+        this.setState({ listFileTong: [ ...this.state.listFileTong,...selectedImagesArray] })
         let error = {...this.state.error,files:""};
         this.setState({error:error});
     }
 
     handleUpload = () => {
         if (this.state.files) {
-            this.saveFileToPublic(this.state.files[0]);
+            this.saveFileToPublic();
         } else {
             alert('Vui lòng chọn một file');
         }
     };
 
-    saveFileToPublic = (file) => {
+    saveFileToPublic = () => {
         const formData = new FormData();
-        for (const file of this.state.files) {
+        for (const file of this.state.listFileTong) {
             formData.append('files', file.file);
         }
-
         axios.post('http://localhost:8080/api/images/upload1', formData)
             .then(response => {
                 console.log(response.data);
@@ -172,7 +201,7 @@ class SanPhamAddComponnent extends Component {
             let error = {...this.state.error,ten:""};
             this.setState({error:error});
         }
-        console.log(this.state.files)
+        console.log(this.state.listFileTong)
     }
 
     thayDoiMoTaAdd=(event)=>{
@@ -279,6 +308,21 @@ class SanPhamAddComponnent extends Component {
         console.log(this.state.listSPCT[index].gia)
     };
 
+    thayDoiAnh = (index, newValue) => {
+        const selectedFiles = newValue.target.files;
+        const selectedImagesArray = Array.from(selectedFiles).map(file => ({file,URL: URL.createObjectURL(file),}));
+        const { listSPCT } = this.state;
+        this.setState({ listFileTong: [ ...this.state.listFileTong,...selectedImagesArray] })
+        const updatedListSPCT = [...listSPCT];
+        updatedListSPCT[index].anh = selectedImagesArray;
+        if (selectedImagesArray.length ===0){
+            updatedListSPCT[index].error = "Bạn cần chọn ít nhất 1 ảnh";
+        }else{
+            updatedListSPCT[index].error = "";
+        }
+        this.setState({ listSPCT: updatedListSPCT });
+    };
+
     componentDidMount() {
         SanPhamService.getDanhMuc().then((res)=>{
             this.setState({listDanhMuc:res.data})
@@ -301,10 +345,12 @@ class SanPhamAddComponnent extends Component {
         const { selectedOptionKT, selectedOptionMS } = this.state;
         const listSPCT = selectedOptionKT.map((kt) =>
                 selectedOptionMS.map((ms) => ({
+                    anh:[],
                     kichThuoc: kt,
                     mauSac: ms,
                     soLuong: 0,
                     gia: 0,
+                    error:''
                 }))
             ).flat();
 
@@ -463,6 +509,7 @@ class SanPhamAddComponnent extends Component {
                                             borderCollapse: 'collapse'}}>
                                             <thead>
                                                 <tr className={"tr1"}>
+                                                    <th>Ảnh sản phẩm</th>
                                                     <th>Kích thước</th>
                                                     <th>Màu sắc</th>
                                                     <th>Số lượng </th>
@@ -474,6 +521,15 @@ class SanPhamAddComponnent extends Component {
                                             {this.state.listSPCT.map((spct, index) => (
 
                                                 <tr key={index} className={"tr1"}>
+                                                    <th >
+                                                        {spct.anh&&spct.anh.length !== 0?(
+                                                            <div className="image-box" key={index}>
+                                                                <img  src={spct.anh[0].URL} alt={spct.anh[0].name}  style={{ width: '100px', height: '100px' ,margin:10,objectFit: 'cover',objectPosition: 'center'}} />
+                                                            </div>
+                                                        ):(<></>)}
+                                                            <input type="file" onChange={(e) => this.thayDoiAnh(index,e)} accept="image/*"/>
+                                                            {spct.error && <div className="text-danger">{spct.error}</div>}
+                                                    </th>
                                                     <th >{spct.kichThuoc.label}</th>
                                                     <th >{spct.mauSac.label}</th>
                                                     <th ><input type={"number"} value={spct.soLuong} style={{padding: 10,

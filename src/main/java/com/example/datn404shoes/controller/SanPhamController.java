@@ -1,6 +1,7 @@
 package com.example.datn404shoes.controller;
 
 import com.example.datn404shoes.entity.*;
+import com.example.datn404shoes.helper.MatrixToImageWriter;
 import com.example.datn404shoes.helper.SanPhamExcelSave;
 import com.example.datn404shoes.helper.SanPhamExport;
 import com.example.datn404shoes.repository.SanPhamAnhRespository;
@@ -10,6 +11,9 @@ import com.example.datn404shoes.request.SPCTRequest;
 import com.example.datn404shoes.request.SanPhamRequest;
 import com.example.datn404shoes.service.serviceimpl.SanPhamAnhServiceimpl;
 import com.example.datn404shoes.service.serviceimpl.SanPhamServiceimpl;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.MultiFormatWriter;
+import com.google.zxing.common.BitMatrix;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -26,6 +30,7 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.DateFormat;
@@ -47,7 +52,7 @@ public class SanPhamController {
     SanPhamChiTietRepository sanPhamChiTietRepository;
     @Autowired
     SanPhamAnhRespository sanPhamAnhRespository;
-    private final Path root = Paths.get("frontend/src/img");
+    private final String root = "frontend/public/niceadmin/img";
     @GetMapping("index")
     public Page<SanPham> index(Pageable pageable){
         return sanPhamServiceimpl.getAllPhanTrang(pageable);
@@ -75,22 +80,10 @@ public class SanPhamController {
         a.setXuatXu(XuatXu.builder().id(sanPham.getXuatXuId()).build());
         a.setThuongHieu(ThuongHieu.builder().id(sanPham.getThuongHieuId()).build());
         sanPhamServiceimpl.add(a);
-//        for (MauSacValue ms:sanPham.getListMauSac()){
-//            for (KichThuocValue kt:sanPham.getListKichThuoc()){
-//                SanPhamChiTiet spct = new SanPhamChiTiet();
-//                spct.setNgayTao(java.sql.Date.valueOf(LocalDate.now()));
-//                spct.setNgayCapNhat(java.sql.Date.valueOf(LocalDate.now()));
-//                spct.setSoLuong(0);
-//                spct.setTrangThai(1);
-//                spct.setMauSac(MauSac.builder().id(ms.getValue()).build());
-//                spct.setKichThuoc(KichThuoc.builder().id(kt.getValue()).build());
-//                spct.setSanPham(a);
-//                sanPhamChiTietRepository.save(spct);
-//            }
-//
-//        }
         for(SPCTRequest spct:sanPham.getListSPCT()){
+            Integer listSPCT = sanPhamChiTietRepository.findAll().size()+1;
             SanPhamChiTiet sanPhamChiTiet = new SanPhamChiTiet();
+            sanPhamChiTiet.setMa("SPCT"+listSPCT);
             sanPhamChiTiet.setSanPham(a);
             sanPhamChiTiet.setNgayTao(java.sql.Date.valueOf(LocalDate.now()));
             sanPhamChiTiet.setNgayCapNhat(java.sql.Date.valueOf(LocalDate.now()));
@@ -99,6 +92,29 @@ public class SanPhamController {
             sanPhamChiTiet.setSoLuong(spct.getSoLuong());
             sanPhamChiTiet.setDonGia(spct.getGia());
             sanPhamChiTiet.setTrangThai(1);
+            sanPhamChiTiet.setAnh(spct.getAnh());
+            String text = "SPCT:" + sanPhamChiTiet.getMa();
+            int width = 300;
+            int height = 300;
+
+            try {
+                BitMatrix bitMatrix = new MultiFormatWriter().encode(text, BarcodeFormat.QR_CODE, width, height);
+
+                // Create a directory if it doesn't exist
+                Path directoryPath = FileSystems.getDefault().getPath(root);
+                if (!directoryPath.toFile().exists()) {
+                    directoryPath.toFile().mkdir();
+                }
+
+                // Save the QR code image to the directory
+                String fileName = sanPhamChiTiet.getMa() + "_QRCode.png";
+                Path filePath = FileSystems.getDefault().getPath(root, fileName);
+                File qrCodeFile = filePath.toFile();
+                MatrixToImageWriter.writeToFile(bitMatrix, "PNG", qrCodeFile);
+                sanPhamChiTiet.setQr(fileName);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             sanPhamChiTietRepository.save(sanPhamChiTiet);
         }
         for(String file : sanPham.getFiles()){
@@ -227,5 +243,33 @@ public class SanPhamController {
         SanPhamExport excelExporter = new SanPhamExport((listSP));
 
         excelExporter.export(response);
+    }
+
+    @GetMapping("/generateQR/{productName}")
+    public ResponseEntity<?> generateQRCode(@PathVariable String productName, HttpServletResponse response) throws IOException {
+        String text = "SPCT:" + productName;
+        int width = 300;
+        int height = 300;
+
+        try {
+            BitMatrix bitMatrix = new MultiFormatWriter().encode(text, BarcodeFormat.QR_CODE, width, height);
+
+            // Create a directory if it doesn't exist
+            Path directoryPath = FileSystems.getDefault().getPath(root);
+            if (!directoryPath.toFile().exists()) {
+                directoryPath.toFile().mkdir();
+            }
+
+            // Save the QR code image to the directory
+            String fileName = productName + "_QRCode.png";
+            Path filePath = FileSystems.getDefault().getPath(root, fileName);
+            File qrCodeFile = filePath.toFile();
+            MatrixToImageWriter.writeToFile(bitMatrix, "PNG", qrCodeFile);
+
+            return ResponseEntity.ok("QR code saved successfully: " + qrCodeFile.getAbsolutePath());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body("Error generating and saving QR code");
+        }
     }
 }

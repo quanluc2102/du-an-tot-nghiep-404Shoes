@@ -1,9 +1,13 @@
-import React, {Component} from 'react';
+import React, {Component,useRef} from 'react';
 import SanPhamService from "../../services/sanphamservice/SanPhamService";
 import ReactPaginate from 'react-paginate';
+// import { QrReader } from 'react-qr-reader';
+import QrScanner  from 'react-qr-scanner';
 import './ChonAnh.css';
+
 class SanPhamComponent extends Component {
     constructor(props) {
+
         super(props);
         this.state = {
             sanPham:[],
@@ -11,8 +15,11 @@ class SanPhamComponent extends Component {
             trangThai:'2',
             search:"",
             pageCount: 0,
-            itemPerPage:5
-        }
+            itemPerPage:5,
+            result:'No QR code scanned yet',
+            isQRReaderOn: true
+        };
+        this.myRef = React.createRef();
         this.timKiem=this.timKiem.bind(this);
         this.formAdd=this.formAdd.bind(this);
         this.delete=this.delete.bind(this);
@@ -21,6 +28,20 @@ class SanPhamComponent extends Component {
         this.updateListSP = this.updateListSP.bind(this);
         this.handlePageClick = this.handlePageClick.bind(this);
     }
+    toggleQRReader = () => {
+        this.setState((prevState) => ({
+            isQRReaderOn: !prevState.isQRReaderOn,
+        }));
+    };
+    handleScan = (data) => {
+        if (data) {
+            this.setState({ result: data });
+        }
+    };
+
+    handleError = (err) => {
+        console.error(err);
+    };
     timKiem = (e)=>{
         // var list = this.state.listThayThe.filter(value => value.ten.toLowerCase().includes(e.target.value.toLowerCase()))
         this.setState({
@@ -117,6 +138,7 @@ class SanPhamComponent extends Component {
         window.location.href = (`/detail/${id}`);
     }
     render() {
+        const { isQRReaderOn, result } = this.state;
         return (
             <div>
                 <div className="pagetitle">
@@ -124,8 +146,26 @@ class SanPhamComponent extends Component {
                     <nav>
                     </nav>
                 </div>
+                {/*<div>*/}
+                {/*    {isQRReaderOn && (*/}
+                {/*        <QrScanner*/}
+                {/*            ref={this.myRef}*/}
+                {/*            onScan={this.handleScan}*/}
+                {/*            onError={this.handleError}*/}
+                {/*            style={{ width: '100%' }}*/}
+                {/*        />*/}
+                {/*    )}*/}
 
+                {/*    /!* Nút để bật/tắt quét QR *!/*/}
+                {/*    <button onClick={this.toggleQRReader}>*/}
+                {/*        {isQRReaderOn ? 'Turn Off QR Scanner' : 'Turn On QR Scanner'}*/}
+                {/*    </button>*/}
 
+                {/*    /!* Hiển thị kết quả quét QR *!/*/}
+                {/*    <p>QR Code Result: {result.text}</p>*/}
+
+                {/*    /!* Rest of your component *!/*/}
+                {/*</div>*/}
                 <section className="section dashboard">
                     <div className="row">
                         <div className="col-lg-12">

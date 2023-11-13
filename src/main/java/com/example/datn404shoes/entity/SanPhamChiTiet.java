@@ -20,6 +20,9 @@ public class SanPhamChiTiet {
     @Column(name = "id", nullable = false)
     private long id;
 
+    @Column(name = "ma")
+    private String ma;
+
     @Column(name = "ngay_tao")
     private Date ngayTao;
 
@@ -35,6 +38,11 @@ public class SanPhamChiTiet {
     @Column(name = "don_gia")
     private double donGia;
 
+    @Column(name = "anh")
+    private String anh;
+
+    @Column(name = "qr")
+    private String qr;
 
     @ManyToOne
     @JoinColumn(name = "kich_thuoc", referencedColumnName = "id", nullable = true)
