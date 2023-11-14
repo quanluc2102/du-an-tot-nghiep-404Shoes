@@ -113,3 +113,31 @@ td {
     width: 200px;                /* Chiều rộng của khối chứa */
     border: 1px solid #ddd;      /* Để hiển thị rõ ràng khối chứa */
 }
+
+.overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Màu đen với độ trong suốt */
+    align-items: center;
+    justify-content: center;
+    z-index: 1; /* Đặt lớp trên cùng */
+    padding-left: 300px;
+    padding-top: 50px;
+}
+
+.overlay.active {
+    display: flex;
+}
+
+.small-window {
+    background-color: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    height: 640px;
+    width: 900px;
+}

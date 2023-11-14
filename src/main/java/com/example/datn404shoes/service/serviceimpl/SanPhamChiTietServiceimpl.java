@@ -40,7 +40,7 @@ public class SanPhamChiTietServiceimpl implements SanPhamChiTietService {
         spct.setNgayTao(Date.valueOf(LocalDate.now()));
         spct.setNgayCapNhat(Date.valueOf(LocalDate.now()));
         spct.setSoLuong(spct1.getSoLuong());
-        spct.setTrangThai(spct1.getTrangThai());
+        spct.setTrangThai(1);
         return repo.save(spct);
     }
 
@@ -58,12 +58,12 @@ public class SanPhamChiTietServiceimpl implements SanPhamChiTietService {
     @Override
     public SanPhamChiTiet update(Long id, SanPhamChiTietRequest spct) {
         SanPhamChiTiet a = repo.findById(id).orElse(null);
-        a.setTrangThai(spct.getTrangThai());
         a.setNgayCapNhat(Date.valueOf(LocalDate.now()));
         a.setKichThuoc(KichThuoc.builder().id(spct.getKichThuoc()).build());
         a.setMauSac(MauSac.builder().id(spct.getMauSac()).build());
-        a.setSanPham(SanPham.builder().id(spct.getSanPham()).build());
         a.setSoLuong(spct.getSoLuong());
+        a.setAnh(spct.getAnh());
+        a.setDonGia(spct.getDonGia());
         repo.save(a);
         return a;
     }

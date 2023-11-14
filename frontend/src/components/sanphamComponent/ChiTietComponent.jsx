@@ -10,7 +10,10 @@ class ChiTietComponent extends Component {
     constructor(props) {
         super(props);
         this.state={
+            listFileTong:[],
             files:[],
+            anhThay:[],
+            listSPCTAdd:[],
             selectedOptionMS:null,
             selectedOptionKT:null,
             listKichThuoc:[],
@@ -21,6 +24,8 @@ class ChiTietComponent extends Component {
             listXuatXu:[],
             listDanhMuc:[],
             showModal:false,
+            showModalDetail:false,
+            detailSPCT:[],
             sanPham:{
                 id:this.props.match.params.id,
                 ma:'',
@@ -41,6 +46,8 @@ class ChiTietComponent extends Component {
         this.home=this.home.bind(this);
         this.handleShowModal=this.handleShowModal.bind(this);
         this.handleCloseModal=this.handleCloseModal.bind(this);
+        this.handleShowModalSPCTDetail=this.handleShowModalSPCTDetail.bind(this);
+        this.handleCloseModalSPCTDetail=this.handleCloseModalSPCTDetail.bind(this);
         this.detail=this.detail.bind(this);
         this.delete=this.delete.bind(this);
         this.deleteAnh=this.deleteAnh.bind(this);
@@ -48,6 +55,7 @@ class ChiTietComponent extends Component {
         this.updatePrice=this.updatePrice.bind(this);
         this.changeSL=this.changeSL.bind(this);
         this.addSPCT=this.addSPCT.bind(this);
+        this.save=this.save.bind(this);
         this.update=this.update.bind(this);
         this.fileSelectedHandler=this.fileSelectedHandler.bind(this);
         this.handleUpload=this.handleUpload.bind(this);
@@ -57,22 +65,49 @@ class ChiTietComponent extends Component {
         this.thayDoiThuongHieuAdd=this.thayDoiThuongHieuAdd.bind(this);
         this.thayDoiXuatXuAdd=this.thayDoiXuatXuAdd.bind(this);
         this.thayDoiDanhMucAdd=this.thayDoiDanhMucAdd.bind(this);
+        this.thayDoiMauSacOne=this.thayDoiMauSacOne.bind(this);
+        this.thayDoiKichThuocOne=this.thayDoiKichThuocOne.bind(this);
+        this.thayDoiSoLuongOne=this.thayDoiSoLuongOne.bind(this);
+        this.thayDoiGiaOne=this.thayDoiGiaOne.bind(this);
+        this.thayDoiAnhOne=this.thayDoiAnhOne.bind(this);
     }
     home = ()=>{
         window.location.href = (`/`);
     }
     handleChangeMS = (selectedOptionMS) => {
-        this.setState({ selectedOptionMS }, () =>
-            console.log(`Option selected:`, this.state.selectedOptionMS)
-        );
+        this.setState({ selectedOptionMS }, () =>{
+            console.log(`Option selected:`, this.state.selectedOptionMS);
+            this.generateSPCTList();
+        });
     };
     handleChangeKT = (selectedOptionKT) => {
         this.setState({ selectedOptionKT }, () =>
             console.log(`Option selected:`, this.state.selectedOptionKT)
         );
     };
-    handleShowModal = () => {this.setState({showModal:true})};
-    handleCloseModal = () => {this.setState({showModal:false})};
+    handleShowModal = () => {
+        this.setState({showModal:true})
+    };
+    handleCloseModal = () => {
+        this.setState({showModal:false})
+    };
+    handleShowModalSPCTDetail = (index) => {
+        this.setState({detailSPCT:this.state.listSPCT[index]})
+        this.setState({showModalDetail:true})
+        this.setState(
+            prevState=>({
+                detailSPCT:{
+                    ...prevState.detailSPCT,
+                    mauSac:this.state.listSPCT[index].mauSac.id,
+                    kichThuoc:this.state.listSPCT[index].kichThuoc.id,
+                }
+            })
+        );
+        console.log(this.state.detailSPCT)
+    };
+    handleCloseModalSPCTDetail = () => {
+        this.setState({showModalDetail:false})
+    };
 
     detail(id) {
         window.location.href = (`/sanphamchitietdetail/${id}`);
@@ -113,6 +148,7 @@ class ChiTietComponent extends Component {
         SanPhamService.getMauSacAdd().then((res)=>{
             this.setState({listMauSac:res.data});
         })
+
     }
 
     deleteAnh = (id,index)=>{
@@ -131,7 +167,7 @@ class ChiTietComponent extends Component {
 
     updateQuality = (productId,newQuality) => {
         const updatedProducts = this.state.listSPCT.map(product =>
-            product.id === productId ? { ...product, soLuong: Math.max(0,newQuality) } : product
+            product.id === productId ? { ...product, soLuong: Math.max(0, Math.min(200, newQuality)) } : product
         );
         this.setState({ listSPCT: updatedProducts });
         console.log(this.state.listSPCT[0].soLuong);
@@ -139,18 +175,78 @@ class ChiTietComponent extends Component {
 
     updatePrice = (productId,newQuality) => {
         const updatedProducts = this.state.listSPCT.map(product =>
-            product.id === productId ? { ...product, donGia: Math.max(0,newQuality) } : product
+            product.id === productId ? { ...product, donGia: Math.max(0, Math.min(100000000, newQuality)) } : product
         );
         this.setState({ listSPCT: updatedProducts });
         console.log(this.state.listSPCT[0].donGia);
     };
 
+    thayDoiAnh = (index, newValue) => {
+        const selectedFiles = newValue.target.files;
+        const selectedImagesArray = Array.from(selectedFiles).map(file => ({file,URL: URL.createObjectURL(file),}));
+        const { listSPCTAdd } = this.state;
+        this.setState({ listFileTong: [ ...this.state.listFileTong,...selectedImagesArray] })
+        const updatedListSPCTAdd = [...listSPCTAdd];
+        updatedListSPCTAdd[index].anh = selectedImagesArray;
+        if (selectedImagesArray.length ===0){
+            updatedListSPCTAdd[index].error = "Bạn cần chọn ít nhất 1 ảnh";
+        }else{
+            updatedListSPCTAdd[index].error = "";
+        }
+        this.setState({ listSPCTAdd: updatedListSPCTAdd });
+    };
+
+    handleSoLuongChange = (index, newValue) => {
+        const { listSPCTAdd } = this.state;
+        const updatedListSPCT = [...listSPCTAdd];
+        updatedListSPCT[index].soLuong = Math.max(0, Math.min(200, newValue));
+        this.setState({ listSPCTAdd: updatedListSPCT });
+        console.log(this.state.listSPCTAdd[index].soLuong)
+        console.log(this.state.listSPCTAdd[0])
+    };
+
+    handleGiaChange = (index, newValue) => {
+        const { listSPCTAdd } = this.state;
+        const updatedListSPCT = [...listSPCTAdd];
+        updatedListSPCT[index].gia = Math.max(0, Math.min(100000000, newValue));
+        this.setState({ listSPCTAdd: updatedListSPCT });
+        console.log(this.state.listSPCTAdd[index].gia)
+    };
+
+    generateSPCTList = () => {
+        const { selectedOptionKT, selectedOptionMS } = this.state;
+        const listSPCTAdd = selectedOptionKT.map((kt) =>
+            selectedOptionMS.map((ms) => ({
+                anh:[],
+                kichThuoc: kt,
+                mauSac: ms,
+                soLuong: 0,
+                gia: 0,
+                error:''
+            }))
+        ).flat();
+
+        this.setState({ listSPCTAdd });
+
+    };
+
     addSPCT = (e)=>{
         e.preventDefault();
-        var sanPham = {
-            listMauSac: this.state.selectedOptionMS,
-            listKichThuoc :this.state.selectedOptionKT
+
+        if(this.state.listSPCTAdd.length===0){
+
+        }else{
+            for(let i=0;i<this.state.listSPCTAdd.length;i++){
+                const { listSPCTAdd } = this.state;
+                const updatedListSPCT = [...listSPCTAdd];
+                updatedListSPCT[i].anh = this.state.listSPCTAdd[i].anh[0].file.name;
+                this.setState({ listSPCTAdd: updatedListSPCT });
+            }
         }
+        var sanPham = {
+            listSPCT: this.state.listSPCTAdd
+        }
+        this.handleUpload();
         const id = this.props.match.params.id;
         SanPhamService.addSanPhamChiTiet(id,sanPham).then((res)=>{
             window.location.href = (`/detail/` + id);
@@ -223,6 +319,47 @@ class ChiTietComponent extends Component {
         })
     }
 
+    save = (e)=>{
+        e.preventDefault();
+        const confirm = window.confirm("Bạn có chắc chắn muốn sửa sản phẩm này ?");
+        if(!confirm){
+            return;
+        }
+        if(this.state.anhThay.length===0){
+            var spct = {kichThuoc : this.state.detailSPCT.kichThuoc,
+                mauSac : this.state.detailSPCT.mauSac,
+                donGia : this.state.detailSPCT.donGia,
+                soLuong : this.state.detailSPCT.soLuong,
+                anh : this.state.detailSPCT.anh,
+            }
+        }else{
+            var spct = {kichThuoc : this.state.detailSPCT.kichThuoc,
+                mauSac : this.state.detailSPCT.mauSac,
+                donGia : this.state.detailSPCT.donGia,
+                soLuong : this.state.detailSPCT.soLuong,
+                anh : this.state.anhThay[0].file.name,
+            }
+        }
+
+        let id =this.props.match.params.id;
+        console.log('nsx' + JSON.stringify(this.state.detailSPCT));
+        this.handleUpload()
+        SanPhamService.updateOneSanPhamChiTiet(this.state.detailSPCT.id,spct).then((res)=>{
+            if (res.status=== 200) {
+                setTimeout(() => {
+                    window.location.href = (`/detail/`+id);
+                }, 2000);
+                toast.success("Sửa thành công!");
+            }else {
+                // Xử lý khi có lỗi trả về từ API
+                const errorMessage = res.data.message || "Có lỗi xảy ra khi thêm sản phẩm.";
+                toast.error("Lỗi: " + errorMessage);
+                console.log(res.data.error)
+            }
+        })
+
+    }
+
     removeSelectedFile = (index) => {
         const { files } = this.state;
         const updatedListFiles = [...files];
@@ -230,10 +367,18 @@ class ChiTietComponent extends Component {
         this.setState({ files: updatedListFiles });
     };
 
+    removeItem = (index) => {
+        const { listSPCTAdd } = this.state;
+        const updatedListSPCT = [...listSPCTAdd];
+        updatedListSPCT.splice(index, 1);
+        this.setState({ listSPCTAdd: updatedListSPCT });
+    };
+
     fileSelectedHandler = (e) => {
         const selectedFiles = e.target.files;
         const selectedImagesArray = Array.from(selectedFiles).map(file => ({file,URL: URL.createObjectURL(file),}));
         this.setState({ files: [ ...this.state.files,...selectedImagesArray] })
+        this.setState({ listFileTong: [ ...this.state.listFileTong,...selectedImagesArray] })
     };
 
     handleUpload = () => {
@@ -246,17 +391,21 @@ class ChiTietComponent extends Component {
 
     saveFileToPublic = (file) => {
         const formData1 = new FormData();
-        for (const file of this.state.files) {
+        for (const file of this.state.listFileTong) {
             formData1.append('files', file.file);
         }
+        if(!this.state.listFileTong){
 
-        axios.post('http://localhost:8080/api/images/upload1', formData1)
-            .then(response => {
-                console.log(response.data);
-            })
-            .catch(error => {
-                console.error('Error uploading files: ', error);
-            });
+        }else{
+            axios.post('http://localhost:8080/api/images/upload1', formData1)
+                .then(response => {
+                    console.log(response.data);
+                })
+                .catch(error => {
+                    console.error('Error uploading files: ', error);
+                });
+        }
+
     };
 
     thayDoiTenAdd=(event)=>{
@@ -268,6 +417,7 @@ class ChiTietComponent extends Component {
                 }
             })
         );
+        console.log(this.state.detailSPCT)
         if(!event.target.value.trim()){
             let error = {...this.state.error,ten:"Tên không được trống !"};
             this.setState({error:error});
@@ -350,6 +500,52 @@ class ChiTietComponent extends Component {
         console.log(`Option selected:`, this.state.selectedOptionMS)
     };
 
+    thayDoiKichThuocOne=(event)=>{
+        this.setState(
+            prevState=>({
+                detailSPCT:{
+                    ...prevState.detailSPCT,
+                    kichThuoc:event.target.value
+                }
+            })
+        );
+    };
+    thayDoiMauSacOne=(event)=>{
+        this.setState(
+            prevState=>({
+                detailSPCT:{
+                    ...prevState.detailSPCT,
+                    mauSac:event.target.value
+                }
+            })
+        );
+    };
+    thayDoiGiaOne=(event)=>{
+        this.setState(
+            prevState=>({
+                detailSPCT:{
+                    ...prevState.detailSPCT,
+                    donGia:event.target.value
+                }
+            })
+        );
+    };
+    thayDoiSoLuongOne=(event)=>{
+        this.setState(
+            prevState=>({
+                detailSPCT:{
+                    ...prevState.detailSPCT,
+                    soLuong:event.target.value
+                }
+            })
+        );
+    };
+    thayDoiAnhOne=(event)=>{
+        const selectedFiles = event.target.files;
+        const selectedImagesArray = Array.from(selectedFiles).map(file => ({file,URL: URL.createObjectURL(file),}));
+        this.setState({ listFileTong: [ ...this.state.listFileTong,...selectedImagesArray] })
+        this.setState({anhThay:selectedImagesArray})
+    };
     render() {
         const { selectedOptionMS } = this.state;
         const { selectedOptionKT } = this.state;
@@ -377,6 +573,54 @@ class ChiTietComponent extends Component {
                         className="basic-multi-select"
                         classNamePrefix="select"
                     />
+                </div>
+                <br/>
+                <div className="card-body">
+                    <h5 className="card-title">Sản phẩm chi tiết</h5>
+                    <div className="tab-pane fade show active" id="home" role="tabpanel"
+                         aria-labelledby="home-tab">
+                        <table style={{width: '100%',
+                            borderCollapse: 'collapse'}}>
+                            <thead>
+                            <tr className={"tr1"}>
+                                <th>Ảnh sản phẩm</th>
+                                <th>Kích thước</th>
+                                <th>Màu sắc</th>
+                                <th>Số lượng </th>
+                                <th>Giá</th>
+                                <th></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {this.state.listSPCTAdd.map((spct, index) => (
+
+                                <tr key={index} className={"tr1"}>
+                                    <th >
+                                        {spct.anh&&spct.anh.length !== 0?(
+                                            <div className="image-box" key={index}>
+                                                <img  src={spct.anh[0].URL} alt={spct.anh[0].name}  style={{ width: '100px', height: '100px' ,margin:10,objectFit: 'cover',objectPosition: 'center'}} />
+                                            </div>
+                                        ):(<></>)}
+                                        <input type="file" onChange={(e) => this.thayDoiAnh(index,e)} accept="image/*"/>
+                                        {spct.error && <div className="text-danger">{spct.error}</div>}
+                                    </th>
+                                    <th >{spct.kichThuoc.label}</th>
+                                    <th >{spct.mauSac.label}</th>
+                                    <th ><input type={"number"} value={spct.soLuong} style={{padding: 10,
+                                        border: '1px solid #ddd',
+                                        borderRadius: 5,width:'90%'}} onChange={(e) => this.handleSoLuongChange(index, e.target.value)} min={0}/> </th>
+                                    <th ><input type={"number"} value={spct.gia} style={{padding: 10,
+                                        border: '1px solid #ddd',
+                                        borderRadius: 5,width:'90%'}} onChange={(e) => this.handleGiaChange(index, e.target.value)} min={0}/> </th>
+                                    <th ><button onClick={() => this.removeItem(index)} className='btn btn-danger bi bi-trash3'></button></th>
+                                </tr>
+                            ))}
+                            </tbody>
+                        </table>
+
+                    </div>
+
+
                 </div>
                 <br/>
                 <div>
@@ -526,13 +770,15 @@ class ChiTietComponent extends Component {
                                     <th ><input type={"number"} value={spct.donGia} style={{padding: 10,
                                         border: '1px solid #ddd',
                                         borderRadius: 5,width:'90%'}} onChange={(e) => this.updatePrice(spct.id, e.target.value)} min={0}/> </th>
-                                    <th ><button onClick={()=>this.delete(spct.id)} className='btn btn-danger bi bi-trash3'></button></th>
+                                    <th ><button onClick={()=>this.delete(spct.id)} className='btn btn-danger bi bi-trash3' style={{marginRight:10}}></button>
+                                        <button className="btn btn-primary bi bi-info" onClick={()=>this.handleShowModalSPCTDetail(index)} style={{marginRight:10}}></button>
+                                    </th>
                                 </tr>
                             ))}
                             </tbody>
                         </table>
                         <button className="btn btn-primary bi bi-plus" onClick={this.handleShowModal}></button>
-                        <Modal show={this.state.showModal} onHide={this.handleCloseModal} backdrop="static">
+                        <Modal show={this.state.showModal} onHide={this.handleCloseModal} backdrop="static" style={{maxWidth: '100%', width: '100%'}} size={"lg"}>
                             <Modal.Header closeButton>
                                 <Modal.Title>Nhập thông tin sản phẩm</Modal.Title>
                             </Modal.Header>
@@ -540,6 +786,78 @@ class ChiTietComponent extends Component {
                                 {popupContent}
                             </Modal.Body>
                         </Modal>
+                        <div>
+                            <div className={`overlay ${this.state.showModalDetail ? 'active' : ''}`} onClick={this.handleCloseModalSPCTDetail}>
+                                {!this.state.detailSPCT  ? (
+                                    <p></p>
+                                    ) : (
+                                    <div className="small-window" onClick={(e) => e.stopPropagation()}>
+                                {/* Nội dung cửa sổ nhỏ */}
+
+                                    <h2>Chi tiết sản phẩm</h2>
+                                        {/*<div style={{marginLeft:"30px"}}>*/}
+                                        {/*    Tên :*/}
+                                        {/*    <input className={`form-control ${this.state.error.ten ? 'is-invalid' : ''}`} defaultValue={this.state.sanPham.ten} type="text" onChange={this.thayDoiTenAdd}/>*/}
+                                        {/*</div>*/}
+                                        <button onClick={this.save} className={"btn btn-warning bi bi-floppy"} style={{float:"right",marginRight:10}}></button>
+                                        <div style={{marginLeft:"30px"}}>
+                                            Mã :
+                                            <input className={`form-control`} defaultValue={this.state.detailSPCT.ma} type="text" disabled={true}/>
+                                        </div>
+                                        <div style={{marginLeft:"30px"}}>
+                                            <label>Kích thước : </label>
+                                                <select className="form-control col-lg-5" onChange={this.thayDoiKichThuocOne}>
+                                                    {this.state.listKichThuoc.map(
+                                                        sp =>
+                                                    <option key={sp.value} value={sp.value} selected={this.state.detailSPCT.kichThuoc === sp.value}>{sp.label}</option>
+                                                )}
+                                                </select>
+                                        </div>
+                                        <div style={{marginLeft:"30px"}}>
+                                            <label>Màu sắc : </label>
+                                                <select className="form-control col-lg-5" onChange={this.thayDoiMauSacOne}>
+                                                    {this.state.listMauSac.map(
+                                                    sp =>
+                                                    <option key={sp.value} value={sp.value} selected={this.state.detailSPCT.mauSac === sp.value}>{sp.label}</option>
+                                                )}
+                                                </select>
+                                        </div>
+                                        <div style={{marginLeft:"30px",display:"inline-block"}} className="col-lg-6">
+                                            <label>Số lượng : </label>
+                                            <input className={`form-control`} defaultValue={this.state.detailSPCT.soLuong} type="text" onChange={this.thayDoiSoLuongOne}/>
+                                        </div>
+                                        <div style={{marginLeft:"30px",display:"inline-block"}} className="col-lg-5">
+                                            <label>Giá : </label>
+                                            <input className={`form-control`} defaultValue={this.state.detailSPCT.donGia} type="text" onChange={this.thayDoiGiaOne}/>
+                                        </div>
+                                        <div style={{marginLeft:"30px",display:"inline-block"}}>
+                                            <label>QR : </label>
+                                            <img  src={'/niceadmin/img/'+ this.state.detailSPCT.qr} alt={this.state.detailSPCT.qr} style={{ width: '100px', height: '100px' ,margin:10,objectFit: 'cover',objectPosition: 'center'}} />
+                                        </div>
+                                        <div style={{marginLeft:"30px",display:"inline-block"}}>
+                                            <label>Ảnh hiện tại : </label>
+                                            <img  src={'/niceadmin/img/'+ this.state.detailSPCT.anh} alt={this.state.detailSPCT.anh} style={{ width: '100px', height: '100px' ,margin:10,objectFit: 'cover',objectPosition: 'center'}} />
+                                        </div>
+                                        <div style={{marginLeft:"30px"}}>
+                                            {this.state.anhThay.map((image, index) => (
+                                                <div className="image-box" key={index}>
+                                                    <img  src={image.URL} alt={image.file.name} style={{ width: '100px', height: '100px' ,margin:10,objectFit: 'cover',objectPosition: 'center'}} />
+                                                </div>
+                                            ))}
+                                            <br/>
+                                            <br/>
+                                            <br/>
+                                            <br/>
+                                            <label>Chọn ảnh thay</label>
+                                            <input type="file" onChange={(e) => this.thayDoiAnhOne(e)} accept="image/*"/>
+                                        </div>
+                                        <br/>
+                                        <button onClick={this.save} className={"btn btn-warning bi bi-floppy"} style={{float:"right",marginRight:10}}></button>
+                                        <button onClick={this.handleCloseModalSPCTDetail} className={"btn btn-danger bi bi-x-lg"} style={{float:"right",marginRight:10}}></button>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
                     </div>
 
                 </div>
