@@ -7,6 +7,7 @@ import com.example.datn404shoes.service.KhuyenMaiService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -60,7 +61,8 @@ public class KhuyenMaiServiceImpl implements KhuyenMaiService {
 
     @Override
     public List<KhuyenMai> getAllNoPage() {
-        return khuyenMaiRepository.findAll();
+        Sort sort = Sort.by(Sort.Direction.DESC, "id");
+        return khuyenMaiRepository.findAll(sort);
     }
 
     @Override

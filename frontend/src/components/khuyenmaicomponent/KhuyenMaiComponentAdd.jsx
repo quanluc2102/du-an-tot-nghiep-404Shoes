@@ -30,6 +30,7 @@ class KhuyenMaiComponent extends Component {
                 dieuKien: '',
                 soLuong: '',
             },
+            maxSoLuong: 1350, // Giới hạn số lượng
         };
 
         this.add = this.add.bind(this);
@@ -177,12 +178,35 @@ class KhuyenMaiComponent extends Component {
     thayDoiTruongAdd(event) {
         const fieldName = event.target.name;
         const value = event.target.value;
-        this.setState((prevState) => ({
-            khuyenMaiAdd: {
-                ...prevState.khuyenMaiAdd,
-                [fieldName]: value,
-            },
-        }));
+        const { name } = event.target;
+        if (name === 'soLuong') {
+            // Chuyển đổi giá trị nhập vào thành số
+            const newValue = parseInt(value, 10); // Change value1 to value
+
+            // Kiểm tra nếu giá trị nhập vào vượt quá giới hạn, đặt lại giá trị tối đa
+            const giaTriToiDa = this.state.maxSoLuong;
+            const giaTriCuoiCung = newValue > giaTriToiDa ? giaTriToiDa : newValue;
+
+            this.setState((prevState) => ({
+                khuyenMaiAdd: {
+                    ...prevState.khuyenMaiAdd,
+                    [name]: giaTriCuoiCung,
+                },
+                errorAdd: {
+                    ...prevState.errorAdd,
+                    [name]: '',
+                },
+            }));
+        } else {
+            this.setState((prevState) => ({
+                khuyenMaiAdd: {
+                    ...prevState.khuyenMaiAdd,
+                    [fieldName]: value,
+                },
+            }));
+        }
+
+
     }
 
     render() {
@@ -303,11 +327,13 @@ class KhuyenMaiComponent extends Component {
                                                     )}
                                                 </div>
                                                 <div className="col-md-3">
-                                                    <label>Số lượng: <span style={{color: 'red'}}>*</span></label>
+                                                    <label>Số lượng: <span style={{ color: 'red' }}>*</span></label>
                                                     <input
+                                                        type={"number"}
                                                         className={`form-control ${this.state.errorAdd.soLuong ? 'is-invalid' : ''}`}
                                                         name="soLuong"
                                                         onChange={this.thayDoiTruongAdd}
+                                                        value={this.state.khuyenMaiAdd.soLuong}
                                                     />
                                                     {this.state.errorAdd.soLuong && (
                                                         <div className="text-danger">{this.state.errorAdd.soLuong}</div>

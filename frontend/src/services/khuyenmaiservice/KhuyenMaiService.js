@@ -10,13 +10,13 @@ const API_SAVE_URL = "http://localhost:8080/khuyen_mai/add";
 
 class KhuyenMaiService {
 
-    getKhuyenMai(pageNumber, searchValue, filterType) {
-        return axios.get(API_BASE_URL + `?page=${pageNumber}&size=5&searchValue=${searchValue}&filterType=${filterType}`);
+    getKhuyenMai(pageNumber) {
+        return axios.get(API_BASE_URL + +`?page=${pageNumber}&size=5`);
     }
 
-    getKhuyenMaiAll(searchQuery, discountType) {
+    getKhuyenMaiAll() {
         // Thực hiện cuộc gọi đến API endpoint mới trả về toàn bộ dữ liệu khuyenMai
-        return axios.get(`${API_BASE_URL_NO_PAGE}?searchQuery=${searchQuery}&discountType=${discountType}`);
+        return axios.get(API_BASE_URL_NO_PAGE);
     }
 
 
