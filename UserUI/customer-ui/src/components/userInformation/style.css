@@ -1,0 +1,312 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Open+Sans:wght@400;700&family=Montserrat:wght@400;700&family=Nunito:wght@400;700&family=Lato:wght@400;700&display=swap');
+
+
+body {
+  font-family: 'Roboto', sans-serif;
+  color: rgb(0, 69, 52);
+}
+
+p {
+  line-height: 2;
+}
+
+.dashed-hr {
+  border-top: 2px dashed black;
+}
+
+.nav-link {
+  color: rgb(0, 69, 52);
+  border-radius: 0;
+  white-space: nowrap;
+  transition: 1000ms;
+}
+
+.nav-link:hover {
+  background-color: rgb(16, 101, 116);
+  white-space: nowrap;
+  transition: 500ms;
+  animation: rainbow 5s linear infinite;
+}
+
+.fw-bolder {
+  font-size: 3vm;
+}
+
+.cart-count {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  font-size: 12px;
+  background-color: red;
+  color: white;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 20px;
+}
+
+.content {
+  width: 100%;
+  min-height: 140vh;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+}
+
+.profile .profile-card img {
+  max-width: 120px;
+}
+
+.profile .profile-card h2 {
+  font-size: 24px;
+  font-weight: 700;
+  color: #2c384e;
+  margin: 10px 0 0 0;
+}
+
+.profile .profile-card h3 {
+  font-size: 18px;
+}
+
+.profile .profile-card .social-links a {
+  font-size: 20px;
+  display: inline-block;
+  color: rgba(1, 41, 112, 0.5);
+  line-height: 0;
+  margin-right: 10px;
+  transition: 0.3s;
+}
+
+.profile .profile-card .social-links a:hover {
+  color: #012970;
+}
+
+.profile .profile-overview .row {
+  margin-bottom: 20px;
+  font-size: 15px;
+}
+
+.profile .profile-overview .card-title {
+  color: #012970;
+}
+
+.profile .profile-overview .label {
+  font-weight: 600;
+  color: rgba(1, 41, 112, 0.6);
+}
+
+.profile .profile-edit label {
+  font-weight: 600;
+  color: rgba(1, 41, 112, 0.6);
+}
+
+.profile .profile-edit img {
+  max-width: 120px;
+}
+
+.content-left {
+  text-align: right;
+  opacity: 0;
+  filter: blur(1px);
+  transform: translateX(-100px) scale(0.89);
+  transition: all 1.5s;
+}
+
+.content-right {
+  text-align: left;
+  opacity: 0;
+  filter: blur(1px);
+  transform: translateX(+100px);
+  transition: all 1.5s;
+}
+
+
+.show {
+  filter: blur(0);
+  opacity: 1;
+  transform: translateX(0) scale(1);
+  transition: all 1.5s;
+}
+
+@media (prefer-reduced-motion) {
+  .content {
+    transition: none;
+  }
+}
+
+.trang1 {
+  min-height: 140vh;
+  background-image: url("https://plus.unsplash.com/premium_photo-1682435561654-20d84cef00eb?q=80&w=1000&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8cnVubmluZyUyMHNob2VzfGVufDB8fDB8fHww");
+  background-attachment: fixed;
+  background-repeat: repeat-x;
+  background-size: cover;
+  animation: sizeBaner 160s linear infinite;
+
+
+}
+
+#x1 {
+  color: rgb(0, 69, 52);
+  font-weight: bolder;
+  background: rgb(184, 203, 204);
+  padding: 20px;
+  border-radius: 30px;
+  transition: all 0.5s;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  /* Box shadow */
+
+}
+
+#x1:hover {
+
+  background: rgb(250, 250, 250);
+
+  transition: all 0.5s;
+  animation: rainbow 5s linear infinite;
+
+}
+
+@keyframes rainbow {
+  0% {
+    color: rgb(249, 188, 172);
+  }
+
+  14% {
+    color: orange;
+  }
+
+  28% {
+    color: rgb(255, 199, 59);
+  }
+
+  42% {
+    color: rgb(204, 233, 129)
+  }
+
+  57% {
+    color: rgb(64, 64, 143);
+  }
+
+  71% {
+    color: rgb(185, 237, 214)
+  }
+
+  85% {
+    color: violet;
+  }
+
+  100% {
+    color: rgb(249, 188, 172);
+  }
+}
+
+@keyframes sizeBaner {
+  0% {
+    background-position: -0px;
+  }
+
+  5% {
+    background-position: -50px;
+  }
+
+  10% {
+    background-position: -100px;
+  }
+
+  15% {
+    background-position: -150px;
+  }
+
+  20% {
+    background-position: -200px;
+  }
+
+  25% {
+    background-position: -2500px;
+  }
+
+  30% {
+    background-position: -300px;
+  }
+
+  35% {
+    background-position: -3500px;
+  }
+
+  40% {
+    background-position: -400px;
+  }
+
+  45% {
+    background-position: -320px;
+  }
+
+  50% {
+    background-position: -808px;
+  }
+
+  55% {
+    background-position: -780px;
+  }
+
+  60% {
+    background-position: -680px;
+  }
+
+  65% {
+    background-position: -580px;
+  }
+
+  70% {
+    background-position: -380px;
+  }
+
+  75% {
+    background-position: -3650px;
+  }
+
+  80% {
+    background-position: -200px;
+  }
+
+  85% {
+    background-position: -2340px;
+  }
+
+  90% {
+    background-position: -1890px;
+  }
+
+  95% {
+    background-position: -120px;
+  }
+
+  100% {
+    background-position: -0px;
+  }
+
+}
+
+.trang2 {
+  background-color: rgb(255, 247, 235);
+  min-height: 140vh;
+}
+
+.trang3 {
+  background-color: rgb(249, 188, 172);
+}
+
+.trang4 {
+  background-color: rgb(255, 199, 59);
+}
+
+.trang5 {
+  background-color: rgb(204, 233, 129);
+}
+
+.trang6 {
+  background-color: rgb(185, 237, 214);
+}

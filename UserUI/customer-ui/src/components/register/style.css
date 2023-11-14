@@ -1,0 +1,17 @@
+.card-registration .select-input.form-control[readonly]:not([disabled]) {
+    font-size: 1rem;
+    line-height: 2.15;
+    padding-left: .75em;
+    padding-right: .75em;
+}
+
+.card-registration .select-arrow {
+    top: 13px;
+}
+
+section{
+    background-image: url('https://c0.wallpaperflare.com/preview/49/160/875/sport-fitness-park-running.jpg');
+    background-repeat: no-repeat;
+    background-size: cover;
+    position: relative;   
+}
