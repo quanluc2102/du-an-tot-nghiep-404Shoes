@@ -146,25 +146,25 @@ class SanPhamComponent extends Component {
                     <nav>
                     </nav>
                 </div>
-                {/*<div>*/}
-                {/*    {isQRReaderOn && (*/}
-                {/*        <QrScanner*/}
-                {/*            ref={this.myRef}*/}
-                {/*            onScan={this.handleScan}*/}
-                {/*            onError={this.handleError}*/}
-                {/*            style={{ width: '100%' }}*/}
-                {/*        />*/}
-                {/*    )}*/}
+            {/*    <div>*/}
+            {/*        {isQRReaderOn && (*/}
+            {/*            <QrScanner*/}
+            {/*                ref={this.myRef}*/}
+            {/*                onScan={this.handleScan}*/}
+            {/*                onError={this.handleError}*/}
+            {/*                style={{ width: '300px',height:'300px' }}*/}
+            {/*            />*/}
+            {/*        )}*/}
 
-                {/*    /!* Nút để bật/tắt quét QR *!/*/}
-                {/*    <button onClick={this.toggleQRReader}>*/}
-                {/*        {isQRReaderOn ? 'Turn Off QR Scanner' : 'Turn On QR Scanner'}*/}
-                {/*    </button>*/}
+            {/*        /!* Nút để bật/tắt quét QR *!/*/}
+            {/*    <button onClick={this.toggleQRReader}>*/}
+            {/*        {isQRReaderOn ? 'Turn Off QR Scanner' : 'Turn On QR Scanner'}*/}
+            {/*    </button>*/}
 
-                {/*    /!* Hiển thị kết quả quét QR *!/*/}
-                {/*    <p>QR Code Result: {result.text}</p>*/}
+            {/*    /!* Hiển thị kết quả quét QR *!/*/}
+            {/*    <p>QR Code Result: {result.text}</p>*/}
 
-                {/*    /!* Rest of your component *!/*/}
+            {/*    /!* Rest of your component *!/*/}
                 {/*</div>*/}
                 <section className="section dashboard">
                     <div className="row">

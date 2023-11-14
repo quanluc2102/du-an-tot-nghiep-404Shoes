@@ -132,29 +132,54 @@ public class SanPhamController {
 //    }
     public ResponseEntity<?> addSPCT(@PathVariable("id") long id,@RequestBody SanPhamRequest sanPham){
         List<SanPhamChiTiet> list = sanPhamChiTietRepository.getAllSPCT(id);
-        for (MauSacValue ms:sanPham.getListMauSac()){
-            for (KichThuocValue kt:sanPham.getListKichThuoc()){
-                int count = 0;
-                for(int i = 0 ; i <list.size();i++){
-                    if(list.get(i).getMauSac().getId() == ms.getValue() && list.get(i).getKichThuoc().getId() == kt.getValue()){
-                        count++;
-                    }
-                }
-                if(count == 0){
-                    SanPhamChiTiet spct = new SanPhamChiTiet();
-                    spct.setNgayTao(java.sql.Date.valueOf(LocalDate.now()));
-                    spct.setNgayCapNhat(java.sql.Date.valueOf(LocalDate.now()));
-                    spct.setSoLuong(0);
-                    spct.setTrangThai(1);
-                    spct.setMauSac(MauSac.builder().id(ms.getValue()).build());
-                    spct.setKichThuoc(KichThuoc.builder().id(kt.getValue()).build());
-                    spct.setSanPham(SanPham.builder().id(id).build());
-                    sanPhamChiTietRepository.save(spct);
-                }else {
-
+        for(SPCTRequest request : sanPham.getListSPCT()){
+            int count = 0;
+            for(int i = 0 ; i <list.size();i++){
+                if(list.get(i).getMauSac().getId() == request.getMauSac().getValue() && list.get(i).getKichThuoc().getId() == request.getKichThuoc().getValue()){
+                    count++;
                 }
             }
+            if(count == 0){
+                SanPhamChiTiet spct = new SanPhamChiTiet();
+                Integer listSPCT = sanPhamChiTietRepository.findAll().size()+1;
+                spct.setMa("SPCT"+listSPCT);
+                spct.setAnh(request.getAnh());
+                spct.setDonGia(request.getGia());
+                spct.setNgayTao(java.sql.Date.valueOf(LocalDate.now()));
+                spct.setNgayCapNhat(java.sql.Date.valueOf(LocalDate.now()));
+                spct.setSoLuong(request.getSoLuong());
+                spct.setTrangThai(1);
+                spct.setMauSac(MauSac.builder().id(request.getMauSac().getValue()).build());
+                spct.setKichThuoc(KichThuoc.builder().id(request.getKichThuoc().getValue()).build());
+                spct.setSanPham(SanPham.builder().id(id).build());
+                String text = "SPCT:" + spct.getMa();
+                int width = 300;
+                int height = 300;
+
+                try {
+                    BitMatrix bitMatrix = new MultiFormatWriter().encode(text, BarcodeFormat.QR_CODE, width, height);
+
+                    // Create a directory if it doesn't exist
+                    Path directoryPath = FileSystems.getDefault().getPath(root);
+                    if (!directoryPath.toFile().exists()) {
+                        directoryPath.toFile().mkdir();
+                    }
+
+                    // Save the QR code image to the directory
+                    String fileName = spct.getMa() + "_QRCode.png";
+                    Path filePath = FileSystems.getDefault().getPath(root, fileName);
+                    File qrCodeFile = filePath.toFile();
+                    MatrixToImageWriter.writeToFile(bitMatrix, "PNG", qrCodeFile);
+                    spct.setQr(fileName);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                sanPhamChiTietRepository.save(spct);
+            }else {
+
+            }
         }
+
         return ResponseEntity.ok("a");
     }
     @GetMapping("detail_spa/{id}")

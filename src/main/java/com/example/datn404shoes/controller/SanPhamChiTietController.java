@@ -56,8 +56,15 @@ public class SanPhamChiTietController {
         return ResponseEntity.ok(serviceimpl.getOne(id));
     }
 
-    @PutMapping("update/{id}")
-    public ResponseEntity<?> update(Model model,
+//    @PutMapping("update/{id}")
+//    public ResponseEntity<?> update(Model model,
+//                                    @PathVariable("id") Long id,
+//                                    @RequestBody SanPhamChiTietRequest spct) {
+//
+//        return ResponseEntity.ok(serviceimpl.update(id, spct));
+//    }
+    @PutMapping("update_new/{id}")
+    public ResponseEntity<?> update1(Model model,
                                     @PathVariable("id") Long id,
                                     @RequestBody SanPhamChiTietRequest spct) {
 

@@ -295,7 +295,7 @@ class SanPhamAddComponnent extends Component {
     handleSoLuongChange = (index, newValue) => {
         const { listSPCT } = this.state;
         const updatedListSPCT = [...listSPCT];
-        updatedListSPCT[index].soLuong = Math.max(0,newValue);
+        updatedListSPCT[index].soLuong = Math.max(0, Math.min(200, newValue));
         this.setState({ listSPCT: updatedListSPCT });
         console.log(this.state.listSPCT[index].soLuong)
     };
@@ -303,7 +303,7 @@ class SanPhamAddComponnent extends Component {
     handleGiaChange = (index, newValue) => {
         const { listSPCT } = this.state;
         const updatedListSPCT = [...listSPCT];
-        updatedListSPCT[index].gia = Math.max(0,newValue);
+        updatedListSPCT[index].gia = Math.max(0, Math.min(100000000, newValue));
         this.setState({ listSPCT: updatedListSPCT });
         console.log(this.state.listSPCT[index].gia)
     };

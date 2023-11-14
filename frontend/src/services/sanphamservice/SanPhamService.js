@@ -11,6 +11,7 @@ const BASE_URL_SPA_DELETE = "http://localhost:8080/san_pham_anh/delete";
 const BASE_URL_SPCT_ADD = "http://localhost:8080/san_pham/add_spct";
 const BASE_URL_SPCT_DELETE = "http://localhost:8080/san_pham_chi_tiet/delete1";
 const BASE_URL_SPCT_UPDATE = "http://localhost:8080/san_pham_chi_tiet/updateAll";
+const BASE_URL_SPCT_UPDATE_ONE = "http://localhost:8080/san_pham_chi_tiet/update_new";
 const BASE_URL_UPDATE = "http://localhost:8080/san_pham/update";
 const BASE_URL_KICHTHUOCADD_INDEX = "http://localhost:8080/kich_thuoc/index";
 const BASE_URL_MAUSACADD_INDEX = "http://localhost:8080/mau_sac/index";
@@ -73,6 +74,9 @@ class SanPhamService{
     }
     updateSanPhamChiTiet(listSPCT){
         return axios.put(BASE_URL_SPCT_UPDATE,listSPCT);
+    }
+    updateOneSanPhamChiTiet(id,spct){
+        return axios.put(BASE_URL_SPCT_UPDATE_ONE+"/"+id,spct);
     }
     deleteSanPhamChiTiet(id){
         return axios.delete(BASE_URL_SPCT_DELETE+"/"+id);
