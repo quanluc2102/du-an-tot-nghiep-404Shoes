@@ -31,6 +31,7 @@ class KhuyenMaiComponent extends Component {
                 soLuong: '',
             },
             maxSoLuong: 1350, // Giới hạn số lượng
+            minSoLuong: 0
         };
 
         this.add = this.add.bind(this);
@@ -57,9 +58,6 @@ class KhuyenMaiComponent extends Component {
             trangThai,
         } = khuyenMaiAdd;
 
-        // Chuyển đổi ngày và giờ sang múi giờ UTC
-        const batDauUTC = new Date(batDau).toISOString();
-        const ketThucUTC = new Date(ketThuc).toISOString();
 
         // Clear previous errors
         let errorAdd = {
@@ -77,7 +75,7 @@ class KhuyenMaiComponent extends Component {
             errorAdd.ma = 'Mã không được bỏ trống hoặc chứa khoảng trắng hoặc kí tự đặc biệt!';
         }
 
-        if (!ten || !ten.trim() || !isNaN(parseInt(ten)) || !/^[a-zA-Z\sàáảãạăắằẳẵặâấầẩẫậèéẹêềếểễệđìíỉĩịòóỏõọôồốổỗộơờớởỡợùúủũụưừứửữựỳýỷỹỵÀÁẢÃẠĂẮẰẲẴẶÂẤẦẨẪẬÈÉẺẼẸÊỀẾỂỄỆĐÌÍỈĨỊÒÓỎÕỌÔỒỐỔỖỘƠỜỚỞỠỢÙÚỦŨỤƯỪỨỬỮỰỲÝỶỸỴ]+$/.test(ten)) {
+        if (!ten || !ten.trim() || !/^[a-zA-Z\sàáảãạăắằẳẵặâấầẩẫậèéẹêềếểễệđìíỉĩịòóỏõọôồốổỗộơờớởỡợùúủũụưừứửữựỳýỷỹỵÀÁẢÃẠĂẮẰẲẴẶÂẤẦẨẪẬÈÉẺẼẸÊỀẾỂỄỆĐÌÍỈĨỊÒÓỎÕỌÔỒỐỔỖỘƠỜỚỞỠỢÙÚỦŨỤƯỪỨỬỮỰỲÝỶỸỴ]+$/.test(ten)) {
             errorAdd.ten = 'Tên không được bỏ trống hoặc chứa kí tự đặc biệt!';
         }
 
@@ -89,43 +87,40 @@ class KhuyenMaiComponent extends Component {
         const ketThucDate = new Date(ketThuc);
 
 
-        if (!batDau.trim()) {
-            errorAdd.batDau = 'Ngày bắt đầu không được bỏ trống!';
+        if (!batDauDate || isNaN(batDauDate.getTime())) {
+            toast.error('Không được để trống ngày bắt đầu.');
+            return;
         } else {
-            khuyenMaiAdd.batDau = batDauDate.toISOString(); // Chuyển đổi sang định dạng ISO 8601
+            khuyenMaiAdd.batDau = batDauDate.toISOString();
         }
 
-        if (batDau > ketThuc) {
+        if (!ketThucDate || isNaN(ketThucDate.getTime())) {
+            toast.error('Không được để trống ngày kết thúc.');
+            return;
+        } else {
+            khuyenMaiAdd.ketThuc = ketThucDate.toISOString();
+        }
+
+        if (batDauDate > ketThuc) {
             errorAdd.batDau = 'Ngày bắt đầu không được nhỏ hơn ngày kết thúc!';
+            return;
         } else {
             khuyenMaiAdd.batDau = batDauDate.toISOString(); // Chuyển đổi sang định dạng ISO 8601
-        }
-
-        if (!ketThuc.trim()) {
-            errorAdd.ketThuc = 'Ngày kết thúc không được bỏ trống!';
-        } else {
-
-            khuyenMaiAdd.ketThuc = ketThucDate.toISOString(); // Chuyển đổi sang định dạng ISO 8601
         }
 
         if (!giamGia.trim() || isNaN(parseFloat(giamGia)) || /[a-zA-Z]+/.test(giamGia)) {
             errorAdd.giamGia = 'Giảm giá không hợp lệ!';
         }
 
-        if (kieuKhuyenMai === '0') {
-            const giamGiaValue = parseFloat(giamGia);
-            if (giamGiaValue <= 0 || giamGiaValue > 100) {
-                errorAdd.giamGia = 'Phần trăm giảm giá phải nằm trong khoảng 1-100!';
-            }
-        } else if (kieuKhuyenMai === '1') {
-            const giamGiaValue = parseFloat(giamGia);
-            const dieuKienValue = parseFloat(dieuKien);
-            if (giamGiaValue <= 0) {
-                errorAdd.giamGia = 'Số tiền giảm giá phải lớn hơn 0!';
-            }
-            if (() => dieuKienValue) {
-                errorAdd.giamGia = 'Số tiền giảm giá không được lớn hơn điều kiện';
-            }
+
+        if (kieuKhuyenMai === '1' && giamGia <= 0 || giamGia > 100) {
+            // errorAdd.giamGia = 'Phần trăm giảm giá phải nằm trong khoảng 1-100!';
+            errorAdd.giamGia = ('Phần trăm giảm giá phải nằm trong khoảng 1-100!');
+            console.log("lỗi nè má")
+        }else
+        if (kieuKhuyenMai === '0' && giamGia <= 0 || kieuKhuyenMai === '0' && giamGia > dieuKien) {
+            errorAdd.giamGia = 'Số tiền giảm giá phải lớn hơn 0 và không được lớn hơn điều kiện!!';
+
         }
 
 
@@ -133,7 +128,7 @@ class KhuyenMaiComponent extends Component {
             errorAdd.dieuKien = 'Điều kiện không hợp lệ!';
         }
 
-        if (!soLuong.trim() || isNaN(parseInt(soLuong)) || parseInt(soLuong) < 0 || /[a-zA-Z]+/.test(soLuong)) {
+        if (!soLuong || isNaN(parseInt(soLuong)) || parseInt(soLuong) < 0 || /[a-zA-Z]+/.test(soLuong)) {
             errorAdd.soLuong = 'Số lượng không hợp lệ!';
         }
 
@@ -143,6 +138,8 @@ class KhuyenMaiComponent extends Component {
         }
 
         // If all data is valid, proceed to create a new KhuyenMai object
+        const batDauUTC = new Date(batDau).toISOString();
+        const ketThucUTC = new Date(ketThuc).toISOString();
         const newKhuyenMai = {
             ma,
             ten,
@@ -178,19 +175,21 @@ class KhuyenMaiComponent extends Component {
     thayDoiTruongAdd(event) {
         const fieldName = event.target.name;
         const value = event.target.value;
-        const { name } = event.target;
+        const {name} = event.target;
         if (name === 'soLuong') {
             // Chuyển đổi giá trị nhập vào thành số
             const newValue = parseInt(value, 10); // Change value1 to value
-
+            const newValueMin = 0 // Change value1 to value
             // Kiểm tra nếu giá trị nhập vào vượt quá giới hạn, đặt lại giá trị tối đa
             const giaTriToiDa = this.state.maxSoLuong;
+            const giaTriMin = this.state.minSoLuong;
             const giaTriCuoiCung = newValue > giaTriToiDa ? giaTriToiDa : newValue;
+            const giaTriCuoiCungMin = newValueMin < giaTriMin ? giaTriMin : newValueMin;
 
             this.setState((prevState) => ({
                 khuyenMaiAdd: {
                     ...prevState.khuyenMaiAdd,
-                    [name]: giaTriCuoiCung,
+                    [name]: giaTriCuoiCung || giaTriCuoiCungMin,
                 },
                 errorAdd: {
                     ...prevState.errorAdd,
@@ -327,9 +326,9 @@ class KhuyenMaiComponent extends Component {
                                                     )}
                                                 </div>
                                                 <div className="col-md-3">
-                                                    <label>Số lượng: <span style={{ color: 'red' }}>*</span></label>
+                                                    <label>Số lượng: <span style={{color: 'red'}}>*</span></label>
                                                     <input
-                                                        type={"number"}
+                                                        // type={"number"}
                                                         className={`form-control ${this.state.errorAdd.soLuong ? 'is-invalid' : ''}`}
                                                         name="soLuong"
                                                         onChange={this.thayDoiTruongAdd}
