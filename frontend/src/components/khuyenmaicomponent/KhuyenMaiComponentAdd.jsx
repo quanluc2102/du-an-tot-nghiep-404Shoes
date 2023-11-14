@@ -1,6 +1,6 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import KhuyenMaiService from '../../services/khuyenmaiservice/KhuyenMaiService';
-import { toast } from 'react-toastify';
+import {toast} from 'react-toastify';
 import "./KhuyenMaiComponentStyle.css"
 
 class KhuyenMaiComponent extends Component {
@@ -15,7 +15,7 @@ class KhuyenMaiComponent extends Component {
                 batDau: '',
                 ketThuc: '',
                 giamGia: '',
-                kieuKhuyenMai: '0',
+                kieuKhuyenMai: '',
                 dieuKien: '',
                 soLuong: '',
                 trangThai: '0',
@@ -30,6 +30,7 @@ class KhuyenMaiComponent extends Component {
                 dieuKien: '',
                 soLuong: '',
             },
+            maxSoLuong: 1350, // Giới hạn số lượng
         };
 
         this.add = this.add.bind(this);
@@ -42,7 +43,7 @@ class KhuyenMaiComponent extends Component {
         if (!confirmed) {
             return; // Người dùng bấm "Cancel", không thực hiện thêm
         }
-        const { khuyenMaiAdd } = this.state;
+        const {khuyenMaiAdd} = this.state;
         const {
             ma,
             ten,
@@ -76,7 +77,7 @@ class KhuyenMaiComponent extends Component {
             errorAdd.ma = 'Mã không được bỏ trống hoặc chứa khoảng trắng hoặc kí tự đặc biệt!';
         }
 
-        if (!ten || !ten.trim() || !/^[a-zA-Z\sàáảãạăắằẳẵặâấầẩẫậèéẹêềếểễệđìíỉĩịòóỏõọôồốổỗộơờớởỡợùúủũụưừứửữựỳýỷỹỵÀÁẢÃẠĂẮẰẲẴẶÂẤẦẨẪẬÈÉẺẼẸÊỀẾỂỄỆĐÌÍỈĨỊÒÓỎÕỌÔỒỐỔỖỘƠỜỚỞỠỢÙÚỦŨỤƯỪỨỬỮỰỲÝỶỸỴ]+$/.test(ten)) {
+        if (!ten || !ten.trim() || !isNaN(parseInt(ten)) || !/^[a-zA-Z\sàáảãạăắằẳẵặâấầẩẫậèéẹêềếểễệđìíỉĩịòóỏõọôồốổỗộơờớởỡợùúủũụưừứửữựỳýỷỹỵÀÁẢÃẠĂẮẰẲẴẶÂẤẦẨẪẬÈÉẺẼẸÊỀẾỂỄỆĐÌÍỈĨỊÒÓỎÕỌÔỒỐỔỖỘƠỜỚỞỠỢÙÚỦŨỤƯỪỨỬỮỰỲÝỶỸỴ]+$/.test(ten)) {
             errorAdd.ten = 'Tên không được bỏ trống hoặc chứa kí tự đặc biệt!';
         }
 
@@ -90,13 +91,19 @@ class KhuyenMaiComponent extends Component {
 
         if (!batDau.trim()) {
             errorAdd.batDau = 'Ngày bắt đầu không được bỏ trống!';
-        }else{
+        } else {
+            khuyenMaiAdd.batDau = batDauDate.toISOString(); // Chuyển đổi sang định dạng ISO 8601
+        }
+
+        if (batDau > ketThuc) {
+            errorAdd.batDau = 'Ngày bắt đầu không được nhỏ hơn ngày kết thúc!';
+        } else {
             khuyenMaiAdd.batDau = batDauDate.toISOString(); // Chuyển đổi sang định dạng ISO 8601
         }
 
         if (!ketThuc.trim()) {
             errorAdd.ketThuc = 'Ngày kết thúc không được bỏ trống!';
-        }else{
+        } else {
 
             khuyenMaiAdd.ketThuc = ketThucDate.toISOString(); // Chuyển đổi sang định dạng ISO 8601
         }
@@ -105,17 +112,22 @@ class KhuyenMaiComponent extends Component {
             errorAdd.giamGia = 'Giảm giá không hợp lệ!';
         }
 
-        if (kieuKhuyenMai === '1') {
+        if (kieuKhuyenMai === '0') {
             const giamGiaValue = parseFloat(giamGia);
             if (giamGiaValue <= 0 || giamGiaValue > 100) {
                 errorAdd.giamGia = 'Phần trăm giảm giá phải nằm trong khoảng 1-100!';
             }
-        } else if (kieuKhuyenMai === '2') {
+        } else if (kieuKhuyenMai === '1') {
             const giamGiaValue = parseFloat(giamGia);
+            const dieuKienValue = parseFloat(dieuKien);
             if (giamGiaValue <= 0) {
                 errorAdd.giamGia = 'Số tiền giảm giá phải lớn hơn 0!';
             }
+            if (() => dieuKienValue) {
+                errorAdd.giamGia = 'Số tiền giảm giá không được lớn hơn điều kiện';
+            }
         }
+
 
         if (!dieuKien.trim() || isNaN(parseInt(dieuKien)) || parseInt(dieuKien) < 0 || /[a-zA-Z]+/.test(dieuKien)) {
             errorAdd.dieuKien = 'Điều kiện không hợp lệ!';
@@ -126,7 +138,7 @@ class KhuyenMaiComponent extends Component {
         }
 
         if (Object.values(errorAdd).some((error) => error !== '')) {
-            this.setState({ errorAdd });
+            this.setState({errorAdd});
             return;
         }
 
@@ -166,16 +178,39 @@ class KhuyenMaiComponent extends Component {
     thayDoiTruongAdd(event) {
         const fieldName = event.target.name;
         const value = event.target.value;
-        this.setState((prevState) => ({
-            khuyenMaiAdd: {
-                ...prevState.khuyenMaiAdd,
-                [fieldName]: value,
-            },
-        }));
+        const { name } = event.target;
+        if (name === 'soLuong') {
+            // Chuyển đổi giá trị nhập vào thành số
+            const newValue = parseInt(value, 10); // Change value1 to value
+
+            // Kiểm tra nếu giá trị nhập vào vượt quá giới hạn, đặt lại giá trị tối đa
+            const giaTriToiDa = this.state.maxSoLuong;
+            const giaTriCuoiCung = newValue > giaTriToiDa ? giaTriToiDa : newValue;
+
+            this.setState((prevState) => ({
+                khuyenMaiAdd: {
+                    ...prevState.khuyenMaiAdd,
+                    [name]: giaTriCuoiCung,
+                },
+                errorAdd: {
+                    ...prevState.errorAdd,
+                    [name]: '',
+                },
+            }));
+        } else {
+            this.setState((prevState) => ({
+                khuyenMaiAdd: {
+                    ...prevState.khuyenMaiAdd,
+                    [fieldName]: value,
+                },
+            }));
+        }
+
+
     }
 
     render() {
-        const { batDau, ketThuc } = this.state.khuyenMaiAdd;
+        const {batDau, ketThuc} = this.state.khuyenMaiAdd;
 
         // Chuyển đổi ngược từ múi giờ UTC sang múi giờ cục bộ
         const batDauLocal = new Date(batDau).toLocaleString();
@@ -197,7 +232,7 @@ class KhuyenMaiComponent extends Component {
                                         <div className="form-group">
                                             <div className="row">
                                                 <div className="col-md-6">
-                                                    <label>Mã <span style={{ color: 'red' }}>*</span></label>
+                                                    <label>Mã <span style={{color: 'red'}}>*</span></label>
                                                     <input
                                                         className={`form-control ${this.state.errorAdd.ma ? 'is-invalid' : ''}`}
                                                         name="ma"
@@ -208,7 +243,7 @@ class KhuyenMaiComponent extends Component {
                                                     )}
                                                 </div>
                                                 <div className="col-md-6">
-                                                    <label>Tên: <span style={{ color: 'red' }}>*</span></label>
+                                                    <label>Tên: <span style={{color: 'red'}}>*</span></label>
                                                     <input
                                                         className={`form-control ${this.state.errorAdd.ten ? 'is-invalid' : ''}`}
                                                         name="ten"
@@ -221,7 +256,7 @@ class KhuyenMaiComponent extends Component {
                                             </div>
                                         </div>
                                         <div className="form-group">
-                                            <label>Mô tả: <span style={{ color: 'red' }}>*</span></label>
+                                            <label>Mô tả: <span style={{color: 'red'}}>*</span></label>
                                             <input
                                                 className={`form-control ${this.state.errorAdd.moTa ? 'is-invalid' : ''}`}
                                                 name="moTa"
@@ -234,7 +269,7 @@ class KhuyenMaiComponent extends Component {
                                         <div className="form-group">
                                             <div className="row">
                                                 <div className="col-md-6">
-                                                    <label>Ngày bắt đầu: <span style={{ color: 'red' }}>*</span></label>
+                                                    <label>Ngày bắt đầu: <span style={{color: 'red'}}>*</span></label>
                                                     <input
                                                         className={`form-control ${this.state.errorAdd.batDau ? 'is-invalid' : ''}`}
                                                         name="batDau"
@@ -247,7 +282,7 @@ class KhuyenMaiComponent extends Component {
                                                     )}
                                                 </div>
                                                 <div className="col-md-6">
-                                                    <label>Kết thúc: <span style={{ color: 'red' }}>*</span></label>
+                                                    <label>Kết thúc: <span style={{color: 'red'}}>*</span></label>
                                                     <input
                                                         className={`form-control ${this.state.errorAdd.ketThuc ? 'is-invalid' : ''}`}
                                                         name="ketThuc"
@@ -264,7 +299,7 @@ class KhuyenMaiComponent extends Component {
                                         <div className="form-group">
                                             <div className="row">
                                                 <div className="col-md-3">
-                                                    <label>Kiểu khuyến mãi <span style={{ color: 'red' }}>*</span></label>
+                                                    <label>Kiểu khuyến mãi <span style={{color: 'red'}}>*</span></label>
                                                     <select
                                                         className={`form-control ${this.state.errorAdd.kieu ? 'is-invalid' : ''}`}
                                                         name="kieu"
@@ -272,15 +307,16 @@ class KhuyenMaiComponent extends Component {
                                                     >
                                                         <option value="">Chọn kiểu khuyến mãi</option>
                                                         <option value="1">Giảm giá theo phần trăm</option>
-                                                        <option value="2">Giảm giá theo số tiền</option>
-                                                        <option value="3">Tặng quà</option>
+                                                        <option value="0">Giảm giá theo số tiền</option>
+                                                        {/*<option value="3">Tặng quà</option>*/}
                                                     </select>
                                                     {this.state.errorAdd.kieuKhuyenMai && (
-                                                        <div className="text-danger">{this.state.errorAdd.kieuKhuyenMai}</div>
+                                                        <div
+                                                            className="text-danger">{this.state.errorAdd.kieuKhuyenMai}</div>
                                                     )}
                                                 </div>
                                                 <div className="col-md-3">
-                                                    <label>Giảm giá: <span style={{ color: 'red' }}>*</span></label>
+                                                    <label>Giảm giá: <span style={{color: 'red'}}>*</span></label>
                                                     <input
                                                         className={`form-control ${this.state.errorAdd.giamGia ? 'is-invalid' : ''}`}
                                                         name="giamGia"
@@ -293,9 +329,11 @@ class KhuyenMaiComponent extends Component {
                                                 <div className="col-md-3">
                                                     <label>Số lượng: <span style={{ color: 'red' }}>*</span></label>
                                                     <input
+                                                        type={"number"}
                                                         className={`form-control ${this.state.errorAdd.soLuong ? 'is-invalid' : ''}`}
                                                         name="soLuong"
                                                         onChange={this.thayDoiTruongAdd}
+                                                        value={this.state.khuyenMaiAdd.soLuong}
                                                     />
                                                     {this.state.errorAdd.soLuong && (
                                                         <div className="text-danger">{this.state.errorAdd.soLuong}</div>
@@ -303,19 +341,21 @@ class KhuyenMaiComponent extends Component {
                                                 </div>
 
                                                 <div className="col-md-3">
-                                                    <label>Điều kiện: <span style={{ color: 'red' }}>*</span></label>
+                                                    <label>Điều kiện: <span style={{color: 'red'}}>*</span></label>
                                                     <input
                                                         className={`form-control ${this.state.errorAdd.dieuKien ? 'is-invalid' : ''}`}
                                                         name="dieuKien"
                                                         onChange={this.thayDoiTruongAdd}
                                                     />
                                                     {this.state.errorAdd.dieuKien && (
-                                                        <div className="text-danger">{this.state.errorAdd.dieuKien}</div>
+                                                        <div
+                                                            className="text-danger">{this.state.errorAdd.dieuKien}</div>
                                                     )}
                                                 </div>
                                             </div>
                                         </div>
-                                        <input type="submit" className="btn btn-primary" value="Add" style={{ marginTop: '10px' }} onClick={this.add} />
+                                        <input type="submit" className="btn btn-primary" value="Add"
+                                               style={{marginTop: '10px'}} onClick={this.add}/>
                                     </form>
                                 </div>
                             </div>
