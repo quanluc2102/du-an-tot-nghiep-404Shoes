@@ -108,17 +108,17 @@ class HoaDonComponents extends Component {
     getStatusText = (status) => {
         switch (status) {
             case 1:
-                return 'Chờ Duyệt';
+                return 'Chờ xác nhận';
             case 2:
-                return 'Duyệt';
+                return 'Chờ giao';
             case 3:
-                return 'Đang chờ đơn vị vận chuyển';
-            case 4:
                 return 'Đang giao';
-            case 5:
+            case 4:
                 return 'Hoàn thành';
+            case 5:
+                return 'Hủy';
             default:
-                return 'Không xác định'; // Default text (or another text of your choice)
+                return 'Không xác định';  // Default text (or another text of your choice)
         }
     }
     handleSearchFocus = () => {

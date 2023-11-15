@@ -1,5 +1,6 @@
 package com.example.datn404shoes.controller;
 
+import com.example.datn404shoes.entity.DanhMuc;
 import com.example.datn404shoes.entity.HoaDon;
 import com.example.datn404shoes.entity.TaiKhoan;
 import com.example.datn404shoes.entity.ThanhToan;
@@ -88,5 +89,11 @@ public class HoaDonController {
 //        hoaDonImpl.update(hoaDon);
 //        return "redirect:/hoa_don/hien-thi";
 //    }
+@PutMapping("update/{id}")
+public ResponseEntity<?> update(Model model,
+                                @PathVariable("id") Long id,
+                                @RequestBody HoaDon hoaDon) {
 
+    return ResponseEntity.ok(hoaDonImpl.update(id, hoaDon));
+}
 }

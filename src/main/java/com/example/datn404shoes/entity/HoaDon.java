@@ -27,6 +27,36 @@ public class HoaDon {
     @Column(name = "ngay_cap_nhat")
     private Date ngayCapNhat;
 
+    @Column(name = "cho_xac_nhan")
+    private Date choXacNhan;
+
+    @Column(name = "ghi_chu_cho_xac_nhan")
+    private String ghiChuChoXacNhan;
+
+    @Column(name = "cho_giao")
+    private Date choGiao;
+
+    @Column(name = "ghi_chu_cho_giao")
+    private String ghiChuChoGiao;
+
+    @Column(name = "dang_giao")
+    private Date dangGiao;
+
+    @Column(name = "ghi_chu_dang_giao")
+    private String ghiChuDangGiao;
+
+    @Column(name = "hoan_thanh")
+    private Date hoanThanh;
+
+    @Column(name = "ghi_chu_hoan_thanh")
+    private String ghiChuHoanThanh;
+
+    @Column(name = "huy")
+    private Date huy;
+
+    @Column(name = "ghi_chu_huy")
+    private String ghiChuHuy;
+
     @Column(name = "trang_thai")
     private int trangThai;
 

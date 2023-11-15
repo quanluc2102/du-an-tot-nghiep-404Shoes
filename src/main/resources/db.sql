@@ -172,6 +172,16 @@ CREATE TABLE hoa_don (
                          ghi_chu NVARCHAR(255),
                          ngay_cap_nhat DATETIME,
                          trang_thai INT NOT NULL,
+                         cho_xac_nhan DATETIME NULL,
+                         ghi_chu_cho_xac_nhan NVARCHAR(255),
+                         cho_giao DATETIME NULL,
+                         ghi_chu_cho_giao NVARCHAR(255),
+                         dang_giao DATETIME NULL,
+                         ghi_chu_dang_giao NVARCHAR(255),
+                         hoan_thanh DATETIME NULL,
+                         ghi_chu_hoan_thanh NVARCHAR(255),
+                         huy DATETIME NULL,
+                         ghi_chu_huy NVARCHAR(255),
                          tai_khoan_id BIGINT,
                          thanh_toan_id BIGINT,
                          kieu_hoa_don INT NOT NULL,
@@ -182,12 +192,10 @@ CREATE TABLE hoa_don (
                          ten NVARCHAR(255) NOT NULL,
                          sdt NVARCHAR(11),
                          email NVARCHAR(255),
-    --sửa 3 trường sau cho đồng nhất
                          dia_chi_cu_the NVARCHAR(255),
                          tinh_thanh_pho NVARCHAR(255),
                          quan_huyen NVARCHAR(255),
-                         xa_phuong_thi_tran nvarchar(255),
-    -------------------------------------------
+                         xa_phuong_thi_tran NVARCHAR(255),
                          FOREIGN KEY (tai_khoan_id) REFERENCES tai_khoan(id),
                          FOREIGN KEY (thanh_toan_id) REFERENCES thanh_toan(id)
 );
