@@ -546,6 +546,14 @@ class ChiTietComponent extends Component {
         this.setState({ listFileTong: [ ...this.state.listFileTong,...selectedImagesArray] })
         this.setState({anhThay:selectedImagesArray})
     };
+    downloadImage = (url, filename) => {
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
     render() {
         const { selectedOptionMS } = this.state;
         const { selectedOptionKT } = this.state;
@@ -832,7 +840,12 @@ class ChiTietComponent extends Component {
                                         </div>
                                         <div style={{marginLeft:"30px",display:"inline-block"}}>
                                             <label>QR : </label>
-                                            <img  src={'/niceadmin/img/'+ this.state.detailSPCT.qr} alt={this.state.detailSPCT.qr} style={{ width: '100px', height: '100px' ,margin:10,objectFit: 'cover',objectPosition: 'center'}} />
+                                            <a href={'/niceadmin/img/'+ this.state.detailSPCT.qr}
+                                               download={this.state.detailSPCT.qr}
+                                               target="_blank"
+                                               rel="noopener noreferrer">
+                                                <img  src={'/niceadmin/img/'+ this.state.detailSPCT.qr} alt={this.state.detailSPCT.qr} style={{ width: '100px', height: '100px' ,margin:10,objectFit: 'cover',objectPosition: 'center'}} />
+                                            </a>
                                         </div>
                                         <div style={{marginLeft:"30px",display:"inline-block"}}>
                                             <label>Ảnh hiện tại : </label>
