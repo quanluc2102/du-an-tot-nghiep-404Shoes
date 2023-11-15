@@ -411,6 +411,7 @@ class ChiTietComponent extends Component {
     };
 
     thayDoiTenAdd=(event)=>{
+
         this.setState(
             prevState=>({
                 sanPham:{
@@ -523,50 +524,33 @@ class ChiTietComponent extends Component {
         );
     };
     thayDoiGiaOne=(event)=>{
+        let newValue = Number(event.target.value); // Chuyển đổi giá trị nhập thành số
+
+        // Sử dụng Math.min và Math.max để giới hạn giá trị trong khoảng từ 0 đến 200
+        newValue = Math.min(100000000, Math.max(0, newValue));
         this.setState(
             prevState=>({
                 detailSPCT:{
                     ...prevState.detailSPCT,
-                    donGia: event.target.value
+                    donGia: newValue
                 }
             })
         );
-        if(!event.target.value.trim()){
-            let error = {...this.state.error,gia:"Giá ko được trống !"};
-            this.setState({error:error});
-        }else if(event.target.value < 0){
-            let error = {...this.state.error,gia:"Giá ko được nhỏ hơn 0 !"};
-            this.setState({error:error});
-        }else if(event.target.value > 100000000){
-            let error = {...this.state.error,gia:"Giá ko được lớn hơn 100000000 !"};
-            this.setState({error:error});
-        }else {
-            let error = {...this.state.error,gia:""};
-            this.setState({error:error});
-        }
     };
     thayDoiSoLuongOne=(event)=>{
+        let newValue = Number(event.target.value); // Chuyển đổi giá trị nhập thành số
+
+        // Sử dụng Math.min và Math.max để giới hạn giá trị trong khoảng từ 0 đến 200
+        newValue = Math.min(200, Math.max(0, newValue));
         this.setState(
             prevState=>({
                 detailSPCT:{
                     ...prevState.detailSPCT,
-                    soLuong:event.target.value
+                    soLuong:newValue
                 }
             })
         );
-        if(!event.target.value.trim()){
-            let error = {...this.state.error,soLuong:"Số lượng ko được trống !"};
-            this.setState({error:error});
-        }else if(event.target.value < 0){
-            let error = {...this.state.error,soLuong:"Số lượng ko được nhỏ hơn 0 !"};
-            this.setState({error:error});
-        }else if(event.target.value > 200){
-            let error = {...this.state.error,soLuong:"Số lượng ko được lớn hơn 200 !"};
-            this.setState({error:error});
-        }else {
-            let error = {...this.state.error,soLuong:""};
-            this.setState({error:error});
-        }
+
     };
     thayDoiAnhOne=(event)=>{
         const selectedFiles = event.target.files;
@@ -859,12 +843,12 @@ class ChiTietComponent extends Component {
                                         </div>
                                         <div style={{marginLeft:"30px",display:"inline-block"}} className="col-lg-6">
                                             <label>Số lượng : </label>
-                                            <input className={`form-control ${this.state.error.soLuong ? 'is-invalid' : ''}`} defaultValue={this.state.detailSPCT.soLuong} type="number" onChange={this.thayDoiSoLuongOne}/>
+                                            <input className={`form-control ${this.state.error.soLuong ? 'is-invalid' : ''}`} value={this.state.detailSPCT.soLuong} type="number" onChange={this.thayDoiSoLuongOne}/>
                                             {this.state.error.soLuong && <div className="text-danger">{this.state.error.soLuong}</div>}
                                         </div>
                                         <div style={{marginLeft:"30px",display:"inline-block"}} className="col-lg-5">
                                             <label>Giá : </label>
-                                            <input className={`form-control ${this.state.error.gia ? 'is-invalid' : ''}`} defaultValue={this.state.detailSPCT.donGia} type="number" onChange={this.thayDoiGiaOne}/>
+                                            <input className={`form-control ${this.state.error.gia ? 'is-invalid' : ''}`} value={this.state.detailSPCT.donGia} type="number" onChange={this.thayDoiGiaOne}/>
                                             {this.state.error.gia && <div className="text-danger">{this.state.error.gia}</div>}
                                         </div>
                                         <div style={{marginLeft:"30px",display:"inline-block"}}>

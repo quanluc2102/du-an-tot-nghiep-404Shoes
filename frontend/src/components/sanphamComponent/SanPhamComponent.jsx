@@ -180,9 +180,9 @@ class SanPhamComponent extends Component {
                                             <button className="btn btn-primary " style={{margin:10}} onClick={this.formAdd}> Thêm sản phẩm </button>
                                             <div>
                                                 <label style={{margin:10}}>Trạng thái</label>
-                                                <label style={{margin:10}}><input type="radio" value="2" name="trangThai" id="trangThai" checked={this.state.trangThai==="2"} onChange={this.thayDoiTrangThai}/> Tất cả</label>
-                                                <label style={{margin:10}}><input type="radio" value="1" name="trangThai" id="trangThai" checked={this.state.trangThai==="1"} onChange={this.thayDoiTrangThai}/> Hoạt động</label>
-                                                <label style={{margin:10}}><input type="radio" value="0" name="trangThai" id="trangThai" checked={this.state.trangThai==="0"}  onChange={this.thayDoiTrangThai}/> Ngừng hoạt động</label>
+                                                <label style={{margin:10,color:"blue"}}><input type="radio" value="2" name="trangThai" id="trangThai" checked={this.state.trangThai==="2"} onChange={this.thayDoiTrangThai}/> Tất cả</label>
+                                                <label style={{margin:10,color:"green"}}><input type="radio" value="1" name="trangThai" id="trangThai" checked={this.state.trangThai==="1"} onChange={this.thayDoiTrangThai}/> Hoạt động</label>
+                                                <label style={{margin:10,color:"red"}}><input type="radio" value="0" name="trangThai" id="trangThai" checked={this.state.trangThai==="0"}  onChange={this.thayDoiTrangThai}/> Ngừng hoạt động</label>
 
 
                                             </div>
