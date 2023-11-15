@@ -25,7 +25,7 @@ import NhanVienComponent from "./components/taikhoancomponent/NhanVienComponent"
 import KhachHangComponent from "./components/taikhoancomponent/KhachHangComponent";
 import QuanLyComponent from "./components/taikhoancomponent/QuanLyComponent";
 import HoaDonChiTietComponents from "./components/hoadonchitietcomponents/HoaDonChiTietComponents";
-import ThongKeDoanhThuSanPham from "./components/tichdiemcomponent/ThongKeDoanhThuSanPham";
+import ThongKeDoanhThuSanPham from "./components/thongkecomponent/ThongKeDoanhThuSanPham";
 import ThongTinComponent from "./components/thongtincomponent/ThongTinComponent";
 import TaiKhoanQuanLyComponent from "./components/taikhoancomponent/TaiKhoanQuanLyComponent";
 import TaiKhoanQLUpdate from "./components/taikhoancomponent/TaiKhoanQLUpdate";
