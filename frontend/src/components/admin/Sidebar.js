@@ -7,7 +7,7 @@ function Sidebar() {
                 <li className="nav-item">
                     <a className="nav-link " href="index.html">
                         <i className="bi bi-grid"></i>
-                        <span>Dashboard</span>
+                        <span>Tổng quan</span>
                     </a>
                 </li>
 
@@ -93,38 +93,36 @@ function Sidebar() {
                             <a href="/nhanvien">
                                 <i className="bi bi-circle"></i><span>Nhân viên</span>
                             </a>
-                            <a href="/quanly">
-                                <i className="bi bi-circle"></i><span>Quản lý</span>
-                            </a>
                             <a href="/khachhang">
                                 <i className="bi bi-circle"></i><span>Khách hàng</span>
-                            </a>
-                            <a href="/taikhoan">
-                                <i className="bi bi-circle"></i><span>Tài khoản</span>
                             </a>
                         </li>
                     </ul>
                 </li>
+
                 <li className="nav-item">
-                    <a className="nav-link collapsed" href="users-profile.html">
-                        <i className="bi bi-bar-chart"></i>
-                        <span>Thống kê</span>
+                    <a className="nav-link collapsed" data-bs-target="#charts-nav1" data-bs-toggle="collapse">
+                        <i className="bi bi-bar-chart"></i><span>Thống kê</span><i
+                        className="bi bi-chevron-down ms-auto"></i>
                     </a>
-                </li>
-                <li className="nav-item">
-                    <a className="nav-link collapsed" href="/tichdiem">
-                        <i className="bi bi-bar-chart"></i>
-                        <span>Quản lý tích điểm</span>
-                    </a>
+                    <ul id="charts-nav1" className="nav-content collapse " data-bs-parent="#sidebar-nav">
+                        <li>
+                            <a href="/thongkedoanhthusanpham">
+                                <i className="bi bi-circle"></i><span>Thống kê theo sản phẩm đã bán</span>
+                            </a>
+                            <a href="/khachhang">
+                                <i className="bi bi-circle"></i><span>Thống kê doanh thu theo tháng</span>
+                            </a>
+                        </li>
+                    </ul>
                 </li>
 
-
-                <li className="nav-heading">Pages</li>
+                <li className="nav-heading">Người dùng</li>
 
                 <li className="nav-item">
                     <a className="nav-link collapsed" href="users-profile.html">
                         <i className="bi bi-person"></i>
-                        <span>Profile</span>
+                        <span>Thông tin nhân viên</span>
                     </a>
                 </li>
 
@@ -153,7 +151,7 @@ function Sidebar() {
                 <li className="nav-item">
                     <a className="nav-link collapsed" href="pages-login.html">
                         <i className="bi bi-box-arrow-in-right"></i>
-                        <span>Logout</span>
+                        <span>Đăng xuất</span>
                     </a>
                 </li>
             </ul>

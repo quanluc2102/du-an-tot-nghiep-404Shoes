@@ -25,7 +25,7 @@ import NhanVienComponent from "./components/taikhoancomponent/NhanVienComponent"
 import KhachHangComponent from "./components/taikhoancomponent/KhachHangComponent";
 import QuanLyComponent from "./components/taikhoancomponent/QuanLyComponent";
 import HoaDonChiTietComponents from "./components/hoadonchitietcomponents/HoaDonChiTietComponents";
-import TichDiemPopup from "./components/tichdiemcomponent/TichDiemPopup";
+import ThongKeDoanhThuSanPham from "./components/tichdiemcomponent/ThongKeDoanhThuSanPham";
 import ThongTinComponent from "./components/thongtincomponent/ThongTinComponent";
 import TaiKhoanQuanLyComponent from "./components/taikhoancomponent/TaiKhoanQuanLyComponent";
 import TaiKhoanQLUpdate from "./components/taikhoancomponent/TaiKhoanQLUpdate";
@@ -83,7 +83,7 @@ function App() {
             <Route path='/thongtin' component={ThongTinComponent} />
             <Route path='/phanquyendetail/:id' component={PhanQuyenComment} />
             <Route path='/HoaDonChiTiet/:id' component={HoaDonChiTietComponents} />
-            <Route path='/tichdiem' component={TichDiemPopup} />
+            <Route path='/thongkedoanhthusanpham' component={ThongKeDoanhThuSanPham} />
           </Switch>
         </main>
         <Footer />

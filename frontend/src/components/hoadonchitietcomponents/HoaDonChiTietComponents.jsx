@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import HoaDonChiTietService from '../../services/hoadonchitietservice/HoaDonChiTietService';
 import HoaDonService from '../../services/hoadonservice/HoaDonService';
 import { Modal, Button } from 'react-bootstrap';
-import { tichDiemDaCoTaiKhoan, tichDiemMoi } from "../tichdiemcomponent/TichDiemService";
+// import { tichDiemDaCoTaiKhoan, tichDiemMoi } from "../tichdiemcomponent/TichDiemService";
 import 'font-awesome/css/font-awesome.min.css';
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.0/css/all.min.css"></link>
 class HoaDonChiTietComponents extends Component {
@@ -91,15 +91,15 @@ class HoaDonChiTietComponents extends Component {
         // Gọi API hoặc thực hiện tìm kiếm tại đây và cập nhật tài khoản ID
     };
 
-    handleTichDiemDaCoTaiKhoan = async () => {
-        const message = await tichDiemDaCoTaiKhoan(this.state.sdt, this.state.diem);
-        this.setState({ result: message });
-    };
-
-    handleTichDiemMoi = async () => {
-        const message = await tichDiemMoi(this.state.sdt, this.state.diem);
-        this.setState({ result: message });
-    };
+    // handleTichDiemDaCoTaiKhoan = async () => {
+    //     const message = await tichDiemDaCoTaiKhoan(this.state.sdt, this.state.diem);
+    //     this.setState({ result: message });
+    // };
+    //
+    // handleTichDiemMoi = async () => {
+    //     const message = await tichDiemMoi(this.state.sdt, this.state.diem);
+    //     this.setState({ result: message });
+    // };
 
     getCircleColor(trangThai) {
         if (trangThai === 1) {
