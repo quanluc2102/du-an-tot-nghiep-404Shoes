@@ -11,6 +11,7 @@ import com.example.datn404shoes.service.TaiKhoanService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -47,13 +48,14 @@ public class TaiKhoanServiceimpl implements TaiKhoanService {
     public TaiKhoan add(TaiKhoan taiKhoan) {
         taiKhoan.setNgayTao(Date.valueOf(LocalDate.now()));
         taiKhoan.setNgayCapNhat(Date.valueOf(LocalDate.now()));
-         responsitory.save(taiKhoan);
+        taiKhoan.setEmail(taiKhoan.getEmail());
+        responsitory.save(taiKhoan);
         return taiKhoan;
     }
 
     @Override
     public void delete(Long id) {
-               responsitory.deleteById(id);
+        responsitory.deleteById(id);
     }
 
     @Override
@@ -72,7 +74,8 @@ public class TaiKhoanServiceimpl implements TaiKhoanService {
 
     @Override
     public List<TaiKhoan> getAll() {
-        return responsitory.findAll();
+        Sort sort = Sort.by(Sort.Direction.DESC,"id");
+        return responsitory.findAll(sort);
     }
 
     @Override
@@ -88,7 +91,7 @@ public class TaiKhoanServiceimpl implements TaiKhoanService {
     @Override
     public TaiKhoan thayDoiTrangThai(Long id, TaiKhoan taiKhoan) {
         TaiKhoan taiKhoan1 = responsitory.findById(id).get();
-//        taiKhoan1.setUsername(taiKhoan.getUsername());
+        taiKhoan1.setMaTaiKhoan(taiKhoan.getMaTaiKhoan());
         taiKhoan1.setEmail(taiKhoan.getEmail());
         taiKhoan1.setNgayCapNhat(Date.valueOf(LocalDate.now()));
         taiKhoan1.setPassword(taiKhoan.getPassword());
@@ -120,16 +123,13 @@ public class TaiKhoanServiceimpl implements TaiKhoanService {
         return responsitory.findNhanVienByQuyenId4();
     }
 
-//    @Override
-//    public List<TaiKhoan> getAllTaiKhoan(Long id) {
-//        return responsitory.getAllTaiKhoan(id);
-//    }
-
     @Override
     public TaiKhoan getOneBySDT(String sdt) {
         return taiKhoanResponsitory.findByThongTinNguoiDung_Sdt(sdt);
     }
 
 
-
+    public Optional<TaiKhoan> findById(Long id) {
+        return responsitory.findById(id);
+    }
 }

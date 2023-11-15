@@ -31,9 +31,11 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Date;
 import java.text.DateFormat;
+import java.text.Normalizer;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.regex.Pattern;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:3000")
@@ -57,10 +59,12 @@ public class TaiKhoanController {
 
     @GetMapping("index")
     public Page<TaiKhoan> index(Model model, Pageable pageable) {
-
         return serviceimpl.findAll(pageable);
     }
-
+    @GetMapping("index1")
+    public List<TaiKhoan> index1(){
+        return serviceimpl.getAll();
+    }
     @PostMapping("add")
     public ResponseEntity<?> add(Model model,
                                  @RequestBody TaiKhoan taiKhoan) {
@@ -173,15 +177,17 @@ public class TaiKhoanController {
         return ResponseEntity.ok(serviceimpl.add(taiKhoan));
     }
     private String generatePasswordFromName(String ten) {
-        // Convert the name to lowercase and remove spaces
-        String nameWithoutSpaces = ten.toLowerCase().replaceAll("\\s", "");
-
-        // Generate a random number (you can use a more sophisticated method)
+        String nameWithoutDiacritics = removeDiacritics(ten);
+        String nameWithoutSpaces = nameWithoutDiacritics.toLowerCase().replaceAll("[^a-zA-Z0-9]", "");
         int randomNumber = (int) (Math.random() * 10000);
-
-        // Combine the name and random number to create a password
         return nameWithoutSpaces + randomNumber;
     }
+    private String removeDiacritics(String input) {
+        String normalizedString = Normalizer.normalize(input, Normalizer.Form.NFD);
+        Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
+        return pattern.matcher(normalizedString).replaceAll("");
+    }
+
     @PutMapping("updateNhanVien/{id}")
     public ResponseEntity<?> updateNhanVien(@PathVariable Long id,
                                             @RequestBody TaiKhoanVaThongTin taiKhoanVaThongTin) {
@@ -230,32 +236,18 @@ public class TaiKhoanController {
         ThongTinNguoiDung thongTinNguoiDung = taiKhoanVaThongTin.getThongTinNguoiDung();
         TaiKhoan taiKhoan = taiKhoanVaThongTin.getTaiKhoan();
 
-        Long list = taiKhoanRepository.count();
-        taiKhoan.setMaTaiKhoan("KH" + (list + 1));
         var b = thongTinNguoiDungServiceimpl.add(thongTinNguoiDung);
-        taiKhoan.setTrangThai(true);
-        String employeeName = thongTinNguoiDung.getTen(); // Replace this with the actual name
         taiKhoan.setThongTinNguoiDung(b);
-        taiKhoan.setAnh(taiKhoanVaThongTin.getFiles().get(0));
+
         serviceimpl.add(taiKhoan);
-        DiaChi diaChi = new DiaChi();
-        diaChi.setTen(b.getTen());
-        diaChi.setSdt(b.getSdt());
-        diaChi.setThongTinNguoiDung(b);
-        diaChi.setTrangThai(0);
-        diaChi.setDiaChiCuThe(taiKhoanVaThongTin.getDiaChiCuThe());
-        diaChi.setTinhThanhPho(taiKhoanVaThongTin.getTinhThanhPho());
-        diaChi.setQuanHuyen(taiKhoanVaThongTin.getQuanHuyen());
-        diaChi.setXaPhuongThiTran(taiKhoanVaThongTin.getXaPhuongThiTran());
-        diaChiServiceimpl.add(diaChi);
         PhanQuyen phanQuyen = new PhanQuyen();
         phanQuyen.setTaiKhoan(TaiKhoan.builder().id(taiKhoan.getId()).build());
-        phanQuyen.setQuyen(quyenServiceimpl.findOne(Long.valueOf(3)));
-//        phanQuyen.setQuyen(Quyen.builder().id(3).build());
+        phanQuyen.setQuyen(Quyen.builder().id(3).build());
         phanQuyenServiceimpl.add(phanQuyen);
-        taiKhoan.setPassword("");
+
         return ResponseEntity.ok(serviceimpl.add(taiKhoan));
     }
+
     @PutMapping("updateKhachHang/{id}")
     public ResponseEntity<?> updateKhacHang(@RequestBody TaiKhoanVaThongTin taiKhoanVaThongTin,
                                             @PathVariable("id") Long id) {
