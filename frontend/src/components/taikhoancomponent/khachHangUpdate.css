@@ -1,38 +1,79 @@
-.container {
+/* Add your custom styles here */
+
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+}
+
+.pagetitle {
+    background-color: #3498db;
+    color: #fff;
+    text-align: center;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.section {
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.card {
+    display: flex;
+    justify-content: space-between;
+}
+
+.update-form {
     display: flex;
 }
 
 .left-column {
     flex: 1;
     padding: 20px;
-    border-right: 1px solid #ccc;
 }
 
 .right-column {
     flex: 1;
     padding: 20px;
+    background-color: #f9f9f9;
 }
 
-/* Định dạng cho ảnh, username, tên khách hàng */
-.avatar {
-    max-width: 100px;
-    max-height: 100px;
+.right-column h2 {
+    color: #333;
+    margin-bottom: 20px;
 }
 
-/* Định dạng cho thông tin đăng nhập và tên khách hàng */
-.user-info {
-    margin-top: 10px;
+.right-column div {
+    margin-bottom: 15px;
 }
 
-/* Định dạng cho nút thêm địa chỉ mới */
-.add-address-button {
-    display: block;
-    width: 100px;
+.form-control {
+    width: 100%;
     padding: 10px;
-    background-color: #007bff;
-    color: #fff;
-    text-align: center;
-    text-decoration: none;
-    border-radius: 5px;
-    margin-top: 10px;
+    margin-bottom: 15px;
+    box-sizing: border-box;
 }
+
+.invalid-feedback {
+    color: #e74c3c;
+    margin-top: 5px;
+}
+
+button {
+    background-color: #3498db;
+    color: #fff;
+    padding: 15px;
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #2980b9;
+}
+
+/* Add more styles as needed */

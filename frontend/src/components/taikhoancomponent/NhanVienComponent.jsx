@@ -15,6 +15,10 @@ class NhanVienComponent extends Component {
             currentPage: 1,   // Current page
             filterStatus: 'all',
             searchValue: '',
+            tinhThanhPho: '',
+            quanHuyen: '',
+            xaPhuongThiTran: '',
+            diaChiCuThe:'' ,
             nhanVienQuyen1: [],
             taiKhoanAdd: {
                 maTaiKhoan: '',
@@ -260,6 +264,7 @@ class NhanVienComponent extends Component {
                                                         <td>{tk.email}</td>
                                                         <td>{tk.thongTinNguoiDung.sdt}</td>
                                                         <td>{tk.thongTinNguoiDung.ten}</td>
+
                                                         <td>
                                                             {tk.anh && <img src={`/niceadmin/img/${tk.anh}`} width="100px" height="100px" />}
 

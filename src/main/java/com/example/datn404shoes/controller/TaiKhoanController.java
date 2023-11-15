@@ -31,9 +31,11 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Date;
 import java.text.DateFormat;
+import java.text.Normalizer;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.regex.Pattern;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:3000")
@@ -57,10 +59,12 @@ public class TaiKhoanController {
 
     @GetMapping("index")
     public Page<TaiKhoan> index(Model model, Pageable pageable) {
-
         return serviceimpl.findAll(pageable);
     }
-
+    @GetMapping("index1")
+    public List<TaiKhoan> index1(){
+        return serviceimpl.getAll();
+    }
     @PostMapping("add")
     public ResponseEntity<?> add(Model model,
                                  @RequestBody TaiKhoan taiKhoan) {
@@ -173,15 +177,17 @@ public class TaiKhoanController {
         return ResponseEntity.ok(serviceimpl.add(taiKhoan));
     }
     private String generatePasswordFromName(String ten) {
-        // Convert the name to lowercase and remove spaces
-        String nameWithoutSpaces = ten.toLowerCase().replaceAll("\\s", "");
-
-        // Generate a random number (you can use a more sophisticated method)
+        String nameWithoutDiacritics = removeDiacritics(ten);
+        String nameWithoutSpaces = nameWithoutDiacritics.toLowerCase().replaceAll("[^a-zA-Z0-9]", "");
         int randomNumber = (int) (Math.random() * 10000);
-
-        // Combine the name and random number to create a password
         return nameWithoutSpaces + randomNumber;
     }
+    private String removeDiacritics(String input) {
+        String normalizedString = Normalizer.normalize(input, Normalizer.Form.NFD);
+        Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
+        return pattern.matcher(normalizedString).replaceAll("");
+    }
+
     @PutMapping("updateNhanVien/{id}")
     public ResponseEntity<?> updateNhanVien(@PathVariable Long id,
                                             @RequestBody TaiKhoanVaThongTin taiKhoanVaThongTin) {
@@ -257,24 +263,50 @@ public class TaiKhoanController {
         return ResponseEntity.ok(serviceimpl.add(taiKhoan));
     }
     @PutMapping("updateKhachHang/{id}")
-    public ResponseEntity<?> updateKhacHang(@RequestBody TaiKhoanVaThongTin taiKhoanVaThongTin,
-                                            @PathVariable("id") Long id) {
+    public ResponseEntity<?> updateKhachHang(@PathVariable Long id, @RequestBody TaiKhoanVaThongTin taiKhoanVaThongTin) {
         ThongTinNguoiDung thongTinNguoiDung = taiKhoanVaThongTin.getThongTinNguoiDung();
         TaiKhoan taiKhoan = taiKhoanVaThongTin.getTaiKhoan();
+        DiaChi diaChiMoi = taiKhoanVaThongTin.getDiaChiMoi(); // Lấy thông tin địa chỉ mới
 
-
-        thongTinNguoiDung.setId(thongTinNguoiDung.getId()); // Assuming id is the ID of the ThongTinNguoiDung to update
-        thongTinNguoiDungServiceimpl.update(thongTinNguoiDung.getId(), thongTinNguoiDung); // Update ThongTinNguoiDung
-        taiKhoan.setId(id);
+        // Tính toán mã tài khoản mới và thêm Thông Tin Người Dùng
+//        Long list = taiKhoanRepository.count();
+//        taiKhoan.setMaTaiKhoan("KH" + (list + 1));
+        var b = thongTinNguoiDungServiceimpl.add(thongTinNguoiDung);
+        taiKhoan.setTrangThai(true);
+        taiKhoan.setThongTinNguoiDung(b);
+        taiKhoan.setAnh(taiKhoanVaThongTin.getFiles().get(0));
+        // Kiểm tra xem trường files có giá trị không
+//        if (taiKhoanVaThongTin.getFiles() != null && !taiKhoanVaThongTin.getFiles().isEmpty()) {
+//            taiKhoan.setAnh(taiKhoanVaThongTin.getFiles().get(0));
+//        } else {
+//            // Xử lý khi files là null hoặc trống
+//            // Có thể throw một exception hoặc xử lý theo ý bạn
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Danh sách files không được trống.");
+//        }
+        System.out.println("Before if statement");
         serviceimpl.update(id, taiKhoan);
 
-        // Update or add PhanQuyen (assuming you want to update or add a new PhanQuyen)
-        PhanQuyen phanQuyen = new PhanQuyen();
-        phanQuyen.setTaiKhoan(TaiKhoan.builder().id(id).build()); // Use the existing Quan Ly ID
-        phanQuyen.setQuyen(Quyen.builder().id(3).build()); // Assuming ID 2 represents "Quan Ly" role
-        phanQuyenServiceimpl.add(phanQuyen); // You should have an update method for PhanQuyen
 
-        return ResponseEntity.ok("Update successful"); // You can return a success message or other appropriate response.
+        // Thêm hoặc cập nhật Địa chỉ mới
+        if (diaChiMoi != null) {
+            System.out.println("diaChiMoi: " + diaChiMoi.toString());
+            diaChiMoi.setThongTinNguoiDung(b);
+            diaChiServiceimpl.updateOrAdd(diaChiMoi);
+            System.out.println("Đã thêm hoặc cập nhật địa chỉ mới: " + diaChiMoi.toString());
+        } else {
+            System.out.println("diaChiMoi là null, không thực hiện thêm hoặc cập nhật.");
+        }
+
+        // Tạo Phân Quyền mới
+        PhanQuyen phanQuyen = new PhanQuyen();
+        phanQuyen.setTaiKhoan(TaiKhoan.builder().id(taiKhoan.getId()).build());
+        phanQuyen.setQuyen(quyenServiceimpl.findOne(Long.valueOf(3)));
+        phanQuyenServiceimpl.add(phanQuyen);
+
+        // Đặt mật khẩu trống trước khi trả về response
+        taiKhoan.setPassword("");
+
+        return ResponseEntity.ok(serviceimpl.update(id, taiKhoan));
     }
 
     @DeleteMapping("delete")
