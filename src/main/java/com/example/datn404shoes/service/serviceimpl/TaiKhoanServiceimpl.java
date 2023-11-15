@@ -20,8 +20,10 @@ import java.sql.Date;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
+import java.util.Optional;
+import java.util.Random;
+import java.util.Base64;
 @Service
 public class TaiKhoanServiceimpl implements TaiKhoanService {
     @Autowired
@@ -48,9 +50,21 @@ public class TaiKhoanServiceimpl implements TaiKhoanService {
     public TaiKhoan add(TaiKhoan taiKhoan) {
         taiKhoan.setNgayTao(Date.valueOf(LocalDate.now()));
         taiKhoan.setNgayCapNhat(Date.valueOf(LocalDate.now()));
-        taiKhoan.setEmail(taiKhoan.getEmail());
+        String randomPassword = generateRandomPassword();
+
+        taiKhoan.setPassword(randomPassword);
+
         responsitory.save(taiKhoan);
         return taiKhoan;
+    }
+    private String generateRandomPassword() {
+        // Sử dụng Random để sinh mật khẩu ngẫu nhiên
+        Random random = new Random();
+        byte[] randomBytes = new byte[16];
+        random.nextBytes(randomBytes);
+
+        // Chuyển đổi byte array thành chuỗi Base64
+        return Base64.getEncoder().encodeToString(randomBytes);
     }
 
     @Override
@@ -71,7 +85,26 @@ public class TaiKhoanServiceimpl implements TaiKhoanService {
         responsitory.save(taiKhoan);
         return tk;
     }
+    @Override
+    public void update1(Long id, TaiKhoan taiKhoan) {
+        Optional<TaiKhoan> existingTaiKhoanOptional = responsitory.findById(id);
 
+        if (existingTaiKhoanOptional.isPresent()) {
+            TaiKhoan existingTaiKhoan = existingTaiKhoanOptional.get();
+
+            // Kiểm tra và cập nhật trường anh
+            if (taiKhoan.getAnh() != null && !taiKhoan.getAnh().isEmpty()) {
+                existingTaiKhoan.setAnh(taiKhoan.getAnh());
+            }
+
+            // Cập nhật các trường cần thiết của existingTaiKhoan với giá trị mới từ taiKhoan
+            existingTaiKhoan.setTrangThai(taiKhoan.isTrangThai());
+            existingTaiKhoan.setThongTinNguoiDung(taiKhoan.getThongTinNguoiDung());
+
+            // Lưu lại thay đổi
+            responsitory.save(existingTaiKhoan);
+        }
+    }
     @Override
     public List<TaiKhoan> getAll() {
         Sort sort = Sort.by(Sort.Direction.DESC,"id");

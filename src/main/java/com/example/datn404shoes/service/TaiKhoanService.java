@@ -18,7 +18,7 @@ public interface TaiKhoanService {
     void delete(Long id);
 
     TaiKhoan update(Long id, TaiKhoan taiKhoan);
-
+    void update1 (Long id, TaiKhoan taiKhoan);
     List<TaiKhoan> getAll();
 
     TaiKhoan getOne(Long id);

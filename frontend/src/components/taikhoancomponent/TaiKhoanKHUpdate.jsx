@@ -2,92 +2,128 @@ import React, { Component } from 'react';
 import taikhoanservice from '../../services/taikhoanservice/taikhoanservice';
 import { toast } from 'react-toastify';
 import axios from "axios";
-
+import "./khachHangUpdate.css";
 class TaiKhoanKHUpdate extends Component {
-    state = {
-        nhanVienQuyen3: [],
-        thongTinNguoiDung: [],
-        provinces: [],
-        districts: [],
-        wards: [],
-        pageCount: 0,
-        taiKhoanUpdate: {
-            id: this.props.match.params.id,
-            maTaiKhoan: '',
-            email: '',
-            anh: '',
-        },
-        nguoiDungUpdate: {
-            id: this.props.match.params.id,
-            diaChi: '',
-            sdt: '',
-            ten: '',
-            cccd: '',
-            gioiTinh: '',
-            ngaySinh: '',
-            addresses: [],
-        },
-        currentAddress: {
-            name: '',
-            phone: '',
-            detailedAddress: '',
-            province: '',
-            district: '',
-            ward: '',
-            town: '',
-        },
-        errorUpdate: {
-            diaChi: '',
-            sdt: '',
-            ten: '',
-            cccd: '',
-            gioiTinh: '',
-            ngaySinh: '',
-            maTaiKhoan: '',
-            email: '',
-            password: '',
-            anh: ''
-        },
-        address: {
-            name: '',
-            phone: '',
-            detailedAddress: '',
-            province: '',
-            district: '',
-            ward: '',
-            town: '',
-        },
-    };
+    constructor(props) {
+        super(props);
+        this.state = {
+            nhanVienQuyen3: [],
+            thongTinNguoiDung: [],
+            tinhThanhPho: '',
+            quanHuyen: '',
+            xaPhuongThiTran: '',
+            diaChiCuThe: '',
+            provinces: [],
+            districts: [],
+            cities: [],
+            diaChi: [],
+            wards: [],
+            files: null,
+            // addresses: [],
+            pageCount: 0,
+            taiKhoanUpdate: {
+                id: this.props.match.params.id,
+                maTaiKhoan: '',
+                email: '',
+                anh: '',
+            },
+            nguoiDungUpdate: {
+                id: this.props.match.params.id,
+                sdt: '',
+                ten: '',
+                cccd: '',
+                gioiTinh: '',
+                ngaySinh: '',
+                addresses: [],
+            },
+            // currentAddress: {},
+
+            currentAddress: {
+                ten: '',
+                sdt: '',
+                diaChiCuThe: '',
+                tinhThanhPho: '',
+                quanHuyen: '',
+                xaPhuongThiTran: '',
+            },
+            errorUpdate: {
+                diaChiCuThe: '',
+                tinhThanhPho: '',
+                quanHuyen: '',
+                xaPhuongThiTran: '',
+                sdt: '',
+                ten: '',
+                cccd: '',
+                gioiTinh: '',
+                ngaySinh: '',
+                maTaiKhoan: '',
+                email: '',
+                password: '',
+                anh: ''
+            },
+            addresses: [
+                {
+                    ten: '',
+                    sdt: '',
+                    diaChiCuThe: '',
+                    tinhThanhPho: '',
+                    quanHuyen: '',
+                    xaPhuongThiTran: '',
+
+                }
+            ],
+
+
+        };
+        this.update = this.update.bind(this);
+        this.thayDoiAnhUpdate = this.thayDoiAnhUpdate.bind(this);
+        this.thayDoiTinhUpdate = this.thayDoiTinhUpdate.bind(this);
+        this.thayDoiHuyenUpdate = this.thayDoiHuyenUpdate.bind(this);
+        this.thayDoiXaUpdate = this.thayDoiXaUpdate.bind(this);
+        this.thayDoiTenDiaChi = this.thayDoiTenDiaChi.bind(this);
+        this.thayDoiSoDienThoaiDiaChi = this.thayDoiSoDienThoaiDiaChi.bind(this);
+        this.thayDoiTinhThanhPhoDiaChi = this.thayDoiTinhThanhPhoDiaChi.bind(this);
+        this.thayDoiPhuongXaDiaChi = this.thayDoiPhuongXaDiaChi.bind(this);
+        this.thayDoiQuanHuyenDiaChi = this.thayDoiQuanHuyenDiaChi.bind(this);
+        this.thayDoiDiaChiUpdate = this.thayDoiDiaChiUpdate.bind(this);
+
+        this.handleCityChange = this.handleCityChange.bind(this);
+        this.handleDistrictChange = this.handleDistrictChange.bind(this);
+        this.handleWardChange = this.handleWardChange.bind(this);
+
+    }
+
 
     componentDidMount() {
         const id = this.props.match.params.id;
+        const storedAddresses = localStorage.getItem('addresses');
+        if (storedAddresses) {
+            this.setState({
+                addresses: JSON.parse(storedAddresses),
+            });
+        }
 
-        // Fetch user account data
+        // Thực hiện fetch các thành phố khi component được mount
+        this.fetchCities();
         taikhoanservice.getTaiKhoanById(id)
             .then((response) => {
                 const taiKhoanData = response.data;
-                console.log('User Account Data:', taiKhoanData);
-                this.setState({ taiKhoanUpdate: taiKhoanData });
+                this.setState({taiKhoanUpdate: taiKhoanData});
 
-                // Fetch user information data
                 taikhoanservice.getThongTinByTaiKhoan(taiKhoanData)
                     .then((thongTinResponse) => {
                         const thongTinData = thongTinResponse.data;
-                        console.log('User Information Data:', thongTinData);
-                        this.setState({ nguoiDungUpdate: thongTinData });
+                        this.setState({nguoiDungUpdate: thongTinData});
                     })
-                    .catch((error) => {
-                        console.error('Error fetching user information:', error);
-                    });
             })
             .catch((error) => {
-                console.error('Error fetching user account:', error);
+                console.error('Lỗi khi lấy tài khoản người dùng:', error);
             });
 
-        // Fetch provinces and initialize empty arrays for districts and wards
+        // Lấy danh sách tỉnh/thành phố khi component được mount
         axios.get("https://provinces.open-api.vn/api/?depth=1")
             .then((response) => {
-                this.setState({ provinces: response.data, districts: [], wards: [] });
+                this.setState({provinces: response.data, districts: [], wards: []});
             })
             .catch((error) => {
                 console.error('Lỗi khi lấy danh sách tỉnh/thành phố:', error);
@@ -97,154 +133,443 @@ class TaiKhoanKHUpdate extends Component {
 
     update = (e) => {
         e.preventDefault();
-        const { taiKhoanUpdate, nguoiDungUpdate, currentAddress, addresses } = this.state;
-        const requestData = {
-            taiKhoan: taiKhoanUpdate,
-            thongTinNguoiDung: nguoiDungUpdate,
-            diaChi: currentAddress,
-            addresses: addresses,
-        };
+        console.log("Update button clicked");
+        let listFile = [];
+        for (let i = 0; i < (this.state.files || []).length; i++) {
+            listFile.push(this.state.files[i].name);
+            const {taiKhoanUpdate, nguoiDungUpdate, addresses} = this.state;
+            const requestData = {
+                taiKhoan: taiKhoanUpdate,
+                thongTinNguoiDung: nguoiDungUpdate,
+                addresses: addresses,
+                files: listFile,
+                diaChiCuThe: nguoiDungUpdate.diaChiCuThe,
+                tinhThanhPho: this.state.tinhThanhPho,
+                quanHuyen: this.state.quanHuyen,
+                xaPhuongThiTran: this.state.xaPhuongThiTran,
+            };
 
-        console.log('Request Data: ' + JSON.stringify(requestData));
-        taikhoanservice
-            .updateQuanLy(requestData, this.state.taiKhoanUpdate.id)
-            .then((response) => {
-                const { taiKhoan, thongTinNguoiDung } = response.data;
-                this.setState({
-                    taiKhoanUpdate: taiKhoan,
-                    nguoiDungUpdate: thongTinNguoiDung,
-                    currentAddress: {
-                        name: '',
-                        phone: '',
-                        detailedAddress: '',
-                        province: '',
-                        district: '',
-                        ward: '',
-                        town: '',
-                    },
-                    addresses: [],
+            console.log('Request Data:', JSON.stringify(requestData));
+
+            taikhoanservice
+                .updateKhachHang(requestData, this.state.taiKhoanUpdate.id)
+                .then((response) => {
+                    const {taiKhoan, thongTinNguoiDung} = response.data;
+                    this.setState({
+                        taiKhoanUpdate: taiKhoan,
+                        nguoiDungUpdate: thongTinNguoiDung,
+                    });
+
+                    // Reset currentAddress after the update
+                    this.setState({
+                        currentAddress: this.emptyAddress(),
+                    });
+
+                    setTimeout(() => {
+                        window.location.href = `/khachhang`;
+                    }, 2000);
+                    toast.success('Sửa thành công!');
+                })
+                .catch((error) => {
+                    console.error('Lỗi khi yêu cầu cập nhật:', error);
+                    toast.error('Lỗi khi cập nhật');
                 });
-                setTimeout(() => {
-                    window.location.href = `/khachhang`;
-                }, 2000);
-                toast.success('Sửa thành công!');
-            })
-            .catch((error) => {
-                console.error('Update request error:', error);
-                toast.error('Lỗi khi cập nhật');
-            });
+        }
     };
 
-    themDiaChiMoi = () => {
+
+    thayDoiTinhUpdate = (event) => {
+        this.setState(
+            prevState => ({
+                nguoiDungUpdate: {
+                    ...prevState.nguoiDungUpdate,
+                    tinhThanhPho: event.target.value
+                }
+            })
+        );
+        let errorUpdate = {...this.state.errorUpdate, tinhThanhPho: ""};
+        this.setState({errorUpdate: errorUpdate});
+    }
+    thayDoiHuyenUpdate = (event) => {
+        this.setState(
+            prevState => ({
+                nguoiDungUpdate: {
+                    ...prevState.nguoiDungUpdate,
+                    quanHuyen: event.target.value
+                }
+            })
+        );
+        let errorUpdate = {...this.state.errorUpdate, quanHuyen: ""};
+        this.setState({errorUpdate: errorUpdate});
+    }
+    thayDoiXaUpdate = (event) => {
+        this.setState(
+            prevState => ({
+                nguoiDungUpdate: {
+                    ...prevState.nguoiDungUpdate,
+                    xaPhuongThiTran: event.target.value
+                }
+            })
+        );
+        let errorUpdate = {...this.state.errorUpdate, xaPhuongThiTran: ""};
+        this.setState({errorUpdate: errorUpdate});
+    }
+
+    thayDoiDiaChiUpdate = (event) => {
+        this.setState(
+            prevState => ({
+                nguoiDungUpdate: {
+                    ...prevState.nguoiDungUpdate,
+                    diaChiCuThe: event.target.value
+                }
+            })
+        );
+        let errorUpdate = {...this.state.errorUpdate, diaChiCuThe: ""};
+        this.setState({errorUpdate: errorUpdate});
+    }
+    isValidAddress = (address) => {
+        // Thêm logic kiểm tra địa chỉ ở đây và hiển thị lỗi nếu cần
+        // Trả về true nếu hợp lệ, false nếu không
+        console.log('Address validation result:', address);
+        return Object.keys(address).length > 0; // Ví dụ: Điều kiện kiểm tra có thể khác
+    };
+
+
+    themDiaChiMoi = (e) => {
+        e.preventDefault();
+
         const { currentAddress, addresses } = this.state;
 
-        if (!currentAddress.name || !currentAddress.phone || !currentAddress.detailedAddress || !currentAddress.province || !currentAddress.district || !currentAddress.ward || !currentAddress.town) {
-            this.setState({ errorUpdate: { ...this.state.errorUpdate, diaChi: 'Vui lòng nhập đầy đủ thông tin địa chỉ.' } });
+        if (!this.isValidAddress(currentAddress)) {
             return;
         }
 
+        // Kiểm tra xem currentAddress đã có trong danh sách địa chỉ chưa
+        const existingAddressIndex = addresses.findIndex(
+            (address) => address.ten === currentAddress.ten && address.sdt === currentAddress.sdt
+        );
+
+        if (existingAddressIndex !== -1) {
+            // Cập nhật địa chỉ đã tồn tại
+            const updatedAddresses = [...addresses];
+            updatedAddresses[existingAddressIndex] = { ...currentAddress };
+            localStorage.setItem('addresses', JSON.stringify(updatedAddresses));
+
+            this.setState({
+                addresses: updatedAddresses,
+                currentAddress: this.emptyAddress(),
+            });
+        } else {
+            // Thêm địa chỉ mới
+            const newAddress = {
+                ten: currentAddress.ten || '',
+                sdt: currentAddress.sdt || '',
+                diaChiCuThe: currentAddress.diaChiCuThe || '',
+                tinhThanhPho: currentAddress.tinhThanhPho || '',
+                quanHuyen: currentAddress.quanHuyen || '',
+                xaPhuongThiTran: currentAddress.xaPhuongThiTran || '',
+            };
+
+            const updatedAddresses = [...addresses, newAddress];
+            localStorage.setItem('addresses', JSON.stringify(updatedAddresses));
+
+            this.setState({
+                addresses: updatedAddresses,
+                currentAddress: this.emptyAddress(),
+            });
+        }
+    };
+
+
+// Thêm hàm để tạo địa chỉ trắng mới
+    emptyAddress() {
+        return {
+            ten: '',
+            sdt: '',
+            diaChiCuThe: '',
+            tinhThanhPho: '',
+            quanHuyen: '',
+            xaPhuongThiTran: '',
+        };
+    }
+
+
+    handleChange = (e, field) => {
+        const { currentAddress } = this.state;
+        const updatedAddress = { ...currentAddress, [field]: e.target.value };
         this.setState({
-            addresses: [...addresses, currentAddress],
+            currentAddress: updatedAddress,
+        });
+    };
+
+
+
+
+
+    editAddress(name) {
+        const selectedAddress = this.state.addresses.find(address => address.ten === name);
+        this.setState({
+            editingAddressName: name,
             currentAddress: {
-                name: '',
-                phone: '',
-                detailedAddress: '',
-                province: '',
-                district: '',
-                ward: '',
-                town: '',
+                ten: selectedAddress.ten || '',
+                sdt: selectedAddress.sdt || '',
+                diaChiCuThe: selectedAddress.diaChiCuThe || '',
+                tinhThanhPho: selectedAddress.tinhThanhPho || '',
+                quanHuyen: selectedAddress.quanHuyen || '',
+                xaPhuongThiTran: selectedAddress.xaPhuongThiTran || '',
             },
         });
     }
 
-    xoaDiaChi = (index) => {
-        const { addresses } = this.state;
+    cancelEditAddress() {
+        this.setState({ editingAddressName: null });
+    }
+
+    saveEditedAddress() {
+        const { editingAddressName, currentAddress } = this.state;
+        const updatedAddresses = [...this.state.addresses];
+        const index = updatedAddresses.findIndex(address => address.ten === editingAddressName);
+        updatedAddresses[index] = { ...currentAddress };
+        localStorage.setItem('addresses', JSON.stringify(updatedAddresses));
+
+        // Đặt lại trạng thái chỉnh sửa
+        this.setState({
+            addresses: updatedAddresses,
+            currentAddress: this.emptyAddress(),
+            editingAddressIndex: null,
+        });
+    }
+
+
+
+    thayDoiAnhUpdate = (event) => {
+        this.setState(
+            prevState => ({
+                taiKhoanUpdate: {
+                    ...prevState.taiKhoanUpdate,
+                    anh: event.target.value
+                }
+            })
+        );
+        this.setState({files: [...event.target.files]})
+        let errorUpdate = {...this.state.errorUpdate, anh: ""};
+        this.setState({errorUpdate: errorUpdate});
+    }
+
+    thayDoiTenDiaChi = (e, addressIndex) => {
+        const {addresses} = this.state;
+        const newAddresses = [...addresses];
+        newAddresses[addressIndex] = {
+            ...newAddresses[addressIndex],
+            ten: e.target.value,
+        };
+
+        this.setState({
+            addresses: newAddresses,
+        });
+    };
+
+
+    thayDoiSoDienThoaiDiaChi = (e, index) => {
+        const {addresses} = this.state;
+        const newAddresses = [...addresses];
+        newAddresses[index] = {
+            ...newAddresses[index],
+            sdt: e.target.value,
+        };
+
+        console.log('Mảng Địa Chỉ Mới:', newAddresses);
+
+        this.setState({
+            addresses: newAddresses,
+        });
+    };
+
+    thayDoiEmailUpdate = (e) => {
+        const {taiKhoanUpdate} = this.state;
+        this.setState({
+            taiKhoanUpdate: {
+                ...taiKhoanUpdate,
+                email: e.target.value,
+            },
+        });
+    };
+
+    thayDoiTenUpdate = (e) => {
+        const {nguoiDungUpdate} = this.state;
+        this.setState({
+            nguoiDungUpdate: {
+                ...nguoiDungUpdate,
+                ten: e.target.value,
+            },
+        });
+    };
+
+    xoaDiaChiMoi = (index) => {
+        const {addresses} = this.state;
         const newAddresses = [...addresses];
         newAddresses.splice(index, 1);
-        this.setState({ addresses: newAddresses });
-    }
 
-    thayDoiTenDiaChi = (event) => {
-        this.setState(
-            prevState => ({
-                currentAddress: {
-                    ...prevState.currentAddress,
-                    name: event.target.value
-                }
-            })
-        );
-        let errorUpdate = { ...this.state.errorUpdate, diaChi: "" };
-        this.setState({ errorUpdate: errorUpdate });
-    }
+        this.setState({
+            addresses: newAddresses,
+        });
+    };
 
-    thayDoiSoDienThoaiDiaChi = (event) => {
-        this.setState(
-            prevState => ({
-                currentAddress: {
-                    ...prevState.currentAddress,
-                    phone: event.target.value
-                }
-            })
-        );
-        let errorUpdate = { ...this.state.errorUpdate, diaChi: "" };
-        this.setState({ errorUpdate: errorUpdate });
-    }
 
-    thayDoiDiaChiCuTheUpdate = (event) => {
-        this.setState(
-            prevState => ({
-                currentAddress: {
-                    ...prevState.currentAddress,
-                    detailedAddress: event.target.value
-                }
-            })
-        );
-        let errorUpdate = { ...this.state.errorUpdate, diaChi: "" };
-        this.setState({ errorUpdate: errorUpdate });
-    }
+    thayDoiTinhThanhPhoDiaChi = (event, index) => {
+        const { addresses } = this.state;
+        const newAddresses = [...addresses];
+        newAddresses[index] = {
+            ...newAddresses[index],
+            tinhThanhPho: event.target.value,
+        };
 
-    thayDoiTinhThanhPho = (event) => {
-        this.setState(
-            prevState => ({
-                currentAddress: {
-                    ...prevState.currentAddress,
-                    province: event.target.value
-                }
-            })
-        );
+        this.setState({
+            addresses: newAddresses,
+        });
 
-        axios.get(`https://provinces.open-api.vn/api/districts?province=${event.target.value}`)
+        console.log('Thành phố đã chọn:', event.target.value);
+
+        // Thêm nhiều câu lệnh console.log hoặc sử dụng điểm dừng để gỡ lỗi thêm.
+
+        // Lấy danh sách quận/huyện dựa trên tỉnh/thành phố đã chọn
+        const selectedProvince = event.target.value;
+        if (selectedProvince) {
+            const selectedProvinceObject = this.state.cities.find(city => city.name === selectedProvince);
+            console.log('Đối tượng Tỉnh/Thành Phố đã chọn:', selectedProvinceObject);
+            this.fetchDistricts(selectedProvinceObject, index); // Truyền thêm index
+        }
+    };
+
+
+    thayDoiQuanHuyenDiaChi = (event, index) => {
+        const {addresses} = this.state;
+        const newAddresses = [...addresses];
+        newAddresses[index] = {
+            ...newAddresses[index],
+            quanHuyen: event.target.value,
+        };
+
+        this.setState({
+            addresses: newAddresses,
+        });
+
+        // Lấy danh sách xã/phường dựa trên quận/huyện đã chọn
+        const selectedDistrict = this.state.districts.find(district => district.name === event.target.value);
+        if (selectedDistrict) {
+            this.fetchWards(selectedDistrict, index); // Truyền thêm index
+        }
+    };
+
+
+    thayDoiPhuongXaDiaChi = (event, index) => {
+        const {addresses} = this.state;
+        const newAddresses = [...addresses];
+        newAddresses[index] = {
+            ...newAddresses[index],
+            xaPhuongThiTran: event.target.value,
+        };
+
+        this.setState({
+            addresses: newAddresses,
+        });
+    };
+
+
+    thayDoiDiaChiCuTheDiaChi = (e, index) => {
+        const {addresses} = this.state;
+        const newAddresses = [...addresses];
+        newAddresses[index].diaChiCuThe = e.target.value; // Update 'diaChiCuThe' instead of 'detailedAddress'
+
+        console.log('Mảng Địa Chỉ Mới:', newAddresses);
+
+        this.setState({
+            addresses: newAddresses,
+        });
+    };
+
+
+    fetchCities() {
+        axios.get('https://provinces.open-api.vn/api/?depth=1')
             .then((response) => {
-                this.setState({ districts: response.data });
+                this.setState({cities: response.data});
             })
             .catch((error) => {
-                console.error('Lỗi khi lấy danh sách quận/huyện:', error);
+                console.error('Error fetching cities:', error);
             });
     }
 
-    thayDoiTinhThanhPho = (event) => {
-        const selectedProvince = event.target.value;
-        this.setState((prevState) => ({
-            currentAddress: {
-                ...prevState.currentAddress,
-                province: selectedProvince,
-            },
-        }));
-        this.fetchDistricts(selectedProvince);
-    };
+    fetchDistricts(selectedCity) {
+        axios.get(`https://provinces.open-api.vn/api/p/${selectedCity.code}?depth=2`)
+            .then((response) => {
+                this.setState({districts: response.data.districts});
+            })
+            .catch((error) => {
+                console.error('Error fetching districts:', error);
+            });
+    }
 
-    thayDoiQuanHuyen = (event) => {
-        const selectedDistrict = event.target.value;
+    fetchWards(selectedDistrict) {
+        axios.get(`https://provinces.open-api.vn/api/d/${selectedDistrict.code}?depth=2`)
+            .then((response) => {
+                const wards = response.data.wards || [];
+                this.setState({wards: wards});
+            })
+            .catch((error) => {
+                console.error('Lỗi khi lấy danh sách phường/xã:', error);
+            });
+    }
+
+
+    handleCityChange(event) {
+        const selectedCityName = event.target.value;
+        const selectedCity = this.state.cities.find(city => city.name === selectedCityName);
+
+        this.setState({
+            currentAddress: {
+                ...this.state.currentAddress,
+                tinhThanhPho: selectedCityName,
+            },
+            districts: [], // Reset districts when city changes
+            wards: [], // Reset wards when city changes
+        });
+
+        if (selectedCity) {
+            this.fetchDistricts(selectedCity); // Fetch districts based on the selected city
+        }
+    }
+
+    handleDistrictChange(event) {
+        const selectedDistrictName = event.target.value;
+
         this.setState((prevState) => ({
             currentAddress: {
                 ...prevState.currentAddress,
-                district: selectedDistrict,
+                quanHuyen: selectedDistrictName,
             },
         }));
-        this.fetchWards(selectedDistrict);
-    };
+
+        // Lấy danh sách xã/phường dựa trên quận đã chọn
+        const selectedDistrict = this.state.districts.find(district => district.name === selectedDistrictName);
+        if (selectedDistrict) {
+            this.fetchWards(selectedDistrict);
+        }
+    }
+
+
+    handleWardChange(event) {
+        const selectedWardName = event.target.value;
+        this.setState((prevState) => ({
+            currentAddress: {
+                ...prevState.currentAddress,
+                xaPhuongThiTran: selectedWardName,
+            },
+        }));
+    }
+
 
     render() {
+        console.log('Render Addresses:', this.state.addresses);
         return (
             <div>
                 <div className="pagetitle">
@@ -256,186 +581,199 @@ class TaiKhoanKHUpdate extends Component {
                         <div className="col-lg-10">
                             <div className="card">
                                 <div className="card-body">
-                                    <div className="update-form">
-                                        <div className="left-column">
+                                    <form onSubmit={this.update}>
+                                        <div className="update-form">
+                                            <div className="left-column">
+                                                <div>
+                                                    Mã KH:
+                                                    <input
+                                                        type="text"
+                                                        defaultValue={this.state.taiKhoanUpdate && this.state.taiKhoanUpdate.maTaiKhoan ? this.state.taiKhoanUpdate.maTaiKhoan : ''}
+                                                        readOnly
+                                                    />
 
-                                            <div>
-                                                Ảnh:
-                                                <input
-                                                    className={`form-control ${this.state.errorUpdate.anh ? 'is-invalid' : ''}`}
-                                                    type="file"
-                                                    onChange={this.thayDoiAnhUpdate}
-                                                />
-                                                {this.state.errorUpdate.anh &&
-                                                <div className="text-danger">{this.state.errorUpdate.anh}</div>}
-                                            </div>
-                                            <div>
-                                                Họ và tên:
-                                                <input
-                                                    className={`form-control ${this.state.errorUpdate.ten ? 'is-invalid' : ''}`}
-                                                    name="ten"
-                                                    value={this.state.nguoiDungUpdate && this.state.nguoiDungUpdate.ten ? this.state.nguoiDungUpdate.ten : ''}
-                                                    onChange={this.thayDoiTenUpdate}
-                                                />
-                                                {this.state.errorUpdate.ten &&
-                                                <div className="text-danger">{this.state.errorUpdate.ten}</div>}
-                                            </div>
-                                            <div>
-                                                Email:
-                                                <input
-                                                    className={`form-control ${this.state.errorUpdate.email ? 'is-invalid' : ''}`}
-                                                    name="email"
-                                                    value={this.state.taiKhoanUpdate && this.state.taiKhoanUpdate.email ? this.state.taiKhoanUpdate.email : ''}
-                                                    onChange={this.thayDoiEmailUpdate}
-                                                />
-                                                {this.state.errorUpdate.email &&
-                                                <div className="text-danger">{this.state.errorUpdate.email}</div>}
-                                            </div>
-                                            <div>
-                                                UserName:
-                                                <input
-                                                    className={`form-control ${this.state.errorUpdate.maTaiKhoan ? 'is-invalid' : ''}`}
-                                                    name="maTaiKhoan"
-                                                    value={this.state.taiKhoanUpdate && this.state.taiKhoanUpdate.maTaiKhoan ? this.state.taiKhoanUpdate.maTaiKhoan : ''}
-                                                    onChange={this.thayDoiUsernameUpdate}
-                                                    disabled
-                                                />
-                                                {this.state.errorUpdate.maTaiKhoan &&
-                                                <div className="text-danger">{this.state.errorUpdate.maTaiKhoan}</div>}
-                                            </div>
+                                                    {this.state.errorUpdate.maTaiKhoan && <div className="text-danger">{this.state.errorUpdate.maTaiKhoan}</div>}
+                                                </div>
+                                                <div>
+                                                    Họ và tên:
+                                                    <input
+                                                        className={`form-control ${this.state.errorUpdate.ten ? 'is-invalid' : ''}`}
+                                                        name="ten"
+                                                        value={this.state.nguoiDungUpdate && this.state.nguoiDungUpdate.ten ? this.state.nguoiDungUpdate.ten : ''}
+                                                        onChange={this.thayDoiTenUpdate}
+                                                    />
+                                                    {this.state.errorUpdate.ten && <div className="text-danger">{this.state.errorUpdate.ten}</div>}
+                                                </div>
+                                                <div>
+                                                    Email:
+                                                    <input
+                                                        className={`form-control ${this.state.errorUpdate.email ? 'is-invalid' : ''}`}
+                                                        name="email"
+                                                        value={this.state.taiKhoanUpdate && this.state.taiKhoanUpdate.email ? this.state.taiKhoanUpdate.email : ''}
+                                                        onChange={this.thayDoiEmailUpdate}
+                                                    />
+                                                    {this.state.errorUpdate.email && <div className="text-danger">{this.state.errorUpdate.email}</div>}
+                                                </div>
+                                                <div className="form-group">
+                                                    <label htmlFor="tinhThanhPho">Tỉnh/Thành phố:</label>
+                                                    <select
+                                                        className="form-control"
+                                                        name="tinhThanhPho"
+                                                        onChange={(event) => this.handleCityChange(event)}
+                                                    >
+                                                        <option value={this.state.tinhThanhPho}>Chọn tỉnh thành</option>
+                                                        {this.state.cities.map(city => (
+                                                            <option key={city.code} value={city.name} selected={city.name === this.state.tinhThanhPho}>
+                                                                {city.name}
+                                                            </option>
+                                                        ))}
+                                                    </select>
+                                                </div>
+                                                <div className="form-group">
+                                                    <label htmlFor="quanHuyen">Quận/Huyện:</label>
+                                                    <select
+                                                        className="form-control"
+                                                        name="quanHuyen"
+                                                        onChange={(event) => this.handleDistrictChange(event)}
+                                                    >
+                                                        <option value={this.state.quanHuyen}>Chọn quận huyện</option>
+                                                        {this.state.districts.map(district => (
+                                                            <option key={district.code} value={district.name} selected={district.name === this.state.quanHuyen}>
+                                                                {district.name}
+                                                            </option>
+                                                        ))}
+                                                    </select>
+                                                </div>
+                                                <div className="form-group">
+                                                    <label htmlFor="xaPhuongThiTran">Xã/Phường/Thị trấn:</label>
+                                                    <select
+                                                        className="form-control"
+                                                        name="xaPhuongThiTran"
+                                                        onChange={(event) => this.handleWardChange(event)}
+                                                    >
+                                                        <option  value={this.state.xaPhuongThiTran}>Chọn phường xã</option>
+                                                        {this.state.wards.map(ward => (
+                                                            <option key={ward.code} value={ward.name} selected={ward.name === this.state.xaPhuongThiTran}>
+                                                                {ward.name}
+                                                            </option>
+                                                        ))}
+                                                    </select>
+                                                </div>
+                                                <div className="form-group">
+                                                    <label htmlFor="diaChiCuThe">Số nhà/Thôn:</label>
+                                                    <input
+                                                        type="text"
+                                                        className={`form-control ${this.state.errorUpdate.diaChiCuThe ? 'is-invalid' : ''}`}
+                                                        id="diaChiCuThe"
+                                                        onChange={this.thayDoiDiaChiUpdate}
+                                                        value={this.state.nguoiDungUpdate.diaChiCuThe}
+                                                    />
+                                                    {this.state.errorUpdate.diaChiCuThe && <div className="invalid-feedback">{this.state.errorUpdate.diaChiCuThe}</div>}
+                                                </div>
+                                                {/* ... */}
 
+                                            </div>
+                                            <div className="right-column">
+                                                <h2>Thêm địa chỉ mới</h2>
+                                                {this.state.addresses.map((address, index) => (
+                                                    <div key={index}>
+                                                        <h3>Địa chỉ {index + 1}</h3>
+                                                        <div>
+                                                            Tên:
+                                                            <input
+                                                                type="text"
+                                                                value={address.ten || ''}
+                                                                onChange={(e) => this.thayDoiTenDiaChi(e, index)}
+                                                            />
+                                                        </div>
+                                                        <div>
+                                                            Số điện thoại:
+                                                            <input
+                                                                type="text"
+                                                                value={address.sdt || ''}
+                                                                onChange={(e) => this.thayDoiSoDienThoaiDiaChi(e, index)}
+                                                            />
+                                                        </div>
+                                                        <div>
+                                                            Tỉnh/Thành phố:
+                                                            <select
+                                                                className="form-control"
+                                                                onChange={(e) => this.thayDoiTinhThanhPhoDiaChi(e, index)}
+                                                                value={address.tinhThanhPho || ''}
+                                                            >
+                                                                <option value="">Chọn tỉnh thành phố</option>
+                                                                {this.state.provinces.map(province => (
+                                                                    <option key={province.code} value={province.name}>
+                                                                        {province.name}
+                                                                    </option>
+                                                                ))}
+                                                            </select>
+                                                        </div>
+                                                        <div>
+                                                            Quận/Huyện:
+                                                            <select
+                                                                className="form-control"
+                                                                onChange={(e) => this.thayDoiQuanHuyenDiaChi(e, index)}
+                                                                value={address.quanHuyen || ''}
+                                                            >
+                                                                <option value="">Chọn quận huyện</option>
+                                                                {this.state.districts.map(district => (
+                                                                    <option key={district.code}
+                                                                            value={district.name}>{district.name}</option>
+                                                                ))}
+                                                            </select>
+                                                        </div>
+                                                        <div>
+                                                            Xã/Phường/Thị trấn:
+                                                            <select
+                                                                className="form-control"
+                                                                onChange={(e) => this.thayDoiPhuongXaDiaChi(e, index)}
+                                                                value={address.xaPhuongThiTran || ''}
+                                                            >
+                                                                <option value="">Chọn phường xã</option>
+                                                                {this.state.wards.map(ward => (
+                                                                    <option key={ward.code}
+                                                                            value={ward.name}>{ward.name}</option>
+                                                                ))}
+                                                            </select>
+                                                        </div>
+                                                        <div className="form-group">
+                                                            <label htmlFor={`diaChiCuThe-${index}`}>Địa chỉ cụ thể:</label>
+                                                            <input
+                                                                type="text"
+                                                                className={`form-control ${this.state.errorUpdate.diaChiCuThe ? 'is-invalid' : ''}`}
+                                                                id={`diaChiCuThe-${index}`}
+                                                                onChange={(e) => this.thayDoiDiaChiCuTheDiaChi(e, index)}
+                                                                value={address.diaChiCuThe || ''}
+                                                            />
+                                                            {this.state.errorUpdate.diaChiCuThe && <div className="invalid-feedback">{this.state.errorUpdate.diaChiCuThe}</div>}
+                                                        </div>
+                                                        {index === this.state.editingAddressIndex ? (
+                                                            <>
+                                                                <button onClick={() => this.cancelEditAddress()}>Hủy Chỉnh Sửa</button>
+                                                                <button onClick={() => this.saveEditedAddress(index)}>Lưu Chỉnh Sửa</button>
+                                                            </>
+                                                        ) : (
+                                                            <>
+                                                                <button onClick={() => this.xoaDiaChiMoi(index)}>Xóa Địa Chỉ</button>
+                                                                <button onClick={() => this.editAddress(index)}>Chỉnh sửa</button>
+                                                            </>
+                                                        )}
+                                                    </div>
+
+                                                ))}
+
+                                                {/* Nút để thêm địa chỉ mới */}
+                                                <button onClick={(e) => this.themDiaChiMoi(e)}>Thêm Địa Chỉ Mới</button>
+
+
+                                                <button type="submit" className="btn btn-primary" style={{ marginTop: '10px' }}>
+                                                    Update
+                                                </button>
+
+                                            </div>
                                         </div>
-                                        <div className="right-column">
-                                            <h2>Thêm địa chỉ mới</h2>
-                                            <div>
-                                                Địa chỉ cụ thể:
-                                                <input
-                                                    className={`form-control ${this.state.errorUpdate.diaChi ? 'is-invalid' : ''}`}
-                                                    name="diaChi"
-                                                    value={this.state.nguoiDungUpdate && this.state.nguoiDungUpdate.diaChi ? this.state.nguoiDungUpdate.diaChi : ''}
-                                                    onChange={this.thayDoiDiaChiCuTheUpdate}
-                                                />
-                                                {this.state.errorUpdate.diaChi &&
-                                                <div className="text-danger">{this.state.errorUpdate.diaChi}</div>}
-                                            </div>
-                                            <div>
-                                                Tỉnh/Thành phố:
-                                                <select
-                                                    className="form-control"
-                                                    onChange={this.thayDoiTinhThanhPho}
-                                                >
-                                                    <option value="">Chọn</option>
-                                                    {this.state.provinces.map(province => (
-                                                        <option
-                                                            key={province.code}
-                                                            value={province.name}
-                                                        >
-                                                            {province.name}
-                                                        </option>
-                                                    ))}
-                                                </select>
-                                            </div>
-                                            <div>
-                                                Quận/Huyện:
-                                                <select
-                                                    id="district"
-                                                    className="form-control"
-                                                    onChange={this.thayDoiQuanHuyen}
-                                                >
-                                                    <option value="">Chọn</option>
-                                                    {this.state.districts.map((district) => (
-                                                        <option key={district.code} value={district.code}>
-                                                            {district.name}
-                                                        </option>
-                                                    ))}
-                                                </select>
-                                            </div>
-                                            <div>
-                                                Xã/Phường/Thị trấn:
-                                                <select
-                                                    id="ward"
-                                                    className="form-control"
-                                                    onChange={this.thayDoiPhuongXa}
-                                                >
-                                                    <option value="">Chọn</option>
-                                                    {this.state.wards.map((ward) => (
-                                                        <option key={ward.code} value={ward.code}>
-                                                            {ward.name}
-                                                        </option>
-                                                    ))}
-                                                </select>
-                                            </div>
-
-                                            {/*<div>*/}
-                                            {/*    Giới tính:*/}
-                                            {/*    <label className="radio-label">*/}
-                                            {/*        <input*/}
-                                            {/*            type="radio"*/}
-                                            {/*            name="gioiTinh"*/}
-                                            {/*            value="0"*/}
-                                            {/*            checked={this.state.nguoiDungUpdate.gioiTinh === 0}*/}
-                                            {/*            onChange={() => this.thayDoiGioiTinhUpdate(0)}*/}
-                                            {/*        />*/}
-                                            {/*        <span className="radio-custom"></span>*/}
-                                            {/*        Nam*/}
-                                            {/*    </label>*/}
-                                            {/*    <label className="radio-label">*/}
-                                            {/*        <input*/}
-                                            {/*            type="radio"*/}
-                                            {/*            name="gioiTinh"*/}
-                                            {/*            value="1"*/}
-                                            {/*            checked={this.state.nguoiDungUpdate.gioiTinh === 1}*/}
-                                            {/*            onChange={() => this.thayDoiGioiTinhUpdate(1)}*/}
-                                            {/*        />*/}
-                                            {/*        <span className="radio-custom"></span>*/}
-                                            {/*        Nữ*/}
-                                            {/*    </label>*/}
-                                            {/*    {this.state.errorUpdate.gioiTinh && (*/}
-                                            {/*        <div className="text-danger">{this.state.errorUpdate.gioiTinh}</div>*/}
-                                            {/*    )}*/}
-                                            {/*</div>*/}
-                                            {/*<div>*/}
-                                            {/*    Ngày Sinh:*/}
-                                            {/*    <input*/}
-                                            {/*        className={`form-control ${this.state.errorUpdate.ngaySinh ? 'is-invalid' : ''}`}*/}
-                                            {/*        value={this.state.nguoiDungUpdate && this.state.nguoiDungUpdate.ngaySinh ? this.state.nguoiDungUpdate.ngaySinh : ''}*/}
-                                            {/*        name="ngaySinh"*/}
-                                            {/*        type="date"*/}
-                                            {/*        onChange={this.thayDoiNGaySinhUpdate}*/}
-                                            {/*    />*/}
-                                            {/*    {this.state.errorUpdate.ngaySinh &&*/}
-                                            {/*    <div className="text-danger">{this.state.errorUpdate.ngaySinh}</div>}*/}
-                                            {/*</div>*/}
-                                            {/*<div>*/}
-                                            {/*    Email:*/}
-                                            {/*    <input*/}
-                                            {/*        className={`form-control ${this.state.errorUpdate.email ? 'is-invalid' : ''}`}*/}
-                                            {/*        name="email"*/}
-                                            {/*        value={this.state.taiKhoanUpdate && this.state.taiKhoanUpdate.email ? this.state.taiKhoanUpdate.email : ''}*/}
-                                            {/*        onChange={this.thayDoiEmailUpdate}*/}
-                                            {/*    />*/}
-                                            {/*    {this.state.errorUpdate.email &&*/}
-                                            {/*    <div className="text-danger">{this.state.errorUpdate.email}</div>}*/}
-                                            {/*</div>*/}
-                                            {/*<div>*/}
-                                            {/*    UserName:*/}
-                                            {/*    <input*/}
-                                            {/*        className={`form-control ${this.state.errorUpdate.maTaiKhoan ? 'is-invalid' : ''}`}*/}
-                                            {/*        name="maTaiKhoan"*/}
-                                            {/*        value={this.state.taiKhoanUpdate && this.state.taiKhoanUpdate.maTaiKhoan ? this.state.taiKhoanUpdate.maTaiKhoan : ''}*/}
-                                            {/*        onChange={this.thayDoiUsernameUpdate}*/}
-                                            {/*        disabled*/}
-                                            {/*    />*/}
-                                            {/*    {this.state.errorUpdate.maTaiKhoan &&*/}
-                                            {/*    <div className="text-danger">{this.state.errorUpdate.maTaiKhoan}</div>}*/}
-                                            {/*</div>*/}
-
-                                            <div>
-                                                <input type="submit" className="btn btn-primary" value="Update" style={{ marginTop: '10px' }} onClick={this.update} />
-                                            </div>
-                                            {/*</form>*/}
-                                        </div>
-                                    </div>
+                                    </form>
                                 </div>
                             </div>
                         </div>
@@ -447,5 +785,3 @@ class TaiKhoanKHUpdate extends Component {
 }
 
 export default TaiKhoanKHUpdate;
-
-

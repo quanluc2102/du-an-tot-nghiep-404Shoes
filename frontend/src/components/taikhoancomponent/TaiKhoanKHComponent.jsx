@@ -117,7 +117,10 @@ class TaiKhoanKHComponent extends Component {
 
     add = (e) => {
         e.preventDefault();
-
+        const confirmed = window.confirm('Bạn có chắc chắn muốn thêm khach hang?');
+        if (!confirmed) {
+            return; // Người dùng bấm "Cancel", không thực hiện thêm
+        }
         let listFile = [];
         if (this.state.files) {
             for (let i = 0; i < this.state.files.length; i++) {
@@ -178,7 +181,7 @@ class TaiKhoanKHComponent extends Component {
             this.setState({ errorAdd });
             return;
         }
-        console.log(requestData);
+        // console.log(requestData);
         taikhoanservice.addKhachHang(requestData)
             .then((res) => {
                 if (res.status === 200) {
@@ -232,9 +235,9 @@ class TaiKhoanKHComponent extends Component {
         );
         let errorAdd = {...this.state.errorAdd, ten: ""};
         this.setState({errorAdd: errorAdd});
-        console.log(this.state.tinhThanhPho)
-        console.log(this.state.quanHuyen)
-        console.log(this.state.xaPhuongThiTran)
+        // console.log(this.state.tinhThanhPho)
+        // console.log(this.state.quanHuyen)
+        // console.log(this.state.xaPhuongThiTran)
     }
     // thayDoiDiaChiAdd = (event) => {
     //     this.setState(

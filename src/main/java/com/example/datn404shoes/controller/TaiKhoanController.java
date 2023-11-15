@@ -236,37 +236,77 @@ public class TaiKhoanController {
         ThongTinNguoiDung thongTinNguoiDung = taiKhoanVaThongTin.getThongTinNguoiDung();
         TaiKhoan taiKhoan = taiKhoanVaThongTin.getTaiKhoan();
 
+        Long list = taiKhoanRepository.count();
+        taiKhoan.setMaTaiKhoan("KH" + (list + 1));
         var b = thongTinNguoiDungServiceimpl.add(thongTinNguoiDung);
+        taiKhoan.setTrangThai(true);
+        String employeeName = thongTinNguoiDung.getTen(); // Replace this with the actual name
         taiKhoan.setThongTinNguoiDung(b);
-
+        taiKhoan.setAnh(taiKhoanVaThongTin.getFiles().get(0));
         serviceimpl.add(taiKhoan);
+        DiaChi diaChi = new DiaChi();
+        diaChi.setTen(b.getTen());
+        diaChi.setSdt(b.getSdt());
+        diaChi.setThongTinNguoiDung(b);
+        diaChi.setTrangThai(0);
+        diaChi.setDiaChiCuThe(taiKhoanVaThongTin.getDiaChiCuThe());
+        diaChi.setTinhThanhPho(taiKhoanVaThongTin.getTinhThanhPho());
+        diaChi.setQuanHuyen(taiKhoanVaThongTin.getQuanHuyen());
+        diaChi.setXaPhuongThiTran(taiKhoanVaThongTin.getXaPhuongThiTran());
+        diaChiServiceimpl.add(diaChi);
         PhanQuyen phanQuyen = new PhanQuyen();
         phanQuyen.setTaiKhoan(TaiKhoan.builder().id(taiKhoan.getId()).build());
-        phanQuyen.setQuyen(Quyen.builder().id(3).build());
+        phanQuyen.setQuyen(quyenServiceimpl.findOne(Long.valueOf(3)));
+//        phanQuyen.setQuyen(Quyen.builder().id(3).build());
         phanQuyenServiceimpl.add(phanQuyen);
-
+        taiKhoan.setPassword("");
         return ResponseEntity.ok(serviceimpl.add(taiKhoan));
     }
-
     @PutMapping("updateKhachHang/{id}")
-    public ResponseEntity<?> updateKhacHang(@RequestBody TaiKhoanVaThongTin taiKhoanVaThongTin,
-                                            @PathVariable("id") Long id) {
+    public ResponseEntity<?> updateKhachHang(@PathVariable Long id, @RequestBody TaiKhoanVaThongTin taiKhoanVaThongTin) {
         ThongTinNguoiDung thongTinNguoiDung = taiKhoanVaThongTin.getThongTinNguoiDung();
         TaiKhoan taiKhoan = taiKhoanVaThongTin.getTaiKhoan();
+        DiaChi diaChiMoi = taiKhoanVaThongTin.getDiaChiMoi(); // Lấy thông tin địa chỉ mới
 
-
-        thongTinNguoiDung.setId(thongTinNguoiDung.getId()); // Assuming id is the ID of the ThongTinNguoiDung to update
-        thongTinNguoiDungServiceimpl.update(thongTinNguoiDung.getId(), thongTinNguoiDung); // Update ThongTinNguoiDung
-        taiKhoan.setId(id);
+        // Tính toán mã tài khoản mới và thêm Thông Tin Người Dùng
+//        Long list = taiKhoanRepository.count();
+//        taiKhoan.setMaTaiKhoan("KH" + (list + 1));
+        var b = thongTinNguoiDungServiceimpl.add(thongTinNguoiDung);
+        taiKhoan.setTrangThai(true);
+        taiKhoan.setThongTinNguoiDung(b);
+        taiKhoan.setAnh(taiKhoanVaThongTin.getFiles().get(0));
+        // Kiểm tra xem trường files có giá trị không
+//        if (taiKhoanVaThongTin.getFiles() != null && !taiKhoanVaThongTin.getFiles().isEmpty()) {
+//            taiKhoan.setAnh(taiKhoanVaThongTin.getFiles().get(0));
+//        } else {
+//            // Xử lý khi files là null hoặc trống
+//            // Có thể throw một exception hoặc xử lý theo ý bạn
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Danh sách files không được trống.");
+//        }
+        System.out.println("Before if statement");
         serviceimpl.update(id, taiKhoan);
 
-        // Update or add PhanQuyen (assuming you want to update or add a new PhanQuyen)
-        PhanQuyen phanQuyen = new PhanQuyen();
-        phanQuyen.setTaiKhoan(TaiKhoan.builder().id(id).build()); // Use the existing Quan Ly ID
-        phanQuyen.setQuyen(Quyen.builder().id(3).build()); // Assuming ID 2 represents "Quan Ly" role
-        phanQuyenServiceimpl.add(phanQuyen); // You should have an update method for PhanQuyen
 
-        return ResponseEntity.ok("Update successful"); // You can return a success message or other appropriate response.
+        // Thêm hoặc cập nhật Địa chỉ mới
+        if (diaChiMoi != null) {
+            System.out.println("diaChiMoi: " + diaChiMoi.toString());
+            diaChiMoi.setThongTinNguoiDung(b);
+            diaChiServiceimpl.updateOrAdd(diaChiMoi);
+            System.out.println("Đã thêm hoặc cập nhật địa chỉ mới: " + diaChiMoi.toString());
+        } else {
+            System.out.println("diaChiMoi là null, không thực hiện thêm hoặc cập nhật.");
+        }
+
+        // Tạo Phân Quyền mới
+        PhanQuyen phanQuyen = new PhanQuyen();
+        phanQuyen.setTaiKhoan(TaiKhoan.builder().id(taiKhoan.getId()).build());
+        phanQuyen.setQuyen(quyenServiceimpl.findOne(Long.valueOf(3)));
+        phanQuyenServiceimpl.add(phanQuyen);
+
+        // Đặt mật khẩu trống trước khi trả về response
+        taiKhoan.setPassword("");
+
+        return ResponseEntity.ok(serviceimpl.update(id, taiKhoan));
     }
 
     @DeleteMapping("delete")

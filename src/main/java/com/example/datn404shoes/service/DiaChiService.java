@@ -10,4 +10,6 @@ public interface DiaChiService {
     List<DiaChi> getAll();
 
     void update(DiaChi diaChi);
+    void updateOrAdd(DiaChi diaChi);
 }
+

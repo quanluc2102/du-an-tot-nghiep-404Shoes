@@ -40,7 +40,7 @@ class KhachHangComponent extends Component {
         });
     };
 
-    loadQuanLyData(pageNumber) {
+    loadKhachHangData(pageNumber) {
         taikhoanservice.getKhachHang(pageNumber)
             .then(response => {
                 this.setState({
@@ -140,108 +140,105 @@ class KhachHangComponent extends Component {
                                     <div className="card recent-sales overflow-auto">
                                         <div className="card-body">
                                             <h5 className="card-title">Danh sách khách hàng</h5>
-                                            <div className="card-body">
-                                                <h5 className="card-title">Danh sách nhân viên <span>| </span></h5>
-                                                <div style={{display: 'flex', justifyContent: 'flex-end'}}>
-                                                    <button onClick={this.add} className='btn btn-success'>
-                                                        Thêm khách hàng
-                                                    </button>
-                                                </div>
-                                                <div className="search-container">
-                                                    <input
-                                                        type="text"
-                                                        placeholder="Tìm kiếm theo tên, mã, SDT, hoặc email"
-                                                        value={searchValue} // Bind the search input value to the state
-                                                        onChange={this.handleSearch} // Attach the search event handler
-                                                    />
-                                                </div>
-                                                <div>
-                                                    <input
-                                                        type="radio"
-                                                        id="filterAll"
-                                                        name="filterStatus"
-                                                        value="all"
-                                                        checked={filterStatus === 'all'}
-                                                        onChange={this.handleFilterChange}
-                                                    />
-                                                    <label htmlFor="filterAll">Tất cả</label>
-                                                </div>
-                                                <div>
-                                                    <input
-                                                        type="radio"
-                                                        id="filterActive"
-                                                        name="filterStatus"
-                                                        value="active"
-                                                        checked={filterStatus === 'active'}
-                                                        onChange={this.handleFilterChange}
-                                                    />
-                                                    <label htmlFor="filterActive">Hoạt động</label>
-                                                </div>
-                                                <div>
-                                                    <input
-                                                        type="radio"
-                                                        id="filterInactive"
-                                                        name="filterStatus"
-                                                        value="inactive"
-                                                        checked={filterStatus === 'inactive'}
-                                                        onChange={this.handleFilterChange}
-                                                    />
-                                                    <label htmlFor="filterInactive">Ngừng hoạt động</label>
-                                                </div>
-                                                <table className="table table-borderless datatable">
-                                                    <thead>
-                                                    <tr>
-                                                        <th>Mã KH</th>
-                                                        <th>Tên</th>
-                                                        <th>Email</th>
-                                                        <th>SDT</th>
-                                                        <th>Ngày tạo</th>
-                                                        <th>Trạng thái</th>
-                                                        <th>Action</th>
-                                                    </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                    {currentItems.map(tk => (
-                                                        <tr key={tk.id}>
-                                                            <td>{tk.maTaiKhoan}</td>
-                                                            <td>{tk.thongTinNguoiDung.ten}</td>
-                                                            <td>{tk.email}</td>
-                                                            <td>{tk.thongTinNguoiDung ? tk.thongTinNguoiDung.sdt : 'N/A'}</td>
-                                                            <td>{tk.ngayTao}</td>
-                                                            <td>{tk.trangThai === true ? "Hoạt động" : "Ngừng hoạt động"}</td>
-                                                            <td>
-                                                                <label className="switch">
-                                                                    <input
-                                                                        type="checkbox"
-                                                                        checked={tk.trangThai === true}
-                                                                        onChange={() => this.toggleTaiKhoan(tk.id, tk.trangThai)}
-                                                                    />
-                                                                    <span className="slider round"></span>
-                                                                </label>
-                                                            </td>
-                                                            <td>
-                                                                <button onClick={() => this.detail(tk.id)}
-                                                                        className='btn btn-primary'>Detail
-                                                                </button>
-                                                            </td>
-                                                        </tr>
-                                                    ))}
-                                                    </tbody>
-                                                </table>
-                                                <ul className="pagination justify-content-center">
-                                                    {Array.from({length: Math.ceil(nhanVienQuyen3.length / itemsPerPage)}, (_, i) => (
-                                                        <li key={i}
-                                                            className={`page-item ${i + 1 === currentPage ? 'active' : ''}`}>
-                                                            <button
-                                                                className="page-link"
-                                                                onClick={() => this.handlePageChange(i + 1)}
-                                                            >
-                                                                {i + 1}
-                                                            </button>
-                                                        </li>
-                                                    ))}
-                                                </ul>
+                                            <div style={{display: 'flex', justifyContent: 'flex-end'}}>
+                                                <button onClick={this.add} className='btn btn-success'>
+                                                    Thêm khách hàng
+                                                </button>
                                             </div>
+                                            <div className="search-container">
+                                                <input
+                                                    type="text"
+                                                    placeholder="Tìm kiếm theo tên, mã, SDT, hoặc email"
+                                                    value={searchValue} // Bind the search input value to the state
+                                                    onChange={this.handleSearch} // Attach the search event handler
+                                                />
+                                            </div>
+                                            <div>
+                                                <input
+                                                    type="radio"
+                                                    id="filterAll"
+                                                    name="filterStatus"
+                                                    value="all"
+                                                    checked={filterStatus === 'all'}
+                                                    onChange={this.handleFilterChange}
+                                                />
+                                                <label htmlFor="filterAll">Tất cả</label>
+                                            </div>
+                                            <div>
+                                                <input
+                                                    type="radio"
+                                                    id="filterActive"
+                                                    name="filterStatus"
+                                                    value="active"
+                                                    checked={filterStatus === 'active'}
+                                                    onChange={this.handleFilterChange}
+                                                />
+                                                <label htmlFor="filterActive">Hoạt động</label>
+                                            </div>
+                                            <div>
+                                                <input
+                                                    type="radio"
+                                                    id="filterInactive"
+                                                    name="filterStatus"
+                                                    value="inactive"
+                                                    checked={filterStatus === 'inactive'}
+                                                    onChange={this.handleFilterChange}
+                                                />
+                                                <label htmlFor="filterInactive">Ngừng hoạt động</label>
+                                            </div>
+                                            <table className="table table-borderless datatable">
+                                                <thead>
+                                                <tr>
+                                                    <th>Mã KH</th>
+                                                    <th>Tên</th>
+                                                    <th>Email</th>
+                                                    <th>SDT</th>
+                                                    <th>Ngày tạo</th>
+                                                    <th>Trạng thái</th>
+                                                    <th>Action</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                {currentItems.map(tk => (
+                                                    <tr key={tk.id}>
+                                                        <td>{tk.maTaiKhoan}</td>
+                                                        <td>{tk.thongTinNguoiDung.ten}</td>
+                                                        <td>{tk.email}</td>
+                                                        <td>{tk.thongTinNguoiDung ? tk.thongTinNguoiDung.sdt : 'N/A'}</td>
+                                                        <td>{tk.ngayTao}</td>
+                                                        <td>{tk.trangThai === true ? "Hoạt động" : "Ngừng hoạt động"}</td>
+                                                        <td>
+                                                            <label className="switch">
+                                                                <input
+                                                                    type="checkbox"
+                                                                    checked={tk.trangThai === true}
+                                                                    onChange={() => this.toggleTaiKhoan(tk.id, tk.trangThai)}
+                                                                />
+                                                                <span className="slider round"></span>
+                                                            </label>
+                                                        </td>
+                                                        <td>
+                                                            <button onClick={() => this.detail(tk.id)}
+                                                                    className='btn btn-primary'>Detail
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                ))}
+                                                </tbody>
+                                            </table>
+                                            <ul className="pagination justify-content-center">
+                                                {Array.from({length: Math.ceil(nhanVienQuyen3.length / itemsPerPage)}, (_, i) => (
+                                                    <li key={i}
+                                                        className={`page-item ${i + 1 === currentPage ? 'active' : ''}`}>
+                                                        <button
+                                                            className="page-link"
+                                                            onClick={() => this.handlePageChange(i + 1)}
+                                                        >
+                                                            {i + 1}
+                                                        </button>
+                                                    </li>
+                                                ))}
+                                            </ul>
                                         </div>
                                     </div>
                                 </div>

@@ -13,15 +13,27 @@ public class TaiKhoanVaThongTin {
     private ThongTinNguoiDung thongTinNguoiDung;
     private TaiKhoan taiKhoan;
     private List<String> files;
+    private List<DiaChi> diaChiList;
     private String diaChiCuThe;
     private String tinhThanhPho;
     private String quanHuyen;
     private String xaPhuongThiTran;
+    private DiaChi diaChiMoi;
 //    private DiaChi diaChi;
     public TaiKhoanVaThongTin() {
         // Hãy tạo các constructor và getter, setter nếu cần thiết
     }
+    // Các phương thức khác
+    public boolean hasDiaChiMoi() {
+        return diaChiMoi != null;
+    }
+    public DiaChi getDiaChiMoi() {
+        return diaChiMoi;
+    }
 
+    public void setDiaChiMoi(DiaChi diaChiMoi) {
+        this.diaChiMoi = diaChiMoi;
+    }
     public ThongTinNguoiDung getThongTinNguoiDung() {
         return thongTinNguoiDung;
     }

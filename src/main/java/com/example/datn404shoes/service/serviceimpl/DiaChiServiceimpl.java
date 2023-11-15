@@ -45,6 +45,10 @@ public class DiaChiServiceimpl implements DiaChiService {
             responsitory.save(existingDiaChi);
         }
     }
+    @Override
+    public void updateOrAdd(DiaChi diaChi) {
+        responsitory.save(diaChi);
+    }
 
     public Optional<DiaChi> findByThongTinNguoiDungId(long id) {
         return responsitory.findById(id);
