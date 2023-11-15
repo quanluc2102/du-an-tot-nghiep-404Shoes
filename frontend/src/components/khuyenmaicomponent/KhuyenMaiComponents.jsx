@@ -302,7 +302,7 @@ class KhuyenMaiComponents extends Component {
                                                         </td>
                                                         <td>{km.dieuKien}</td>
                                                         <td>{km.soLuong}</td>
-                                                        <td>
+                                                        <td className={km.trangThai===0?'badge bg-warning text-dark':km.trangThai===1?'badge bg-success':'badge bg-danger'}>
                                                             {km.trangThai === 0
                                                                 ? 'Chưa diễn ra'
                                                                 : km.trangThai === 1
@@ -312,9 +312,9 @@ class KhuyenMaiComponents extends Component {
                                                         <td>
                                                             <button
                                                                 onClick={() => this.detail(km.id)}
-                                                                className="btn btn-primary"
+                                                                className="btn btn-info"
                                                             >
-                                                                Chi tiết
+                                                                <span className="bi bi-info-circle"></span>
                                                             </button>
                                                         </td>
                                                     </tr>
