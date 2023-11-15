@@ -843,13 +843,11 @@ class ChiTietComponent extends Component {
                                         </div>
                                         <div style={{marginLeft:"30px",display:"inline-block"}} className="col-lg-6">
                                             <label>Số lượng : </label>
-                                            <input className={`form-control ${this.state.error.soLuong ? 'is-invalid' : ''}`} value={this.state.detailSPCT.soLuong} type="number" onChange={this.thayDoiSoLuongOne}/>
-                                            {this.state.error.soLuong && <div className="text-danger">{this.state.error.soLuong}</div>}
+                                            <input className={`form-control`} value={this.state.detailSPCT.soLuong} type="number" onChange={this.thayDoiSoLuongOne}/>
                                         </div>
                                         <div style={{marginLeft:"30px",display:"inline-block"}} className="col-lg-5">
                                             <label>Giá : </label>
-                                            <input className={`form-control ${this.state.error.gia ? 'is-invalid' : ''}`} value={this.state.detailSPCT.donGia} type="number" onChange={this.thayDoiGiaOne}/>
-                                            {this.state.error.gia && <div className="text-danger">{this.state.error.gia}</div>}
+                                            <input className={`form-control`} value={this.state.detailSPCT.donGia} type="number" onChange={this.thayDoiGiaOne}/>
                                         </div>
                                         <div style={{marginLeft:"30px",display:"inline-block"}}>
                                             <label>QR : </label>
@@ -873,13 +871,13 @@ class ChiTietComponent extends Component {
                                             <br/>
                                             <br/>
                                             <br/>
-                                            <br/>
                                             <label>Chọn ảnh thay</label>
                                             <input type="file" onChange={(e) => this.thayDoiAnhOne(e)} accept="image/*"/>
+                                            <button onClick={this.save} className={"btn btn-warning bi bi-floppy"} style={{float:"right",marginRight:10}}></button>
+                                            <button onClick={this.handleCloseModalSPCTDetail} className={"btn btn-danger bi bi-x-lg"} style={{float:"right",marginRight:10}}></button>
                                         </div>
                                         <br/>
-                                        <button onClick={this.save} className={"btn btn-warning bi bi-floppy"} style={{float:"right",marginRight:10}}></button>
-                                        <button onClick={this.handleCloseModalSPCTDetail} className={"btn btn-danger bi bi-x-lg"} style={{float:"right",marginRight:10}}></button>
+
                                     </div>
                                 )}
                             </div>

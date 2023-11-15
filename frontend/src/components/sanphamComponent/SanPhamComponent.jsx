@@ -232,7 +232,7 @@ class SanPhamComponent extends Component {
                                                                 <td>{sp.thuongHieu.ten}</td>
                                                                 <td>{sp.xuatXu.ten}</td>
                                                                 <td>{sp.moTa}</td>
-                                                                <td>{sp.trangThai===1?"HD":"Ko HD"}</td>
+                                                                <td style={{ color: sp.trangThai === 1 ? 'green' : 'red' }}>{sp.trangThai===1?"HD":"Ko HD"}</td>
                                                                 <td>
                                                                     <button onClick={()=>this.delete(sp.id)} className='btn btn-danger'>Xóa</button>
                                                                     <button onClick={()=>this.detail(sp.id)} className='btn btn-primary'>Chi tiết</button>
