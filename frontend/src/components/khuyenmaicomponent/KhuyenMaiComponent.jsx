@@ -451,34 +451,32 @@ class KhuyenMaiComponent extends Component {
                                                     {this.state.errorUpdate.giamGia &&
                                                     <div className="text-danger">{this.state.errorUpdate.giamGia}</div>}
                                                 </div>
-                                                <div className="form-row">
-                                                    <div className="form-group col-md-6">
-                                                        <label>Kiểu khuyến mãi <span style={{ color: 'red' }}>*</span></label>
-                                                        <select
-                                                            name="kieuKhuyenMai"
-                                                            id="kieuKhuyenMai"
-                                                            value={this.state.khuyenMaiUpdate.kieuKhuyenMai}
-                                                            className={`form-control ${this.state.errorUpdate.kieuKhuyenMai ? 'is-invalid' : ''}`}
-                                                            onChange={(e) => this.handleFieldChange(e, 'khuyenMaiUpdate')}
-                                                        >
-                                                            <option value="">Chọn kiểu khuyến mãi</option>
-                                                            <option value="1">Phần trăm</option>
-                                                            <option value="0">Tiền</option>
-                                                        </select>
-                                                        {this.state.errorUpdate.kieuKhuyenMai && <div
-                                                            className="text-danger">{this.state.errorUpdate.kieuKhuyenMai}</div>}
-                                                    </div>
-                                                    <div className="form-group col-md-6">
-                                                        <label>Điều kiện <span className="small-text"> (Nhập tổng tiền tối thiểu hóa đơn để áp dụng khuyến mãi này)</span>:<span style={{ color: 'red' }}>*</span></label>
-                                                        <input
-                                                            className={`form-control ${this.state.errorUpdate.dieuKien ? 'is-invalid' : ''}`}
-                                                            name="dieuKien"
-                                                            value={this.state.khuyenMaiUpdate.dieuKien}
-                                                            onChange={(e) => this.handleFieldChange(e, 'khuyenMaiUpdate')}
-                                                        />
-                                                        {this.state.errorUpdate.dieuKien && <div
-                                                            className="text-danger">{this.state.errorUpdate.dieuKien}</div>}
-                                                    </div>
+                                                <div className="form-group">
+                                                    <label>Kiểu khuyến mãi <span style={{ color: 'red' }}>*</span></label>
+                                                    <select
+                                                        name="kieuKhuyenMai"
+                                                        id="kieuKhuyenMai"
+                                                        value={this.state.khuyenMaiUpdate.kieuKhuyenMai}
+                                                        className={`form-control ${this.state.errorUpdate.kieuKhuyenMai ? 'is-invalid' : ''}`}
+                                                        onChange={(e) => this.handleFieldChange(e, 'khuyenMaiUpdate')}
+                                                    >
+                                                        <option value="">Chọn kiểu khuyến mãi</option>
+                                                        <option value="1">Phần trăm</option>
+                                                        <option value="0">Tiền</option>
+                                                    </select>
+                                                    {this.state.errorUpdate.kieuKhuyenMai && <div
+                                                        className="text-danger">{this.state.errorUpdate.kieuKhuyenMai}</div>}
+                                                </div>
+                                                <div className="form-group">
+                                                    <label>Điều kiện <span className="small-text"> (Nhập tổng tiền tối thiểu hóa đơn để áp dụng khuyến mãi này)</span>:<span style={{ color: 'red' }}>*</span></label>
+                                                    <input
+                                                        className={`form-control ${this.state.errorUpdate.dieuKien ? 'is-invalid' : ''}`}
+                                                        name="dieuKien"
+                                                        value={this.state.khuyenMaiUpdate.dieuKien}
+                                                        onChange={(e) => this.handleFieldChange(e, 'khuyenMaiUpdate')}
+                                                    />
+                                                    {this.state.errorUpdate.dieuKien && <div
+                                                        className="text-danger">{this.state.errorUpdate.dieuKien}</div>}
                                                 </div>
                                                 <div className="form-group">
                                                     <label>Số lượng <span style={{ color: 'red' }}>*</span></label>
@@ -491,7 +489,7 @@ class KhuyenMaiComponent extends Component {
                                                     {this.state.errorUpdate.soLuong &&
                                                     <div className="text-danger">{this.state.errorUpdate.soLuong}</div>}
                                                 </div>
-                                                <button className="btn btn-primary" style={{marginTop: '10px'}} onClick={this.update}>
+                                                <button className="btn btn-primary" style={{ marginTop: '10px' }} onClick={this.update}>
                                                     Update
                                                 </button>
                                             </form>
@@ -503,6 +501,7 @@ class KhuyenMaiComponent extends Component {
                     </div>
                 </section>
             </div>
+
 
 
         )
