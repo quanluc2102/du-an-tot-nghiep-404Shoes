@@ -387,7 +387,7 @@ class SanPhamAddComponnent extends Component {
                              aria-labelledby="home-tab">
                             <form>
                                 <div style={{marginLeft:"30px"}}>
-                                    <label style={{float:"none"}}>Chọn ảnh :</label>
+                                    <label style={{float:"none"}}>Chọn ảnh<a style={{color:"red"}}>*</a> :</label>
                                     <div className="image-uploader">
                                         <label htmlFor="file-input" className="upload-btn btn btn-outline-danger">
                                             <i className="bi bi-image-fill"></i> <br/>Chọn ảnh
@@ -404,14 +404,14 @@ class SanPhamAddComponnent extends Component {
                                 </div>
                                 <br/>
                                 <div style={{marginLeft:"30px",float:"none"}}>
-                                    Tên :
+                                    Tên<a style={{color:"red"}}>*</a> :
                                     <input className={`form-control ${this.state.error.ten ? 'is-invalid' : ''}`} type="text" onChange={this.thayDoiTenAdd}/>
                                     {this.state.error.ten && <div className="text-danger">{this.state.error.ten}</div>}
                                 </div>
                                 <br/>
 
                                 <div className="col-lg-3" style={{marginLeft:"30px",display:"inline-block"}}>
-                                    <label>Thuong hiệu : </label>
+                                    <label>Thuong hiệu<a style={{color:"red"}}>*</a> : </label>
                                     <select className={`form-control ${this.state.error.thuongHieuId ? 'is-invalid' : ''}`} onChange={this.thayDoiThuongHieuAdd}>
                                         <option value=''>Chọn thương hiệu</option>
                                         {this.state.listThuongHieu.map(
@@ -422,7 +422,7 @@ class SanPhamAddComponnent extends Component {
                                     {this.state.error.thuongHieuId && <div className="text-danger">{this.state.error.thuongHieuId}</div>}
                                 </div>
                                 <div className="col-lg-3" style={{marginLeft:"115px",display:"inline-block"}}>
-                                    <label>Xuất xứ : </label>
+                                    <label>Xuất xứ<a style={{color:"red"}}>*</a> : </label>
                                     <select className={`form-control ${this.state.error.xuatXuId ? 'is-invalid' : ''}`} onChange={this.thayDoiXuatXuAdd}>
                                         <option value=''>Chọn xuất xứ</option>
                                         {this.state.listXuatXu.map(
@@ -433,7 +433,7 @@ class SanPhamAddComponnent extends Component {
                                     {this.state.error.xuatXuId && <div className="text-danger">{this.state.error.xuatXuId}</div>}
                                 </div>
                                 <div className="col-lg-3" style={{marginLeft:"115px",display:"inline-block"}}>
-                                    <label>Danh mục : </label>
+                                    <label>Danh mục<a style={{color:"red"}}>*</a> : </label>
                                     <select className={`form-control ${this.state.error.danhMucId ? 'is-invalid' : ''}`} onChange={this.thayDoiDanhMucAdd}>
                                         <option value=''>Chọn danh mục</option>
                                         {this.state.listDanhMuc.map(
@@ -447,7 +447,7 @@ class SanPhamAddComponnent extends Component {
                                 <br/>
                                 <br/>
                                 <div style={{marginLeft:"30px"}}>
-                                    Mô tả :
+                                    Mô tả<a style={{color:"red"}}>*</a> :
                                     <textarea className={`form-control ${this.state.error.moTa ? 'is-invalid' : ''}`} onChange={this.thayDoiMoTaAdd}/>
                                     {this.state.error.moTa && <div className="text-danger">{this.state.error.moTa}</div>}
                                 </div>

@@ -40,7 +40,9 @@ class ChiTietComponent extends Component {
                 moTa:'',
                 thuongHieuId:'',
                 xuatXuId:'',
-                danhMucId:''
+                danhMucId:'',
+                soLuong:'',
+                gia:''
             },
         };
         this.home=this.home.bind(this);
@@ -323,7 +325,7 @@ class ChiTietComponent extends Component {
         e.preventDefault();
         const confirm = window.confirm("Bạn có chắc chắn muốn sửa sản phẩm này ?");
         if(!confirm){
-            return;
+            return ;
         }
         if(this.state.anhThay.length===0){
             var spct = {kichThuoc : this.state.detailSPCT.kichThuoc,
@@ -525,10 +527,23 @@ class ChiTietComponent extends Component {
             prevState=>({
                 detailSPCT:{
                     ...prevState.detailSPCT,
-                    donGia:event.target.value
+                    donGia: event.target.value
                 }
             })
         );
+        if(!event.target.value.trim()){
+            let error = {...this.state.error,gia:"Giá ko được trống !"};
+            this.setState({error:error});
+        }else if(event.target.value < 0){
+            let error = {...this.state.error,gia:"Giá ko được nhỏ hơn 0 !"};
+            this.setState({error:error});
+        }else if(event.target.value > 100000000){
+            let error = {...this.state.error,gia:"Giá ko được lớn hơn 100000000 !"};
+            this.setState({error:error});
+        }else {
+            let error = {...this.state.error,gia:""};
+            this.setState({error:error});
+        }
     };
     thayDoiSoLuongOne=(event)=>{
         this.setState(
@@ -539,6 +554,19 @@ class ChiTietComponent extends Component {
                 }
             })
         );
+        if(!event.target.value.trim()){
+            let error = {...this.state.error,soLuong:"Số lượng ko được trống !"};
+            this.setState({error:error});
+        }else if(event.target.value < 0){
+            let error = {...this.state.error,soLuong:"Số lượng ko được nhỏ hơn 0 !"};
+            this.setState({error:error});
+        }else if(event.target.value > 200){
+            let error = {...this.state.error,soLuong:"Số lượng ko được lớn hơn 200 !"};
+            this.setState({error:error});
+        }else {
+            let error = {...this.state.error,soLuong:""};
+            this.setState({error:error});
+        }
     };
     thayDoiAnhOne=(event)=>{
         const selectedFiles = event.target.files;
@@ -693,14 +721,14 @@ class ChiTietComponent extends Component {
                                 </div>
                                 <br/>
                                 <div style={{marginLeft:"30px"}}>
-                                    Tên :
+                                    Tên<a style={{color:"red"}}>*</a> :
                                     <input className={`form-control ${this.state.error.ten ? 'is-invalid' : ''}`} defaultValue={this.state.sanPham.ten} type="text" onChange={this.thayDoiTenAdd}/>
                                     {this.state.error.ten && <div className="text-danger">{this.state.error.ten}</div>}
                                 </div>
                                 <br/>
 
                                 <div className="col-lg-3" style={{marginLeft:"30px",display:"inline-block"}}>
-                                    <label>Thuong hiệu : </label>
+                                    <label>Thuong hiệu<a style={{color:"red"}}>*</a> : </label>
                                     <select className={`form-control ${this.state.error.thuongHieuId ? 'is-invalid' : ''}`} value={this.state.sanPham.thuongHieu} onChange={this.thayDoiThuongHieuAdd}>
                                         <option value="">Chọn thương hiệu</option>
                                         {this.state.listThuongHieu.map(
@@ -711,7 +739,7 @@ class ChiTietComponent extends Component {
                                     {this.state.error.thuongHieuId && <div className="text-danger">{this.state.error.thuongHieuId}</div>}
                                 </div>
                                 <div className="col-lg-3" style={{marginLeft:"115px",display:"inline-block"}}>
-                                    <label>Xuất xứ : </label>
+                                    <label>Xuất xứ<a style={{color:"red"}}>*</a> : </label>
                                     <select className={`form-control ${this.state.error.xuatXuId ? 'is-invalid' : ''}`} value={this.state.sanPham.xuatXu} onChange={this.thayDoiXuatXuAdd}>
                                         <option value="">Chọn xuất xứ</option>
                                         {this.state.listXuatXu.map(
@@ -722,7 +750,7 @@ class ChiTietComponent extends Component {
                                     {this.state.error.xuatXuId && <div className="text-danger">{this.state.error.xuatXuId}</div>}
                                 </div>
                                 <div className="col-lg-3" style={{marginLeft:"115px",display:"inline-block"}}>
-                                    <label>Danh mục : </label>
+                                    <label>Danh mục<a style={{color:"red"}}>*</a> : </label>
                                     <select className={`form-control ${this.state.error.danhMucId ? 'is-invalid' : ''}`} value={this.state.sanPham.danhMuc} onChange={this.thayDoiDanhMucAdd}>
                                         <option value="">Chọn danh mục</option>
                                         {this.state.listDanhMuc.map(
@@ -736,7 +764,7 @@ class ChiTietComponent extends Component {
                                 <br/>
                                 <br/>
                                 <div style={{marginLeft:"30px"}}>
-                                    Mô tả :
+                                    Mô tả<a style={{color:"red"}}>*</a> :
                                     <textarea className={`form-control ${this.state.error.moTa ? 'is-invalid' : ''}`} defaultValue={this.state.sanPham.moTa} onChange={this.thayDoiMoTaAdd}/>
                                     {this.state.error.moTa && <div className="text-danger">{this.state.error.moTa}</div>}
                                 </div>
@@ -807,7 +835,6 @@ class ChiTietComponent extends Component {
                                         {/*    Tên :*/}
                                         {/*    <input className={`form-control ${this.state.error.ten ? 'is-invalid' : ''}`} defaultValue={this.state.sanPham.ten} type="text" onChange={this.thayDoiTenAdd}/>*/}
                                         {/*</div>*/}
-                                        <button onClick={this.save} className={"btn btn-warning bi bi-floppy"} style={{float:"right",marginRight:10}}></button>
                                         <div style={{marginLeft:"30px"}}>
                                             Mã :
                                             <input className={`form-control`} defaultValue={this.state.detailSPCT.ma} type="text" disabled={true}/>
@@ -832,11 +859,13 @@ class ChiTietComponent extends Component {
                                         </div>
                                         <div style={{marginLeft:"30px",display:"inline-block"}} className="col-lg-6">
                                             <label>Số lượng : </label>
-                                            <input className={`form-control`} defaultValue={this.state.detailSPCT.soLuong} type="text" onChange={this.thayDoiSoLuongOne}/>
+                                            <input className={`form-control ${this.state.error.soLuong ? 'is-invalid' : ''}`} defaultValue={this.state.detailSPCT.soLuong} type="number" onChange={this.thayDoiSoLuongOne}/>
+                                            {this.state.error.soLuong && <div className="text-danger">{this.state.error.soLuong}</div>}
                                         </div>
                                         <div style={{marginLeft:"30px",display:"inline-block"}} className="col-lg-5">
                                             <label>Giá : </label>
-                                            <input className={`form-control`} defaultValue={this.state.detailSPCT.donGia} type="text" onChange={this.thayDoiGiaOne}/>
+                                            <input className={`form-control ${this.state.error.gia ? 'is-invalid' : ''}`} defaultValue={this.state.detailSPCT.donGia} type="number" onChange={this.thayDoiGiaOne}/>
+                                            {this.state.error.gia && <div className="text-danger">{this.state.error.gia}</div>}
                                         </div>
                                         <div style={{marginLeft:"30px",display:"inline-block"}}>
                                             <label>QR : </label>
