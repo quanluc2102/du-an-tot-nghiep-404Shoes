@@ -31,24 +31,25 @@ public class HoaDonImpl implements HoaDonService {
     @Override
     public HoaDon update(Long id,HoaDon hoaDon) {
         HoaDon hoaDon1 = hoaDonRepository.findById(id).get();
-        if(hoaDon1.getTrangThai()==1) {
+        if(hoaDon1.getTrangThai()==0) {
             hoaDon1.setChoXacNhan(Date.valueOf(LocalDate.now()));
             hoaDon1.setTrangThai(hoaDon1.getTrangThai()+1);
             hoaDon1.setGhiChuChoXacNhan(hoaDon.getGhiChuChoXacNhan());
-        }else if(hoaDon1.getTrangThai()==2){
+        }else
+        if(hoaDon1.getTrangThai()==1) {
             hoaDon1.setChoGiao(Date.valueOf(LocalDate.now()));
             hoaDon1.setTrangThai(hoaDon1.getTrangThai()+1);
             hoaDon1.setGhiChuChoGiao(hoaDon.getGhiChuChoGiao());
-        }else if(hoaDon1.getTrangThai()==3){
+        }else if(hoaDon1.getTrangThai()==2){
             hoaDon1.setDangGiao(Date.valueOf(LocalDate.now()));
             hoaDon1.setTrangThai(hoaDon1.getTrangThai()+1);
             hoaDon1.setGhiChuDangGiao(hoaDon.getGhiChuDangGiao());
-        }if(hoaDon1.getTrangThai()==4){
+        }else if(hoaDon1.getTrangThai()==3) {
             hoaDon1.setHoanThanh(Date.valueOf(LocalDate.now()));
-            hoaDon1.setTrangThai(hoaDon1.getTrangThai()+1);
+            hoaDon1.setTrangThai(hoaDon1.getTrangThai() + 1);
             hoaDon1.setGhiChuHoanThanh(hoaDon.getGhiChuHoanThanh());
         }
-          return hoaDonRepository.save(hoaDon1);
+        return hoaDonRepository.save(hoaDon1);
     }
 
     @Override

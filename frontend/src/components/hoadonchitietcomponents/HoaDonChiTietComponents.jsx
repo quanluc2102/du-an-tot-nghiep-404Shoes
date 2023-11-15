@@ -132,13 +132,13 @@ class HoaDonChiTietComponents extends Component {
     }
     getStatusUpdateKey = (status) => {
         switch (status) {
-            case 1:
+            case 0:
                 return 'ghiChuChoXacNhan';
-            case 2:
+            case 1:
                 return 'ghiChuChoGiao';
-            case 3:
+            case 2:
                 return 'ghiChuDangGiao';
-            case 4:
+            case 3:
                 return 'ghiChuHoanThanh';
             default:
                 return ''; // Handle default case
@@ -197,7 +197,7 @@ class HoaDonChiTietComponents extends Component {
                         {/* ... Các phần mã khác ở đây ... */}
 
                         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                            {Array.from(Array(5).keys()).map((index) => {
+                            {Array.from(Array(4).keys()).map((index) => {
                                 const trangThai = index + 1;
                                 const isActive = this.state.hoaDon.trangThai >= trangThai;
 
@@ -207,7 +207,7 @@ class HoaDonChiTietComponents extends Component {
                                             style={{
                                                 width: '40px',
                                                 height: '40px',
-                                                backgroundColor: trangThai === 1 ? 'gray' : isActive ? 'green' : '#e0e0e0',
+                                                backgroundColor: trangThai === 0 ? 'gray' : isActive ? 'green' : '#e0e0e0',
                                                 borderRadius: '50%',
                                                 display: 'flex',
                                                 alignItems: 'center',
@@ -221,7 +221,7 @@ class HoaDonChiTietComponents extends Component {
                                             {trangThai}
                                         </div>
                                         <div style={{ fontWeight: 'bold', fontSize: '14px' }}>
-                                            {trangThai === 1 ? 'Chờ xác nhận' : trangThai === 2 ? 'Chờ giao' : trangThai === 3 ? 'Đang giao' : trangThai === 4 ? 'Hoàn thành': "Khác"}
+                                            {trangThai === 1 ? 'Xác nhận' : trangThai === 2 ? 'Chuẩn bị giao' : trangThai === 3 ? 'Đang giao' : trangThai === 4 ? 'Hoàn thành': ""}
                                         </div>
                                         <div style={{ fontWeight: 'bold', fontSize: '14px' }}>
                                             {trangThai === 1 ? this.state.hoaDon.choXacNhan : trangThai === 2 ? this.state.hoaDon.choGiao : trangThai === 3 ? this.state.hoaDon.dangGiao : trangThai === 4 ? this.state.hoaDon.hoanThanh : "Chờ duyệt"}
@@ -236,21 +236,19 @@ class HoaDonChiTietComponents extends Component {
 
                         {/* Kết nối các ô trạng thái bằng các đường kẻ */}
                         <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '10px' }}>
-                            <div style={{ flex: 1, height: '10px', backgroundColor: this.state.hoaDon.trangThai == 1 ? 'e0e0e0' : this.state.hoaDon.trangThai >= 2 ? 'green' : '#e0e0e0' }}></div>
+                            <div style={{ flex: 1, height: '10px', backgroundColor: this.state.hoaDon.trangThai >= 1 ? 'green' : '#e0e0e0'}}></div>
                             <div style={{ flex: 1, height: '10px', backgroundColor: this.state.hoaDon.trangThai >= 2 ? 'green' : '#e0e0e0' }}></div>
                             <div style={{ flex: 1, height: '10px', backgroundColor: this.state.hoaDon.trangThai >= 3 ? 'green' : '#e0e0e0' }}></div>
                             <div style={{ flex: 1, height: '10px', backgroundColor: this.state.hoaDon.trangThai >= 4 ? 'green' : '#e0e0e0' }}></div>
-                            <div style={{ flex: 1, height: '10px', backgroundColor: this.state.hoaDon.trangThai >= 5 ? 'e0e0e0' : '#e0e0e0' }}></div>
                         </div>
                         <br />
                         <br />
                         <Button variant="btn btn-outline-primary" onClick={this.handleShowModal1}>
-                        {this.state.hoaDon.trangThai === 1 ? 'Chờ xác nhận' : this.state.hoaDon.trangThai === 2 ? 'Chờ giao' : this.state.hoaDon.trangThai === 3 ? 'Đang giao' : this.state.hoaDon.trangThai === 4 ? 'Hoàn thành' : this.state.hoaDon.trangThai === 5 ? 'Hủy' : "Chờ duyệt"}
-
+                        {this.state.hoaDon.trangThai === 0 ? 'Xác nhận hóa đơn' : this.state.hoaDon.trangThai === 1 ? 'Xác nhận chuẩn bị giao' : this.state.hoaDon.trangThai === 2 ? 'Xác nhận Đang giao' : this.state.hoaDon.trangThai === 3 ? 'Đang giao' : this.state.hoaDon.trangThai === 4 ? 'Hoàn thành' : ""}
                         </Button>
                         <Modal show={this.state.showModal1} onHide={this.handleCloseModal1} backdrop="static">
                             <Modal.Header closeButton>
-                                <Modal.Title>{this.state.hoaDon.trangThai === 1 ? 'Xác nhận' : this.state.hoaDon.trangThai === 2 ? ' Xác nhận Chờ giao' : this.state.hoaDon?.trangThai === 3 ? ' Xác nhận Đang giao' : this.state.hoaDon?.trangThai === 4 ? 'Xác nhận Hoàn thành' : this.state.hoaDon?.trangThai === 5 ? 'Hủy' : "Chờ duyệt"}</Modal.Title>
+                                <Modal.Title>{this.state.hoaDon.trangThai === 0 ? 'Xác nhận' : this.state.hoaDon.trangThai === 1 ? ' Xác nhận Chờ giao' : this.state.hoaDon?.trangThai === 3 ? ' Xác nhận Đang giao' : this.state.hoaDon?.trangThai === 4 ? 'Xác nhận Hoàn thành' : this.state.hoaDon?.trangThai === 5 ? 'Hủy' : "Chờ duyệt"}</Modal.Title>
                             </Modal.Header>
                             <Modal.Body>
                                 <div className="form-floating">
@@ -424,7 +422,6 @@ class HoaDonChiTietComponents extends Component {
                                             </form>
                                         </div>
                                     </div>
-
 
                                 </div>
 

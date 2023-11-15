@@ -12,7 +12,7 @@ class HoaDonComponents extends Component {
             isSortAsc: true,
             searchTerm: '',
             currentPage: 0, // Trang hiện tại
-            perPage: 3, // Số mục trên mỗi trang// Initialize searchTerm
+            perPage: 4, // Số mục trên mỗi trang// Initialize searchTerm
         }
         // this.detail = this.detail.bind(this);
     }
@@ -48,9 +48,9 @@ class HoaDonComponents extends Component {
             // Combine the values of the columns you want to search in
             const searchValues = (
                 (item.ten && item.ten !== null ? item.ten : "Khách lẻ") +
-                (item.maHoaDon) + (item.ngayTao) +(item.ghiChu)+
-                (item.sdt) +(item.taiKhoan.maTaiKhoan)+
-                (item.trangThai === 4 ? "Hoàn thành" : item.trangThai === 0 ? "Chờ duyệt": item.trangThai === 1 ? "Duyệt" : item.trangThai === 2 ? "Đang chờ đơn vị vận chuyển" : item.trangThai === 3 ? "Đang giao": "Chờ")
+                (item.maHoaDon) + (item.ngayTao) + (item.ghiChu) +
+                (item.sdt) + (item.taiKhoan.maTaiKhoan) +
+                (item.trangThai === 4 ? "Hoàn thành" : item.trangThai === 0 ? "Chờ xác nhận" : item.trangThai === 1 ? "Đã xác nhận" : item.trangThai === 2 ? "Chuẩn bị giao" : item.trangThai === 3 ? "Đang giao" : item.trangThai === 4 ? "Hoàn thành" : "Chờ")
             ).toLowerCase();
 
             switch (searchTerm) {
@@ -61,9 +61,9 @@ class HoaDonComponents extends Component {
                 case "4":
                     return item.trangThai == 4; // Filter for "Chờ"
                 case "2":
-                    return item.trangThai == 2; 
+                    return item.trangThai == 2;
                 case "1":
-                    return item.trangThai == 1; 
+                    return item.trangThai == 1;
                 default:
                     return searchValues.includes(searchTerm.toLowerCase());
             }
@@ -100,6 +100,9 @@ class HoaDonComponents extends Component {
                 return 'red'; // Chờ (màu vàng)
             case 1:
                 return 'black'; // Chờ (màu vàng)
+            case 0:
+                    return '#e0e0e0'; // Chờ (màu vàng)
+                      
             default:
                 return 'white'; // Default color (or another color of your choice)
         }
@@ -107,10 +110,12 @@ class HoaDonComponents extends Component {
 
     getStatusText = (status) => {
         switch (status) {
+            case 0:
+                return 'Chưa xác nhận';
             case 1:
-                return 'Chờ xác nhận';
+                return 'Đã xác nhận';
             case 2:
-                return 'Chờ giao';
+                return 'Chuẩn bị giao';
             case 3:
                 return 'Đang giao';
             case 4:
@@ -146,7 +151,6 @@ class HoaDonComponents extends Component {
                     </nav>
                 </div>
 
-
                 <section className="section dashboard">
                     <div className="row">
                         <div className="col-lg-13">
@@ -158,15 +162,15 @@ class HoaDonComponents extends Component {
                                         <div className="col-13">
                                             <div className="row">
                                                 <div className="col-3 container">
-                                                <input
-    type="text"
-    name="query"
-    placeholder="Tìm kiếm"
-    title="Enter search keyword"
-    value={searchTerm}
-    onChange={this.handleSearch}
-    onFocus={this.handleSearchFocus} // Thêm sự kiện onFocus
-/>
+                                                    <input
+                                                        type="text"
+                                                        name="query"
+                                                        placeholder="Tìm kiếm"
+                                                        title="Enter search keyword"
+                                                        value={searchTerm}
+                                                        onChange={this.handleSearch}
+                                                        onFocus={this.handleSearchFocus} // Thêm sự kiện onFocus
+                                                    />
                                                 </div>
                                                 <div className="col-7">
                                                     <div className="form-check form-check-inline">
@@ -191,7 +195,7 @@ class HoaDonComponents extends Component {
                                                             onChange={() => this.handleStatusFilter("1")}
                                                             className="form-check-input"
                                                         />
-                                                        <label htmlFor="filterPaid" className="form-check-label">Chờ duyệt</label>
+                                                        <label htmlFor="filterPaid" className="form-check-label">Đã xác nhận</label>
                                                     </div>
                                                     <div className="form-check form-check-inline">
                                                         <input
@@ -203,7 +207,7 @@ class HoaDonComponents extends Component {
                                                             onChange={() => this.handleStatusFilter("2")}
                                                             className="form-check-input"
                                                         />
-                                                        <label htmlFor="filterPaid" className="form-check-label">Duyệt</label>
+                                                        <label htmlFor="filterPaid" className="form-check-label">Chuẩn bị giao</label>
                                                     </div>
                                                     <div className="form-check form-check-inline">
                                                         <input
@@ -215,7 +219,7 @@ class HoaDonComponents extends Component {
                                                             onChange={() => this.handleStatusFilter("3")}
                                                             className="form-check-input"
                                                         />
-                                                        <label htmlFor="filterUnpaid" className="form-check-label">Đang chờ đơn vị vận chuyển</label>
+                                                        <label htmlFor="filterUnpaid" className="form-check-label">Đang giao</label>
                                                     </div>
                                                     <div className="form-check form-check-inline">
                                                         <input
@@ -227,7 +231,7 @@ class HoaDonComponents extends Component {
                                                             onChange={() => this.handleStatusFilter("4")}
                                                             className="form-check-input"
                                                         />
-                                                        <label htmlFor="filterPending" className="form-check-label">Đang giao</label>
+                                                        <label htmlFor="filterPending" className="form-check-label">Hoàn thành</label>
                                                     </div>
                                                     <div className="form-check form-check-inline">
                                                         <input
@@ -239,7 +243,7 @@ class HoaDonComponents extends Component {
                                                             onChange={() => this.handleStatusFilter("5")}
                                                             className="form-check-input"
                                                         />
-                                                        <label htmlFor="filterPending" className="form-check-label">Hoàn thành</label>
+                                                        <label htmlFor="filterPending" className="form-check-label">Hủy</label>
                                                     </div>
                                                 </div>
                                             </div>
@@ -282,22 +286,21 @@ class HoaDonComponents extends Component {
                                                                     <td>{hoaDon.tongTienSauGiam.toLocaleString()}</td>
                                                                     <td><a onClick={() => this.detail(hoaDon.id)}><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAAAXNSR0IArs4c6QAAAi1JREFUSEvF10vITVEUwPHflzL0yjvJQBETGRBFpIgJMTEzUEQGyiMywEQpFMUAmRuIGUqEZMDAK0mEMpBXiBGhpX20ne+e795zz823Jve271r7v9djr7Vvn0GSvkHiagceiVmYidEdHvI9HuEePlXZVIEn4hjWdAirUjuLLYjD/COtwDNwBRMaQgvzF1iC+PwrZfBk3MWYpHEOJ3C15iECFJ6uSnYBnZN7XgZfwMqkvB2HawLL6nuxLy2exMZCIQeHt6/SD5GbtQ2hhfklLMN3RLF+ix9y8HqcTtpRyfdrgofjcwubpbic1lfgYhm8GweSwhD8rAGOQryV6uFQyW4UPqS1rThaBkcuIifl9Xb8oXiAaUlxT+ZAYfsrfdlf5DwPdTfgIrybcTxt/hrTi1ymtZ6CY/Mb2IUz2ITwaG75zqJn4IBex9jk0QacwoiKNtkTcOQyoOOy5Edvnp2uTKuaaAyeipsYn+3+BAvxboAqbASegttdQOM8XYMDGp5Oyrx6hvltPG10nSKsd1pAF+BNu0ve5DotwrUM8BLzakC7DnUODmh4Gk2iUxmW9fBtONJpy4y7GUMj5DHedkpMeouzeb4a5zsF1+T0U4/JFBPqRxqLX/8H+CB2pqNEZ4sO90eaDomqaMQrJl4by5PC89TDi/FYCW4a3tz+aQp18brp53FMl3jY9VJiau3Ax/Kmeahjtq5DvBiaSFT9w/R0+lK1Ubt/Ek0OMKDtoIF/AxLsgR+5iHZvAAAAAElFTkSuQmCC" /></a></td>
 
-
                                                                 </tr>
                                                         )
                                                     }
                                                 </tbody>
                                             </table>
                                             <ReactPaginate
-                pageCount={Math.ceil(hoaDonList.length / perPage)}
-                pageRangeDisplayed={5}
-                marginPagesDisplayed={2}
-                onPageChange={this.handlePageClick}
-                containerClassName={'pagination'}
-                activeClassName={'active'}
-                previousLabel={"Previous"} // Customize the labels as needed
-                nextLabel={"Next"}
-            />
+                                                pageCount={Math.ceil(hoaDonList.length / perPage)}
+                                                pageRangeDisplayed={5}
+                                                marginPagesDisplayed={2}
+                                                onPageChange={this.handlePageClick}
+                                                containerClassName={'pagination'}
+                                                activeClassName={'active'}
+                                                previousLabel={"Previous"} // Customize the labels as needed
+                                                nextLabel={"Next"}
+                                            />
                                         </div>
                                     </div>
                                 </div>
