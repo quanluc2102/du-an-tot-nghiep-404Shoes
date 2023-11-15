@@ -1,10 +1,9 @@
-import React, {Component} from 'react';
+import React, {Component, useRef} from 'react';
 import taikhoanservice from "../../services/taikhoanservice/taikhoanservice";
 import {toast} from "react-toastify";
 import axios from "axios";
 import "./nhanvien.css";
-import $ from 'jquery';
-
+import QrScanner from 'react-qr-scanner';
 class TaiKhoanNVComponent extends Component {
 
     constructor(props) {
@@ -22,6 +21,9 @@ class TaiKhoanNVComponent extends Component {
             pageCount: 0,
             diaChi:[],
             files:null,
+            result:'No QR code scanned yet',
+            isQRReaderOn: true,
+            qrCodeResult:null,
             taiKhoanAdd: {
                 maTaiKhoan: '',
                 email: '',
@@ -29,15 +31,15 @@ class TaiKhoanNVComponent extends Component {
                 anh: ''
             },
             nguoiDungAdd: {
-                sdt: '',
-                ten: '',
                 cccd: '',
-                gioiTinh: '',
+                ten: '',
                 ngaySinh: '',
-                tinhThanhPho: '',
-                quanHuyen: '',
-                xaPhuongThiTran: '',
+                gioiTinh: '',
                 diaChiCuThe:'' ,
+                xaPhuongThiTran: '',
+                quanHuyen: '',
+                tinhThanhPho: '',
+                sdt: '',
             },
             errorAdd: {
                 diaChi: '',
@@ -56,6 +58,7 @@ class TaiKhoanNVComponent extends Component {
                 xaPhuongThiTran: '',
             },
         }
+        this.myRef = React.createRef();
         this.add = this.add.bind(this);
         this.detail = this.detail.bind(this);
         this.thayDoiTenAdd = this.thayDoiTenAdd.bind(this);
@@ -74,8 +77,44 @@ class TaiKhoanNVComponent extends Component {
         this.handleCityChange = this.handleCityChange.bind(this);
         this.handleDistrictChange = this.handleDistrictChange.bind(this);
         this.handleWardChange = this.handleWardChange.bind(this);
+        this.handleScan = this.handleScan.bind(this);
     }
+    toggleQRReader = () => {
+        this.setState((prevState) => ({
+            isQRReaderOn: !prevState.isQRReaderOn,
+        }));
+    };
+    handleScan = (data) => {
+        if (data && data.text) {
+            const dataArray = data.text.split('|');
+            const cccd = dataArray[0];
+            const ten = dataArray[2];
+            const ngaySinhOriginal = dataArray[3];
+            const gioiTinhOriginal = dataArray[4];
+            const ngaySinh = this.convertToFormattedDate(ngaySinhOriginal);
+            const gioiTinh = gioiTinhOriginal === 'Nam' ? 0 : gioiTinhOriginal === 'Nữ' ? 1 : null;
 
+            this.setState({
+                nguoiDungAdd: {  // Change 'result' to 'nguoiDungAdd'
+                    cccd,
+                    ten,
+                    ngaySinh,
+                    gioiTinh,
+                },
+            });
+        }
+    };
+
+    convertToFormattedDate = (dateString) => {
+        const day = dateString.slice(0, 2);
+        const month = dateString.slice(2, 4);
+        const year = dateString.slice(4, 8);
+        return `${year}-${month}-${day}`;
+    };
+
+    handleError = (err) => {
+        console.error(err);
+    };
     componentDidMount() {
         taikhoanservice.getNhanVien().then((res) => {
             this.setState({nhanVienQuyen1: res.data});
@@ -90,8 +129,6 @@ class TaiKhoanNVComponent extends Component {
 
 
     }
-
-
     add = (e) => {
         e.preventDefault();
         let listFile = [];
@@ -99,14 +136,41 @@ class TaiKhoanNVComponent extends Component {
             listFile.push(this.state.files[i].name);
             const {taiKhoanAdd, nguoiDungAdd} = this.state;
             const requestData = {
-                taiKhoan: taiKhoanAdd,
-                thongTinNguoiDung: nguoiDungAdd,
+                taiKhoan: {
+                    email : taiKhoanAdd.email,
+                },
+                thongTinNguoiDung: {
+                    ten: nguoiDungAdd.ten,
+                    cccd: nguoiDungAdd.cccd,
+                    sdt: nguoiDungAdd.sdt,
+                    gioiTinh: nguoiDungAdd.gioiTinh,
+                    ngaySinh: nguoiDungAdd.ngaySinh,
+                },
                 files: listFile,
                 diaChiCuThe: nguoiDungAdd.diaChiCuThe,
                 tinhThanhPho: this.state.tinhThanhPho,
                 quanHuyen: this.state.quanHuyen,
                 xaPhuongThiTran: this.state.xaPhuongThiTran,
+
             };
+            console.log('nsx' + JSON.stringify(requestData));
+
+            // if (listFile.length === 0) {
+            //     this.setState({ errorAdd: { ...this.state.errorAdd, files: "Chọn ít nhất 1 ảnh !" } });
+            //     console.log('nsx' + JSON.stringify(requestData));
+            //     return;
+            // } else {
+            //     this.setState({ errorAdd: { ...this.state.errorAdd, files: "" } });
+            // }
+            //
+            // if (!nguoiDungAdd.ten.trim()) {
+            //     this.setState({ errorAdd: { ...this.state.errorAdd, ten: "Tên không được bỏ trống !" } });
+            //     return;
+            // } else {
+            //     this.setState({ errorAdd: { ...this.state.errorAdd, ten: "" } });
+            // }
+
+
             console.log(requestData);
             // Gọi API để thêm tài khoản
             taikhoanservice.addNhanVien(requestData)
@@ -170,10 +234,6 @@ class TaiKhoanNVComponent extends Component {
         );
         let errorAdd = {...this.state.errorAdd, ten: ""};
         this.setState({errorAdd: errorAdd});
-
-        console.log(this.state.tinhThanhPho)
-        console.log(this.state.quanHuyen)
-        console.log(this.state.xaPhuongThiTran)
     }
 
     thayDoiSdtAdd = (event) => {
@@ -212,6 +272,8 @@ class TaiKhoanNVComponent extends Component {
         let errorAdd = {...this.state.errorAdd, ngaySinh: ""};
         this.setState({errorAdd: errorAdd});
     }
+
+
     thayDoiMaNVAdd = (event) => {
         this.setState(
             prevState => ({
@@ -381,6 +443,7 @@ class TaiKhoanNVComponent extends Component {
     }
 
     render() {
+        const { isQRReaderOn, result , nguoiDungAdd } = this.state;
         return (
             <div>
                 <div className="pagetitle">
@@ -401,8 +464,24 @@ class TaiKhoanNVComponent extends Component {
                                 <div className="card-body">
                                     <h5 className="card-title">ADD<span>| xx</span></h5>
                                     <form onSubmit={this.add}>
+                                        <div className="form-group">
+                                            <label>Quét mã QR:</label>
+                                            <div>
+                                                {isQRReaderOn && (
+                                                    <QrScanner
+                                                        ref={this.myRef}
+                                                        onScan={this.handleScan}
+                                                        onError={this.handleError}
+                                                        style={{ width: '300px',height:'300px' }}
+                                                    />
+                                                )}
 
-                                        {/* Ảnh */}
+                                                {/* Nút để bật/tắt quét QR */}
+                                                <button onClick={this.toggleQRReader}>
+                                                    {isQRReaderOn ? 'Turn Off QR Scanner' : 'Turn On QR Scanner'}
+                                                </button>
+                                            </div>
+                                        </div>
                                         <div className="form-group">
                                             <label htmlFor="anh">Ảnh:</label>
                                             <input
@@ -411,9 +490,20 @@ class TaiKhoanNVComponent extends Component {
                                                 id="anh"
                                                 onChange={this.thayDoiAnhAdd}
                                             />
-                                            {this.state.errorAdd.anh && <div className="invalid-feedback">{this.state.errorAdd.anh}</div>}
+                                            {this.state.errorAdd.files && <div className="invalid-feedback">{this.state.errorAdd.files}</div>}
                                         </div>
-
+                                        {/* CCCD */}
+                                        <div className="form-group">
+                                            <label htmlFor="cccd">CCCD:</label>
+                                            <input
+                                                type="text"
+                                                className={`form-control ${this.state.errorAdd.cccd ? 'is-invalid' : ''}`}
+                                                id="cccd"
+                                                onChange={this.thayDoiCCCDAdd}
+                                                value={this.state.nguoiDungAdd.cccd }
+                                            />
+                                            {this.state.errorAdd.cccd && <div className="invalid-feedback">{this.state.errorAdd.cccd}</div>}
+                                        </div>
                                         {/* Họ và tên */}
                                         <div className="form-group">
                                             <label htmlFor="ten">Họ và tên:</label>
@@ -426,7 +516,45 @@ class TaiKhoanNVComponent extends Component {
                                             />
                                             {this.state.errorAdd.ten && <div className="invalid-feedback">{this.state.errorAdd.ten}</div>}
                                         </div>
-
+                                        {/* Ngày Sinh */}
+                                        <div className="form-group">
+                                            <label htmlFor="ngaySinh">Ngày Sinh:</label>
+                                            <input
+                                                type="date"
+                                                className={`form-control ${this.state.errorAdd.ngaySinh ? 'is-invalid' : ''}`}
+                                                id="ngaySinh"
+                                                value={this.state.nguoiDungAdd.ngaySinh}
+                                                onChange={this.thayDoiNGaySinhAdd}
+                                            />
+                                            {this.state.errorAdd.ngaySinh && <div className="invalid-feedback">{this.state.errorAdd.ngaySinh}</div>}
+                                        </div>
+                                        {/* Giới tính */}
+                                        <div className="form-group">
+                                            <label>Giới tính:</label>
+                                            <div>
+                                                <label className="form-check-label">
+                                                    <input
+                                                        type="radio"
+                                                        name="gioiTinh"
+                                                        value="0"
+                                                        checked={this.state.nguoiDungAdd.gioiTinh === 0}
+                                                        onChange={this.thayDoiGioiTinhAdd}
+                                                    /> Nam
+                                                </label>
+                                                <label className="form-check-label">
+                                                    <input
+                                                        type="radio"
+                                                        name="gioiTinh"
+                                                        value="1"
+                                                        checked={this.state.nguoiDungAdd.gioiTinh === 1}
+                                                        onChange={this.thayDoiGioiTinhAdd}
+                                                    /> Nữ
+                                                </label>
+                                            </div>
+                                            {this.state.errorAdd.gioiTinh && (
+                                                <div className="text-danger">{this.state.errorAdd.gioiTinh}</div>
+                                            )}
+                                        </div>
                                         {/* Địa chỉ */}
                                         <div className="form-group">
                                             <label>Địa chỉ:</label>
@@ -484,23 +612,11 @@ class TaiKhoanNVComponent extends Component {
                                                 className={`form-control ${this.state.errorAdd.diaChiCuThe ? 'is-invalid' : ''}`}
                                                 id="diaChiCuThe"
                                                 onChange={this.thayDoiDiaChiAdd}
-                                                value={this.state.nguoiDungAdd.diaChiCuThe}
                                             />
                                             {this.state.errorAdd.diaChiCuThe && <div className="invalid-feedback">{this.state.errorAdd.diaChiCuThe}</div>}
                                         </div>
 
-                                        {/* CCCD */}
-                                        <div className="form-group">
-                                            <label htmlFor="cccd">CCCD:</label>
-                                            <input
-                                                type="text"
-                                                className={`form-control ${this.state.errorAdd.cccd ? 'is-invalid' : ''}`}
-                                                id="cccd"
-                                                onChange={this.thayDoiCCCDAdd}
-                                                value={this.state.nguoiDungAdd.cccd}
-                                            />
-                                            {this.state.errorAdd.cccd && <div className="invalid-feedback">{this.state.errorAdd.cccd}</div>}
-                                        </div>
+
 
                                         {/* SDT */}
                                         <div className="form-group">
@@ -510,48 +626,9 @@ class TaiKhoanNVComponent extends Component {
                                                 className={`form-control ${this.state.errorAdd.sdt ? 'is-invalid' : ''}`}
                                                 id="sdt"
                                                 onChange={this.thayDoiSdtAdd}
-                                                value={this.state.nguoiDungAdd.sdt}
+                                                // value={this.state.nguoiDungAdd.sdt}
                                             />
                                             {this.state.errorAdd.sdt && <div className="invalid-feedback">{this.state.errorAdd.sdt}</div>}
-                                        </div>
-
-                                        {/* Giới tính */}
-                                        <div className="form-group">
-                                            <label>Giới tính:</label>
-                                            <div>
-                                                <label className="form-check-label">
-                                                    <input
-                                                        type="radio"
-                                                        name="gioiTinh"
-                                                        value="0"
-                                                        onChange={this.thayDoiGioiTinhAdd}
-                                                    /> Nam
-                                                </label>
-                                                <label className="form-check-label">
-                                                    <input
-                                                        type="radio"
-                                                        name="gioiTinh"
-                                                        value="1"
-                                                        onChange={this.thayDoiGioiTinhAdd}
-                                                    /> Nữ
-                                                </label>
-                                            </div>
-                                            {this.state.errorAdd.gioiTinh && (
-                                                <div className="text-danger">{this.state.errorAdd.gioiTinh}</div>
-                                            )}
-                                        </div>
-
-                                        {/* Ngày Sinh */}
-                                        <div className="form-group">
-                                            <label htmlFor="ngaySinh">Ngày Sinh:</label>
-                                            <input
-                                                type="date"
-                                                className={`form-control ${this.state.errorAdd.ngaySinh ? 'is-invalid' : ''}`}
-                                                id="ngaySinh"
-                                                value={this.state.nguoiDungAdd.ngaySinh}
-                                                onChange={this.thayDoiNGaySinhAdd}
-                                            />
-                                            {this.state.errorAdd.ngaySinh && <div className="invalid-feedback">{this.state.errorAdd.ngaySinh}</div>}
                                         </div>
 
                                         {/* Email */}
@@ -561,25 +638,11 @@ class TaiKhoanNVComponent extends Component {
                                                 type="email"
                                                 className={`form-control ${this.state.errorAdd.email ? 'is-invalid' : ''}`}
                                                 id="email"
-                                                value={this.state.taiKhoanAdd.email}
+                                                // value={this.state.taiKhoanAdd.email}
                                                 onChange={this.thayDoiEmailAdd}
                                             />
                                             {this.state.errorAdd.email && <div className="invalid-feedback">{this.state.errorAdd.email}</div>}
                                         </div>
-
-                                        {/* PassWord */}
-                                        {/*<div className="form-group">*/}
-                                        {/*    <label htmlFor="password">PassWord:</label>*/}
-                                        {/*    <input*/}
-                                        {/*        type="password"*/}
-                                        {/*        className={`form-control ${this.state.errorAdd.password ? 'is-invalid' : ''}`}*/}
-                                        {/*        id="password"*/}
-                                        {/*        value={this.state.taiKhoanAdd.password}*/}
-                                        {/*        onChange={this.thayDoiPassAdd}*/}
-                                        {/*    />*/}
-                                        {/*    {this.state.errorAdd.password && <div className="invalid-feedback">{this.state.errorAdd.password}</div>}*/}
-                                        {/*</div>*/}
-
                                         <input type="submit" className="btn btn-primary" value="Add" style={{ marginTop: '10px' }} />
 
                                     </form>
