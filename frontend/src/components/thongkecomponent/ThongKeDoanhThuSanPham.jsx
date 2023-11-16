@@ -5,7 +5,8 @@ import ReactPaginate from 'react-paginate';
 import Chart from 'chart.js/auto';
 import * as XLSX from 'xlsx'; // Import xlsx library
 import { FaFileExcel } from 'react-icons/fa'; // Import the Excel icon from Font Awesome
-
+import { Tabs, TabList, Tab, TabPanel } from 'react-tabs';
+import 'react-tabs/style/react-tabs.css'; // Import CSS styles for react-tabs
 
 class ThongKeDoanhThuSanPham extends Component {
     constructor(props) {
@@ -15,8 +16,8 @@ class ThongKeDoanhThuSanPham extends Component {
             startDate: '',
             endDate: '',
             pageCount: 0,
+            exportingToExcel: false,
             showTable: false,
-            exportingToExcel: false
         };
         // Create a ref for the canvas element
         this.combinedChartRef = React.createRef();
@@ -54,7 +55,7 @@ class ThongKeDoanhThuSanPham extends Component {
         // Fetch data when the Thong Ke button is clicked
         this.fetchData();
         // Show the table when data is fetched
-        // this.setState({ showTable: true });
+        this.setState({ showTable: true });
     };
 
     handlePageClick = (data) => {
@@ -62,12 +63,6 @@ class ThongKeDoanhThuSanPham extends Component {
 
         // Assuming you have a function to fetch data based on the selected page
         this.fetchData(selectedPage + 1);
-    };
-
-    handleToggleTable = () => {
-        this.setState((prevState) => ({
-            showTable: !prevState.showTable,
-        }));
     };
 
     handleExportToExcel = async () => {
@@ -122,7 +117,6 @@ class ThongKeDoanhThuSanPham extends Component {
             this.setState({ exportingToExcel: false });
         }
     };
-
 
     combinedChart = null;
 
@@ -220,9 +214,16 @@ class ThongKeDoanhThuSanPham extends Component {
             this.combinedChart = new Chart(ctx, {
                 type: 'bar',
                 data: chartData,
+                options: chartOptions, // Add this line to include chart options
             });
         }
     }
+
+    handleToggleTable = () => {
+        this.setState((prevState) => ({
+            showTable: !prevState.showTable,
+        }));
+    };
 
     render() {
         return (
@@ -235,9 +236,15 @@ class ThongKeDoanhThuSanPham extends Component {
                 </div>
 
                 <section className="section dashboard">
-                    <div className="row">
-                        <div className="col-lg-12">
-                            <div>
+                    <Tabs>
+                        <TabList>
+                            <Tab>Biểu đồ thống kê</Tab>
+                            <Tab>Bảng thống kê</Tab>
+                            <Tab>Thống kê doanh thu</Tab>
+                        </TabList>
+
+                        <TabPanel>
+                            <div className="thongke-controls">
                                 <label>Ngày bắt đầu:</label>
                                 <input
                                     type="date"
@@ -252,95 +259,91 @@ class ThongKeDoanhThuSanPham extends Component {
                                 />
                                 <button onClick={this.handleThongKeClick}>Thống kê</button>
                             </div>
-                        </div>
-                    </div>
 
-                    <div className="col-lg-12">
-                        <div className="card recent-sales overflow-auto">
-                            <div className="card-body">
-                                <div className="col-lg-12">
-                                    <div className="card recent-sales overflow-auto">
-                                        <div className="card-body">
-                                            <h5 className="card-title">
-                                                Biểu đồ thống kê doanh thu theo sản phẩm <span>| </span>
-                                            </h5>
-                                            <div className="row">
-                                                <div className="col-md-12">
-                                                    <canvas id="combinedChart" ref={this.combinedChartRef} width="400" height="200"></canvas>
-                                                </div>
-                                            </div>
-                                            <button className="btn btn-outline-secondary" onClick={this.handleToggleTable}>
-                                                {this.state.showTable ? (
-                                                    <i className="bi bi-eye-slash"></i>
-                                                ) : (
-                                                    <i className="bi bi-eye"></i>
-                                                )}
-                                            </button>
+                            <div className="card combined-chart overflow-auto">
+                                <div className="card-body">
+                                    <h5 className="card-title">
+                                        Biểu đồ thống kê doanh thu theo sản phẩm <span>| </span>
+                                    </h5>
+                                    <div className="row">
+                                        <div className="col-md-12">
+                                            <canvas id="combinedChart" ref={this.combinedChartRef} width="400" height="200"></canvas>
                                         </div>
-
                                     </div>
+                                    <button className="btn btn-outline-secondary" onClick={this.handleToggleTable}>
+                                        {this.state.showTable ? (
+                                            <i className="bi bi-eye-slash"></i>
+                                        ) : (
+                                            <i className="bi bi-eye"></i>
+                                        )}
+                                    </button>
                                 </div>
                             </div>
-                        </div>
-                    </div>
 
-                    <div className="col-lg-12">
-                        <div className="card">
-                            <div className="card-body">
-                                <div className="d-flex justify-content-between align-items-center mb-3">
-                                    <h5 className="card-title">Bảng thống kê theo sản phẩm <span>|</span></h5>
-                                    <div>
-                                        <button onClick={this.handleExportToExcel} disabled={this.state.exportingToExcel}>
-                                            {this.state.exportingToExcel ? 'Exporting...' : <FaFileExcel /> }
-                                        </button>
-                                    </div>
-                                </div>
-                                {this.state.showTable && (
-                                    <div className="table-responsive">
-                                        <table className="table table-borderless datatable">
-                                            <thead>
-                                            <tr>
-                                                <th>STT</th>
-                                                <th>Sản phẩm</th>
-                                                <th>Số lượng đã bán</th>
-                                                <th>Tổng tiền</th>
-                                            </tr>
-                                            </thead>
-                                            <tbody>
-                                            {this.state.thongKeSanPham.map((th, index) => (
-                                                <tr key={index}>
-                                                    <td>{index + 1}</td>
-                                                    <td>{th[0]}</td>
-                                                    <td>{th[1]}</td>
-                                                    <td>{th[2]}</td>
+                            {this.state.showTable && (
+                                <div className="card">
+                                    <div className="card-body">
+                                        <div className="d-flex justify-content-between align-items-center mb-3">
+                                            <h5 className="card-title">Bảng thống kê theo sản phẩm <span>|</span></h5>
+                                            <div>
+                                                <button onClick={this.handleExportToExcel} disabled={this.state.exportingToExcel}>
+                                                    {this.state.exportingToExcel ? 'Exporting...' : <FaFileExcel /> }
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div className="table-responsive">
+                                            <table className="table table-borderless datatable">
+                                                <thead>
+                                                <tr>
+                                                    <th>STT</th>
+                                                    <th>Sản phẩm</th>
+                                                    <th>Số lượng đã bán</th>
+                                                    <th>Tổng tiền</th>
                                                 </tr>
-                                            ))}
-                                            </tbody>
-                                        </table>
+                                                </thead>
+                                                <tbody>
+                                                {this.state.thongKeSanPham.map((th, index) => (
+                                                    <tr key={index}>
+                                                        <td>{index + 1}</td>
+                                                        <td>{th[0]}</td>
+                                                        <td>{th[1]}</td>
+                                                        <td>{th[2]}</td>
+                                                    </tr>
+                                                ))}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <ReactPaginate
+                                            previousLabel={"<"}
+                                            nextLabel={">"}
+                                            breakLabel={"..."}
+                                            breakClassName={"page-item"}
+                                            breakLinkClassName={"page-link"}
+                                            pageClassName={"page-item"}
+                                            pageLinkClassName={"page-link"}
+                                            previousClassName={"page-item"}
+                                            previousLinkClassName={"page-link"}
+                                            nextClassName={"page-item"}
+                                            nextLinkClassName={"page-link"}
+                                            pageCount={this.state.pageCount}
+                                            marginPagesDisplayed={2}
+                                            pageRangeDisplayed={5}
+                                            onPageChange={this.handlePageClick}
+                                            containerClassName={"pagination justify-content-center"}
+                                            activeClassName={"active"}
+                                        />
                                     </div>
-                                )}
-                                <ReactPaginate
-                                    previousLabel={"<"}
-                                    nextLabel={">"}
-                                    breakLabel={"..."}
-                                    breakClassName={"page-item"}
-                                    breakLinkClassName={"page-link"}
-                                    pageClassName={"page-item"}
-                                    pageLinkClassName={"page-link"}
-                                    previousClassName={"page-item"}
-                                    previousLinkClassName={"page-link"}
-                                    nextClassName={"page-item"}
-                                    nextLinkClassName={"page-link"}
-                                    pageCount={this.state.pageCount}
-                                    marginPagesDisplayed={2}
-                                    pageRangeDisplayed={5}
-                                    onPageChange={this.handlePageClick}
-                                    containerClassName={"pagination justify-content-center"}
-                                    activeClassName={"active"}
-                                />
-                            </div>
-                        </div>
-                    </div>
+                                </div>
+                            )}
+                        </TabPanel>
+
+                        {/* Add new TabPanel for "Thống kê doanh thu" */}
+                        <TabPanel>
+                            {/* You can add content for the new tab here */}
+                            <h2>Thống kê doanh thu</h2>
+                            {/* ... */}
+                        </TabPanel>
+                    </Tabs>
                 </section>
             </div>
         );

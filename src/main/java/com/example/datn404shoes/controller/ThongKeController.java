@@ -22,8 +22,13 @@ public class ThongKeController {
     private HoaDonChiTietRepository hoaDonChiTietRepository;
 
     @GetMapping("thong_ke_theo_doanh_thu_san_pham")
-    public List<Object[]> thongKeDoanhThu(Date startDate, Date endDate) {
-            return hoaDonChiTietRepository.thongKeDoanhThu(startDate, endDate);
+    public List<Object[]> thongKeDoanhThuSanPham(Date startDate, Date endDate) {
+        return hoaDonChiTietRepository.thongKeDoanhThu(startDate, endDate);
+    }
+
+    @GetMapping("thong_ke_theo_doanh_thu")
+    public List<Object[]> thongKeDoanhThuTheoThang(Date startDate, Date endDate) {
+        return hoaDonChiTietRepository.thongKeDoanhThu(startDate, endDate);
     }
 
 }

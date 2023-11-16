@@ -290,12 +290,12 @@ class KhuyenMaiComponents extends Component {
                                                         <td>
                                                             {moment(km.ketThuc).format('YYYY-MM-DD HH:mm:ss')}
                                                         </td>
-                                                        <td>{km.giamGia}</td>
+                                                        <td>{km.kieuKhuyenMai===1?km.giamGia + '%': km.giamGia + 'VND'}</td>
                                                         <td>
-                                                            {km.kieuKhuyenMai === 0
-                                                                ? 'Phần trăm'
-                                                                : km.kieuKhuyenMai === 1
-                                                                    ? 'Tiền'
+                                                            {km.kieuKhuyenMai === 1
+                                                                ? 'Giảm giá theo phần trăm'
+                                                                : km.kieuKhuyenMai === 0
+                                                                    ? 'Giảm giá theo số tiền'
                                                                     : 'Khuyến mãi khác'}
                                                         </td>
                                                         <td>{km.dieuKien}</td>
