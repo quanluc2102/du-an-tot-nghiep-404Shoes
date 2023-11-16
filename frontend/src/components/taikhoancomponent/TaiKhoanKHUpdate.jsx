@@ -19,6 +19,9 @@ class TaiKhoanKHUpdate extends Component {
             diaChi: [],
             wards: [],
             files: null,
+            selectedDistrict: '',
+            selectedWard: '',
+
             // addresses: [],
             pageCount: 0,
             taiKhoanUpdate: {
@@ -69,7 +72,7 @@ class TaiKhoanKHUpdate extends Component {
                     tinhThanhPho: '',
                     quanHuyen: '',
                     xaPhuongThiTran: '',
-
+                    isDefault: false,
                 }
             ],
 
@@ -97,42 +100,87 @@ class TaiKhoanKHUpdate extends Component {
     componentDidMount() {
         const id = this.props.match.params.id;
         const storedAddresses = localStorage.getItem('addresses');
+        const defaultDistrict = "Default District";
+        const defaultWard = "Default Ward";
+
+        // Lấy danh sách tỉnh/thành phố khi component được mount
+        axios.get("https://provinces.open-api.vn/api/?depth=1")
+            .then((response) => {
+                this.setState({ provinces: response.data });
+            })
+            .catch((error) => {
+                console.error('Lỗi khi lấy danh sách tỉnh/thành phố:', error);
+            })
+            .finally(() => {
+                // Nếu có địa chỉ được lưu trữ, cập nhật state
+                if (storedAddresses) {
+                    this.setState({
+                        addresses: JSON.parse(storedAddresses),
+                    });
+                }
+
+                // Thiết lập giá trị mặc định trong state
+                this.setState((prevState) => ({
+                    nguoiDungUpdate: {
+                        ...prevState.nguoiDungUpdate,
+                        quanHuyen: prevState.nguoiDungUpdate.quanHuyen || defaultDistrict,
+                        xaPhuongThiTran: prevState.nguoiDungUpdate.xaPhuongThiTran || defaultWard,
+                    },
+                }));
+
+                // Thực hiện fetch các thành phố khi component được mount
+                this.fetchCities();
+
+                // Lấy thông tin tài khoản và thông tin người dùng
+                taikhoanservice.getTaiKhoanById(id)
+                    .then((response) => {
+                        const taiKhoanData = response.data;
+                        this.setState({ taiKhoanUpdate: taiKhoanData });
+
+                        taikhoanservice.getThongTinByTaiKhoan(taiKhoanData)
+                            .then((thongTinResponse) => {
+                                const thongTinData = thongTinResponse.data;
+                                this.setState({ nguoiDungUpdate: thongTinData });
+                            })
+                            .catch((error) => {
+                                console.error('Lỗi khi lấy thông tin người dùng:', error);
+                            });
+                    })
+                    .catch((error) => {
+                        console.error('Lỗi khi lấy tài khoản người dùng:', error);
+                    });
+            });
+    }
+    resetForm() {
+        const storedAddresses = localStorage.getItem('addresses');
+        const defaultDistrict = "Default District";
+        const defaultWard = "Default Ward";
+
+        // Nếu có địa chỉ được lưu trữ, cập nhật state
         if (storedAddresses) {
             this.setState({
                 addresses: JSON.parse(storedAddresses),
             });
         }
 
+        // Thiết lập giá trị mặc định trong state
+        this.setState((prevState) => ({
+            nguoiDungUpdate: {
+                ...prevState.nguoiDungUpdate,
+                quanHuyen: prevState.nguoiDungUpdate.quanHuyen || defaultDistrict,
+                xaPhuongThiTran: prevState.nguoiDungUpdate.xaPhuongThiTran || defaultWard,
+            },
+            selectedDistrict: prevState.nguoiDungUpdate.quanHuyen || defaultDistrict,
+            selectedWard: prevState.nguoiDungUpdate.xaPhuongThiTran || defaultWard,
+        }));
+
         // Thực hiện fetch các thành phố khi component được mount
         this.fetchCities();
-        taikhoanservice.getTaiKhoanById(id)
-            .then((response) => {
-                const taiKhoanData = response.data;
-                this.setState({taiKhoanUpdate: taiKhoanData});
-
-                taikhoanservice.getThongTinByTaiKhoan(taiKhoanData)
-                    .then((thongTinResponse) => {
-                        const thongTinData = thongTinResponse.data;
-                        this.setState({nguoiDungUpdate: thongTinData});
-                    })
-            })
-            .catch((error) => {
-                console.error('Lỗi khi lấy tài khoản người dùng:', error);
-            });
-
-        // Lấy danh sách tỉnh/thành phố khi component được mount
-        axios.get("https://provinces.open-api.vn/api/?depth=1")
-            .then((response) => {
-                this.setState({provinces: response.data, districts: [], wards: []});
-            })
-            .catch((error) => {
-                console.error('Lỗi khi lấy danh sách tỉnh/thành phố:', error);
-            });
     }
-
 
     update = (e) => {
         e.preventDefault();
+        const confirmed = window.confirm('Bạn có chắc chắn muốn sửa khách hàng?');
         console.log("Update button clicked");
         let listFile = [];
         for (let i = 0; i < (this.state.files || []).length; i++) {
@@ -237,7 +285,7 @@ class TaiKhoanKHUpdate extends Component {
 
     themDiaChiMoi = (e) => {
         e.preventDefault();
-
+        const confirmed = window.confirm('Bạn có chắc chắn muốn thêm mới địa chỉ?');
         const { currentAddress, addresses } = this.state;
 
         if (!this.isValidAddress(currentAddress)) {
@@ -303,23 +351,38 @@ class TaiKhoanKHUpdate extends Component {
     };
 
 
-
-
-
-    editAddress(name) {
-        const selectedAddress = this.state.addresses.find(address => address.ten === name);
-        this.setState({
-            editingAddressName: name,
-            currentAddress: {
-                ten: selectedAddress.ten || '',
-                sdt: selectedAddress.sdt || '',
-                diaChiCuThe: selectedAddress.diaChiCuThe || '',
-                tinhThanhPho: selectedAddress.tinhThanhPho || '',
-                quanHuyen: selectedAddress.quanHuyen || '',
-                xaPhuongThiTran: selectedAddress.xaPhuongThiTran || '',
-            },
+    setAsDefaultAddress(index) {
+        const updatedAddresses = [...this.state.addresses];
+        updatedAddresses.forEach((address, i) => {
+            if (i === index) {
+                address.isDefault = true;
+            } else {
+                address.isDefault = false;
+            }
         });
+
+        this.setState({ addresses: updatedAddresses });
     }
+
+
+
+    editAddress(index) {
+        const selectedAddress = this.state.addresses[index];
+        if (selectedAddress) {
+            this.setState({
+                editingAddressIndex: index,
+                currentAddress: {
+                    ten: selectedAddress.ten || '',
+                    sdt: selectedAddress.sdt || '',
+                    diaChiCuThe: selectedAddress.diaChiCuThe || '',
+                    tinhThanhPho: selectedAddress.tinhThanhPho || '',
+                    quanHuyen: selectedAddress.quanHuyen || '',
+                    xaPhuongThiTran: selectedAddress.xaPhuongThiTran || '',
+                },
+            });
+        }
+    }
+
 
     cancelEditAddress() {
         this.setState({ editingAddressName: null });
@@ -406,15 +469,42 @@ class TaiKhoanKHUpdate extends Component {
     };
 
     xoaDiaChiMoi = (index) => {
-        const {addresses} = this.state;
+        const confirmed = window.confirm('Bạn có chắc chắn muốn xóa địa chỉ?');
+        const { addresses } = this.state;
         const newAddresses = [...addresses];
         newAddresses.splice(index, 1);
+
+        // Lưu các địa chỉ đã cập nhật vào localStorage hoặc cơ chế lưu trữ ưa thích của bạn
+        localStorage.setItem('addresses', JSON.stringify(newAddresses));
 
         this.setState({
             addresses: newAddresses,
         });
     };
 
+
+    handleAvatarChange = (event) => {
+        const file = event.target.files[0];
+
+        if (file) {
+            // Tạo đối tượng FileReader để đọc file
+            const reader = new FileReader();
+
+            // Xử lý khi FileReader hoàn thành việc đọc
+            reader.onloadend = () => {
+                // Cập nhật trạng thái với đường dẫn ảnh mới
+                this.setState({
+                    nguoiDungUpdate: {
+                        ...this.state.nguoiDungUpdate,
+                        anh: reader.result,
+                    },
+                });
+            };
+
+            // Đọc file dưới dạng URL
+            reader.readAsDataURL(file);
+        }
+    };
 
     thayDoiTinhThanhPhoDiaChi = (event, index) => {
         const { addresses } = this.state;
@@ -541,8 +631,8 @@ class TaiKhoanKHUpdate extends Component {
 
     handleDistrictChange(event) {
         const selectedDistrictName = event.target.value;
-
         this.setState((prevState) => ({
+            selectedDistrict: selectedDistrictName,
             currentAddress: {
                 ...prevState.currentAddress,
                 quanHuyen: selectedDistrictName,
@@ -560,6 +650,7 @@ class TaiKhoanKHUpdate extends Component {
     handleWardChange(event) {
         const selectedWardName = event.target.value;
         this.setState((prevState) => ({
+            selectedWard: selectedWardName,
             currentAddress: {
                 ...prevState.currentAddress,
                 xaPhuongThiTran: selectedWardName,
@@ -584,6 +675,24 @@ class TaiKhoanKHUpdate extends Component {
                                     <form onSubmit={this.update}>
                                         <div className="update-form">
                                             <div className="left-column">
+                                                <div className="form-group">
+                                                    <label htmlFor="avatar">Ảnh đại diện:</label>
+                                                    <input
+                                                        type="file"
+                                                        accept="image/*"
+                                                        onChange={this.handleAvatarChange}
+                                                        id="anh"
+                                                    />
+                                                    {this.state.errorUpdate.anh && <div className="text-danger">{this.state.errorUpdate.anh}</div>}
+
+                                                    {this.state.nguoiDungUpdate && this.state.nguoiDungUpdate.anh && (
+                                                        <img
+                                                            src={this.state.nguoiDungUpdate.anh}
+                                                            alt="anh"
+                                                            style={{ maxWidth: '100px', maxHeight: '100px', marginTop: '10px' }}
+                                                        />
+                                                    )}
+                                                </div>
                                                 <div>
                                                     Mã KH:
                                                     <input
@@ -660,7 +769,7 @@ class TaiKhoanKHUpdate extends Component {
                                                     </select>
                                                 </div>
                                                 <div className="form-group">
-                                                    <label htmlFor="diaChiCuThe">Số nhà/Thôn:</label>
+                                                    <label htmlFor="diaChiCuThe">Địa chỉ cụ thể:</label>
                                                     <input
                                                         type="text"
                                                         className={`form-control ${this.state.errorUpdate.diaChiCuThe ? 'is-invalid' : ''}`}
@@ -709,6 +818,7 @@ class TaiKhoanKHUpdate extends Component {
                                                                 ))}
                                                             </select>
                                                         </div>
+
                                                         <div>
                                                             Quận/Huyện:
                                                             <select
@@ -750,13 +860,33 @@ class TaiKhoanKHUpdate extends Component {
                                                         </div>
                                                         {index === this.state.editingAddressIndex ? (
                                                             <>
-                                                                <button onClick={() => this.cancelEditAddress()}>Hủy Chỉnh Sửa</button>
-                                                                <button onClick={() => this.saveEditedAddress(index)}>Lưu Chỉnh Sửa</button>
+
+                                                                <button
+                                                                    onClick={() => this.cancelEditAddress()}
+                                                                    style={{ backgroundColor: 'red', color: 'white' }}
+                                                                >
+                                                                    Hủy Chỉnh Sửa
+                                                                </button>
+
+
+                                                                <button
+                                                                    onClick={() => this.saveEditedAddress(index)}
+                                                                    style={{ backgroundColor: 'green', color: 'white' }}
+                                                                >
+                                                                    Lưu Chỉnh Sửa
+                                                                </button>
+
                                                             </>
                                                         ) : (
                                                             <>
                                                                 <button onClick={() => this.xoaDiaChiMoi(index)}>Xóa Địa Chỉ</button>
-                                                                <button onClick={() => this.editAddress(index)}>Chỉnh sửa</button>
+                                                                <button
+                                                                    onClick={() => this.editAddress(index)}
+                                                                    style={{ backgroundColor: 'yellow', color: 'black' }} // Thiết lập màu trực tiếp
+                                                                >
+                                                                    Chỉnh sửa
+                                                                </button>
+                                                               
                                                             </>
                                                         )}
                                                     </div>
@@ -767,7 +897,7 @@ class TaiKhoanKHUpdate extends Component {
                                                 <button onClick={(e) => this.themDiaChiMoi(e)}>Thêm Địa Chỉ Mới</button>
 
 
-                                                <button type="submit" className="btn btn-primary" style={{ marginTop: '10px' }}>
+                                                <button type="submit" className="btn btn-primary" style={{ marginTop: '10px', display: 'block', margin: 'auto' }}>
                                                     Update
                                                 </button>
 

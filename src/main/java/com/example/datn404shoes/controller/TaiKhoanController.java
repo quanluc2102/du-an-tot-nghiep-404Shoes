@@ -71,7 +71,10 @@ public class TaiKhoanController {
 
         return ResponseEntity.ok(serviceimpl.add(taiKhoan));
     }
-
+//    @GetMapping("indexAll")
+//    public ResponseEntity<?> indexAll(Model model) {
+//        return ResponseEntity.ok(serviceimpl.getAllNoPage());
+//    }
 //    @PostMapping("addNhanVien")
 //    public ResponseEntity<?> addNhanVien(Model model,
 //                                         @RequestBody TaiKhoan taiKhoan) {
@@ -286,7 +289,15 @@ public class TaiKhoanController {
         System.out.println("Before if statement");
         serviceimpl.update(id, taiKhoan);
 
-
+        DiaChi diaChi = new DiaChi();
+        diaChi.setTen(b.getTen());
+        diaChi.setSdt(b.getSdt());
+        diaChi.setThongTinNguoiDung(b);
+        diaChi.setTrangThai(0);
+        diaChi.setDiaChiCuThe(taiKhoanVaThongTin.getDiaChiCuThe());
+        diaChi.setTinhThanhPho(taiKhoanVaThongTin.getTinhThanhPho());
+        diaChi.setQuanHuyen(taiKhoanVaThongTin.getQuanHuyen());
+        diaChi.setXaPhuongThiTran(taiKhoanVaThongTin.getXaPhuongThiTran());
         // Thêm hoặc cập nhật Địa chỉ mới
         if (diaChiMoi != null) {
             System.out.println("diaChiMoi: " + diaChiMoi.toString());
