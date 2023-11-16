@@ -3,6 +3,9 @@ import thongkeservice from '../../services/thongkeservice/thongkeservice';
 import { toast } from 'react-toastify';
 import ReactPaginate from 'react-paginate';
 import Chart from 'chart.js/auto';
+import * as XLSX from 'xlsx'; // Import xlsx library
+import { FaFileExcel } from 'react-icons/fa'; // Import the Excel icon from Font Awesome
+
 
 class ThongKeDoanhThuSanPham extends Component {
     constructor(props) {
@@ -13,6 +16,7 @@ class ThongKeDoanhThuSanPham extends Component {
             endDate: '',
             pageCount: 0,
             showTable: false,
+            exportingToExcel: false
         };
         // Create a ref for the canvas element
         this.combinedChartRef = React.createRef();
@@ -50,7 +54,7 @@ class ThongKeDoanhThuSanPham extends Component {
         // Fetch data when the Thong Ke button is clicked
         this.fetchData();
         // Show the table when data is fetched
-        this.setState({ showTable: true });
+        // this.setState({ showTable: true });
     };
 
     handlePageClick = (data) => {
@@ -61,17 +65,64 @@ class ThongKeDoanhThuSanPham extends Component {
     };
 
     handleToggleTable = () => {
-        // Toggle the visibility of the table
-        this.setState((prevState) => ({ showTable: !prevState.showTable }));
+        this.setState((prevState) => ({
+            showTable: !prevState.showTable,
+        }));
     };
 
-    handleExportToExcel = () => {
-        // Add your logic to export table data to Excel
-        // You can use a library like 'xlsx' for this purpose
-        // Example: https://github.com/SheetJS/sheetjs
-        // This function is a placeholder and should be implemented based on your requirements
-        console.log('Exporting to Excel...');
+    handleExportToExcel = async () => {
+        const { thongKeSanPham, startDate, endDate } = this.state;
+
+        // Check if the table is empty
+        if (thongKeSanPham.length === 0) {
+            toast.warn('Dữ liệu bảng đang trống.');
+            return;
+        }
+
+        // Update state to indicate that export is in progress
+        this.setState({ exportingToExcel: true });
+
+        // Simulate an asynchronous operation (e.g., API call) for exporting
+        try {
+            // Create a new workbook
+            const workbook = XLSX.utils.book_new();
+
+            // Convert the table data to a worksheet
+            const worksheet = XLSX.utils.json_to_sheet(thongKeSanPham);
+
+            // Set column names in Excel
+            const colNames = ['Sản phẩm', 'Số lượng đã bán', 'Tổng tiền'];
+            colNames.forEach((col, index) => {
+                const cellAddress = XLSX.utils.encode_cell({ c: index, r: 1 }); // Start from row 1 for column names
+                worksheet[cellAddress].v = col; // Update the value of the cell
+            });
+
+            // Add the title row
+            const titleCellAddress = XLSX.utils.encode_cell({ c: 0, r: 0 });
+            worksheet[titleCellAddress].v = 'Thống kê sản phẩm';
+
+            // Update the worksheet name
+            XLSX.utils.book_append_sheet(workbook, worksheet, 'ThongKeSanPham');
+
+            // Format the time range for the file name
+            const formattedStartDate = new Date(startDate).toLocaleDateString();
+            const formattedEndDate = new Date(endDate).toLocaleDateString();
+            const timeRange = `${formattedStartDate}_${formattedEndDate}`;
+
+            // Save the workbook as an Excel file with the specified name
+            await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate delay
+            XLSX.writeFile(workbook, `ThongKeSanPham_${timeRange}.xlsx`);
+
+            console.log('Exporting to Excel completed!');
+        } catch (error) {
+            console.error('Error exporting to Excel:', error);
+            toast.error('Error exporting to Excel. Please try again.');
+        } finally {
+            // Update state to indicate that export is completed
+            this.setState({ exportingToExcel: false });
+        }
     };
+
 
     combinedChart = null;
 
@@ -218,7 +269,15 @@ class ThongKeDoanhThuSanPham extends Component {
                                                     <canvas id="combinedChart" ref={this.combinedChartRef} width="400" height="200"></canvas>
                                                 </div>
                                             </div>
+                                            <button className="btn btn-outline-secondary" onClick={this.handleToggleTable}>
+                                                {this.state.showTable ? (
+                                                    <i className="bi bi-eye-slash"></i>
+                                                ) : (
+                                                    <i className="bi bi-eye"></i>
+                                                )}
+                                            </button>
                                         </div>
+
                                     </div>
                                 </div>
                             </div>
@@ -231,15 +290,8 @@ class ThongKeDoanhThuSanPham extends Component {
                                 <div className="d-flex justify-content-between align-items-center mb-3">
                                     <h5 className="card-title">Bảng thống kê theo sản phẩm <span>|</span></h5>
                                     <div>
-                                        <button className="btn btn-outline-secondary" onClick={this.handleToggleTable}>
-                                            {this.state.showTable ? (
-                                                <i className="bi bi-eye-slash"></i>
-                                            ) : (
-                                                <i className="bi bi-eye"></i>
-                                            )}
-                                        </button>
-                                        <button className="btn btn-success ms-2" onClick={this.handleExportToExcel}>
-                                            <i className="bi bi-file-excel"></i> Xuất Excel
+                                        <button onClick={this.handleExportToExcel} disabled={this.state.exportingToExcel}>
+                                            {this.state.exportingToExcel ? 'Exporting...' : <FaFileExcel /> }
                                         </button>
                                     </div>
                                 </div>
