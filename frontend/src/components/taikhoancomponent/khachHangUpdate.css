@@ -31,14 +31,13 @@ body {
     display: flex;
 }
 
-.left-column {
+.left-column,
+.right-column {
     flex: 1;
     padding: 20px;
 }
 
 .right-column {
-    flex: 1;
-    padding: 20px;
     background-color: #f9f9f9;
 }
 
@@ -77,3 +76,40 @@ button:hover {
 }
 
 /* Add more styles as needed */
+
+/* Container for new address form */
+.new-address {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+
+/* Container for addresses */
+.address-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+/* Styling for each address item */
+.address-item {
+    width: 100%; /* Adjust width as needed */
+    margin-bottom: 10px;
+    border: 1px solid #ddd; /* Add border for separation */
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+/* Optional: Add styles for address item header (e.g., "Địa chỉ 1", "Địa chỉ 2") */
+.address-item h3 {
+    font-size: 16px;
+    color: #333;
+    margin-bottom: 10px;
+}
+/* Thêm kiểu cho nút chỉnh sửa */
+.edit-button {
+    background-color: yellow; /* Màu nền */
+    color: black; /* Màu chữ */
+    /* Thêm các kiểu khác nếu cần thiết */
+}

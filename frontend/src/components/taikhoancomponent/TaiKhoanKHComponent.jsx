@@ -539,7 +539,7 @@ class TaiKhoanKHComponent extends Component {
                                             <div className="text-danger">{this.state.errorAdd.anh}</div>}
                                         </div>
                                         <div>
-                                            Họ và tên :
+                                            <label>Họ và tên: <span style={{color: 'red'}}>*</span></label>
                                             <input
                                                 className={`form-control ${this.state.errorAdd.ten ? 'is-invalid' : ''}`}
                                                 name="ten"
@@ -549,7 +549,7 @@ class TaiKhoanKHComponent extends Component {
                                         </div>
 
                                         <div className="form-group">
-                                            <label htmlFor="tinhThanhPho">Tỉnh/Thành phố:</label>
+                                            <label htmlFor="tinhThanhPho">Tỉnh/Thành phố:  <span style={{color: 'red'}}>*</span></label>
                                             <select className="form-control" name="tinhThanhPho" onChange={(event) => this.handleCityChange(event)}>
                                                 <option value="">Chọn tỉnh thành</option>
                                                 {this.state.cities.map(city => (
@@ -559,7 +559,7 @@ class TaiKhoanKHComponent extends Component {
                                         </div>
 
                                         <div className="form-group">
-                                            <label htmlFor="quanHuyen">Quận/Huyện:</label>
+                                            <label htmlFor="quanHuyen">Quận/Huyện: <span style={{color: 'red'}}>*</span></label>
                                             <select className="form-control" name="quanHuyen" onChange={(event) => this.handleDistrictChange(event)}>
                                                 <option value="">Chọn quận huyện</option>
                                                 {this.state.districts.map(district => (
@@ -569,7 +569,7 @@ class TaiKhoanKHComponent extends Component {
                                         </div>
 
                                         <div className="form-group">
-                                            <label htmlFor="xaPhuongThiTran">Xã/Phường/Thị trấn:</label>
+                                            <label htmlFor="xaPhuongThiTran">Xã/Phường/Thị trấn: <span style={{color: 'red'}}>*</span></label>
                                             <select className="form-control" name="xaPhuongThiTran" onChange={(event) => this.handleWardChange(event)}>
                                                 <option value="">Chọn phường xã</option>
                                                 {this.state.wards.map(ward => (
@@ -579,7 +579,7 @@ class TaiKhoanKHComponent extends Component {
                                         </div>
 
                                         <div>
-                                            <label>Địa chỉ cụ thể :</label>
+                                            <label>Địa chỉ cụ thể: <span style={{color: 'red'}}>*</span></label>
                                             <input
                                                 className={`form-control ${this.state.errorAdd.diaChiCuThe ? 'is-invalid' : ''}`}
                                                 name="diaChiCuThe" style={{}}
@@ -592,7 +592,7 @@ class TaiKhoanKHComponent extends Component {
 
 
                                         <div>
-                                            CCCD :
+                                            <label>CCCD: <span style={{color: 'red'}}>*</span></label>
                                             <input
                                                 className={`form-control ${this.state.errorAdd.cccd ? 'is-invalid' : ''}`}
                                                 name="cccd" style={{}}
@@ -603,7 +603,7 @@ class TaiKhoanKHComponent extends Component {
                                             <div className="text-danger">{this.state.errorAdd.cccd}</div>}
                                         </div>
                                         <div>
-                                            SDT :
+                                            <label>SDT: <span style={{color: 'red'}}>*</span></label>
                                             <input
                                                 className={`form-control ${this.state.errorAdd.sdt ? 'is-invalid' : ''}`}
                                                 name="sdt"
@@ -639,7 +639,7 @@ class TaiKhoanKHComponent extends Component {
                                         </div>
 
                                         <div>
-                                            Ngày Sinh :
+                                            <label>Ngày sinh: <span style={{color: 'red'}}>*</span></label>
                                             <input
                                                 className={`form-control ${this.state.errorAdd.ngaySinh ? 'is-invalid' : ''}`}
                                                 value={this.state.nguoiDungAdd.ngaySinh} name="ngaySinh" type="date"
@@ -648,7 +648,7 @@ class TaiKhoanKHComponent extends Component {
                                             <div className="text-danger">{this.state.errorAdd.ngaySinh}</div>}
                                         </div>
                                         <div>
-                                            Email :
+                                            <label>Email: <span style={{color: 'red'}}>*</span></label>
                                             <input
                                                 className={`form-control ${this.state.errorAdd.email ? 'is-invalid' : ''}`}
                                                 name="email" value={this.state.taiKhoanAdd.email}
