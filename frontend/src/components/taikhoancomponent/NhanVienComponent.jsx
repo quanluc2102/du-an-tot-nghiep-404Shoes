@@ -3,7 +3,7 @@ import taikhoanservice from "../../services/taikhoanservice/taikhoanservice";
 import ReactPaginate from 'react-paginate';
 import {toast} from "react-toastify";
 import thongtinservice from "../../services/thongtinservice/thongtinservice";
-import "./style.css";
+import "./nhanvien.css";
 
 class NhanVienComponent extends Component {
     constructor(props) {
@@ -208,10 +208,17 @@ class NhanVienComponent extends Component {
                                                     placeholder="Tìm kiếm theo tên, mã, SDT, hoặc email"
                                                     value={searchValue}
                                                     onChange={this.handleSearch}
+                                                    style={{
+                                                        padding: '10px',
+                                                        width: '300px',
+                                                        border: '1px solid #ccc',
+                                                        borderRadius: '5px',
+                                                    }}
                                                 />
                                             </div>
-                                            <div className="filter-container">
-                                                <div>
+
+                                            <div className="filter-container" style={{ display: 'flex' }}>
+                                                <div style={{ marginRight: '10px' }}>
                                                     <input
                                                         type="radio"
                                                         id="filterAll"
@@ -220,9 +227,22 @@ class NhanVienComponent extends Component {
                                                         checked={filterStatus === 'all'}
                                                         onChange={this.handleFilterChange}
                                                     />
-                                                    <label htmlFor="filterAll">Tất cả</label>
+                                                    <label
+                                                        htmlFor="filterAll"
+                                                        style={{
+                                                            cursor: 'pointer',
+                                                            padding: '8px 12px',
+                                                            borderRadius: '5px',
+                                                            backgroundColor: '#fff',
+                                                            color: '#333',
+                                                            transition: 'background-color 0.3s, color 0.3s',
+                                                        }}
+                                                    >
+                                                        Tất cả
+                                                    </label>
                                                 </div>
-                                                <div>
+
+                                                <div style={{ marginRight: '10px' }}>
                                                     <input
                                                         type="radio"
                                                         id="filterActive"
@@ -231,8 +251,21 @@ class NhanVienComponent extends Component {
                                                         checked={filterStatus === 'active'}
                                                         onChange={this.handleFilterChange}
                                                     />
-                                                    <label htmlFor="filterActive" style={{color:"green"}}>Đang làm</label>
+                                                    <label
+                                                        htmlFor="filterActive"
+                                                        style={{
+                                                            cursor: 'pointer',
+                                                            padding: '8px 12px',
+                                                            borderRadius: '5px',
+                                                            backgroundColor: '#fff',
+                                                            color: 'green',
+                                                            transition: 'background-color 0.3s, color 0.3s',
+                                                        }}
+                                                    >
+                                                        Đang làm
+                                                    </label>
                                                 </div>
+
                                                 <div>
                                                     <input
                                                         type="radio"
@@ -242,7 +275,19 @@ class NhanVienComponent extends Component {
                                                         checked={filterStatus === 'inactive'}
                                                         onChange={this.handleFilterChange}
                                                     />
-                                                    <label htmlFor="filterInactive" style={{color:"red"}}>Nghỉ việc</label>
+                                                    <label
+                                                        htmlFor="filterInactive"
+                                                        style={{
+                                                            cursor: 'pointer',
+                                                            padding: '8px 12px',
+                                                            borderRadius: '5px',
+                                                            backgroundColor: '#fff',
+                                                            color: 'red',
+                                                            transition: 'background-color 0.3s, color 0.3s',
+                                                        }}
+                                                    >
+                                                        Nghỉ việc
+                                                    </label>
                                                 </div>
                                             </div>
                                             <table className="table table-borderless datatable">
