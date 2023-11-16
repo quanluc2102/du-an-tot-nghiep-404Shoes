@@ -1,36 +1,29 @@
 import React, { Fragment, useEffect } from "react"
 import './style.css'
+import { Link } from "react-router-dom/cjs/react-router-dom";
 
 function Home() {
 
     useEffect(() => {
-        const obse = new IntersectionObserver((entries) => {
-            entries.forEach((entry) => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('show');
+        const obse = new IntersectionObserver((enti) => {
+            enti.forEach((enty) => {
+                if (enty.isIntersecting) {
+                    enty.target.classList.add('show')
                 } else {
-                    entry.target.classList.remove('show');
+                    enty.target.classList.remove('show')
                 }
-            });
-        });
+            })
+        })
 
-        const contentText = document.querySelectorAll('.content-right');
-        contentText.forEach((element) => {
-            obse.observe(element);
-        });
-
-        const contentImg = document.querySelectorAll('.content-left');
-        contentImg.forEach((element) => {
-            obse.observe(element);
-        });
+        const contentText = document.querySelectorAll('.content-right')
+        contentText.forEach((e) => { obse.observe(e) })
+        const contentImg = document.querySelectorAll('.content-left')
+        contentImg.forEach((e) => { obse.observe(e) })
 
         window.addEventListener('scroll', function () {
-            var parallax1 = document.getElementById('x1');
             var parallax3 = document.getElementById('navbarhead');
             let scrolled = this.window.scrollY;
-            parallax1.style.transform = 'translateY(' + scrolled * 0.6 + 'px)';
-            parallax3.style.top = - scrolled * 0.06 + 'px';
-        
+            parallax3.style.top = - scrolled * 0.9 + 'px';
         });
     }, []);
 
@@ -38,7 +31,7 @@ function Home() {
         <Fragment>
             <body>
                 <header>
-                    <nav className="navbar navbar-expand-lg navbar-light bg-0 py-4 fixed-top" id="navbarhead">
+                    <nav className="navbar navbar-expand-lg navbar-light bg-0 py-4 fixed-top" id="navbarhead" style={{ backgroundColor: ' rgb(178, 221, 235) ' }}>
                         <div className="container">
                             <div className="d-flex justify-content-between align-items-center w-100">
                                 <a className="navbar-brand d-flex align-items-center" href="index.html">
@@ -55,11 +48,12 @@ function Home() {
 
                             <div className="collapse navbar-collapse justify-content-end" id="navMenu">
                                 <ul className="navbar-nav mx-auto text-center">
-                                    <li className="nav-item px-2 py-2">
-                                        <a className="nav-link text-uppercase " href="/khach-hang/home">TRANG CHỦ</a>
+                                <li className="nav-item px-2 py-2">
+                                        <Link to='/' style={{ textDecoration: 'none' }}> <a className="nav-link text-uppercase ">TRANG CHỦ</a></Link>
+
                                     </li>
                                     <li className="nav-item px-2 py-2">
-                                        <a className="nav-link text-uppercase " href="/khach-hang/products">SẢN PHẨM</a>
+                                        <Link to='product-list' style={{ textDecoration: 'none' }}><a className="nav-link text-uppercase ">SẢN PHẨM</a></Link>
                                     </li>
                                     <li className="nav-item px-2 py-2">
                                         <a className="nav-link text-uppercase " href="#div6">KHÁM PHÁ</a>
@@ -109,15 +103,16 @@ function Home() {
                         </div>
                     </div>
                 </header>
+
                 <main style={{ minHeight: '100vh', backgroundColor: 'aquamarine' }} data-bs-spy="scroll" data-bs-target="#nav-example"
                     data-bs-smooth-scroll="true" tabindex="0">
-                    <div className="content trang1">
+                    <div className="contentHome trang1-home">
                         <a href="#div1" className="btn">
                             <h1 className="text-center" id="x1">Bắt Đầu Khám Phá</h1>
                         </a>
                     </div>
 
-                    <div className="content trang2" id="div1">
+                    <div className="contentHome trang2-home" id="div1">
                         <div className="row container">
                             <div className="col-6 content-left">
                                 <img src="https://ananas.vn/wp-content/uploads/Pro_AV00202_1.jpg"
@@ -147,7 +142,7 @@ function Home() {
 
                         </div>
                     </div>
-                    <div className="content trang3">
+                    <div className="contentHome trang3-home">
                         <div className="row container">
                             <div className="col-6 content-left">
                                 <img src="https://ananas.vn/wp-content/uploads/Pro_AV00007_1.jpeg"
@@ -179,7 +174,7 @@ function Home() {
 
 
                     </div>
-                    <div className="content trang4">
+                    <div className="contentHome trang4-home">
                         <div className="row container">
                             <div className="col-6 content-left">
                                 <img src="https://ananas.vn/wp-content/uploads/Pro_AV00202_1.jpg"
@@ -209,7 +204,7 @@ function Home() {
 
                         </div>
                     </div>
-                    <div className="content trang5">
+                    <div className="contentHome trang5-home">
                         <div className="row container">
                             <div className="col-6 content-left">
                                 <img src="https://ananas.vn/wp-content/uploads/Pro_AV00197_1.jpg"
@@ -239,7 +234,7 @@ function Home() {
 
                         </div>
                     </div>
-                    <div className="content trang6">
+                    <div className="contentHome trang6-home">
                         <div className="row container" id="div6">
                             <div className="col-6 content-left">
                                 <h1 className="font-monospace fw-bolder"><strong>👈 BÀI VIẾT FACEBOOK</strong></h1>
@@ -292,7 +287,7 @@ function Home() {
                             <div class="row text-white g-4">
                                 <div class="col-md-6 col-lg-3">
                                     <a class="text-uppercase text-decoration-none brand text-white" href="index.html">404SHOES</a>
-                                    <p class="text-white text-muted mt-3"> <strong>Giày Việt chính hãng </strong><br />
+                                    <p class="text-white text-muted mt-3"> <strong>Giày thể thao chính hãng </strong><br />
                                         Hoàn trả 100% nếu sản phẩm bị lỗi hoặc hỏng khi vận chuyển <br />
                                         Đội ngũ hỗ trợ khách hàng luôn luôn 24/7
                                     </p>
@@ -303,22 +298,22 @@ function Home() {
                                     <ul class="list-unstyled">
                                         <li class="my-3">
                                             <a href="#" class="text-white text-decoration-none text-muted">
-                                                <i class="fas fa-chevron-right me-1"></i> Home
+                                                Home
                                             </a>
                                         </li>
                                         <li class="my-3">
                                             <a href="#" class="text-white text-decoration-none text-muted">
-                                                <i class="fas fa-chevron-right me-1"></i> Bộ sưu tập
+                                               Bộ sưu tập
                                             </a>
                                         </li>
                                         <li class="my-3">
                                             <a href="#" class="text-white text-decoration-none text-muted">
-                                                <i class="fas fa-chevron-right me-1"></i> Blogs
+                                                 Blogs
                                             </a>
                                         </li>
                                         <li class="my-3">
                                             <a href="#" class="text-white text-decoration-none text-muted">
-                                                <i class="fas fa-chevron-right me-1"></i> Về chúng tôi
+                                               Về chúng tôi
                                             </a>
                                         </li>
                                     </ul>
@@ -358,17 +353,17 @@ function Home() {
                                         <ul class="list-unstyled d-flex flex-column">
                                             <li>
                                                 <a href="#" class="text-white text-decoration-none text-muted fs-4 me-4">
-                                                    <i class="fab fa-facebook-f">Facebook</i>
+                                                    <i class="fab fa-facebook-f"> Facebook</i>
                                                 </a>
                                             </li>
                                             <li>
                                                 <a href="#" class="text-white text-decoration-none text-muted fs-4 me-4">
-                                                    <i class="fab fa-twitter">Twitter</i>
+                                                    <i class="fab fa-twitter"> Twitter</i>
                                                 </a>
                                             </li>
                                             <li>
                                                 <a href="#" class="text-white text-decoration-none text-muted fs-4 me-4">
-                                                    <i class="fab fa-instagram">Instagram</i>
+                                                    <i class="fab fa-instagram"> Instagram</i>
                                                 </a>
                                             </li>
                                         </ul>
@@ -379,7 +374,7 @@ function Home() {
                     </footer>
                 </footer>
             </body>
-            
+
         </Fragment>
     )
 }

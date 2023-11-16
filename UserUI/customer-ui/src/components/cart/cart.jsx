@@ -23,7 +23,7 @@ function Cart() {
         window.addEventListener('scroll', function () {
             var parallax3 = document.getElementById('navbarhead');
             let scrolled = this.window.scrollY;
-            parallax3.style.top = - scrolled * 2 + 'px';
+            parallax3.style.top = - scrolled * 0.9 + 'px';
 
         });
 
@@ -58,7 +58,7 @@ function Cart() {
         <Fragment>
             <body>
                 <header>
-                    <nav className="navbar navbar-expand-lg navbar-light bg-0 py-4 fixed-top" id="navbarhead" style={{backgroundColor: 'rgb(255, 228, 196)'}}>
+                    <nav className="navbar navbar-expand-lg navbar-light bg-0 py-4 fixed-top" id="navbarhead" style={{ backgroundColor: 'rgb(173, 216, 230) ' }}>
                         <div className="container">
                             <div className="d-flex justify-content-between align-items-center w-100">
                                 <a className="navbar-brand d-flex align-items-center" href="index.html">
@@ -75,15 +75,24 @@ function Cart() {
 
                             <div className="collapse navbar-collapse justify-content-end" id="navMenu">
                                 <ul className="navbar-nav mx-auto text-center">
-                                    <li className="nav-item px-2 py-2">
-                                        <a className="nav-link text-uppercase " href="/khach-hang/home">TRANG CHỦ</a>
+                                    <li className={`nav-item px-2 py-2`}>
+                                        <a className="nav-link text-uppercase" href="/khach-hang/home">
+                                            TRANG CHỦ
+                                        </a>
                                     </li>
-                                    <li className="nav-item px-2 py-2">
-                                        <a className="nav-link text-uppercase " href="/khach-hang/products">SẢN PHẨM</a>
+
+                                    <li className={`nav-item px-2 py-2`}>
+                                        <a className="nav-link text-uppercase" href="/khach-hang/products">
+                                            SẢN PHẨM
+                                        </a>
                                     </li>
-                                    <li className="nav-item px-2 py-2">
-                                        <a className="nav-link text-uppercase " href="#div6">KHÁM PHÁ</a>
+
+                                    <li className={`nav-item px-2 py-2`}>
+                                        <a className="nav-link text-uppercase" href="#div6">
+                                            KHÁM PHÁ
+                                        </a>
                                     </li>
+
                                 </ul>
                             </div>
                         </div>
@@ -129,191 +138,193 @@ function Cart() {
                         </div>
                     </div>
                 </header>
-                <main style={{ minHeight: '100vh'}} data-bs-spy="scroll"
+                <br/>
+                <br/>
+                <main style={{ minHeight: '100vh' }} data-bs-spy="scroll"
                     data-bs-target="#nav-example" data-bs-smooth-scroll="true" tabindex="0">
-                    <div class="content trang2 " id="div1" style={{backgroundColor: 'rgb(255, 228, 196)'}}>
-                        <div class="row container">
-                            <div class="col-8 content-left bg-light pt-3">
-                                <h1 style={{display: 'flex'}}><strong>GIỎ HÀNG</strong></h1>
-                                <hr/>
-                                <div class="the-san-pham my-3 position-relative">
-                                    <div class="row">                                      
-                                        <div class="col-4">
+                    <div className="content" id="div1">
+                        <div className="row container">
+                            <div className="col-8 content-left bg-light pt-3">
+                                <h1 style={{ display: 'flex' }}><strong>GIỎ HÀNG</strong></h1>
+                                <hr />
+                                <div className="the-san-pham my-3 position-relative">
+                                    <div className="row">
+                                        <div className="col-4">
                                             <img src="https://ananas.vn/wp-content/uploads/Pro_AV00167_1-500x500.jpeg" width="200px"
                                                 height="200px" alt="ảnh sản phẩm" />
                                         </div>
-                                        <div class="col-8">
-                                            <div class="row mb-5">
-                                                <h4 style={{display: 'flex'}}><strong>GIÀY ĐÁ LMAO ĐỜ PHẮC</strong></h4>
-                                                <div style={{display: 'flex'}} class="col-5"> <span><strong>Giá</strong> : 120.000 VND</span></div>
-                                                <div style={{display: 'flex'}} class="col-5"> <span><strong>Tình trạng</strong> : Còn Hàng</span></div>
-                                                <div style={{display: 'flex'}} class="col-5"> <span><strong>Đơn giá</strong> : 100.000 NVD</span></div>
-                                                <div style={{display: 'flex'}} class="col-5"> <span><strong>Màu</strong> : Nâu Đất</span></div>
+                                        <div className="col-8">
+                                            <div className="row mb-5">
+                                                <h4 style={{ display: 'flex' }}><strong>GIÀY ĐÁ LMAO ĐỜ PHẮC</strong></h4>
+                                                <div style={{ display: 'flex' }} className="col-5"> <span><strong>Giá</strong> : 120.000 VND</span></div>
+                                                <div style={{ display: 'flex' }} className="col-5"> <span><strong>Tình trạng</strong> : Còn Hàng</span></div>
+                                                <div style={{ display: 'flex' }} className="col-5"> <span><strong>Đơn giá</strong> : 100.000 NVD</span></div>
+                                                <div style={{ display: 'flex' }} className="col-5"> <span><strong>Màu</strong> : Nâu Đất</span></div>
                                             </div>
 
-                                            <div class="row ">                           
-                                                <div class="col-3">
-                                                    <div class="form-floating mb-3 border-0">
-                                                        <input type="number"  class="form-control" min="1" name="formId1" id="formId1"
+                                            <div className="row ">
+                                                <div className="col-3">
+                                                    <div className="form-floating mb-3 border-0">
+                                                        <input type="number" className="form-control" min="1" name="formId1" id="formId1"
                                                             placeholder="Số Lượng" />
-                                                        <label for="formId1" class="font-monospace"><strong>Số Lượng :</strong></label>
+                                                        <label for="formId1" className="font-monospace"><strong>Số Lượng :</strong></label>
                                                     </div>
                                                 </div>
-                                                <div class="col-2">
-                                                    <a href="#" title="lưu thay đổi" class="btn btn-outline-success btn-lg"><i class='bx bx-upload fs-2'></i></a>
+                                                <div className="col-2">
+                                                    <a href="#" title="lưu thay đổi" className="btn btn-outline-success btn-lg"><i class='bx bx-upload fs-2'></i></a>
                                                 </div>
-                                                <div class="col-2">
-                                                    <a href="#" title="Xóa" class="btn btn-outline-danger btn-lg"><i class='bx bx-trash-alt fs-2' ></i></a>
+                                                <div className="col-2">
+                                                    <a href="#" title="Xóa" className="btn btn-outline-danger btn-lg"><i class='bx bx-trash-alt fs-2' ></i></a>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
 
-                                <hr class="dashed-hr" />
-                                <button class="btn btn-danger">Xóa tất cả</button>
-                                <button class="btn btn-primary" style={{marginLeft: '1em'}}>Tiếp tục mua hàng</button>
+                                <hr className="dashed-hr" />
+                                <button className="btn btn-danger" style={{ marginLeft: '0em', width: '25%'}}>Xóa tất cả</button>
+                                <button className="btn btn-primary" style={{ marginLeft: '5px', width: '25%'}}>Tiếp tục mua hàng</button>
 
                             </div>
-                            <div class="col-4 content-right bg-light pt-3">
+                            <div className="col-4 content-right bg-light pt-3">
                                 <h1><strong>TỔNG TIỀN</strong></h1>
                                 <hr />
 
                                 <form action="#" method="get">
-                                    <div class="row">
-                                        <div class="col-9">
-                                            <div class="form-floating mb-3 border-0">
-                                                <input type="text" min="0" class="form-control" name="formId1" id="formId1"
+                                    <div className="row">
+                                        <div className="col-9">
+                                            <div className="form-floating mb-3 border-0">
+                                                <input type="text" min="0" className="form-control" name="formId1" id="formId1"
                                                     placeholder="Số Lượng" />
-                                                <label for="formId1" class="font-monospace"><strong>Mã khuyến mãi</strong></label>
+                                                <label for="formId1" className="font-monospace"><strong>Mã khuyến mãi</strong></label>
 
                                             </div>
                                         </div>
-                                        <div class="col-3">
-                                            <button type="submit" class="btn btn-outline-danger">ÁP DỤNG</button>
+                                        <div className="col-3">
+                                            <button type="submit" className="btn btn-outline-danger" style={{height: '60px'}}>ÁP DỤNG</button>
                                         </div>
                                     </div>
                                 </form>
 
-                                <div class="row">
-                                    <div class="col-6"> <span><strong>Đơn hàng</strong> :</span></div>
-                                    <div class="col-6"> <span>100.333.213 VND</span></div>
-                                    <div class="col-6"> <span><strong>Giảm</strong> :</span></div>
-                                    <div class="col-6"> <span>900.000</span></div>
+                                <div className="row">
+                                    <div className="col-6"> <span><strong>Đơn hàng</strong> :</span></div>
+                                    <div className="col-6"> <span>100.333.213 VND</span></div>
+                                    <div className="col-6"> <span><strong>Giảm</strong> :</span></div>
+                                    <div className="col-6"> <span>900.000</span></div>
                                 </div>
-                                <hr class="dashed-hr" />
-                                <div class="row">
-                                    <div class="col-5"><br />
-                                        <h5><strong style={{ color: 'orangered' }}>TẠM TÍNH : </strong></h5>
+                                <hr className="dashed-hr" />
+                                <div className="row">
+                                    <div className="col-5"><br />
+                                        <h5><strong style={{ color: 'orangered' }}>Thành tiền : </strong></h5>
                                     </div>
-                                    <div class="col-6 float-end"><br />
+                                    <div className="col-6 float-end"><br />
                                         <h5><strong style={{ color: 'orangered' }}>500.000 VND</strong></h5>
                                     </div>
 
                                 </div>
-                                <hr class="dashed-hr" />
+                                <hr className="dashed-hr" />
                                 <span>
 
                                     Cảm ơn quý khách đã tin tưởng và mua hàng tại 404SHOES 😍😍😍
                                 </span>
-                                <hr class="dashed-hr" />
+                                <hr className="dashed-hr" />
 
-                                <div class="row">
+                                <div className="row">
 
-                                    <div class="col-12 mt-1" style={{marginBottom: '1em'}}>
-                                        <a href="#" class="btn btn-warning btn-lg" style={{ width: '100%' }}><strong>TIẾP TỤC THANH
+                                    <div className="col-12 mt-1" >
+                                        <a href="#" className="btn btn-warning btn-lg" style={{ width: '100%' }}><strong>TIẾP TỤC THANH
                                             TOÁN</strong></a>
                                     </div>
                                 </div>
                             </div>
 
-                            <hr class="dashed-hr mt-5" />
+                            <hr className="dashed-hr mt-5" />
                         </div>
                     </div>
                 </main>
                 <footer>
-                    <footer class="bg-dark py-5">
-                        <div class="container">
-                            <div class="row text-white g-4">
-                                <div class="col-md-6 col-lg-3">
-                                    <a class="text-uppercase text-decoration-none brand text-white" href="index.html">404SHOES</a>
-                                    <p class="text-white text-muted mt-3"> <strong>Giày Việt chính hãng </strong><br />
+                    <footer className="bg-dark py-5">
+                        <div className="container">
+                            <div className="row text-white g-4">
+                                <div className="col-md-6 col-lg-3">
+                                    <a className="text-uppercase text-decoration-none brand text-white" href="index.html">404SHOES</a>
+                                    <p className="text-white text-muted mt-3"> <strong>Giày thể thao chính hãng </strong><br />
                                         Hoàn trả 100% nếu sản phẩm bị lỗi hoặc hỏng khi vận chuyển <br />
                                         Đội ngũ hỗ trợ khách hàng luôn luôn 24/7
                                     </p>
                                 </div>
 
-                                <div class="col-md-6 col-lg-3">
-                                    <h5 class="fw-light">Liên Kết</h5>
-                                    <ul class="list-unstyled">
-                                        <li class="my-3">
-                                            <a href="#" class="text-white text-decoration-none text-muted">
-                                                <i class="fas fa-chevron-right me-1"></i> Home
+                                <div className="col-md-6 col-lg-3">
+                                    <h5 className="fw-light">Liên Kết</h5>
+                                    <ul className="list-unstyled">
+                                        <li className="my-3">
+                                            <a href="#" className="text-white text-decoration-none text-muted">
+                                                 Home
                                             </a>
                                         </li>
-                                        <li class="my-3">
-                                            <a href="#" class="text-white text-decoration-none text-muted">
-                                                <i class="fas fa-chevron-right me-1"></i> Bộ sưu tập
+                                        <li className="my-3">
+                                            <a href="#" className="text-white text-decoration-none text-muted">
+                                                 Bộ sưu tập
                                             </a>
                                         </li>
-                                        <li class="my-3">
-                                            <a href="#" class="text-white text-decoration-none text-muted">
-                                                <i class="fas fa-chevron-right me-1"></i> Blogs
+                                        <li className="my-3">
+                                            <a href="#" className="text-white text-decoration-none text-muted">
+                                                Blogs
                                             </a>
                                         </li>
-                                        <li class="my-3">
-                                            <a href="#" class="text-white text-decoration-none text-muted">
-                                                <i class="fas fa-chevron-right me-1"></i> Về chúng tôi
+                                        <li className="my-3">
+                                            <a href="#" className="text-white text-decoration-none text-muted">
+                                                 Về chúng tôi
                                             </a>
                                         </li>
                                     </ul>
                                 </div>
 
-                                <div class="col-md-6 col-lg-3">
-                                    <h5 class="fw-light mb-4">Liên Hệ</h5>
-                                    <div class="d-flex justify-content-start align-items-start my-2 text-muted">
-                                        <span class="me-0">
-                                            <i class="fas fa-map-marked-alt"></i>
+                                <div className="col-md-6 col-lg-3">
+                                    <h5 className="fw-light mb-4">Liên Hệ</h5>
+                                    <div className="d-flex justify-content-start align-items-start my-2 text-muted">
+                                        <span className="me-0">
+                                            <i className="fas fa-map-marked-alt"></i>
                                         </span>
-                                        <span class="fw-light">
-                                             Hoàng Quốc Việt - Cầu Giấy - Hà Nội
-                                        </span>
-                                    </div>
-                                    <div class="d-flex justify-content-start align-items-start my-2 text-muted">
-                                        <span class="me-0">
-                                            <i class="fas fa-envelope"></i>
-                                        </span>
-                                        <span class="fw-light">
-                                             404shopshoes@gmail.com
+                                        <span className="fw-light">
+                                            Hoàng Quốc Việt - Cầu Giấy - Hà Nội
                                         </span>
                                     </div>
-                                    <div class="d-flex justify-content-start align-items-start my-2 text-muted">
-                                        <span class="me-0">
-                                            <i class="fas fa-phone-alt"></i>
+                                    <div className="d-flex justify-content-start align-items-start my-2 text-muted">
+                                        <span className="me-0">
+                                            <i className="fas fa-envelope"></i>
                                         </span>
-                                        <span class="fw-light">
-                                             +84 0819130199
+                                        <span className="fw-light">
+                                            404shopshoes@gmail.com
+                                        </span>
+                                    </div>
+                                    <div className="d-flex justify-content-start align-items-start my-2 text-muted">
+                                        <span className="me-0">
+                                            <i className="fas fa-phone-alt"></i>
+                                        </span>
+                                        <span className="fw-light">
+                                            +84 0819130199
                                         </span>
                                     </div>
                                 </div>
 
-                                <div class="col-md-6 col-lg-3">
-                                    <h5 class="fw-light mb-3">Theo Dõi</h5>
+                                <div className="col-md-6 col-lg-3">
+                                    <h5 className="fw-light mb-3">Theo Dõi</h5>
                                     <div>
-                                        <ul class="list-unstyled d-flex flex-column">
+                                        <ul className="list-unstyled d-flex flex-column">
                                             <li>
-                                                <a href="#" class="text-white text-decoration-none text-muted fs-4 me-4">
-                                                    <i class="fab fa-facebook-f">   Facebook</i>
+                                                <a href="#" className="text-white text-decoration-none text-muted fs-4 me-4">
+                                                    <i className="fab fa-facebook-f">   Facebook</i>
                                                 </a>
                                             </li>
                                             <li>
-                                                <a href="#" class="text-white text-decoration-none text-muted fs-4 me-4">
-                                                    <i class="fab fa-twitter">   Twitter</i>
+                                                <a href="#" className="text-white text-decoration-none text-muted fs-4 me-4">
+                                                    <i className="fab fa-twitter">   Twitter</i>
                                                 </a>
                                             </li>
                                             <li>
-                                                <a href="#" class="text-white text-decoration-none text-muted fs-4 me-4">
-                                                    <i class="fab fa-instagram">   Instagram</i>
+                                                <a href="#" className="text-white text-decoration-none text-muted fs-4 me-4">
+                                                    <i className="fab fa-instagram">   Instagram</i>
                                                 </a>
                                             </li>
                                         </ul>

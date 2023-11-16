@@ -1,22 +1,23 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Open+Sans:wght@400;700&family=Montserrat:wght@400;700&family=Nunito:wght@400;700&family=Lato:wght@400;700&display=swap');
 
-  
+
 body {
-  font-family: 'Roboto', sans-serif;
-  color: rgb(0, 69, 52);
+    font-family: 'Roboto', sans-serif;
+    color: rgb(0, 69, 52);
 }
-p{
+
+p {
     line-height: 2;
 }
 
-.nav-link{
+.nav-link {
     color: rgb(0, 69, 52);
     border-radius: 10px;
     white-space: nowrap;
     transition: 1000ms;
 }
 
-.nav-link:hover{
+.nav-link:hover {
     background-color: rgb(16, 101, 116);
     border-radius: 50px;
     white-space: nowrap;
@@ -24,7 +25,7 @@ p{
     animation: rainbow 5s linear infinite;
 }
 
-.fw-bolder{
+.fw-bolder {
     font-size: 3vm;
 }
 
@@ -40,9 +41,9 @@ p{
     border-radius: 50%;
     text-align: center;
     line-height: 20px;
-  }
+}
 
-.content{
+.contentHome {
     width: 100%;
     min-height: 140vh;
     overflow: hidden;
@@ -53,21 +54,22 @@ p{
     z-index: 1;
 }
 
-.position-relative{
+.position-relative {
     position: relative;
     top: 0;
     bottom: 0;
     z-index: 9999;
 }
 
-.content-left{
+.content-left {
     text-align: right;
     opacity: 1;
     filter: blur(1px);
     transform: translateX(-100px) scale(0.89);
     transition: all 1.5s;
 }
-.content-right{
+
+.content-right {
     text-align: left;
     opacity: 1;
     filter: blur(1px);
@@ -76,7 +78,7 @@ p{
 }
 
 
-.show{
+.show {
     filter: blur(0);
     opacity: 1;
     transform: translateX(0) scale(1);
@@ -84,21 +86,21 @@ p{
 }
 
 @media (prefer-reduced-motion) {
-    .content{
+    .content {
         transition: none;
     }
 }
 
-.trang1{
-    min-height: 140vh;
-    background-image: url("https://cdn.thewirecutter.com/wp-content/media/2021/10/running-shoes-2048px-3128-2x1-1.jpg?auto=webp&quality=75&crop=2:1&width=1024");
+.trang1-home {
+    min-height: 100vh;
+    background-image: url("https://t3.ftcdn.net/jpg/02/05/63/96/360_F_205639641_eYm8waWWhuMV8zbmcGHUG7fs6kLS7ksc.jpg");
     background-attachment: fixed;
     background-repeat: repeat-x;
     background-size: cover;
     animation: sizeBaner 360s linear infinite;
 }
 
-#x1{
+#x1 {
     color: rgb(0, 69, 52);
     font-weight: bolder;
     background: rgb(184, 203, 204);
@@ -106,71 +108,154 @@ p{
     border-radius: 30px;
     transition: all 1;
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    
-}
-#x1:hover{
-  
-    background: rgb(250, 250, 250);
 
+}
+
+#x1:hover {
+    background: rgb(250, 250, 250);
     transition: all 0.5s;
     animation: rainbow 5s linear infinite;
-    
 }
 
 @keyframes rainbow {
-    0% { color: rgb(249, 188, 172); }
-    14% { color: orange; }
-    28% { color: rgb(255, 199, 59); }
-    42% { color:  rgb(204, 233, 129) }
-    57% { color: rgb(64, 64, 143); }
-    71% { color:  rgb(185, 237, 214) }
-    85% { color: violet; }
-    100% { color: rgb(249, 188, 172); }
-  }
+    0% {
+        color: rgb(249, 188, 172);
+    }
+
+    14% {
+        color: orange;
+    }
+
+    28% {
+        color: rgb(255, 199, 59);
+    }
+
+    42% {
+        color: rgb(204, 233, 129)
+    }
+
+    57% {
+        color: rgb(64, 64, 143);
+    }
+
+    71% {
+        color: rgb(185, 237, 214)
+    }
+
+    85% {
+        color: violet;
+    }
+
+    100% {
+        color: rgb(249, 188, 172);
+    }
+}
 
 @keyframes sizeBaner {
-    0% {  background-position: -0px;}
-    5% {  background-position: -50px;}
-    10% {  background-position: -100px; }
-    15% {  background-position: -150px; }
-    20% {  background-position: -200px; }
-    25% {  background-position: -2500px; }
-    30% {  background-position: -300px; }
-    35% {  background-position: -3500px; }
-    40% {  background-position: -400px; }
-    45% {  background-position: -320px;}
-    50% {  background-position: -808px;}
-    55% {  background-position: -780px;}
-    60% {  background-position: -680px;}
-    65% {  background-position: -580px;}
-    70% {  background-position: -380px;}
-    75% {  background-position: -3650px;}
-    80% {  background-position: -200px;}
-    85% {  background-position: -2340px;}
-    90% {  background-position: -1890px;}
-    95% {  background-position: -120px;}
-    100% {  background-position: -0px;}
-    
-  }
- 
-.trang2{
-    background-color:rgb(255, 247, 235) ;
+    0% {
+        background-position: -0px;
+    }
+
+    5% {
+        background-position: -50px;
+    }
+
+    10% {
+        background-position: -100px;
+    }
+
+    15% {
+        background-position: -150px;
+    }
+
+    20% {
+        background-position: -200px;
+    }
+
+    25% {
+        background-position: -2500px;
+    }
+
+    30% {
+        background-position: -300px;
+    }
+
+    35% {
+        background-position: -3500px;
+    }
+
+    40% {
+        background-position: -400px;
+    }
+
+    45% {
+        background-position: -320px;
+    }
+
+    50% {
+        background-position: -808px;
+    }
+
+    55% {
+        background-position: -780px;
+    }
+
+    60% {
+        background-position: -680px;
+    }
+
+    65% {
+        background-position: -580px;
+    }
+
+    70% {
+        background-position: -380px;
+    }
+
+    75% {
+        background-position: -3650px;
+    }
+
+    80% {
+        background-position: -200px;
+    }
+
+    85% {
+        background-position: -2340px;
+    }
+
+    90% {
+        background-position: -1890px;
+    }
+
+    95% {
+        background-position: -120px;
+    }
+
+    100% {
+        background-position: -0px;
+    }
+
+}
+
+.trang2-home {
+    background-color: rgb(255, 247, 235);
     min-height: 140vh;
 }
 
-.trang3{
-   
+.trang3-home {
+
     background-color: rgb(249, 188, 172);
 }
 
-.trang4{
-    background-color:rgb(255, 199, 59);
+.trang4 {
+    background-color: rgb(255, 199, 59);
 }
 
-.trang5{
+.trang5-home {
     background-color: rgb(204, 233, 129);
 }
 
-.trang6{
+.trang6-home {
     background-color: rgb(185, 237, 214);
 }
