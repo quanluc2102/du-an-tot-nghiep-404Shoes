@@ -1,54 +1,54 @@
-.search-container {
-    margin-bottom: 10px;
-}
+/*.search-container {*/
+/*    margin-bottom: 10px;*/
+/*}*/
 
-input[type="text"] {
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    width: 300px;
-    font-size: 14px;
-}
+/*input[type="text"] {*/
+/*    padding: 8px;*/
+/*    border: 1px solid #ccc;*/
+/*    border-radius: 4px;*/
+/*    width: 300px;*/
+/*    font-size: 14px;*/
+/*}*/
 
-.filter-container {
-    display: flex;
-    align-items: center;
-}
+/*.filter-container {*/
+/*    display: flex;*/
+/*    align-items: center;*/
+/*}*/
 
-.filter-container > div {
-    margin-right: 10px;
-}
+/*.filter-container > div {*/
+/*    margin-right: 10px;*/
+/*}*/
 
-input[type="radio"] {
-    display: none; /* Hide the default radio button */
-}
+/*input[type="radio"] {*/
+/*    display: none; !* Hide the default radio button *!*/
+/*}*/
 
-label {
-    font-size: 14px;
-    cursor: pointer;
-}
+/*label {*/
+/*    font-size: 14px;*/
+/*    cursor: pointer;*/
+/*}*/
 
-.green-label {
-    color: green;
-}
+/*.green-label {*/
+/*    color: green;*/
+/*}*/
 
-.red-label {
-    color: red;
-}
+/*.red-label {*/
+/*    color: red;*/
+/*}*/
 
-/* Style the custom radio button */
-input[type="radio"] + label:before {
-    content: "";
-    display: inline-block;
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    border: 3px solid #ccc;
-    margin-right: 5px;
-    vertical-align: middle;
-}
+/*!* Style the custom radio button *!*/
+/*input[type="radio"] + label:before {*/
+/*    content: "";*/
+/*    display: inline-block;*/
+/*    width: 12px;*/
+/*    height: 12px;*/
+/*    border-radius: 50%;*/
+/*    border: 3px solid #ccc;*/
+/*    margin-right: 5px;*/
+/*    vertical-align: middle;*/
+/*}*/
 
-/* Style the custom radio button when checked */
-input[type="radio"]:checked + label:before {
-    background-color: #0a53be;
-}
+/*!* Style the custom radio button when checked *!*/
+/*input[type="radio"]:checked + label:before {*/
+/*    background-color: #0a53be;*/
+/*}*/
