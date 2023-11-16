@@ -4,6 +4,7 @@ import axios from 'axios';
 import taikhoanservice from "../../services/taikhoanservice/taikhoanservice";
 import $ from 'jquery';
 import "./TaiKhoanKH.css";
+import KhuyenMaiService from "../../services/khuyenmaiservice/KhuyenMaiService";
 class TaiKhoanKHComponent extends Component {
     constructor(props) {
         super(props);
@@ -114,31 +115,12 @@ class TaiKhoanKHComponent extends Component {
 
 
     // ... (Các xử lý khác)
-
     add = (e) => {
         e.preventDefault();
-        const confirmed = window.confirm('Bạn có chắc chắn muốn thêm khach hang?');
+        const confirmed = window.confirm('Bạn có chắc chắn muốn thêm khách hàng?');
         if (!confirmed) {
-            return; // Người dùng bấm "Cancel", không thực hiện thêm
+            return;
         }
-        let listFile = [];
-        if (this.state.files) {
-            for (let i = 0; i < this.state.files.length; i++) {
-                listFile.push(this.state.files[i].name);
-            }
-        }
-
-
-        const { taiKhoanAdd, nguoiDungAdd } = this.state;
-        const requestData = {
-            taiKhoan: taiKhoanAdd,
-            thongTinNguoiDung: nguoiDungAdd,
-            files: listFile,
-            diaChiCuThe: nguoiDungAdd.diaChiCuThe,
-            tinhThanhPho: this.state.tinhThanhPho,
-            quanHuyen: this.state.quanHuyen,
-            xaPhuongThiTran: this.state.xaPhuongThiTran,
-        };
 
         let errorAdd = {
             diaChiCuThe: '',
@@ -152,76 +134,157 @@ class TaiKhoanKHComponent extends Component {
             password: '',
             anh: '',
         };
-        if (!nguoiDungAdd.ten || !nguoiDungAdd.ten.trim() || !/^[a-zA-Z\sàáảãạăắằẳẵặâấầẩẫậèéẹêềếểễệđìíỉĩịòóỏõọôồốổỗộơờớởỡợùúủũụưừứửữựỳýỷỹỵÀÁẢÃẠĂẮẰẲẴẶÂẤẦẨẪẬÈÉẺẼẸÊỀẾỂỄỆĐÌÍỈĨỊÒÓỎÕỌÔỒỐỔỖỘƠỜỚỞỠỢÙÚỦŨỤƯỪỨỬỮỰỲÝỶỸỴ]+$/.test(nguoiDungAdd.ten)) {
-            errorAdd.ten = 'Tên không được bỏ trống hoặc chứa kí tự đặc biệt!';
-        }
-        // Kiểm tra số điện thoại
-        if (!nguoiDungAdd.sdt || !nguoiDungAdd.sdt.trim() || !/^\d+$/.test(nguoiDungAdd.sdt)) {
-            errorAdd.sdt = 'Số điện thoại không được bỏ trống và chỉ chứa số!';
-        }
 
-        // Kiểm tra email
-        if (!taiKhoanAdd.email || !taiKhoanAdd.email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(taiKhoanAdd.email)) {
-            errorAdd.email = 'Email không được bỏ trống và phải là địa chỉ email hợp lệ!';
-        }
+        const validateInput = () => {
+            let isValid = true;
 
-        // Kiểm tra địa chỉ cụ thể
-        if (!nguoiDungAdd.diaChiCuThe || !nguoiDungAdd.diaChiCuThe.trim() || nguoiDungAdd.diaChiCuThe.trim() === '') {
-            errorAdd.diaChiCuThe = 'Địa chỉ cụ thể không được bỏ trống hoặc chỉ chứa khoảng trắng!';
-        }
+            // Kiểm tra tên không được bỏ trống và không có kí tự đặc biệt
+            if (!this.state.nguoiDungAdd.ten) {
+                errorAdd.ten = 'Tên không được bỏ trống';
+                isValid = false;
+            } else if (!/^[a-zA-Z ]+$/.test(this.state.nguoiDungAdd.ten)) {
+                errorAdd.ten = 'Tên không được chứa kí tự đặc biệt';
+                isValid = false;
+            } else {
+                errorAdd.ten = '';
+            }
 
-        // Kiểm tra CCCD
-        if (!nguoiDungAdd.cccd || !nguoiDungAdd.cccd.trim()) {
-            errorAdd.cccd = 'CCCD không được bỏ trống!';
-        }
+            // Kiểm tra tỉnh thành phố, quận huyện, xã phường thị trấn được chọn
+            if (!this.state.tinhThanhPho || !this.state.quanHuyen || !this.state.xaPhuongThiTran) {
+                // Có thể hiển thị thông báo lỗi ở đây
+                isValid = false;
+            }
+
+            // Kiểm tra địa chỉ cụ thể không được bỏ trống
+            if (!this.state.nguoiDungAdd.diaChiCuThe) {
+                errorAdd.diaChiCuThe = 'Địa chỉ cụ thể không được bỏ trống';
+                isValid = false;
+            } else {
+                errorAdd.diaChiCuThe = '';
+            }
+
+            // Kiểm tra căn cước công dân không được bỏ trống
+            // Kiểm tra căn cước công dân không được bỏ trống
+            if (!this.state.nguoiDungAdd.cccd) {
+                errorAdd.cccd = 'Căn cước công dân không được bỏ trống';
+                isValid = false;
+            } else {
+                errorAdd.cccd = '';
+            }
+
+// Kiểm tra số điện thoại không được bỏ trống
+            if (!this.state.nguoiDungAdd.sdt) {
+                errorAdd.sdt = 'Số điện thoại không được bỏ trống';
+                isValid = false;
+            } else {
+                errorAdd.sdt = '';
+            }
+
+// Kiểm tra trùng email
+            if (!this.state.taiKhoanAdd || !this.state.taiKhoanAdd.email) {
+                errorAdd.email = 'Email không được bỏ trống';
+                isValid = false;
+            } else {
+                errorAdd.email = '';
+
+                // Kiểm tra trùng email
+                const isEmailDuplicate = this.state.nhanVienQuyen3.some(
+                    (taiKhoan) => taiKhoan.email === this.state.taiKhoanAdd.email
+                );
+
+                if (isEmailDuplicate) {
+                    errorAdd.email = 'Email đã tồn tại. Vui lòng chọn một email khác.';
+                    isValid = false;
+                }
+            }
+
+// Kiểm tra trùng số điện thoại
+            if (!this.state.nguoiDungAdd || !this.state.nguoiDungAdd.sdt) {
+                errorAdd.sdt = 'Số điện thoại không được bỏ trống';
+                isValid = false;
+            } else {
+                errorAdd.sdt = '';
+
+                // Kiểm tra trùng số điện thoại
+                const isPhoneDuplicate = this.state.thongTinNguoiDung.some(
+                    (nguoiDung) => nguoiDung.sdt === this.state.nguoiDungAdd.sdt
+                );
+
+                if (isPhoneDuplicate) {
+                    errorAdd.sdt = 'Số điện thoại đã tồn tại. Vui lòng chọn một số điện thoại khác.';
+                    isValid = false;
+                }
+            }
 
 
 
-        if (Object.values(errorAdd).some((error) => error !== '')) {
+
+            // Thực hiện thêm các kiểm tra khác nếu cần
+
+            // Cập nhật state errorAdd
             this.setState({ errorAdd });
+
+            return isValid;
+        };
+
+        // Kiểm tra validate trước khi gửi yêu cầu API
+        if (!validateInput()) {
+            // Có thể hiển thị thông báo lỗi ở đây nếu cần
             return;
         }
-        // console.log(requestData);
+
+        let listFile = [];
+        if (this.state.files) {
+            for (let i = 0; i < this.state.files.length; i++) {
+                listFile.push(this.state.files[i].name);
+            }
+        }
+
+        const { taiKhoanAdd, nguoiDungAdd } = this.state;
+        const requestData = {
+            taiKhoan: taiKhoanAdd,
+            thongTinNguoiDung: nguoiDungAdd,
+            files: listFile,
+            diaChiCuThe: nguoiDungAdd.diaChiCuThe,
+            tinhThanhPho: this.state.tinhThanhPho,
+            quanHuyen: this.state.quanHuyen,
+            xaPhuongThiTran: this.state.xaPhuongThiTran,
+        };
+
         taikhoanservice.addKhachHang(requestData)
             .then((res) => {
                 if (res.status === 200) {
-                    // Xử lý khi thêm thành công
+                    // Thêm khách hàng mới vào đầu danh sách
                     let taiKhoanMoi = res.data.taiKhoan;
-                    this.setState((prevState) => ({
-                        nhanVienQuyen3: [...prevState.nhanVienQuyen3, taiKhoanMoi],
-                    }));
-
                     let nguoiDungMoi = res.data.thongTinNguoiDung;
+                    let diaChiMoi = res.data.diaChi;
+
                     this.setState((prevState) => ({
+                        nhanVienQuyen3: [taiKhoanMoi, ...prevState.nhanVienQuyen3],
                         thongTinNguoiDung: [...prevState.thongTinNguoiDung, nguoiDungMoi],
-                    }));
-                    let diaChiMoi = res.data.diaChi
-                    this.setState((prevState) => ({
                         diaChi: [...prevState.diaChi, diaChiMoi],
                     }));
+
                     setTimeout(() => {
                         window.location.href = (`/khachhang`);
                     }, 2000);
+                    window.scrollTo(0, 0);
+
                     toast.success("Thêm thành công!");
                 } else {
-                    // Xử lý khi có lỗi trả về từ API
                     const errorMessage = res.data.message || "Có lỗi xảy ra khi thêm danh mục.";
                     toast.error("Lỗi: " + errorMessage);
                     console.log(res.data.error);
                 }
             })
             .catch((error) => {
-                // Xử lý lỗi khi gửi yêu cầu API
                 if (error.message === "Network Error") {
                     toast.error("Lỗi kết nối mạng. Vui lòng kiểm tra kết nối của bạn.");
                 } else {
                     toast.error("Lỗi khi gửi yêu cầu API: " + error);
                 }
             });
-    }
-
-// ... (Các xử lý khác)
-
+    };
 
 
     thayDoiTenAdd = (event) => {
@@ -361,6 +424,14 @@ class TaiKhoanKHComponent extends Component {
         let errorAdd = {...this.state.errorAdd, tinhThanhPho: ""};
         this.setState({errorAdd: errorAdd});
     }
+    // fetchData = () => {
+    //    taikhoanservice.getKhachHangAll().then((res) => {
+    //         this.setState({
+    //             listThayThe: res.data,
+    //         });
+    //         this.timKiemMoi();
+    //     });
+    // };
     thayDoiHuyenAdd = (event) => {
         this.setState(
             prevState => ({
@@ -476,21 +547,30 @@ class TaiKhoanKHComponent extends Component {
                                             {this.state.errorAdd.ten &&
                                             <div className="text-danger">{this.state.errorAdd.ten}</div>}
                                         </div>
-                                        <div>
-                                            Địa chỉ:
-                                            <select name="tinhThanhPho" onChange={(event) => this.handleCityChange(event)}>
+
+                                        <div className="form-group">
+                                            <label htmlFor="tinhThanhPho">Tỉnh/Thành phố:</label>
+                                            <select className="form-control" name="tinhThanhPho" onChange={(event) => this.handleCityChange(event)}>
                                                 <option value="">Chọn tỉnh thành</option>
                                                 {this.state.cities.map(city => (
                                                     <option key={city.code} value={city.name}>{city.name}</option>
                                                 ))}
                                             </select>
-                                            <select name="quanHuyen" onChange={(event) => this.handleDistrictChange(event)}>
+                                        </div>
+
+                                        <div className="form-group">
+                                            <label htmlFor="quanHuyen">Quận/Huyện:</label>
+                                            <select className="form-control" name="quanHuyen" onChange={(event) => this.handleDistrictChange(event)}>
                                                 <option value="">Chọn quận huyện</option>
                                                 {this.state.districts.map(district => (
                                                     <option key={district.code} value={district.name}>{district.name}</option>
                                                 ))}
                                             </select>
-                                            <select name="xaPhuongThiTran" onChange={(event) => this.handleWardChange(event)}>
+                                        </div>
+
+                                        <div className="form-group">
+                                            <label htmlFor="xaPhuongThiTran">Xã/Phường/Thị trấn:</label>
+                                            <select className="form-control" name="xaPhuongThiTran" onChange={(event) => this.handleWardChange(event)}>
                                                 <option value="">Chọn phường xã</option>
                                                 {this.state.wards.map(ward => (
                                                     <option key={ward.code} value={ward.name}>{ward.name}</option>
