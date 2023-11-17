@@ -1,31 +1,31 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Open+Sans:wght@400;700&family=Montserrat:wght@400;700&family=Nunito:wght@400;700&family=Lato:wght@400;700&display=swap');
 
-  
+
 body {
-  font-family: 'Roboto', sans-serif;
-  color: rgb(0, 69, 52);
+    font-family: 'Roboto', sans-serif;
+    color: rgb(0, 69, 52);
 }
 
-p{
+p {
     line-height: 2;
 }
 
 
-.nav-link{
+.nav-link {
     color: rgb(0, 69, 52);
     border-radius: 10px;
     white-space: nowrap;
     transition: 1000ms;
 }
 
-.nav-link:hover{
+.nav-link:hover {
     background-color: rgb(16, 101, 116);
     border-radius: 50px;
     white-space: nowrap;
     transition: 500ms;
-    animation: rainbow 5s linear infinite;
 }
-.fw-bolder{
+
+.fw-bolder {
     font-size: 3vm;
 }
 
@@ -41,28 +41,32 @@ p{
     border-radius: 50%;
     text-align: center;
     line-height: 20px;
-  }
-.card{
+}
+
+.card {
     height: 1120px;
     overflow: hidden;
 }
-.pagination{
+
+.pagination {
     color: rgb(0, 69, 52);
 }
-.shopBtn{
+
+.shopBtn {
     opacity: 0;
     filter: blur(2px);
     transition: all 0.5s;
-    transform:  scale(0.8) translatex(-100px);
+    transform: scale(0.8) translatex(-100px);
 }
-.card:hover .shopBtn{
+
+.card:hover .shopBtn {
     opacity: 1;
     transform: translatex(0) scale(1);
     filter: blur(0);
     transition: all 0.5s;
 }
 
-.content{
+.content {
     width: 100%;
     min-height: 80vh;
     overflow: hidden;
@@ -73,22 +77,23 @@ p{
     z-index: 1;
 }
 
-.position-relative{
+.position-relative {
     position: relative;
     top: 0;
     bottom: 0;
     z-index: 9999;
 }
 
-.content-left{
+.content-left {
     text-align: left;
     transform: translateX(-100px);
     filter: blur(0);
     opacity: 1;
-   
+
     transition: all 1.5s;
 }
-.content-right{
+
+.content-right {
     text-align: left;
     opacity: 0;
     filter: blur(1px);
@@ -96,17 +101,18 @@ p{
     transition: all 1.5s;
 }
 
-.font-monospace{
+.font-monospace {
     color: rgb(0, 69, 52);
 }
-.bx{
+
+.bx {
     color: rgb(0, 69, 52);
     font-size: larger;
 }
-.show{
+
+.show {
     filter: blur(0);
     opacity: 1;
     transform: translateX(0) scale(1);
     transition: all 1.5s;
 }
-
