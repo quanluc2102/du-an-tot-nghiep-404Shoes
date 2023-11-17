@@ -11,18 +11,18 @@ p {
 }
 
 .nav-link {
-    color: rgb(0, 69, 52);
+    color: rgba(13, 12, 12);
     border-radius: 10px;
     white-space: nowrap;
     transition: 1000ms;
 }
 
 .nav-link:hover {
-    background-color: rgb(16, 101, 116);
+    background-color: rgb(94, 127, 133);
     border-radius: 50px;
     white-space: nowrap;
     transition: 500ms;
-    animation: rainbow 5s linear infinite;
+    font-size: 1.2em;
 }
 
 .fw-bolder {
@@ -93,149 +93,38 @@ p {
 
 .trang1-home {
     min-height: 100vh;
-    background-image: url("https://t3.ftcdn.net/jpg/02/05/63/96/360_F_205639641_eYm8waWWhuMV8zbmcGHUG7fs6kLS7ksc.jpg");
+    background-image: url("https://wallpaperaccess.com/full/1986692.jpg");
     background-attachment: fixed;
     background-repeat: repeat-x;
     background-size: cover;
-    animation: sizeBaner 360s linear infinite;
 }
 
 #x1 {
+    right: 670px;
+    top: 150px;
+    position: relative;
     color: rgb(0, 69, 52);
-    font-weight: bolder;
-    background: rgb(184, 203, 204);
-    padding: 20px;
+    font-weight: bold;
+    background: rgba(114, 228, 234, 1);
+    padding: 10px;
     border-radius: 30px;
     transition: all 1;
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
 
+.description{
+    position: relative;
+    top: -10px;
+    font-weight: bolder;
+    color: rgb(0, 0, 0);
+    right: 150px;
+    font-family: serif;
+    font-size: 35px;
 }
 
 #x1:hover {
     background: rgb(250, 250, 250);
     transition: all 0.5s;
-    animation: rainbow 5s linear infinite;
-}
-
-@keyframes rainbow {
-    0% {
-        color: rgb(249, 188, 172);
-    }
-
-    14% {
-        color: orange;
-    }
-
-    28% {
-        color: rgb(255, 199, 59);
-    }
-
-    42% {
-        color: rgb(204, 233, 129)
-    }
-
-    57% {
-        color: rgb(64, 64, 143);
-    }
-
-    71% {
-        color: rgb(185, 237, 214)
-    }
-
-    85% {
-        color: violet;
-    }
-
-    100% {
-        color: rgb(249, 188, 172);
-    }
-}
-
-@keyframes sizeBaner {
-    0% {
-        background-position: -0px;
-    }
-
-    5% {
-        background-position: -50px;
-    }
-
-    10% {
-        background-position: -100px;
-    }
-
-    15% {
-        background-position: -150px;
-    }
-
-    20% {
-        background-position: -200px;
-    }
-
-    25% {
-        background-position: -2500px;
-    }
-
-    30% {
-        background-position: -300px;
-    }
-
-    35% {
-        background-position: -3500px;
-    }
-
-    40% {
-        background-position: -400px;
-    }
-
-    45% {
-        background-position: -320px;
-    }
-
-    50% {
-        background-position: -808px;
-    }
-
-    55% {
-        background-position: -780px;
-    }
-
-    60% {
-        background-position: -680px;
-    }
-
-    65% {
-        background-position: -580px;
-    }
-
-    70% {
-        background-position: -380px;
-    }
-
-    75% {
-        background-position: -3650px;
-    }
-
-    80% {
-        background-position: -200px;
-    }
-
-    85% {
-        background-position: -2340px;
-    }
-
-    90% {
-        background-position: -1890px;
-    }
-
-    95% {
-        background-position: -120px;
-    }
-
-    100% {
-        background-position: -0px;
-    }
-
 }
 
 .trang2-home {
