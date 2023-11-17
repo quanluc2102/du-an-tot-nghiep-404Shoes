@@ -36,12 +36,13 @@ function Login() {
                 <nav className="navbar navbar-expand-lg navbar-light bg-0 py-1" id="navbarhead" style={{ backgroundColor: 'rgb(255, 255, 255)' }}>
                     <div className="container">
                         <div className="d-flex justify-content-between align-items-left w-100" style={{ marginRight: '10px' }}>
-                            <a className="navbar-brand d-flex align-items-center">
+                            <Link to='/' style={{ textDecoration: 'none' }}> <a className="navbar-brand d-flex align-items-center">
                                 <img style={{ width: '90px' }}
                                     src="https://t3.ftcdn.net/jpg/00/71/53/56/360_F_71535683_03OP8nG0N3YRVDTasetbEfT2BpucFmo5.jpg"
                                     alt="site icon" />
                                 <a class="text-uppercase text-decoration-none brand text-black" style={{ fontWeight: 'bold', fontSize: '26px' }}>404SHOES</a>
                             </a>
+                            </Link>
                         </div>
 
                         <div className="collapse navbar-collapse justify-content-center" id="navMenu">
@@ -81,7 +82,7 @@ function Login() {
             </header>
 
             <div className="background"></div>
-            <section className="home" style={{ marginTop: '130px' }}>              
+            <section className="home" style={{ marginTop: '130px' }}>
                 <div className="login">
                     <h2> Đăng nhập </h2>
                     <div className="input">
@@ -107,7 +108,7 @@ function Login() {
             </section>
 
             <footer>
-                <footer class="bg-gray py-5" style={{backgroundColor: 'rgba(0,0,0,0.03)'}}>
+                <footer class="bg-gray py-5" style={{ backgroundColor: 'rgba(0,0,0,0.03)' }}>
                     <div class="container">
                         <div class="row text-black g-4">
                             <div class="col-md-6 col-lg-3">

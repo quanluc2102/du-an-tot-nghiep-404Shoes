@@ -44,12 +44,13 @@ function Cart() {
                     <nav className="navbar navbar-expand-lg navbar-light bg-0 py-1" id="navbarhead" style={{ backgroundColor: 'rgb(255, 255, 255)' }}>
                         <div className="container">
                             <div className="d-flex justify-content-between align-items-left w-100" style={{ marginRight: '10px' }}>
-                                <a className="navbar-brand d-flex align-items-center">
+                                <Link to='/' style={{ textDecoration: 'none' }}> <a className="navbar-brand d-flex align-items-center">
                                     <img style={{ width: '90px' }}
                                         src="https://t3.ftcdn.net/jpg/00/71/53/56/360_F_71535683_03OP8nG0N3YRVDTasetbEfT2BpucFmo5.jpg"
                                         alt="site icon" />
                                     <a class="text-uppercase text-decoration-none brand text-black" style={{ fontWeight: 'bold', fontSize: '26px' }}>404SHOES</a>
                                 </a>
+                                </Link>
                             </div>
 
                             <div className="collapse navbar-collapse justify-content-center" id="navMenu">
@@ -97,19 +98,26 @@ function Cart() {
                                 <hr />
                                 <div className="the-san-pham my-3 position-relative">
                                     <div className="row">
+
+                                        <div className="col-1" style={{}}>
+                                            <input type="checkbox" class="btn-check" id="btncheck1" autocomplete="off" />
+                                            <label class="btn btn-outline-primary" for="btncheck1">✔</label>
+                                        </div>
+
                                         <div className="col-4">
                                             <img src="https://ananas.vn/wp-content/uploads/Pro_AV00167_1-500x500.jpeg" width="200px"
                                                 height="200px" alt="ảnh sản phẩm" />
                                         </div>
-                                        <div className="col-8">
-                                            <div className="row mb-5">
+                                        <div className="col-7">
+                                            <div className="row mb-6">
                                                 <h4 style={{ display: 'flex' }}><strong>GIÀY CHẠY BỘ ADIDAS</strong></h4>
-                                                <div style={{ display: 'flex' }} className="col-5"> <span><strong>Giá</strong> : 120.000 VND</span></div>
-                                                <div style={{ display: 'flex' }} className="col-5"> <span><strong>Tình trạng</strong> : Còn Hàng</span></div>
-                                                <div style={{ display: 'flex' }} className="col-5"> <span><strong>Đơn giá</strong> : 100.000 NVD</span></div>
-                                                <div style={{ display: 'flex' }} className="col-5"> <span><strong>Màu</strong> : Nâu Đất</span></div>
+                                                <div style={{ display: 'flex' }} className="col-6"> <span><strong>Giá</strong> : 120.000 VND</span></div>
+                                                <div style={{ display: 'flex' }} className="col-6"> <span><strong>Tình trạng</strong> : Còn Hàng</span></div>
+                                                <div style={{ display: 'flex' }} className="col-6"> <span><strong>Đơn giá</strong> : 100.000 VND</span></div>
+                                                <div style={{ display: 'flex' }} className="col-6"> <span><strong>Màu</strong> : Nâu Đất</span></div>
                                             </div>
 
+                                            <br />
                                             <div className="row ">
                                                 <div className="col-4">
                                                     <div className="form-floating mb-3 border-1">
@@ -120,11 +128,6 @@ function Cart() {
                                                     {/*<i class='bx bx-trash-alt fs-2' ></i>*/}
                                                 </div>
 
-                                                <div className="col-2" style={{ marginTop: '10px' }}>
-                                                    <input type="checkbox" class="btn-check" id="btncheck1" autocomplete="off" />
-                                                    <label class="btn btn-outline-primary" for="btncheck1">✔</label>
-                                                </div>
-
                                             </div>
                                         </div>
                                     </div>
@@ -133,19 +136,26 @@ function Cart() {
 
                                 <div className="the-san-pham my-3 position-relative">
                                     <div className="row">
+
+                                        <div className="col-1">
+                                            <input type="checkbox" class="btn-check" id="btncheck2" autocomplete="off" />
+                                            <label class="btn btn-outline-primary" for="btncheck2">✔</label>
+                                        </div>
+
                                         <div className="col-4">
                                             <img src="https://ananas.vn/wp-content/uploads/Pro_AV00167_1-500x500.jpeg" width="200px"
                                                 height="200px" alt="ảnh sản phẩm" />
                                         </div>
-                                        <div className="col-8">
-                                            <div className="row mb-5">
+                                        <div className="col-7">
+                                            <div className="row mb-6">
                                                 <h4 style={{ display: 'flex' }}><strong>GIÀY CHẠY BỘ ADIDAS</strong></h4>
-                                                <div style={{ display: 'flex' }} className="col-5"> <span><strong>Giá</strong> : 120.000 VND</span></div>
-                                                <div style={{ display: 'flex' }} className="col-5"> <span><strong>Tình trạng</strong> : Còn Hàng</span></div>
-                                                <div style={{ display: 'flex' }} className="col-5"> <span><strong>Đơn giá</strong> : 100.000 NVD</span></div>
-                                                <div style={{ display: 'flex' }} className="col-5"> <span><strong>Màu</strong> : Nâu Đất</span></div>
+                                                <div style={{ display: 'flex' }} className="col-6"> <span><strong>Giá</strong> : 120.000 VND</span></div>
+                                                <div style={{ display: 'flex' }} className="col-6"> <span><strong>Tình trạng</strong> : Còn Hàng</span></div>
+                                                <div style={{ display: 'flex' }} className="col-6"> <span><strong>Đơn giá</strong> : 100.000 VND</span></div>
+                                                <div style={{ display: 'flex' }} className="col-6"> <span><strong>Màu</strong> : Nâu Đất</span></div>
                                             </div>
 
+                                            <br />
                                             <div className="row ">
                                                 <div className="col-4">
                                                     <div className="form-floating mb-3 border-1">
@@ -153,11 +163,8 @@ function Cart() {
                                                             placeholder="Số Lượng" />
                                                         <label for="formId1" className="font-monospace"><strong>Số Lượng :</strong></label>
                                                     </div>
+                                                    {/*<i class='bx bx-trash-alt fs-2' ></i>*/}
                                                 </div>
-
-                                                <div className="col-2" style={{ marginTop: '10px' }}>
-                                                    <input type="checkbox" class="btn-check" id="btncheck2" autocomplete="off" />
-                                                    <label class="btn btn-outline-primary" for="btncheck2">✔</label>                                                </div>
 
                                             </div>
                                         </div>

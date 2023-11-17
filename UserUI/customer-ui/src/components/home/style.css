@@ -101,7 +101,7 @@ p {
 
 #x1 {
     right: 670px;
-    top: 150px;
+    top: 110px;
     position: relative;
     color: rgb(0, 69, 52);
     font-weight: bold;
@@ -114,7 +114,7 @@ p {
 
 .description{
     position: relative;
-    top: -10px;
+    top: -50px;
     font-weight: bolder;
     color: rgb(0, 0, 0);
     right: 150px;

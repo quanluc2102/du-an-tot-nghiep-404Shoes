@@ -81,12 +81,13 @@ function ProductList() {
                     <nav className="navbar navbar-expand-lg navbar-light bg-0 py-1" id="navbarhead" style={{ backgroundColor: 'rgb(255, 255, 255)' }}>
                         <div className="container">
                             <div className="d-flex justify-content-between align-items-left w-100" style={{ marginRight: '10px' }}>
-                                <a className="navbar-brand d-flex align-items-center">
+                               <Link to='/' style={{textDecoration: 'none'}}> <a className="navbar-brand d-flex align-items-center">
                                     <img style={{ width: '90px' }}
                                         src="https://t3.ftcdn.net/jpg/00/71/53/56/360_F_71535683_03OP8nG0N3YRVDTasetbEfT2BpucFmo5.jpg"
                                         alt="site icon" />
                                     <a class="text-uppercase text-decoration-none brand text-black" style={{ fontWeight: 'bold', fontSize: '26px' }}>404SHOES</a>
                                 </a>
+                                </Link>
                             </div>
 
                             <div className="collapse navbar-collapse justify-content-center" id="navMenu">
@@ -182,9 +183,10 @@ function ProductList() {
                                             </div>
                                         </div>
                                     </div>
+                                </div>
 
-                                    <hr />
-
+                                <hr />
+                                <div class="accordion" id="accordionExample5">
                                     <div class="accordion-item border-0">
                                         <h1 class="accordion-header" id="headingTwo1">
                                             <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo1"
@@ -193,7 +195,7 @@ function ProductList() {
                                             </button>
                                         </h1>
                                         <div id="collapseTwo1" class="accordion-collapse collapse show" aria-labelledby="headingTwo1"
-                                            data-bs-parent="#accordionExample1">
+                                            data-bs-parent="#accordionExample5">
                                             <div class="accordion-body">
                                                 <ul class="list-group list-group-flush">
                                                     <li class="list-group-item">Việt Nam</li>
@@ -205,52 +207,54 @@ function ProductList() {
                                             </div>
                                         </div>
                                     </div>
+                                </div>
 
-                                    <hr />
+                                <hr />
+                                <div class="accordion" id="accordionExample4">
 
-                                    <div class="accordion" id="accordionExample1">
-
-                                        <div class="accordion-item border-0">
-                                            <h1 class="accordion-header" id="headingThree1">
-                                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree1"
-                                                    aria-expanded="true" aria-controls="collapseThree1">
-                                                    <strong class="font-monospace">MẠNG DI ĐỘNG</strong>
-                                                </button>
-                                            </h1>
-                                            <div id="collapseThree1" class="accordion-collapse collapse" aria-labelledby="headingThree1"
-                                                data-bs-parent="#accordionExample1">
-                                                <div class="accordion-body">
-                                                    <ul class="list-group list-group-flush">
-                                                        <li class="list-group-item">Viettel</li>
-                                                        <li class="list-group-item">Vinaphone</li>
-                                                        <li class="list-group-item">Mobifone</li>
-                                                        <li class="list-group-item">Vietnamobile</li>
-                                                        <li class="list-group-item">Gmobile</li>
-                                                    </ul>
-                                                </div>
+                                    <div class="accordion-item border-0">
+                                        <h1 class="accordion-header" id="headingThree1">
+                                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree1"
+                                                aria-expanded="true" aria-controls="collapseThree1">
+                                                <strong class="font-monospace">MẠNG DI ĐỘNG</strong>
+                                            </button>
+                                        </h1>
+                                        <div id="collapseThree1" class="accordion-collapse collapse" aria-labelledby="headingThree1"
+                                            data-bs-parent="#accordionExample4">
+                                            <div class="accordion-body">
+                                                <ul class="list-group list-group-flush">
+                                                    <li class="list-group-item">Viettel</li>
+                                                    <li class="list-group-item">Vinaphone</li>
+                                                    <li class="list-group-item">Mobifone</li>
+                                                    <li class="list-group-item">Vietnamobile</li>
+                                                    <li class="list-group-item">Gmobile</li>
+                                                </ul>
                                             </div>
                                         </div>
+                                    </div>
+                                </div>
 
-                                        <hr />
+                                <hr />
 
-                                        <div class="accordion-item border-0">
-                                            <h1 class="accordion-header" id="headingFour1">
-                                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour1"
-                                                    aria-expanded="true" aria-controls="collapseFour1">
-                                                    <strong class="font-monospace">CHẤT LIỆU</strong>
-                                                </button>
-                                            </h1>
-                                            <div id="collapseFour1" class="accordion-collapse collapse" aria-labelledby="headingFour1"
-                                                data-bs-parent="#accordionExample1">
-                                                <div class="accordion-body">
-                                                    <ul class="list-group list-group-flush">
-                                                        <li class="list-group-item">Chất liệu 1</li>
-                                                        <li class="list-group-item">Chất liệu 2</li>
-                                                        <li class="list-group-item">Chất liệu 3</li>
-                                                        <li class="list-group-item">Chất liệu 4</li>
-                                                        <li class="list-group-item">Chất liệu 5</li>
-                                                    </ul>
-                                                </div>
+                                <div className="accordion" id="accordionExample6">
+                                    <div class="accordion-item border-0">
+                                        <h1 class="accordion-header" id="headingFour1">
+                                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour1"
+                                                aria-expanded="true" aria-controls="collapseFour1">
+                                                <strong class="font-monospace">CHẤT LIỆU</strong>
+                                            </button>
+                                        </h1>
+                                        <div id="collapseFour1" class="accordion-collapse collapse"
+                                            aria-labelledby="headingFour1"
+                                            data-bs-parent="#accordionExample6">
+                                            <div class="accordion-body">
+                                                <ul class="list-group list-group-flush">
+                                                    <li class="list-group-item">Chất liệu 1</li>
+                                                    <li class="list-group-item">Chất liệu 2</li>
+                                                    <li class="list-group-item">Chất liệu 3</li>
+                                                    <li class="list-group-item">Chất liệu 4</li>
+                                                    <li class="list-group-item">Chất liệu 5</li>
+                                                </ul>
                                             </div>
                                         </div>
                                     </div>
@@ -321,8 +325,6 @@ function ProductList() {
                                                     <button class="btn color-pick" style={{ backgroundColor: 'rgb(59, 59, 59)' }}></button>
                                                 </div>
                                             </div>
-
-
                                         </div>
                                     </div>
                                 </div>
@@ -362,16 +364,6 @@ function ProductList() {
                                                 <div class="position-absolute top-0 end-0 mt-1 me-1">
                                                     <button class="badge bg-danger">Mới !</button>
                                                 </div>
-
-
-                                                <div class="position-absolute bottom-0 end-0 mb-1 me-0">
-
-                                                    <a class="btn favorite-button" data-product-id="1" ><i class='bx bx-heart fs-2'
-                                                        title="Yêu thích"></i></a>
-
-                                                </div>
-
-
                                                 <div class="position-absolute bottom-0 start-0 mb-1 ms-1 shopBtn">
                                                     <button class="btn btn-success ">Mua Ngay!</button>
                                                 </div>
@@ -398,16 +390,6 @@ function ProductList() {
                                                 <div class="position-absolute top-0 end-0 mt-1 me-1">
                                                     <button class="badge bg-danger">Mới !</button>
                                                 </div>
-
-
-                                                <div class="position-absolute bottom-0 end-0 mb-1 me-0">
-
-                                                    <a class="btn favorite-button" data-product-id="2"><i class='bx bx-heart fs-2'
-                                                        title="Yêu thích"></i></a>
-
-                                                </div>
-
-
                                                 <div class="position-absolute bottom-0 start-0 mb-1 ms-1 shopBtn">
                                                     <button class="btn btn-success ">Mua Ngay!</button>
                                                 </div>
@@ -433,15 +415,6 @@ function ProductList() {
                                                 <div class="position-absolute top-0 end-0 mt-1 me-1">
                                                     <button class="badge bg-danger">Cũ !</button>
                                                 </div>
-
-
-                                                <div class="position-absolute bottom-0 end-0 mb-1 me-0">
-
-                                                    <a class="btn favorite-button" data-product-id="3" ><i class='bx bx-heart fs-2'
-                                                        title="Yêu thích"></i></a>
-
-                                                </div>
-
 
                                                 <div class="position-absolute bottom-0 start-0 mb-1 ms-1 shopBtn">
                                                     <button class="btn btn-success ">Mua Ngay!</button>
@@ -485,7 +458,7 @@ function ProductList() {
                         </div>
                     </div>
                 </main>
-                
+
                 <footer>
                     <footer class="bg-gray py-5" style={{ backgroundColor: 'rgba(0,0,0,0.03)' }}>
                         <div class="container">
