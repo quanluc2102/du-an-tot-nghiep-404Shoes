@@ -1,12 +1,12 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import thongkeservice from '../../services/thongkeservice/thongkeservice';
-import { toast } from 'react-toastify';
+import {toast} from 'react-toastify';
 import ReactPaginate from 'react-paginate';
 import Chart from 'chart.js/auto';
-import * as XLSX from 'xlsx'; // Import xlsx library
-import { FaFileExcel } from 'react-icons/fa'; // Import the Excel icon from Font Awesome
-import { Tabs, TabList, Tab, TabPanel } from 'react-tabs';
-import 'react-tabs/style/react-tabs.css'; // Import CSS styles for react-tabs
+import * as XLSX from 'xlsx';
+import {FaFileExcel} from 'react-icons/fa';
+import {Tabs, TabList, Tab, TabPanel} from 'react-tabs';
+import 'react-tabs/style/react-tabs.css';
 
 class ThongKeDoanhThuSanPham extends Component {
     constructor(props) {
@@ -18,23 +18,22 @@ class ThongKeDoanhThuSanPham extends Component {
             pageCount: 0,
             exportingToExcel: false,
             showTable: false,
+            currentDateRange: 'Trong ngày', // Initialize currentDateRange with a default value
+
         };
-        // Create a ref for the canvas element
         this.combinedChartRef = React.createRef();
     }
 
     componentDidMount() {
-        // Fetch data when the component mounts
         this.fetchData();
     }
 
     fetchData = (page = 1) => {
-        const { startDate, endDate } = this.state;
+        const {startDate, endDate} = this.state;
 
         thongkeservice.getThongKeSanPham(startDate, endDate, page)
             .then(data => {
-                this.setState({ thongKeSanPham: data }, () => {
-                    // Call renderCombinedChart in the callback to ensure it is called after state is updated
+                this.setState({thongKeSanPham: data}, () => {
                     this.renderCombinedChart();
                 });
             })
@@ -43,69 +42,49 @@ class ThongKeDoanhThuSanPham extends Component {
             });
     };
 
-    handleStartDateChange = (event) => {
-        this.setState({ startDate: event.target.value });
-    };
-
-    handleEndDateChange = (event) => {
-        this.setState({ endDate: event.target.value });
+    handleInputChange = (event) => {
+        this.setState({[event.target.name]: event.target.value});
     };
 
     handleThongKeClick = () => {
-        // Fetch data when the Thong Ke button is clicked
         this.fetchData();
-        // Show the table when data is fetched
-        this.setState({ showTable: true });
+        this.setState({showTable: true});
     };
 
     handlePageClick = (data) => {
-        const selectedPage = data.selected;
-
-        // Assuming you have a function to fetch data based on the selected page
-        this.fetchData(selectedPage + 1);
+        this.fetchData(data.selected + 1);
     };
 
     handleExportToExcel = async () => {
-        const { thongKeSanPham, startDate, endDate } = this.state;
+        const {thongKeSanPham, startDate, endDate} = this.state;
 
-        // Check if the table is empty
         if (thongKeSanPham.length === 0) {
             toast.warn('Dữ liệu bảng đang trống.');
             return;
         }
 
-        // Update state to indicate that export is in progress
-        this.setState({ exportingToExcel: true });
+        this.setState({exportingToExcel: true});
 
-        // Simulate an asynchronous operation (e.g., API call) for exporting
         try {
-            // Create a new workbook
             const workbook = XLSX.utils.book_new();
-
-            // Convert the table data to a worksheet
             const worksheet = XLSX.utils.json_to_sheet(thongKeSanPham);
 
-            // Set column names in Excel
             const colNames = ['Sản phẩm', 'Số lượng đã bán', 'Tổng tiền'];
             colNames.forEach((col, index) => {
-                const cellAddress = XLSX.utils.encode_cell({ c: index, r: 1 }); // Start from row 1 for column names
-                worksheet[cellAddress].v = col; // Update the value of the cell
+                const cellAddress = XLSX.utils.encode_cell({c: index, r: 1});
+                worksheet[cellAddress].v = col;
             });
 
-            // Add the title row
-            const titleCellAddress = XLSX.utils.encode_cell({ c: 0, r: 0 });
+            const titleCellAddress = XLSX.utils.encode_cell({c: 0, r: 0});
             worksheet[titleCellAddress].v = 'Thống kê sản phẩm';
 
-            // Update the worksheet name
             XLSX.utils.book_append_sheet(workbook, worksheet, 'ThongKeSanPham');
 
-            // Format the time range for the file name
             const formattedStartDate = new Date(startDate).toLocaleDateString();
             const formattedEndDate = new Date(endDate).toLocaleDateString();
             const timeRange = `${formattedStartDate}_${formattedEndDate}`;
 
-            // Save the workbook as an Excel file with the specified name
-            await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate delay
+            await new Promise(resolve => setTimeout(resolve, 1000));
             XLSX.writeFile(workbook, `ThongKeSanPham_${timeRange}.xlsx`);
 
             console.log('Exporting to Excel completed!');
@@ -113,8 +92,7 @@ class ThongKeDoanhThuSanPham extends Component {
             console.error('Error exporting to Excel:', error);
             toast.error('Error exporting to Excel. Please try again.');
         } finally {
-            // Update state to indicate that export is completed
-            this.setState({ exportingToExcel: false });
+            this.setState({exportingToExcel: false});
         }
     };
 
@@ -159,9 +137,7 @@ class ThongKeDoanhThuSanPham extends Component {
                         ticks: {
                             beginAtZero: true,
                             stepSize: 1,
-                            callback: function (value) {
-                                return value + ' units';
-                            },
+                            callback: (value) => value + ' units',
                         },
                         scaleLabel: {
                             display: true,
@@ -178,9 +154,7 @@ class ThongKeDoanhThuSanPham extends Component {
                         position: 'left',
                         ticks: {
                             beginAtZero: true,
-                            callback: function (value) {
-                                return '$' + value;
-                            },
+                            callback: (value) => '$' + value,
                         },
                         scaleLabel: {
                             display: true,
@@ -214,7 +188,7 @@ class ThongKeDoanhThuSanPham extends Component {
             this.combinedChart = new Chart(ctx, {
                 type: 'bar',
                 data: chartData,
-                options: chartOptions, // Add this line to include chart options
+                options: chartOptions,
             });
         }
     }
@@ -225,6 +199,13 @@ class ThongKeDoanhThuSanPham extends Component {
         }));
     };
 
+    handleFilterChange = (filterOption) => {
+        // Handle filter change logic here based on the selected option
+        // Update state or perform other actions accordingly
+        this.setState({currentDateRange: filterOption});
+
+    };
+
     render() {
         return (
             <div>
@@ -233,7 +214,139 @@ class ThongKeDoanhThuSanPham extends Component {
                     <nav>
                         <ol className="breadcrumb"></ol>
                     </nav>
+
                 </div>
+                <div className="col-xxl-4 col-md-6">
+
+
+
+
+                </div>
+
+                <div className="row">
+                    <div className="col-xxl-4 col-md-6">
+                        <div className="card info-card sales-card">
+                            <div className="card info-card sales-card">
+                                <div className="card-body">
+                                    <h5 className="card-title">
+                                        Tổng quan doanh thu <span>| {this.state.currentDateRange}</span>
+                                        <div className="filter">
+                                            <a className="icon" href="#" data-bs-toggle="dropdown" aria-expanded="false">
+                                                <i className="bi bi-chevron-compact-down"></i>
+                                            </a>
+                                            <ul className="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                                                <li className="dropdown-header">
+                                                    <h6>Filter</h6>
+                                                </li>
+                                                <li>
+                                                    <a className="dropdown-item" href="#"
+                                                       onClick={() => this.handleFilterChange('Theo ngày')}>
+                                                        Trong ngày
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a className="dropdown-item" href="#"
+                                                       onClick={() => this.handleFilterChange('Trong tháng')}>
+                                                        Trong tháng
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a className="dropdown-item" href="#"
+                                                       onClick={() => this.handleFilterChange('Trong quý')}>
+                                                        Trong quý
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a className="dropdown-item" href="#"
+                                                       onClick={() => this.handleFilterChange('Trong năm')}>
+                                                        Trong năm
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </h5>
+
+                                    <div className="d-flex align-items-center">
+                                        <div
+                                            className="card-icon rounded-circle d-flex align-items-center justify-content-center"
+                                            style={{
+                                                border: '2px solid green',
+                                                borderRadius: '50%',
+                                                width: '40px',
+                                                height: '40px'
+                                            }}>
+                                            <i className="bi bi-cart text-success"></i>
+                                        </div>
+                                        <div className="ps-3">
+                                            <h6 className="text-success pt-1 fw-bold">145 VND</h6>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>                        </div>
+                    </div>
+
+                    <div className="col-xxl-4 col-md-6">
+                        <div className="card info-card sales-card">
+                            <div className="card info-card sales-card">
+                                <div className="card-body">
+                                    <h5 className="card-title">
+                                        Tổng quan doanh thu <span>| {this.state.currentDateRange}</span>
+                                        <div className="filter">
+                                            <a className="icon" href="#" data-bs-toggle="dropdown" aria-expanded="false">
+                                                <i className="bi bi-chevron-compact-down"></i>
+                                            </a>
+                                            <ul className="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                                                <li className="dropdown-header">
+                                                    <h6>Filter</h6>
+                                                </li>
+                                                <li>
+                                                    <a className="dropdown-item" href="#"
+                                                       onClick={() => this.handleFilterChange('Theo ngày')}>
+                                                        Trong ngày
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a className="dropdown-item" href="#"
+                                                       onClick={() => this.handleFilterChange('Trong tháng')}>
+                                                        Trong tháng
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a className="dropdown-item" href="#"
+                                                       onClick={() => this.handleFilterChange('Trong quý')}>
+                                                        Trong quý
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a className="dropdown-item" href="#"
+                                                       onClick={() => this.handleFilterChange('Trong năm')}>
+                                                        Trong năm
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </h5>
+
+                                    <div className="d-flex align-items-center">
+                                        <div
+                                            className="card-icon rounded-circle d-flex align-items-center justify-content-center"
+                                            style={{
+                                                border: '2px solid green',
+                                                borderRadius: '50%',
+                                                width: '40px',
+                                                height: '40px'
+                                            }}>
+                                            <i className="bi bi-cart text-success"></i>
+                                        </div>
+                                        <div className="ps-3">
+                                            <h6 className="text-success pt-1 fw-bold">145 VND</h6>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>                        </div>
+                    </div>
+                </div>
+
 
                 <section className="section dashboard">
                     <Tabs>
@@ -248,14 +361,16 @@ class ThongKeDoanhThuSanPham extends Component {
                                 <label>Ngày bắt đầu:</label>
                                 <input
                                     type="date"
+                                    name="startDate"
                                     value={this.state.startDate}
-                                    onChange={this.handleStartDateChange}
+                                    onChange={this.handleInputChange}
                                 />
                                 <label>Ngày kết thúc:</label>
                                 <input
                                     type="date"
+                                    name="endDate"
                                     value={this.state.endDate}
-                                    onChange={this.handleEndDateChange}
+                                    onChange={this.handleInputChange}
                                 />
                                 <button onClick={this.handleThongKeClick}>Thống kê</button>
                             </div>
@@ -267,7 +382,8 @@ class ThongKeDoanhThuSanPham extends Component {
                                     </h5>
                                     <div className="row">
                                         <div className="col-md-12">
-                                            <canvas id="combinedChart" ref={this.combinedChartRef} width="400" height="200"></canvas>
+                                            <canvas id="combinedChart" ref={this.combinedChartRef} width="400"
+                                                    height="200"></canvas>
                                         </div>
                                     </div>
                                     <button className="btn btn-outline-secondary" onClick={this.handleToggleTable}>
@@ -286,8 +402,9 @@ class ThongKeDoanhThuSanPham extends Component {
                                         <div className="d-flex justify-content-between align-items-center mb-3">
                                             <h5 className="card-title">Bảng thống kê theo sản phẩm <span>|</span></h5>
                                             <div>
-                                                <button onClick={this.handleExportToExcel} disabled={this.state.exportingToExcel}>
-                                                    {this.state.exportingToExcel ? 'Exporting...' : <FaFileExcel /> }
+                                                <button onClick={this.handleExportToExcel}
+                                                        disabled={this.state.exportingToExcel}>
+                                                    {this.state.exportingToExcel ? 'Exporting...' : <FaFileExcel/>}
                                                 </button>
                                             </div>
                                         </div>
