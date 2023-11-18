@@ -1,47 +1,18 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Open+Sans:wght@400;700&family=Montserrat:wght@400;700&family=Nunito:wght@400;700&family=Lato:wght@400;700&display=swap');
 
-
-body {
-    font-family: 'Roboto', sans-serif;
-    color: rgb(0, 69, 52);
+.showCase{
+    min-height: 30em;;
 }
 
-p {
-    line-height: 2;
-}
-
-.nav-link {
-    color: rgba(13, 12, 12);
-    border-radius: 10px;
-    white-space: nowrap;
-    transition: 1000ms;
-}
-
-.nav-link:hover {
-    background-color: rgb(94, 127, 133);
-    border-radius: 50px;
-    white-space: nowrap;
-    transition: 500ms;
-    font-size: 1.2em;
-}
-
-.fw-bolder {
-    font-size: 3vm;
-}
-
-.cart-count {
-    position: absolute;
-    top: -5px;
-    right: -5px;
-    font-size: 12px;
-    background-color: red;
-    color: white;
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
+.showCase p{
     text-align: center;
-    line-height: 20px;
+    text-transform: uppercase;
+    font-weight: bolder;
+    margin-top: 35px;
+    font-size: 35px;
 }
+
+
 
 .contentHome {
     width: 100%;
@@ -60,23 +31,6 @@ p {
     bottom: 0;
     z-index: 9999;
 }
-
-.content-left {
-    text-align: right;
-    opacity: 1;
-    filter: blur(1px);
-    transform: translateX(-100px) scale(0.89);
-    transition: all 1.5s;
-}
-
-.content-right {
-    text-align: left;
-    opacity: 1;
-    filter: blur(1px);
-    transform: translateX(+100px);
-    transition: all 1.5s;
-}
-
 
 .show {
     filter: blur(0);

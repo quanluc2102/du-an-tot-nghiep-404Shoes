@@ -1,48 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Open+Sans:wght@400;700&family=Montserrat:wght@400;700&family=Nunito:wght@400;700&family=Lato:wght@400;700&display=swap');
 
-
-body {
-    font-family: 'Roboto', sans-serif;
-    color: rgb(0, 69, 52);
-}
-
-p {
-    line-height: 2;
-}
-
-
-.nav-link {
-    color: rgb(0, 69, 52);
-    border-radius: 10px;
-    white-space: nowrap;
-    transition: 1000ms;
-}
-
-.nav-link:hover {
-    background-color: rgb(16, 101, 116);
-    border-radius: 50px;
-    white-space: nowrap;
-    transition: 500ms;
-}
-
-.fw-bolder {
-    font-size: 3vm;
-}
-
-.cart-count {
-    position: absolute;
-    top: -5px;
-    right: -5px;
-    font-size: 12px;
-    background-color: red;
-    color: white;
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    text-align: center;
-    line-height: 20px;
-}
-
 .cardProductList {
     height: 380px;
     overflow: hidden;
@@ -107,10 +64,6 @@ p {
     filter: blur(1px);
     transform: translateX(+100px);
     transition: all 1.5s;
-}
-
-.font-monospace {
-    color: rgb(0, 69, 52);
 }
 
 .bx {

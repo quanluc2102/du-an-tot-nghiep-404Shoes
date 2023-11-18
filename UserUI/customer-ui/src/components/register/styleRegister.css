@@ -1,6 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Open+Sans:wght@400;700&family=Montserrat:wght@400;700&family=Nunito:wght@400;700&family=Lato:wght@400;700&display=swap');
 
-
 body {
     font-family: 'Roboto', sans-serif;
     color: rgb(0, 69, 52);
@@ -10,6 +9,9 @@ p {
     line-height: 2;
 }
 
+header{
+    border-bottom: 1px solid rgba(0,0,0,0.2);
+}
 
 .nav-link {
     color: rgb(0, 69, 52);
@@ -88,17 +90,16 @@ p {
     text-align: left;
     transform: translateX(-100px);
     filter: blur(0);
-    opacity: 1;
-
-    transition: all 1.5s;
+    opacity: 0.5;
+    transition: all 1s;
 }
 
 .content-right {
     text-align: left;
     opacity: 0;
-    filter: blur(1px);
+    filter: blur(0.5px);
     transform: translateX(+100px);
-    transition: all 1.5s;
+    transition: all 1s;
 }
 
 .font-monospace {

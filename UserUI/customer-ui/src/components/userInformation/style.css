@@ -1,49 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Open+Sans:wght@400;700&family=Montserrat:wght@400;700&family=Nunito:wght@400;700&family=Lato:wght@400;700&display=swap');
 
-
-body {
-  font-family: 'Roboto', sans-serif;
-  color: rgb(0, 69, 52);
-}
-
-p {
-  line-height: 2;
-}
-
 .dashed-hr {
   border-top: 2px dashed black;
-}
-
-.nav-link {
-  color: rgb(0, 69, 52);
-  border-radius: 0;
-  white-space: nowrap;
-  transition: 1000ms;
-}
-
-.nav-link:hover {
-  background-color: rgb(16, 101, 116);
-  white-space: nowrap;
-  transition: 500ms;
-  animation: rainbow 5s linear infinite;
-}
-
-.fw-bolder {
-  font-size: 3vm;
-}
-
-.cart-count {
-  position: absolute;
-  top: -5px;
-  right: -5px;
-  font-size: 12px;
-  background-color: red;
-  color: white;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  text-align: center;
-  line-height: 20px;
 }
 
 .content {
@@ -106,23 +64,6 @@ p {
 .profile .profile-edit img {
   max-width: 120px;
 }
-
-.content-left {
-  text-align: right;
-  opacity: 0;
-  filter: blur(1px);
-  transform: translateX(-100px) scale(0.89);
-  transition: all 1.5s;
-}
-
-.content-right {
-  text-align: left;
-  opacity: 0;
-  filter: blur(1px);
-  transform: translateX(+100px);
-  transition: all 1.5s;
-}
-
 
 .show {
   filter: blur(0);

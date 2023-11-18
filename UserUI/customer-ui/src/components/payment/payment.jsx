@@ -1,33 +1,11 @@
-import React, { Fragment, useEffect } from 'react'
-import './style.css'
-import { Link } from 'react-router-dom/cjs/react-router-dom'
+import React, { Fragment, useEffect } from "react"
+import { Link } from "react-router-dom/cjs/react-router-dom";
 
-function Cart() {
+function Payment() {
 
     useEffect(() => {
-        const obse = new IntersectionObserver((enti) => {
-            enti.forEach((enty) => {
-                if (enty.isIntersecting) {
-                    enty.target.classList.add('show')
-                } else {
-                    enty.target.classList.remove('show')
-                }
-            })
-        })
-
-        const contentText = document.querySelectorAll('.content-right')
-        contentText.forEach((e) => { obse.observe(e) })
-        const contentImg = document.querySelectorAll('.content-left')
-        contentImg.forEach((e) => { obse.observe(e) })
-
-
-        window.addEventListener('scroll', function () {
-            var parallax3 = document.getElementById('navbarhead');
-            let scrolled = this.window.scrollY;
-            parallax3.style.top = - scrolled * 0.9 + 'px';
-
-        });
-    }, [])
+        
+    }, []);
 
     return (
         <Fragment>
@@ -36,7 +14,7 @@ function Cart() {
                 <header>
                     <nav class="navbar navbar-light bg-light">
                         <div class="container-fluid justify-content-end">
-                            <Link to='/login' style={{ textDecoration: 'none' }}><a class="navbar-brand" href="#" style={{ fontSize: '13px' }}> <i className='bx bxs-user'></i> Đăng nhập</a></Link>
+                            <Link to='/register' style={{ textDecoration: 'none' }}><a class="navbar-brand" href="#" style={{ fontSize: '13px' }}> <i className='bx bxs-user'></i> Đăng ký</a></Link>
                             <Link to='your-cart' style={{ textDecoration: 'none' }}><a class="navbar-brand" href="#" style={{ fontSize: '13px' }}> <i className='bx bxs-cart'></i>Giỏ hàng {'(0)'}</a></Link>
                         </div>
                     </nav>
@@ -89,149 +67,120 @@ function Cart() {
                     </nav>
                 </header>
 
-                <main style={{ minHeight: '120vh' }} data-bs-spy="scroll"
+                <main style={{ minHeight: '100vh', backgroundColor: 'rgb(234, 227, 219)' }} data-bs-spy="scroll"
                     data-bs-target="#nav-example" data-bs-smooth-scroll="true" tabindex="0">
-                    <div className="content" id="div1">
+                    <div className="content trang2 " id="div1">
                         <div className="row container">
                             <div className="col-8 content-left bg-light pt-3">
-                                <h1 style={{ display: 'flex' }}><strong>GIỎ HÀNG</strong></h1>
+                                <h1><strong>THÔNG TIN NHẬN HÀNG</strong></h1>
                                 <hr />
-                                <div className="the-san-pham my-3 position-relative">
-                                    <div className="row">
-
-                                        <div className="col-1" style={{}}>
-                                            <input type="checkbox" class="btn-check" id="btncheck1" autocomplete="off" />
-                                            <label class="btn btn-outline-primary" for="btncheck1">✔</label>
-                                        </div>
-
-                                        <div className="col-4">
-                                            <img src="https://ananas.vn/wp-content/uploads/Pro_AV00167_1-500x500.jpeg" width="200px"
-                                                height="200px" alt="ảnh sản phẩm" />
-                                        </div>
-                                        <div className="col-7">
-                                            <div className="row mb-6">
-                                                <h4 style={{ display: 'flex' }}><strong>GIÀY CHẠY BỘ ADIDAS</strong></h4>
-                                                <div style={{ display: 'flex' }} className="col-6"> <span><strong>Giá</strong> : 120.000 VND</span></div>
-                                                <div style={{ display: 'flex' }} className="col-6"> <span><strong>Size</strong> : 40</span></div>
-                                                <div style={{ display: 'flex' }} className="col-6"> <span><strong>Đơn giá</strong> : 100.000 VND</span></div>
-                                                <div style={{ display: 'flex' }} className="col-6"> <span><strong>Màu</strong> : Nâu Đất</span></div>
-                                            </div>
-
-                                            <br />
-                                            <div className="row ">
-                                                <div className="col-4">
-                                                    <div className="form-floating mb-3 border-1">
-                                                        <input type="number" className="form-control" min="1" name="formId1" id="formId1"
-                                                            placeholder="Số Lượng" />
-                                                        <label for="formId1" className="font-monospace"><strong>Số Lượng :</strong></label>
-                                                    </div>
-                                                </div>
-
-                                            </div>
-                                        </div>
+                                <div className="form-floating mb-3">
+                                    <input type="text" className="form-control" name="formId1" id="formId1" placeholder="tên" />
+                                    <label for="formId1">Họ tên</label>
+                                </div>
+                                <div className="form-floating mb-3">
+                                    <input type="text" className="form-control" name="formId2" id="formId1" placeholder="sdt" />
+                                    <label for="formId2">Số điện thoại</label>
+                                </div>
+                                <div className="form-floating mb-3">
+                                    <input type="email" className="form-control" name="formId3" id="formId1" placeholder="tên" />
+                                    <label for="formId3">Email</label>
+                                </div>
+                                <div className="form-floating mb-3">
+                                    <input type="text" className="form-control" name="formId1" id="formId4" placeholder="tên" />
+                                    <label for="formId4">Địa chỉ</label>
+                                </div>
+                                <div className="row">
+                                    <div className="col-12">
+                                        <select className="form-select form-select mb-3" id="city" aria-label=".form-select">
+                                            <option value="" selected>Chọn tỉnh thành</option>
+                                        </select>
+                                    </div>
+                                    <div className="col-6">
+                                        <select className="form-select form-select mb-3" id="district" aria-label=".form-select">
+                                            <option value="" selected>Chọn quận huyện</option>
+                                        </select>
+                                    </div>
+                                    <div className="col-6">
+                                        <select className="form-select form-select" id="ward" aria-label=".form-select">
+                                            <option value="" selected>Chọn phường xã</option>
+                                        </select>
                                     </div>
                                 </div>
-                                <hr className="dashed-hr" />
+                                <h2><strong>PHƯƠNG THỨC GIAO HÀNG</strong></h2>
+                                <hr />
+                                <div className="form-check">
+                                    <label className="form-check-label">
+                                        <input className="form-check-input" name="" id="" type="radio" value="checkedValue"
+                                            aria-label="Text for screen reader" />
+                                        a đù
+                                    </label>
 
-                                <div className="the-san-pham my-3 position-relative">
-                                    <div className="row">
-
-                                        <div className="col-1">
-                                            <input type="checkbox" class="btn-check" id="btncheck2" autocomplete="off" />
-                                            <label class="btn btn-outline-primary" for="btncheck2">✔</label>
-                                        </div>
-
-                                        <div className="col-4">
-                                            <img src="https://ananas.vn/wp-content/uploads/Pro_AV00167_1-500x500.jpeg" width="200px"
-                                                height="200px" alt="ảnh sản phẩm" />
-                                        </div>
-                                        <div className="col-7">
-                                            <div className="row mb-6">
-                                                <h4 style={{ display: 'flex' }}><strong>GIÀY CHẠY BỘ ADIDAS</strong></h4>
-                                                <div style={{ display: 'flex' }} className="col-6"> <span><strong>Giá</strong> : 120.000 VND</span></div>
-                                                <div style={{ display: 'flex' }} className="col-6"> <span><strong>Size</strong> : 40</span></div>
-                                                <div style={{ display: 'flex' }} className="col-6"> <span><strong>Đơn giá</strong> : 100.000 VND</span></div>
-                                                <div style={{ display: 'flex' }} className="col-6"> <span><strong>Màu</strong> : Nâu Đất</span></div>
-                                            </div>
-
-                                            <br />
-                                            <div className="row ">
-                                                <div className="col-4">
-                                                    <div className="form-floating mb-3 border-1">
-                                                        <input type="number" className="form-control" min="1" name="formId1" id="formId1"
-                                                            placeholder="Số Lượng" />
-                                                        <label for="formId1" className="font-monospace"><strong>Số Lượng :</strong></label>
-                                                    </div>
-                                                    {/*<i class='bx bx-trash-alt fs-2' ></i>*/}
-                                                </div>
-
-                                            </div>
-                                        </div>
-                                    </div>
                                 </div>
-                                <hr className="dashed-hr" />
 
-                                <button className="btn btn-danger" style={{ marginLeft: '0em', width: '25%' }}>Xóa</button>
-                                <button className="btn btn-primary" style={{ marginLeft: '5px', width: '25%' }}>Tiếp tục mua hàng</button>
-
+                                <h2><strong>PHƯƠNG THỨC THANH TOÁN</strong></h2>
+                                <hr />
                             </div>
-
-
-                            <div class="col-4 content-right bg-light pt-3">
-                                <h1><strong>SẢN PHẨM</strong></h1>
+                            <div className="col-4 content-right bg-light pt-3">
+                                <h1><strong>ĐƠN HÀNG</strong></h1>
                                 <hr />
-                                <div class="row mb-4 border py-2">
-                                    <div class="col-8">
+                                <div className="row mb-4 border py-2">
+                                    <div className="col-8">
                                         <h5><strong>tên sản phẩm + Màu</strong></h5>
                                         <span>Size: 34</span>
-                                        <span class="float-end">Số lượng: 4</span>
+                                        <span className="float-end">Số lượng: 4</span>
                                     </div>
-                                    <div class="col-4 ">
+                                    <div className="col-4 ">
                                         <p></p>
-                                        <h6 class="float-end">200.000 đ</h6>
+                                        <h6 className="float-end">100.000 VND</h6>
                                     </div>
 
                                 </div>
-                                <div class="row mb-4 border py-2">
-                                    <div class="col-8">
+                                <div className="row mb-4 border py-2">
+                                    <div className="col-8">
                                         <h5><strong>tên sản phẩm + Màu</strong></h5>
                                         <span>Size: 54</span>
-                                        <span class="float-end">Số lượng: 4</span>
+                                        <span className="float-end">Số lượng: 4</span>
                                     </div>
-                                    <div class="col-4 ">
+                                    <div className="col-4 ">
                                         <p></p>
-                                        <h6 class="float-end">300.000 đ</h6>
+                                        <h6 className="float-end">250.000 VND</h6>
                                     </div>
                                 </div>
 
-                                <hr class="dashed-hr" />
-                                <div class="row">
-                                    <div class="col-5"><br />
+                                <hr className="dashed-hr" />
+                                <div className="row">
+                                    <div className="col-6"> <span>Đơn hàng :</span></div>
+                                    <div className="col-6"> <span className="float-end">100.333.213 VND</span></div>
+                                    <div className="col-6"> <span>Giảm :</span></div>
+                                    <div className="col-6"> <span className="float-end">900.000</span></div>
+                                </div>
+                                <div className="row">
+                                    <div className="col-4"><br />
                                         <h5><strong style={{ color: 'orangered' }}>TỔNG CỘNG: </strong></h5>
                                     </div>
-                                    <div class="col-7 "><br />
-                                        <h5><strong class="float-end" style={{ color: 'orangered' }}>500.000 VND</strong></h5>
+                                    <div className="col-8 "><br />
+                                        <h5><strong className="float-end" style={{ color: 'orangered' }}>124.121.000 VND</strong></h5>
                                     </div>
 
                                 </div>
-                                <hr class="dashed-hr" />
+                                <hr className="dashed-hr" />
                                 <span>
-                                    Hoàn trả 100% nếu sản phẩm bị lỗi hoặc bị hỏng trong quá trình vận chuyển 🤩
+
+                                    Cảm ơn quý khách đã tin tưởng và mua hàng tại website của chúng tôi 😍
                                 </span>
-                                <hr class="dashed-hr" />
+                                <hr className="dashed-hr" />
 
 
 
-                                <div class="row">
-
-
-
-                                    <div class="col-12 mt-2">
-                                        <a href="#" class="btn btn-warning btn-lg" style={{ width: '100%' }}><strong>TIẾP TỤC THANH
+                                <div className="row">
+                                    <div className="col-12 mt-2">
+                                        <a href="#" className="btn btn-warning btn-lg" style={{ width: '100%' }}><strong>TIẾP TỤC THANH
                                             TOÁN</strong></a>
                                     </div>
                                 </div>
                             </div>
+                            <hr className="dashed-hr mt-5" />
                         </div>
                     </div>
                 </main>
@@ -328,9 +277,10 @@ function Cart() {
                         </div>
                     </footer>
                 </footer>
+
             </body>
         </Fragment>
     )
 }
 
-export default Cart;
+export default Payment;
