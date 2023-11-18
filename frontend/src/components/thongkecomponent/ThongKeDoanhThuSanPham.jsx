@@ -7,6 +7,7 @@ import * as XLSX from 'xlsx';
 import {FaFileExcel} from 'react-icons/fa';
 import {Tabs, TabList, Tab, TabPanel} from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
+import ThongKeInfo from "./ThongKeInfo";
 
 class ThongKeDoanhThuSanPham extends Component {
     constructor(props) {
@@ -18,15 +19,41 @@ class ThongKeDoanhThuSanPham extends Component {
             pageCount: 0,
             exportingToExcel: false,
             showTable: false,
-            currentDateRange: 'Trong ngày', // Initialize currentDateRange with a default value
-
+            currentDateRange: 'Theo ngày',
+            currentDateRangeHD:'Theo ngày',
+            doanhThuNgay: 0,
+            doanhThuTuan: 0,
+            doanhThuThang: 0,
+            doanhThuQuy: 0,
+            doanhThuNam: 0,
+            hoaDonNgay: 0,
+            hoaDonTuan: 0,
+            hoaDonThang: 0,
+            hoaDonQuy: 0,
+            hoaDonNam: 0,
         };
         this.combinedChartRef = React.createRef();
     }
 
     componentDidMount() {
         this.fetchData();
+        this.handleFilterChange('Theo ngày'); // Thêm dòng này
+        this.fetchDoanhThuNgay();
+        this.fetchDoanhThuTuan();
+        this.fetchDoanhThuThang();
+        this.fetchDoanhThuQuy();
+        this.fetchDoanhThuNam();
+        this.fetchHoaDonNgay();
+        this.fetchHoaDonTuan();
+        this.fetchHoaDonThang();
+        this.fetchHoaDonQuy();
+        this.fetchHoaDonNam();
     }
+
+    formatNumberOrZero(value) {
+        return typeof value === 'number' ? value : 0;
+    }
+
 
     fetchData = (page = 1) => {
         const {startDate, endDate} = this.state;
@@ -38,8 +65,129 @@ class ThongKeDoanhThuSanPham extends Component {
                 });
             })
             .catch(error => {
-                console.error("Error fetching data:", error);
+                console.error('Error fetching data:', error);
             });
+    };
+
+    fetchDoanhThuNgay = () => {
+        thongkeservice.getDoanhThuNgay()
+            .then(data => {
+                this.setState({doanhThuNgay: data});
+            })
+            .catch(error => {
+                console.error('Error fetching doanhThuNgay:', error);
+            });
+    };
+
+    fetchDoanhThuTuan = () => {
+        // Lấy ngày đầu tuần và cuối tuần
+        const startOfWeek = new Date();
+        startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay());
+        const endOfWeek = new Date(startOfWeek);
+        endOfWeek.setDate(endOfWeek.getDate() + 6);
+
+        thongkeservice.getDoanhThuTuan(startOfWeek, endOfWeek)
+            .then(data => {
+                this.setState({doanhThuTuan: data});
+            })
+            .catch(error => {
+                console.error('Error fetching doanhThuTuan:', error);
+            });
+    };
+
+    fetchDoanhThuThang = () => {
+        thongkeservice.getDoanhThuThang()
+            .then(data => {
+                this.setState({doanhThuThang: data});
+            })
+            .catch(error => {
+                console.error('Error fetching doanhThuThang:', error);
+            });
+    };
+
+    fetchDoanhThuQuy = () => {
+        thongkeservice.getDoanhThuQuy()
+            .then(data => {
+                this.setState({doanhThuQuy: data});
+            })
+            .catch(error => {
+                console.error('Error fetching doanhThuQuy:', error);
+            });
+    };
+
+    fetchDoanhThuNam = () => {
+        thongkeservice.getDoanhThuNam()
+            .then(data => {
+                this.setState({doanhThuNam: data});
+            })
+            .catch(error => {
+                console.error('Error fetching doanhThuNam:', error);
+            });
+    };
+
+    fetchHoaDonNgay = () => {
+        thongkeservice.getHoaDonNgay()
+            .then(data => {
+                this.setState({hoaDonNgay: data});
+            })
+            .catch(error => {
+                console.error('Error fetching hoaDonNgay:', error);
+            });
+    };
+
+    fetchHoaDonTuan = () => {
+        // Lấy ngày đầu tuần và cuối tuần
+        const startOfWeek = new Date();
+        startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay());
+        const endOfWeek = new Date(startOfWeek);
+        endOfWeek.setDate(endOfWeek.getDate() + 6);
+
+        thongkeservice.getHoaDonTuan(startOfWeek, endOfWeek)
+            .then(data => {
+                this.setState({hoaDonTuan: data});
+            })
+            .catch(error => {
+                console.error('Error fetching hoaDonTuan:', error);
+            });
+    };
+
+    fetchHoaDonThang = () => {
+        thongkeservice.getHoaDonThang()
+            .then(data => {
+                this.setState({hoaDonThang: data});
+            })
+            .catch(error => {
+                console.error('Error fetching hoaDonThang:', error);
+            });
+    };
+
+    fetchHoaDonQuy = () => {
+        thongkeservice.getHoaDonQuy()
+            .then(data => {
+                this.setState({hoaDonQuy: data});
+            })
+            .catch(error => {
+                console.error('Error fetching hoaDonQuy:', error);
+            });
+    };
+
+    fetchHoaDonNam = () => {
+        thongkeservice.getHoaDonNam()
+            .then(data => {
+                this.setState({hoaDonNam: data});
+            })
+            .catch(error => {
+                console.error('Error fetching hoaDonNam:', error);
+            });
+    };
+
+    calculateTotalRevenue = () => {
+        // Calculate total revenue from fetched data
+        const totalRevenue = this.state.thongKeSanPham.reduce(
+            (total, item) => total + item[2],
+            0
+        );
+        this.setState({totalRevenue});
     };
 
     handleInputChange = (event) => {
@@ -48,8 +196,9 @@ class ThongKeDoanhThuSanPham extends Component {
 
     handleThongKeClick = () => {
         this.fetchData();
-        this.setState({showTable: true});
+        this.setState({showTable: false});
     };
+
 
     handlePageClick = (data) => {
         this.fetchData(data.selected + 1);
@@ -71,12 +220,10 @@ class ThongKeDoanhThuSanPham extends Component {
 
             const colNames = ['Sản phẩm', 'Số lượng đã bán', 'Tổng tiền'];
             colNames.forEach((col, index) => {
-                const cellAddress = XLSX.utils.encode_cell({c: index, r: 1});
+                const cellAddress = XLSX.utils.encode_cell({c: index, r: 0});
                 worksheet[cellAddress].v = col;
             });
 
-            const titleCellAddress = XLSX.utils.encode_cell({c: 0, r: 0});
-            worksheet[titleCellAddress].v = 'Thống kê sản phẩm';
 
             XLSX.utils.book_append_sheet(workbook, worksheet, 'ThongKeSanPham');
 
@@ -199,12 +346,219 @@ class ThongKeDoanhThuSanPham extends Component {
         }));
     };
 
-    handleFilterChange = (filterOption) => {
+    formatCurrency(amount) {
+        // Sử dụng toLocaleString để định dạng số và chèn dấu chấm phân tách
+        return amount.toLocaleString('vi-VN');
+    }
+
+    handleFilterChange = async (filterOption) => {
         // Handle filter change logic here based on the selected option
         // Update state or perform other actions accordingly
         this.setState({currentDateRange: filterOption});
 
+        // Fetch the corresponding data based on the selected option
+        switch (filterOption) {
+            case 'Theo ngày':
+                await this.fetchDoanhThuNgay();
+                break;
+            case 'Trong tuần':
+                await this.fetchDoanhThuTuan();
+                break;
+            case 'Trong tháng':
+                await this.fetchDoanhThuThang();
+                break;
+            case 'Trong quý':
+                await this.fetchDoanhThuQuy();
+                break;
+            case 'Trong năm':
+                await this.fetchDoanhThuNam();
+                break;
+            default:
+                break;
+        }
     };
+
+    handleFilterChangeSoHoaDon = async (filterOption) => {
+        // Handle filter change logic here based on the selected option
+        // Update state or perform other actions accordingly
+        this.setState({currentDateRangeHD: filterOption});
+
+        // Fetch the corresponding data based on the selected option
+        switch (filterOption) {
+            case 'Theo ngày':
+                await this.fetchHoaDonNgay();
+                break;
+            case 'Trong tuần':
+                await this.fetchHoaDonTuan();
+                break;
+            case 'Trong tháng':
+                await this.fetchHoaDonThang();
+                break;
+            case 'Trong quý':
+                await this.fetchHoaDonQuy();
+                break;
+            case 'Trong năm':
+                await this.fetchHoaDonNam();
+                break;
+            default:
+                break;
+        }
+    };
+
+    fetchDoanhThuNgay = () => {
+        thongkeservice.getDoanhThuNgay()
+            .then(data => {
+                this.setState({doanhThuNgay: data});
+            })
+            .catch(error => {
+                console.error('Error fetching doanhThuNgay:', error);
+            });
+    };
+
+    fetchDoanhThuTuan = () => {
+        // Lấy ngày đầu tuần và cuối tuần
+        const startOfWeek = new Date();
+        startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay());
+        const endOfWeek = new Date(startOfWeek);
+        endOfWeek.setDate(endOfWeek.getDate() + 6);
+
+        thongkeservice.getDoanhThuTuan(startOfWeek, endOfWeek)
+            .then(data => {
+                this.setState({doanhThuTuan: data});
+            })
+            .catch(error => {
+                console.error('Error fetching doanhThuTuan:', error);
+            });
+    };
+
+    fetchDoanhThuThang = () => {
+        thongkeservice.getDoanhThuThang()
+            .then(data => {
+                this.setState({doanhThuThang: data});
+            })
+            .catch(error => {
+                console.error('Error fetching doanhThuThang:', error);
+            });
+    };
+
+    fetchDoanhThuQuy = () => {
+        thongkeservice.getDoanhThuQuy()
+            .then(data => {
+                this.setState({doanhThuQuy: data});
+            })
+            .catch(error => {
+                console.error('Error fetching doanhThuQuy:', error);
+            });
+    };
+
+    fetchDoanhThuNam = () => {
+        thongkeservice.getDoanhThuNam()
+            .then(data => {
+                this.setState({doanhThuNam: data});
+            })
+            .catch(error => {
+                console.error('Error fetching doanhThuNam:', error);
+            });
+    };
+
+    renderFilterOptions() {
+        return (
+            <>
+                <li>
+                    <a className="dropdown-item" href="#" onClick={() => this.handleFilterChange('Theo ngày')}>
+                        Theo ngày
+                    </a>
+                </li>
+                <li>
+                    <a className="dropdown-item" href="#" onClick={() => this.handleFilterChange('Trong tuần')}>
+                        Trong tuần
+                    </a>
+                </li>
+                <li>
+                    <a className="dropdown-item" href="#" onClick={() => this.handleFilterChange('Trong tháng')}>
+                        Trong tháng
+                    </a>
+                </li>
+                <li>
+                    <a className="dropdown-item" href="#" onClick={() => this.handleFilterChange('Trong quý')}>
+                        Trong quý
+                    </a>
+                </li>
+                <li>
+                    <a className="dropdown-item" href="#" onClick={() => this.handleFilterChange('Trong năm')}>
+                        Trong năm
+                    </a>
+                </li>
+            </>
+        );
+    }
+
+    renderFilterOptionsHD() {
+        return (
+            <>
+                <li>
+                    <a className="dropdown-item" href="#" onClick={() => this.handleFilterChangeSoHoaDon('Theo ngày')}>
+                        Theo ngày
+                    </a>
+                </li>
+                <li>
+                    <a className="dropdown-item" href="#" onClick={() => this.handleFilterChangeSoHoaDon('Trong tuần')}>
+                        Trong tuần
+                    </a>
+                </li>
+                <li>
+                    <a className="dropdown-item" href="#" onClick={() => this.handleFilterChangeSoHoaDon('Trong tháng')}>
+                        Trong tháng
+                    </a>
+                </li>
+                <li>
+                    <a className="dropdown-item" href="#" onClick={() => this.handleFilterChangeSoHoaDon('Trong quý')}>
+                        Trong quý
+                    </a>
+                </li>
+                <li>
+                    <a className="dropdown-item" href="#" onClick={() => this.handleFilterChangeSoHoaDon('Trong năm')}>
+                        Trong năm
+                    </a>
+                </li>
+            </>
+        );
+    }
+
+    renderDoanhThu() {
+        switch (this.state.currentDateRange) {
+            case 'Theo ngày':
+                return `${this.formatCurrency(this.state.doanhThuNgay)} `;
+            case 'Trong tuần':
+                return `${this.formatCurrency(this.state.doanhThuTuan)} `;
+            case 'Trong tháng':
+                return `${this.formatCurrency(this.state.doanhThuThang)} `;
+            case 'Trong quý':
+                return `${this.formatCurrency(this.state.doanhThuQuy)} `;
+            case 'Trong năm':
+                return `${this.formatCurrency(this.state.doanhThuNam)} `;
+            default:
+                return '';
+        }
+    }
+
+    renderSoHoaDon() {
+        switch (this.state.currentDateRangeHD) {
+            case 'Theo ngày':
+                return `${this.formatCurrency(this.state.hoaDonNgay)} Hóa đơn`;
+            case 'Trong tuần':
+                return `${this.formatCurrency(this.state.hoaDonTuan)} Hóa đơn`;
+            case 'Trong tháng':
+                return `${this.formatCurrency(this.state.hoaDonThang)} Hóa đơn`;
+            case 'Trong quý':
+                return `${this.formatCurrency(this.state.hoaDonQuy)} Hóa đơn`;
+            case 'Trong năm':
+                return `${this.formatCurrency(this.state.hoaDonNam)} Hóa đơn`;
+            default:
+                return '';
+        }
+    }
+
 
     render() {
         return (
@@ -219,133 +573,97 @@ class ThongKeDoanhThuSanPham extends Component {
                 <div className="col-xxl-4 col-md-6">
 
 
-
-
                 </div>
 
                 <div className="row">
                     <div className="col-xxl-4 col-md-6">
                         <div className="card info-card sales-card">
-                            <div className="card info-card sales-card">
-                                <div className="card-body">
-                                    <h5 className="card-title">
-                                        Tổng quan doanh thu <span>| {this.state.currentDateRange}</span>
-                                        <div className="filter">
-                                            <a className="icon" href="#" data-bs-toggle="dropdown" aria-expanded="false">
-                                                <i className="bi bi-chevron-compact-down"></i>
-                                            </a>
-                                            <ul className="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
-                                                <li className="dropdown-header">
-                                                    <h6>Filter</h6>
-                                                </li>
-                                                <li>
-                                                    <a className="dropdown-item" href="#"
-                                                       onClick={() => this.handleFilterChange('Theo ngày')}>
-                                                        Trong ngày
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a className="dropdown-item" href="#"
-                                                       onClick={() => this.handleFilterChange('Trong tháng')}>
-                                                        Trong tháng
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a className="dropdown-item" href="#"
-                                                       onClick={() => this.handleFilterChange('Trong quý')}>
-                                                        Trong quý
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a className="dropdown-item" href="#"
-                                                       onClick={() => this.handleFilterChange('Trong năm')}>
-                                                        Trong năm
-                                                    </a>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </h5>
+                            <div className="card-body">
+                                <h5 className="card-title">
+                                    Tổng quan doanh thu <span>| {this.state.currentDateRange}</span>
+                                    <div className="filter">
+                                        <a className="icon" href="#" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i className="bi bi-chevron-compact-down"></i>
+                                        </a>
+                                        <ul className="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                                            <li className="dropdown-header">
+                                                <h6>Thống kê theo</h6>
+                                            </li>
+                                            {this.renderFilterOptions()}
+                                        </ul>
+                                    </div>
+                                </h5>
 
-                                    <div className="d-flex align-items-center">
-                                        <div
-                                            className="card-icon rounded-circle d-flex align-items-center justify-content-center"
-                                            style={{
-                                                border: '2px solid green',
-                                                borderRadius: '50%',
-                                                width: '40px',
-                                                height: '40px'
-                                            }}>
-                                            <i className="bi bi-cart text-success"></i>
-                                        </div>
-                                        <div className="ps-3">
-                                            <h6 className="text-success pt-1 fw-bold">145 VND</h6>
-                                        </div>
+                                <div className="d-flex align-items-center">
+                                    <div
+                                        className="card-icon rounded-circle d-flex align-items-center justify-content-center"
+                                        style={{
+                                            backgroundColor: 'green', // Màu xanh lá cây
+                                            border: '2px solid white',
+                                            borderRadius: '50%',
+                                            width: '40px',
+                                            height: '40px'
+                                        }}
+                                    >
+                                        <i className="bi bi-currency-dollar text-white"></i> {/* Sử dụng biểu tượng tiền */}
+                                    </div>
+                                    <div className="ps-3">
+                                        <h6 className="text-success pt-1 fw-bold">
+                                            {this.renderDoanhThu()}
+                                            VNĐ
+                                        </h6>
                                     </div>
                                 </div>
-                            </div>                        </div>
+                            </div>
+                        </div>
                     </div>
+
 
                     <div className="col-xxl-4 col-md-6">
                         <div className="card info-card sales-card">
-                            <div className="card info-card sales-card">
-                                <div className="card-body">
-                                    <h5 className="card-title">
-                                        Tổng quan doanh thu <span>| {this.state.currentDateRange}</span>
-                                        <div className="filter">
-                                            <a className="icon" href="#" data-bs-toggle="dropdown" aria-expanded="false">
-                                                <i className="bi bi-chevron-compact-down"></i>
-                                            </a>
-                                            <ul className="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
-                                                <li className="dropdown-header">
-                                                    <h6>Filter</h6>
-                                                </li>
-                                                <li>
-                                                    <a className="dropdown-item" href="#"
-                                                       onClick={() => this.handleFilterChange('Theo ngày')}>
-                                                        Trong ngày
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a className="dropdown-item" href="#"
-                                                       onClick={() => this.handleFilterChange('Trong tháng')}>
-                                                        Trong tháng
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a className="dropdown-item" href="#"
-                                                       onClick={() => this.handleFilterChange('Trong quý')}>
-                                                        Trong quý
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a className="dropdown-item" href="#"
-                                                       onClick={() => this.handleFilterChange('Trong năm')}>
-                                                        Trong năm
-                                                    </a>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </h5>
+                            <div className="card-body">
+                                <h5 className="card-title">
+                                    Số hóa đơn <span>| {this.state.currentDateRangeHD}</span>
+                                    <div className="filter">
+                                        <a className="icon" href="#" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i className="bi bi-chevron-compact-down"></i>
+                                        </a>
+                                        <ul className="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                                            <li className="dropdown-header">
+                                                <h6>Thống kê theo</h6>
+                                            </li>
+                                            {this.renderFilterOptionsHD()}
+                                        </ul>
+                                    </div>
+                                </h5>
 
-                                    <div className="d-flex align-items-center">
-                                        <div
-                                            className="card-icon rounded-circle d-flex align-items-center justify-content-center"
-                                            style={{
-                                                border: '2px solid green',
-                                                borderRadius: '50%',
-                                                width: '40px',
-                                                height: '40px'
-                                            }}>
-                                            <i className="bi bi-cart text-success"></i>
-                                        </div>
-                                        <div className="ps-3">
-                                            <h6 className="text-success pt-1 fw-bold">145 VND</h6>
-                                        </div>
+                                <div className="d-flex align-items-center">
+                                    <div
+                                        className="card-icon rounded-circle d-flex align-items-center justify-content-center"
+                                        style={{
+                                            backgroundColor: 'blue', // Màu xanh dương
+                                            border: '2px solid white',
+                                            borderRadius: '50%',
+                                            width: '40px',
+                                            height: '40px'
+                                        }}
+                                    >
+                                        <i className="bi bi-receipt text-white"></i> {/* Sử dụng biểu tượng receipt thay vì cart */}
+                                    </div>
+                                    <div className="ps-3">
+                                        <h6 className="text-primary pt-1 fw-bold">
+                                            {this.renderSoHoaDon()}
+
+                                        </h6>
                                     </div>
                                 </div>
-                            </div>                        </div>
+
+                            </div>
+                        </div>
                     </div>
                 </div>
+
+
 
 
                 <section className="section dashboard">
@@ -424,7 +742,7 @@ class ThongKeDoanhThuSanPham extends Component {
                                                         <td>{index + 1}</td>
                                                         <td>{th[0]}</td>
                                                         <td>{th[1]}</td>
-                                                        <td>{th[2]}</td>
+                                                        <td>{this.formatCurrency(th[2])} VND</td>
                                                     </tr>
                                                 ))}
                                                 </tbody>
