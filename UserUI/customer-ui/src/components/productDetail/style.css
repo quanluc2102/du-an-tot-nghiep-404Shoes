@@ -1,83 +1,93 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Open+Sans:wght@400;700&family=Montserrat:wght@400;700&family=Nunito:wght@400;700&family=Lato:wght@400;700&display=swap');
 
-  
+
 body {
-  font-family: 'Roboto', sans-serif;
-  color: rgb(0, 69, 52);
+    font-family: 'Roboto', sans-serif;
+    color: rgb(0, 69, 52);
 }
 
-p{
+p {
     line-height: 2;
 }
 
-#main{
+#main {
     background-color: rgb(255, 228, 196);
 }
 
-.nav-link{
+.nav-link {
     color: rgb(0, 69, 52);
     border-radius: 10px;
     white-space: nowrap;
     transition: 1000ms;
 }
 
-.nav-link:hover{
+.nav-link:hover {
     background-color: rgb(16, 101, 116);
     border-radius: 50px;
     white-space: nowrap;
     transition: 500ms;
     animation: rainbow 5s linear infinite;
 }
-.fw-bolder{
+
+.fw-bolder {
     font-size: 3vm;
 }
 
 
-.cardProductDetail{
+.cardProductDetail {
     height: 380px;
     overflow: hidden;
     border: 1px solid rgba(0, 0, 0, 0.5);
 }
-.pagination{
+
+.cardProductDetail:hover {
+    box-shadow: 0 0 20px rgba(0, 128, 0, 0.8);
+    cursor: pointer;
+    border-radius: 10px 10px 10px 10px;
+
+}
+
+.pagination {
     color: rgb(0, 69, 52);
 }
-.shopBtn{
+
+.shopBtn {
     opacity: 0;
     filter: blur(2px);
     transition: all 0.5s;
-    transform:  scale(0.8) translatex(-100px);
+    transform: scale(0.8) translatex(-100px);
 }
-.card:hover .shopBtn{
-    opacity: 1;
-    transform: translatex(0) scale(1);
+
+.cardProductDetail:hover .shopBtn {
     filter: blur(0);
+    opacity: 1;
+    transform: translateX(0) scale(1);
     transition: all 0.5s;
 }
+
 .dashed-hr {
     border-top: 2px dashed black;
-  }
-  
-.contentProductDetail{
+}
+
+.contentProductDetail {
     width: 100%;
     min-height: 140vh;
-    overflow: hidden;
     display: flex;
     justify-content: center;
     padding-top: 100px;
-  
-  
+
 }
 
-.contentProductDetail-left{
+.contentProductDetail-left {
     text-align: left;
     transform: translateX(-100px);
     filter: blur(1px);
     opacity: 0;
-   
+
     transition: all 1.5s;
 }
 
-.contentProductDetail-right{
+.contentProductDetail-right {
     text-align: left;
     opacity: 0;
     filter: blur(1px);
@@ -85,16 +95,16 @@ p{
     transition: all 1.5s;
 }
 
-.font-monospace{
+.font-monospace {
     color: rgb(0, 69, 52);
 }
 
-.bx{
+.bx {
     color: rgb(0, 69, 52);
     font-size: larger;
 }
 
-.show{
+.show {
     filter: blur(0);
     opacity: 1;
     transform: translateX(0) scale(1);
@@ -102,19 +112,19 @@ p{
 }
 
 @media (prefer-reduced-motion) {
-    .content{
+    .content {
         transition: none;
     }
 }
 
-.trang2ProductDetail{
-    background-color:rgb(255, 255, 255) ;
-    
+.trang2ProductDetail {
+    background-color: rgb(255, 255, 255);
+
 }
 
 .carousel-control-prev-icon,
 .carousel-control-next-icon {
-  background-color: black;
-  font-size: 2rem; 
-  margin-top: 100px;
+    background-color: black;
+    font-size: 2rem;
+    margin-top: 100px;
 }

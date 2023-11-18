@@ -392,7 +392,6 @@ function ProductDetail() {
                                 <div className="col-3 mt-4">
                                     <div className="cardProductDetail text-start ">
                                         <div className="position-relative">
-
                                             <img className="card-img-top"
                                                 src="https://ananas.vn/wp-content/uploads/Pro_A6T012_2-500x500.jpg" alt="Title" />
                                             <div className="position-absolute top-0 end-0 mt-1 me-1">

@@ -211,7 +211,6 @@ function ProductList() {
 
                                 <hr />
                                 <div class="accordion" id="accordionExample4">
-
                                     <div class="accordion-item border-0">
                                         <h1 class="accordion-header" id="headingThree1">
                                             <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree1"
@@ -219,7 +218,7 @@ function ProductList() {
                                                 <strong class="font-monospace">MẠNG DI ĐỘNG</strong>
                                             </button>
                                         </h1>
-                                        <div id="collapseThree1" class="accordion-collapse collapse" aria-labelledby="headingThree1"
+                                        <div id="collapseThree1" class="accordion-collapse collapse show" aria-labelledby="headingThree1"
                                             data-bs-parent="#accordionExample4">
                                             <div class="accordion-body">
                                                 <ul class="list-group list-group-flush">
@@ -244,7 +243,7 @@ function ProductList() {
                                                 <strong class="font-monospace">CHẤT LIỆU</strong>
                                             </button>
                                         </h1>
-                                        <div id="collapseFour1" class="accordion-collapse collapse"
+                                        <div id="collapseFour1" class="accordion-collapse collapse show"
                                             aria-labelledby="headingFour1"
                                             data-bs-parent="#accordionExample6">
                                             <div class="accordion-body">

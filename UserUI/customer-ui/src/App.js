@@ -7,18 +7,22 @@ import UserInformation from './components/userInformation/userInformation';
 import Login from './components/login/login';
 import Register from './components/register/register';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
+import ErrorPage from './components/error/errorpage';
+import { Redirect } from 'react-router-dom/cjs/react-router-dom';
 
 function App() {
   return (
     <Router>
       <Switch>
-        <Route path='/' exact component={Home} />
+      <Redirect exact from='/' to='/home'/>
+        <Route path='/home' component={Home} />
         <Route path='/product-list' component={ProductList} />
         <Route path='/your-cart' component={Cart} />
         <Route path='/login' component={Login} />
         <Route path='/register' component={Register} />
         <Route path='/product-detail' component={ProductDetail} />
-      <Route path='/user-info' component={UserInformation} />
+        <Route path='/user-info' component={UserInformation} />
+        <Route component={ErrorPage} />
       </Switch>
     </Router>
   );

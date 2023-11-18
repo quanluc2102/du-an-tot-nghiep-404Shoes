@@ -15,11 +15,11 @@ function Cart() {
             })
         })
 
-
         const contentText = document.querySelectorAll('.content-right')
         contentText.forEach((e) => { obse.observe(e) })
         const contentImg = document.querySelectorAll('.content-left')
         contentImg.forEach((e) => { obse.observe(e) })
+
 
         window.addEventListener('scroll', function () {
             var parallax3 = document.getElementById('navbarhead');
@@ -125,7 +125,6 @@ function Cart() {
                                                             placeholder="Số Lượng" />
                                                         <label for="formId1" className="font-monospace"><strong>Số Lượng :</strong></label>
                                                     </div>
-                                                    {/*<i class='bx bx-trash-alt fs-2' ></i>*/}
                                                 </div>
 
                                             </div>
