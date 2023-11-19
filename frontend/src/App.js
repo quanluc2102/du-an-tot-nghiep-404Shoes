@@ -33,6 +33,7 @@ import TaiKhoanNVComponent from "./components/taikhoancomponent/TaiKhoanNVCompon
 import TaiKhoanNVUpdate from "./components/taikhoancomponent/TaiKhoanNVUpdate";
 import TaiKhoanKHComponent from "./components/taikhoancomponent/TaiKhoanKHComponent";
 import TaiKhoanKHUpdate from "./components/taikhoancomponent/TaiKhoanKHUpdate";
+import BanHangOffline from './components/banhangoffline/banhang';
 function App() {
   return (
 
@@ -41,9 +42,14 @@ function App() {
       <Router>
 
         <Header />
-        <Sidebar />
+        {/* <Sidebar/> */}
 
         <main id='main' className='main '>
+
+          <Route
+            render={({ location }) =>
+              !location.pathname.includes('/banhangoffline') && <Sidebar />
+            }/>
 
           <Switch>
             <Route path='/' exact component={SanPhamComponent} />
@@ -84,6 +90,7 @@ function App() {
             <Route path='/phanquyendetail/:id' component={PhanQuyenComment} />
             <Route path='/HoaDonChiTiet/:id' component={HoaDonChiTietComponents} />
             <Route path='/thongkedoanhthusanpham' component={ThongKeDoanhThuSanPham} />
+            <Route path='/banhangoffline' component={BanHangOffline} />
           </Switch>
         </main>
         <Footer />
