@@ -17,7 +17,8 @@ class SanPhamComponent extends Component {
             pageCount: 0,
             itemPerPage:5,
             result:'No QR code scanned yet',
-            isQRReaderOn: true
+            isQRReaderOn: true,
+            loading: true,
         };
         this.myRef = React.createRef();
         this.timKiem=this.timKiem.bind(this);
@@ -107,12 +108,18 @@ class SanPhamComponent extends Component {
     };
 
     componentDidMount(){
-        SanPhamService.getAllSanPham().then(res=>{
+        setTimeout(()=>{
+            SanPhamService.getAllSanPham().then(res=>{
+                this.setState({
+                    listThayThe:res.data,
+                    sanPham:res.data.slice(0,5)
+                });
+            })
             this.setState({
-                listThayThe:res.data,
-                sanPham:res.data.slice(0,5)
+                loading: false,
             });
-        })
+        },2000);
+
 
         this.updateListSP();
     }
@@ -139,8 +146,17 @@ class SanPhamComponent extends Component {
     }
     render() {
         const { isQRReaderOn, result } = this.state;
+        if(this.state.loading){
+            return  <div className="text-center" style={{marginTop:"25%",marginBottom:"25%"}}>
+                <div className="spinner-border" role="status">
+                    <span className="sr-only">Loading...</span>
+                </div>
+                <div>Loading...</div>
+            </div>
+        }
         return (
             <div>
+
                 <div className="pagetitle">
                     <h1>Quản lý sản phẩm</h1>
                     <nav>

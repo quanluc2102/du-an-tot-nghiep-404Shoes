@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Open+Sans:wght@400;700&family=Montserrat:wght@400;700&family=Nunito:wght@400;700&family=Lato:wght@400;700&display=swap');
 
 .cardProductList {
-    height: 380px;
+    height: 400px;
     overflow: hidden;
     border: 1px solid rgba(0, 0, 0, 0.5);
     border-radius: 5px 5px 5px 5px;

@@ -1,10 +1,25 @@
-import React, { Fragment, useEffect } from "react"
+import React, { Fragment, useEffect ,useState} from "react"
 import { Link } from "react-router-dom/cjs/react-router-dom.min"
 import './style.css'
+import {SanPhamService} from "../../service/SanPhamService";
 
 function ProductList() {
+    const [listSP, setListSP] = useState([]);
 
     useEffect(() => {
+        const fetchData = async () => {
+            try {
+                // Lấy danh sách sản phẩm và danh mục từ service.js
+                const data = await SanPhamService.getSPActive();
+                // const response = await fetch('http://localhost:8080/san_pham/index');
+                // const data = await response.json();
+                // console.log(data);
+                setListSP(data);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+
         const obse = new IntersectionObserver((enti) => {
             enti.forEach((enty) => {
                 if (enty.isIntersecting) {
@@ -65,6 +80,7 @@ function ProductList() {
                 danhSachSanPham.scrollIntoView({ behavior: "smooth" });
             });
         });
+        fetchData();
     }, [])
 
     return (
@@ -430,6 +446,41 @@ function ProductList() {
                                             </div>
                                         </div>
                                     </div>
+                                {/*   start list sp mới*/}
+                                    {listSP.map((sp)=> (
+                                        <div className="col-4 mt-4" key={sp.id}>
+                                            <div className="cardProductList text-start ">
+                                                <div className="position-relative">
+
+                                                    <img className="card-img-top"
+                                                         src={'/img/'+sp.anh}
+                                                         // src={'/frontend/public/niceadmin/img/'+sp.anh}
+                                                         alt="Title"
+                                                         height={270}
+                                                         width={335}
+                                                    />
+
+                                                    <div className="position-absolute top-0 end-0 mt-1 me-1">
+                                                        <button className="badge bg-danger">Mới !</button>
+                                                    </div>
+                                                    <div className="position-absolute bottom-0 start-0 mb-1 ms-1 shopBtn">
+                                                        <button className="btn btn-success ">Mua Ngay!</button>
+                                                    </div>
+
+                                                </div>
+                                                <br/>
+                                                <div className="card-body text-center">
+
+                                                    <h4 className="card-title" style={{fontSize:20}}><strong>{sp.ten}</strong></h4>
+                                                    <h7 className="card-text">{sp.thuongHieu.ten}</h7>
+                                                    <h5 className="card-text" style={{color:"red"}}>1.000.000 VND</h5>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                        ))}
+
+                                {/*    end*/}
                                 </div>
 
                                 <div class="d-flex justify-content-center  pt-5">

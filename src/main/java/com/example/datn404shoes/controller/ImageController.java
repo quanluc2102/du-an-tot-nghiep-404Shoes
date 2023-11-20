@@ -18,6 +18,7 @@ import java.util.List;
 @RequestMapping("/api/images")
 public class ImageController {
     private static final String IMAGE_UPLOAD_DIR = "frontend/public/niceadmin/img/";
+    private static final String IMAGE_UPLOAD_DIR_USER = "UserUI/customer-ui/public/img/";
     @PostMapping("/upload")
     public ResponseEntity<String> uploadImage(@RequestParam("file") MultipartFile file) {
         try {
@@ -27,11 +28,13 @@ public class ImageController {
 
             String fileName = file.getOriginalFilename();
             String imagePath = IMAGE_UPLOAD_DIR + fileName;
-
+            String imagePathUser = IMAGE_UPLOAD_DIR_USER + fileName;
             // Lưu ảnh vào thư mục lưu trữ
             byte[] bytes = file.getBytes();
             Path path = Paths.get(imagePath);
+            Path pathUser = Paths.get(imagePathUser);
             Files.write(path, bytes);
+            Files.write(pathUser, bytes);
             System.out.println("được rùi");
             return ResponseEntity.ok("Image uploaded successfully!");
         } catch (IOException e) {
@@ -51,11 +54,13 @@ public class ImageController {
                 // Save each file to the specified directory
                 String fileName = file.getOriginalFilename();
                 String imagePath = IMAGE_UPLOAD_DIR + fileName;
-
+                String imagePathUser = IMAGE_UPLOAD_DIR_USER + fileName;
                 // Lưu ảnh vào thư mục lưu trữ
                 byte[] bytes = file.getBytes();
                 Path path = Paths.get(imagePath);
+                Path pathUser = Paths.get(imagePathUser);
                 Files.write(path, bytes);
+                Files.write(pathUser, bytes);
             } catch (IOException e) {
                 return "Error uploading files: " + e.getMessage();
             }

@@ -13,6 +13,7 @@ class SanPhamAddComponnent extends Component {
             listSPCT:[],
             selectedOptionMS:null,
             selectedOptionKT:null,
+            listSPValue:[],
             listKichThuoc:[],
             listMauSac:[],
             listThuongHieu:[],
@@ -338,6 +339,9 @@ class SanPhamAddComponnent extends Component {
         })
         SanPhamService.getXuatXu().then((res)=>{
             this.setState({listXuatXu:res.data})
+        })
+        SanPhamService.getSanPhamValue().then((res)=>{
+            this.setState({listSPValue:res.data})
         })
     }
 

@@ -38,7 +38,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.*;
 
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = {"http://localhost:3000","http://localhost:3006"})
 @RestController
 @RequestMapping("san_pham")
 public class SanPhamController {
@@ -235,6 +235,23 @@ public class SanPhamController {
             sanPhamAnhServiceimpl.save(spa);
         }
         return ResponseEntity.ok(a);
+    }
+
+    @GetMapping("san_pham_value")
+    public ResponseEntity<?> index2(Model model) {
+        List<SanPhamSelection> list = new ArrayList<>();
+        List<SanPham> listSP = sanPhamRespository.findAll();
+        for(SanPham a : listSP){
+            SanPhamSelection b = new SanPhamSelection(String.valueOf(a.getId()),a.getTen());
+            list.add(b);
+        }
+        return ResponseEntity.ok(list);
+    }
+
+    @GetMapping("active")
+    public ResponseEntity<?> getSPActive(Model model) {
+        List<SanPham> listSP = sanPhamRespository.findAll().stream().filter(sanPham -> sanPham.getTrangThai()==1).toList();
+        return ResponseEntity.ok(listSP);
     }
 
     @PostMapping( value = "import", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)

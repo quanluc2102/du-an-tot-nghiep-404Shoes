@@ -1,6 +1,7 @@
 import axios from "axios";
 
 const BASE_URL_INDEX = "http://localhost:8080/san_pham/index";
+const BASE_URL_SANPHAM_VALUE = "http://localhost:8080/san_pham/san_pham_value";
 const BASE_URL_INDEX_ALL = "http://localhost:8080/san_pham/index1";
 const BASE_URL_DETAIL = "http://localhost:8080/san_pham/detail";
 const BASE_URL_SPCT_DETAIL = "http://localhost:8080/san_pham/detail_spct";
@@ -23,7 +24,9 @@ class SanPhamService{
     getSanPham(pageNumber){
         return axios.get(BASE_URL_INDEX+`?page=${pageNumber}&size=5`);
     }
-
+    getSanPhamValue(){
+        return axios.get(BASE_URL_SANPHAM_VALUE);
+    }
     getAllSanPham(){
         return axios.get(BASE_URL_INDEX_ALL);
     }
