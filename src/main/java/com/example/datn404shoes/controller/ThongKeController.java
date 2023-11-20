@@ -32,6 +32,18 @@ public class ThongKeController {
         return hoaDonChiTietRepository.thongKeDoanhThu(startDate, endDate);
     }
 
+    @GetMapping("/doanh_thu_thang_custom")
+    public List<Object[]> getDoanhThuThangCustom(Date startDate) {
+        System.out.println("meo meo"+startDate);
+
+        return hoaDonChiTietRepository.thongKeDoanhThuTheoThang(startDate);
+    }
+
+    @GetMapping("/doanh_thu_nam_custom")
+    public List<Object[]> getDoanhThuNamCustom(Date startDate) {
+        return hoaDonChiTietRepository.thongKeDoanhThuTheoNam(startDate);
+    }
+
     @GetMapping("/doanh_thu_ngay")
     public Float getDoanhThuNgay() {
         return thongKeRepository.findDoanhThuNgay();

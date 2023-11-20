@@ -20,6 +20,19 @@ public interface ThongKeRepository extends JpaRepository<HoaDon, Long> {
             "GROUP BY CAST(h.ngayTao AS DATE)")
     List<ThongKeCustom> thongKeDoanhThuTheoNgay(@Param("startDate") Date startDate, @Param("endDate") Date endDate);
 
+//    @Query("SELECT NEW com.example.datn404shoes.custom.ThongKeCustom(FUNCTION('YEAR', h.ngayTao), FUNCTION('MONTH', h.ngayTao), SUM(h.tongTienSauGiam)) " +
+//            "FROM HoaDon h " +
+//            "WHERE h.ngayTao BETWEEN :startDate AND :endDate " +
+//            "GROUP BY FUNCTION('YEAR', h.ngayTao), FUNCTION('MONTH', h.ngayTao)")
+//    List<Object[]> thongKeDoanhThuTheoThang(@Param("startDate") Date startDate, @Param("endDate") Date endDate);
+
+    @Query("SELECT NEW com.example.datn404shoes.custom.ThongKeCustom(FUNCTION('YEAR', h.ngayTao), SUM(h.tongTienSauGiam)) " +
+            "FROM HoaDon h " +
+            "WHERE h.ngayTao BETWEEN :startDate AND :endDate " +
+            "GROUP BY FUNCTION('YEAR', h.ngayTao)")
+    List<ThongKeCustom> thongKeDoanhThuTheoNam(@Param("startDate") Date startDate, @Param("endDate") Date endDate);
+
+
     @Query("SELECT SUM(hd.tongTien) FROM HoaDon hd WHERE CAST(hd.ngayTao AS date) = CURRENT_DATE")
     Float findDoanhThuNgay();
 

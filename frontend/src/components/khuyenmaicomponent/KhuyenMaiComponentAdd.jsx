@@ -129,7 +129,7 @@ class KhuyenMaiComponent extends Component {
             errorAdd.giamGia = ('Phần trăm giảm giá phải nằm trong khoảng 1-100!');
             console.log("lỗi nè má")
         }
-        if (kieuKhuyenMai === '0' && giamGia <= 0 || kieuKhuyenMai === '0' && giamGia > dieuKien) {
+        if (kieuKhuyenMai === '0' && giamGia <= 0) {
             errorAdd.giamGia = 'Số tiền giảm giá phải lớn hơn 0 và không được lớn hơn điều kiện!!';
 
         }
@@ -364,7 +364,7 @@ class KhuyenMaiComponent extends Component {
                                                 </div>
                                             </div>
                                         </div>
-                                        <input type="submit" className="btn btn-primary" value="Add"
+                                        <input type="submit" className="btn btn-primary" value="Thêm khuyến mãi"
                                                style={{marginTop: '10px'}} onClick={this.add}/>
                                     </form>
                                 </div>

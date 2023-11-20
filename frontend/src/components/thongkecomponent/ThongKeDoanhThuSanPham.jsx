@@ -12,6 +12,7 @@ import ThongKeInfo from "./ThongKeInfo";
 class ThongKeDoanhThuSanPham extends Component {
     constructor(props) {
         super(props);
+        const currentYear = new Date().getFullYear();
         this.state = {
             thongKeSanPham: [],
             startDate: '',
@@ -31,6 +32,9 @@ class ThongKeDoanhThuSanPham extends Component {
             hoaDonThang: 0,
             hoaDonQuy: 0,
             hoaDonNam: 0,
+            selectedMonth:'',
+            selectedYear:currentYear,
+            thongKeType:'nam'
         };
         this.combinedChartRef = React.createRef();
     }
@@ -55,19 +59,49 @@ class ThongKeDoanhThuSanPham extends Component {
     }
 
 
-    fetchData = (page = 1) => {
-        const {startDate, endDate} = this.state;
 
-        thongkeservice.getThongKeSanPham(startDate, endDate, page)
-            .then(data => {
-                this.setState({thongKeSanPham: data}, () => {
-                    this.renderCombinedChart();
+    fetchData = (page = 1) => {
+        const { startDate, endDate, thongKeType, selectedMonth,selectedYear} = this.state;
+    console.log(selectedMonth)
+    console.log(selectedYear)
+        if (thongKeType === 'ngay') {
+            thongkeservice.getThongKeSanPham(startDate, endDate, page)
+                .then(data => {
+                    this.setState({thongKeSanPham: data}, () => {
+                        this.renderCombinedChart();
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching data:', error);
                 });
-            })
-            .catch(error => {
-                console.error('Error fetching data:', error);
-            });
+        } else if (thongKeType === 'thang') {
+            thongkeservice.getDoanhThuThangCustom(selectedMonth, page)
+                .then(data => {
+                    this.setState({thongKeSanPham: data}, () => {
+                        this.renderCombinedChart();
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching data:', error);
+                });
+        } else if (thongKeType === 'nam') {
+            thongkeservice.getDoanhThuNamCustom(selectedYear, page)
+                .then(data => {
+                    this.setState({thongKeSanPham: data}, () => {
+                        this.renderCombinedChart();
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching data:', error);
+                });
+        } else {
+
+        }
+
     };
+
+
+
 
     fetchDoanhThuNgay = () => {
         thongkeservice.getDoanhThuNgay()
@@ -461,6 +495,17 @@ class ThongKeDoanhThuSanPham extends Component {
             });
     };
 
+    handleThongKeTypeChange = (event) => {
+        this.setState({
+            thongKeType: event.target.value,
+            startDate: '',
+            endDate: '',
+            selectedMonth: '', // Thêm dòng này để đặt lại giá trị selectedMonth khi thay đổi kiểu thống kê
+            selectedYear: '',  // Thêm dòng này để đặt lại giá trị selectedYear khi thay đổi kiểu thống kê
+        });
+    };
+
+
     renderFilterOptions() {
         return (
             <>
@@ -676,20 +721,70 @@ class ThongKeDoanhThuSanPham extends Component {
 
                         <TabPanel>
                             <div className="thongke-controls">
-                                <label>Ngày bắt đầu:</label>
-                                <input
-                                    type="date"
-                                    name="startDate"
-                                    value={this.state.startDate}
-                                    onChange={this.handleInputChange}
-                                />
-                                <label>Ngày kết thúc:</label>
-                                <input
-                                    type="date"
-                                    name="endDate"
-                                    value={this.state.endDate}
-                                    onChange={this.handleInputChange}
-                                />
+                                <label>Chọn kiểu thống kê:</label>
+                                <select
+                                    name="thongKeType"
+                                    value={this.state.thongKeType}
+                                    onChange={this.handleThongKeTypeChange}
+                                >
+                                    <option value="ngay">Theo ngày</option>
+                                    <option value="thang">Theo tháng</option>
+                                    <option value="nam">Theo năm</option>
+                                </select>
+
+                                {this.state.thongKeType === 'ngay' && (
+                                    <>
+                                        <label>Ngày bắt đầu:</label>
+                                        <input
+                                            type="date"
+                                            name="startDate"
+                                            value={this.state.startDate}
+                                            onChange={this.handleInputChange}
+                                        />
+                                        <label>Ngày kết thúc:</label>
+                                        <input
+                                            type="date"
+                                            name="endDate"
+                                            value={this.state.endDate}
+                                            onChange={this.handleInputChange}
+                                        />
+                                    </>
+                                )}
+
+                                {this.state.thongKeType === 'thang' && (
+                                    <>
+                                        <label>Chọn tháng:</label>
+                                        <input
+                                            type="month"
+                                            name="selectedMonth"
+                                            value={this.state.selectedMonth}
+                                            onChange={this.handleInputChange}
+                                        />
+                                    </>
+                                )}
+
+                                {this.state.thongKeType === 'nam' && (
+                                    <>
+                                        <label>Chọn năm:</label>
+                                        <select
+                                            name="selectedYear"
+                                            value={this.state.selectedYear}
+                                            onChange={this.handleInputChange}
+                                        >
+                                            {/* Tạo các option từ năm 1990 đến 10 năm sau tính từ thời điểm hiện tại */}
+                                            {Array.from({ length: new Date().getFullYear() - 1990 + 11 }, (_, index) => {
+                                                const year = 1990 + index;
+                                                return (
+                                                    <option key={year} value={year}>
+                                                        {year}
+                                                    </option>
+                                                );
+                                            })}
+                                        </select>
+                                    </>
+                                )}
+
+
                                 <button onClick={this.handleThongKeClick}>Thống kê</button>
                             </div>
 

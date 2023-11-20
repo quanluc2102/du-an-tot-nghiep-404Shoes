@@ -17,6 +17,31 @@ class ThongKeService {
             });
     }
 
+    getDoanhThuThangCustom(date) {
+        const url = `${API_BASE_URL}/doanh_thu_thang_custom`;
+        const startDate =  date+'-01'
+        const endDate =  date+'-01'
+        console.log(startDate)
+        console.log(endDate)
+        return axios.get(url, {params: {startDate}})
+            .then(response => response.data)
+            .catch(error => {
+                console.error("Error in getDoanhThuThangCustom:", error);
+                throw error;
+            });
+    }
+
+    getDoanhThuNamCustom(date) {
+        const url = `${API_BASE_URL}/doanh_thu_nam_custom`;
+        const startDate =  date+'-01-01'
+        return axios.get(url, {params: {startDate}})
+            .then(response => response.data)
+            .catch(error => {
+                console.error("Error in getDoanhThuThangCustom:", error);
+                throw error;
+            });
+    }
+
     getDoanhThuNgay() {
         const url = `${API_BASE_URL}/doanh_thu_ngay`;
         return axios.get(url)
