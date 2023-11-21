@@ -27,4 +27,26 @@ public interface HoaDonChiTietRepository extends JpaRepository<HoaDonChiTiet, Lo
     List<Object[]> thongKeDoanhThu(@Param("startDate") Date startDate, @Param("endDate") Date endDate);
 
 
+    @Query("SELECT sp.ten AS ten_san_pham, SUM(hdct.soLuong) AS so_luong_ban, SUM(spct.donGia * hdct.soLuong) AS doanh_thu " +
+            "FROM HoaDonChiTiet hdct " +
+            "JOIN SanPhamChiTiet spct ON hdct.sanPhamChiTiet.id = spct.id " +
+            "JOIN SanPham sp ON spct.sanPham.id = sp.id " +
+            "JOIN HoaDon hd ON hdct.hd.id = hd.id " +
+            "WHERE FUNCTION('MONTH', hd.ngayTao) = FUNCTION('MONTH', :startDate) " +
+            "AND FUNCTION('YEAR', hd.ngayTao) = FUNCTION('YEAR', :startDate) " +
+            "GROUP BY spct.sanPham.id, sp.ten " +
+            "ORDER BY so_luong_ban DESC")
+    List<Object[]> thongKeDoanhThuTheoThang(@Param("startDate") Date startDate);
+
+    @Query("SELECT sp.ten AS ten_san_pham, SUM(hdct.soLuong) AS so_luong_ban, SUM(spct.donGia * hdct.soLuong) AS doanh_thu " +
+            "FROM HoaDonChiTiet hdct " +
+            "JOIN SanPhamChiTiet spct ON hdct.sanPhamChiTiet.id = spct.id " +
+            "JOIN SanPham sp ON spct.sanPham.id = sp.id " +
+            "JOIN HoaDon hd ON hdct.hd.id = hd.id " +
+            "WHERE FUNCTION('YEAR', hd.ngayTao) = FUNCTION('YEAR', :startDate) " +
+            "GROUP BY spct.sanPham.id, sp.ten " +
+            "ORDER BY so_luong_ban DESC")
+    List<Object[]> thongKeDoanhThuTheoNam(@Param("startDate") Date startDate);
+
+
 }

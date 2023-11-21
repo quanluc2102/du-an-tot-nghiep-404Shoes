@@ -3,7 +3,7 @@ import taikhoanservice from "../../services/taikhoanservice/taikhoanservice";
 import ReactPaginate from 'react-paginate';
 import {toast} from "react-toastify";
 import thongtinservice from "../../services/thongtinservice/thongtinservice";
-
+import "./nhanvien.css";
 
 class NhanVienComponent extends Component {
     constructor(props) {
@@ -178,14 +178,13 @@ class NhanVienComponent extends Component {
                 <div className="pagetitle">
                     <h1>Nhân viên</h1>
                     <nav>
-                        {/*<ol className="breadcrumb">*/}
-                        {/*    <li className="breadcrumb-item"><a href="index.html">Home</a></li>*/}
-                        {/*    <li className="breadcrumb-item active">Overview</li>*/}
-                        {/*    <li className="breadcrumb-item active">Color</li>*/}
-                        {/*</ol>*/}
+                        <ol className="breadcrumb">
+                            <li className="breadcrumb-item"><a href="index.html">Home</a></li>
+                            <li className="breadcrumb-item active">Overview</li>
+                            <li className="breadcrumb-item active">Color</li>
+                        </ol>
                     </nav>
                 </div>
-
 
                 <section className="section dashboard">
                     <div className="row">
@@ -207,42 +206,89 @@ class NhanVienComponent extends Component {
                                                 <input
                                                     type="text"
                                                     placeholder="Tìm kiếm theo tên, mã, SDT, hoặc email"
-                                                    value={searchValue} // Bind the search input value to the state
-                                                    onChange={this.handleSearch} // Attach the search event handler
+                                                    value={searchValue}
+                                                    onChange={this.handleSearch}
+                                                    style={{
+                                                        padding: '10px',
+                                                        width: '300px',
+                                                        border: '1px solid #ccc',
+                                                        borderRadius: '5px',
+                                                    }}
                                                 />
                                             </div>
-                                            <div>
-                                                <input
-                                                    type="radio"
-                                                    id="filterAll"
-                                                    name="filterStatus"
-                                                    value="all"
-                                                    checked={filterStatus === 'all'}
-                                                    onChange={this.handleFilterChange}
-                                                />
-                                                <label htmlFor="filterAll">Tất cả</label>
-                                            </div>
-                                            <div>
-                                                <input
-                                                    type="radio"
-                                                    id="filterActive"
-                                                    name="filterStatus"
-                                                    value="active"
-                                                    checked={filterStatus === 'active'}
-                                                    onChange={this.handleFilterChange}
-                                                />
-                                                <label htmlFor="filterActive">Đang làm</label>
-                                            </div>
-                                            <div>
-                                                <input
-                                                    type="radio"
-                                                    id="filterInactive"
-                                                    name="filterStatus"
-                                                    value="inactive"
-                                                    checked={filterStatus === 'inactive'}
-                                                    onChange={this.handleFilterChange}
-                                                />
-                                                <label htmlFor="filterInactive">Nghỉ việc</label>
+
+                                            <div className="filter-container" style={{ display: 'flex' }}>
+                                                <div style={{ marginRight: '10px' }}>
+                                                    <input
+                                                        type="radio"
+                                                        id="filterAll"
+                                                        name="filterStatus"
+                                                        value="all"
+                                                        checked={filterStatus === 'all'}
+                                                        onChange={this.handleFilterChange}
+                                                    />
+                                                    <label
+                                                        htmlFor="filterAll"
+                                                        style={{
+                                                            cursor: 'pointer',
+                                                            padding: '8px 12px',
+                                                            borderRadius: '5px',
+                                                            backgroundColor: '#fff',
+                                                            color: '#333',
+                                                            transition: 'background-color 0.3s, color 0.3s',
+                                                        }}
+                                                    >
+                                                        Tất cả
+                                                    </label>
+                                                </div>
+
+                                                <div style={{ marginRight: '10px' }}>
+                                                    <input
+                                                        type="radio"
+                                                        id="filterActive"
+                                                        name="filterStatus"
+                                                        value="active"
+                                                        checked={filterStatus === 'active'}
+                                                        onChange={this.handleFilterChange}
+                                                    />
+                                                    <label
+                                                        htmlFor="filterActive"
+                                                        style={{
+                                                            cursor: 'pointer',
+                                                            padding: '8px 12px',
+                                                            borderRadius: '5px',
+                                                            backgroundColor: '#fff',
+                                                            color: 'green',
+                                                            transition: 'background-color 0.3s, color 0.3s',
+                                                        }}
+                                                    >
+                                                        Đang làm
+                                                    </label>
+                                                </div>
+
+                                                <div>
+                                                    <input
+                                                        type="radio"
+                                                        id="filterInactive"
+                                                        name="filterStatus"
+                                                        value="inactive"
+                                                        checked={filterStatus === 'inactive'}
+                                                        onChange={this.handleFilterChange}
+                                                    />
+                                                    <label
+                                                        htmlFor="filterInactive"
+                                                        style={{
+                                                            cursor: 'pointer',
+                                                            padding: '8px 12px',
+                                                            borderRadius: '5px',
+                                                            backgroundColor: '#fff',
+                                                            color: 'red',
+                                                            transition: 'background-color 0.3s, color 0.3s',
+                                                        }}
+                                                    >
+                                                        Nghỉ việc
+                                                    </label>
+                                                </div>
                                             </div>
                                             <table className="table table-borderless datatable">
                                                 <thead>
@@ -269,7 +315,11 @@ class NhanVienComponent extends Component {
                                                             {tk.anh && <img src={`/niceadmin/img/${tk.anh}`} width="100px" height="100px" />}
 
                                                         </td>
-                                                        <td>{tk.trangThai == true ? "Đang làm" : "Nghỉ việc"}</td>
+                                                        <td>
+                                                          <span style={{ color: tk.trangThai ? 'green' : 'red' }}>
+                                                                  {tk.trangThai ? 'Đang làm' : 'Nghỉ việc'}
+                                                          </span>
+                                                        </td>
                                                         <td><label className="switch">
                                                             <input
                                                                 type="checkbox"

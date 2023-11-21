@@ -14,6 +14,7 @@ class TaiKhoanNVComponent extends Component {
             tinhThanhPho: '',
             quanHuyen: '',
             xaPhuongThiTran: '',
+            listThayThe:[],
             diaChiCuThe:'' ,
             cities: [],
             districts: [],
@@ -22,8 +23,7 @@ class TaiKhoanNVComponent extends Component {
             diaChi:[],
             files:null,
             result:'No QR code scanned yet',
-            isQRReaderOn: true,
-            qrCodeResult:null,
+            isQRReaderOn: false,
             taiKhoanAdd: {
                 maTaiKhoan: '',
                 email: '',
@@ -52,6 +52,7 @@ class TaiKhoanNVComponent extends Component {
                 email: '',
                 password: '',
                 anh: '',
+                files:'',
                 diaChiCuThe: '',
                 tinhThanhPho: '',
                 quanHuyen: '',
@@ -80,10 +81,20 @@ class TaiKhoanNVComponent extends Component {
         this.handleScan = this.handleScan.bind(this);
     }
     toggleQRReader = () => {
+        // Toggle the QR code reader state
         this.setState((prevState) => ({
             isQRReaderOn: !prevState.isQRReaderOn,
-        }));
-    };
+        }), () => {
+            // Start or stop the QR code scanning based on the new state
+            if (this.myRef.current) {
+                if (this.state.isQRReaderOn) {
+                    this.myRef.current.start();
+                } else {
+                    this.myRef.current.stop();
+                }
+            }
+        });
+    }
     handleScan = (data) => {
         if (data && data.text) {
             const dataArray = data.text.split('|');
@@ -101,6 +112,7 @@ class TaiKhoanNVComponent extends Component {
                     ngaySinh,
                     gioiTinh,
                 },
+                isScanned: true,
             });
         }
     };
@@ -112,8 +124,9 @@ class TaiKhoanNVComponent extends Component {
         return `${year}-${month}-${day}`;
     };
 
-    handleError = (err) => {
-        console.error(err);
+    handleError = (error) => {
+        console.error(error);
+        // Handle error as needed
     };
     componentDidMount() {
         taikhoanservice.getNhanVien().then((res) => {
@@ -131,10 +144,14 @@ class TaiKhoanNVComponent extends Component {
     }
     add = (e) => {
         e.preventDefault();
+
         let listFile = [];
         for (let i = 0; i < this.state.files.length; i++) {
             listFile.push(this.state.files[i].name);
+
             const {taiKhoanAdd, nguoiDungAdd} = this.state;
+
+
             const requestData = {
                 taiKhoan: {
                     email : taiKhoanAdd.email,
@@ -155,20 +172,144 @@ class TaiKhoanNVComponent extends Component {
             };
             console.log('nsx' + JSON.stringify(requestData));
 
-            // if (listFile.length === 0) {
-            //     this.setState({ errorAdd: { ...this.state.errorAdd, files: "Chọn ít nhất 1 ảnh !" } });
-            //     console.log('nsx' + JSON.stringify(requestData));
+            if (listFile.length === 0) {
+                this.setState({error: {...this.state.errorAdd, files: "Chọn ít nhất 1 ảnh !"}});
+                console.log('nsx' + JSON.stringify(requestData));
+                return;
+            } else {
+                this.setState({ error: { ...this.state.errorAdd, files: "" } });
+            }
+
+            // Kiểm tra không được để trống
+            if (!nguoiDungAdd.cccd.trim()) {
+                this.setState({ errorAdd: { ...this.state.errorAdd, cccd: "CCCD không được bỏ trống!" } });
+                return;
+            } else if (!/^\d+$/.test(nguoiDungAdd.cccd)) {
+                // Kiểm tra là số nguyên
+                this.setState({ errorAdd: { ...this.state.errorAdd, cccd: "CCCD phải là số nguyên và không được chứa khoảng trắng !" } });
+                return;
+            } else if (nguoiDungAdd.cccd.length !== 12) {
+                // Kiểm tra có đủ 12 số
+                this.setState({ errorAdd: { ...this.state.errorAdd, cccd: "CCCD phải có đủ 12 số!" } });
+                return;
+            } else if (this.state.nhanVienQuyen1.some(user => user.thongTinNguoiDung.cccd === nguoiDungAdd.cccd)) {
+                // Kiểm tra trùng căn cước
+                this.setState({ errorAdd: { ...this.state.errorAdd, cccd: "CCCD đã tồn tại trong hệ thống!" } });
+                return;
+            } else {
+                this.setState({ errorAdd: { ...this.state.errorAdd, cccd: "" } });
+            }
+
+
+            //check ten
+            if (!nguoiDungAdd.ten.trim()) {
+                this.setState({ errorAdd: { ...this.state.errorAdd, ten: "Tên không được bỏ trống!" } });
+                return;
+            } else if (!/^[\p{L}\s]+$/u.test(nguoiDungAdd.ten)) {
+                this.setState({ errorAdd: { ...this.state.errorAdd, ten: "Tên chỉ được chứa chữ cái và không có kí tự đặc biệt!" } });
+                return;
+            // } else if (/\s/.test(nguoiDungAdd.ten)) {
+            //     this.setState({ errorAdd: { ...this.state.errorAdd, ten: "Tên không được chứa khoảng trắng!" } });
             //     return;
-            // } else {
-            //     this.setState({ errorAdd: { ...this.state.errorAdd, files: "" } });
-            // }
-            //
-            // if (!nguoiDungAdd.ten.trim()) {
-            //     this.setState({ errorAdd: { ...this.state.errorAdd, ten: "Tên không được bỏ trống !" } });
-            //     return;
-            // } else {
-            //     this.setState({ errorAdd: { ...this.state.errorAdd, ten: "" } });
-            // }
+            } else {
+                this.setState({ errorAdd: { ...this.state.errorAdd, ten: "" } });
+            }
+
+           //check ngaySinh
+            const inputDate = new Date(nguoiDungAdd.ngaySinh.trim());
+            const currentDate = new Date();
+
+            if (!nguoiDungAdd.ngaySinh.trim()) {
+                this.setState({ errorAdd: { ...this.state.errorAdd, ngaySinh: "Ngày sinh không được bỏ trống!" } });
+                return;
+            } else if (inputDate > currentDate) {
+                this.setState({ errorAdd: { ...this.state.errorAdd, ngaySinh: "Không được lấy ngày sinh trong tương lai!" } });
+                return;
+            } else if (inputDate.toDateString() === currentDate.toDateString()) {
+                this.setState({ errorAdd: { ...this.state.errorAdd, ngaySinh: "Ngày sinh không được lấy ngày hiện tại!" } });
+                return;
+            } else {
+                this.setState({ errorAdd: { ...this.state.errorAdd, ngaySinh: "" } });
+            }
+            // check gioiTinh
+            if (nguoiDungAdd.gioiTinh === null || nguoiDungAdd.gioiTinh === undefined || nguoiDungAdd.gioiTinh === "") {
+                this.setState({ errorAdd: { ...this.state.errorAdd, gioiTinh: "Giới tính không được bỏ trống !" } });
+                return;
+            } else {
+                this.setState({ errorAdd: { ...this.state.errorAdd, gioiTinh: "" } });
+            }
+            // check thanhPho
+            if (!this.state.tinhThanhPho.trim()) {
+                this.setState({ errorAdd: { ...this.state.errorAdd, tinhThanhPho: "Tỉnh/Thành phố không được bỏ trống!" } });
+                return;
+            } else {
+                this.setState({ errorAdd: { ...this.state.errorAdd, tinhThanhPho: "" } });
+            }
+            // check quanHuyen
+            if (!this.state.quanHuyen.trim()) {
+                this.setState({ errorAdd: { ...this.state.errorAdd, quanHuyen: "Quận/Huyện không được bỏ trống!" } });
+                return;
+            } else {
+                this.setState({ errorAdd: { ...this.state.errorAdd, quanHuyen: "" } });
+            }
+            // check xaPhuongThiTran
+            if (!this.state.xaPhuongThiTran.trim()) {
+                this.setState({ errorAdd: { ...this.state.errorAdd, xaPhuongThiTran: "Xã/Phường/Thị trấn không được bỏ trống!" } });
+                return;
+            } else {
+                this.setState({errorAdd: {...this.state.errorAdd, xaPhuongThiTran: ""}});
+            }
+            // check diaChiCuThe
+            if (!nguoiDungAdd.diaChiCuThe.trim()) {
+                this.setState({ errorAdd: { ...this.state.errorAdd, diaChiCuThe: "Địa chỉ cụ thể không được bỏ trống !" } });
+                return;
+            } else {
+                this.setState({ errorAdd: { ...this.state.errorAdd, diaChiCuThe: "" } });
+            }
+            // check sdt
+            const sdtRegex = /^[0-9]{10}$/; // Regex for 10 digits
+
+            if (!nguoiDungAdd.sdt.trim()) {
+                this.setState({ errorAdd: { ...this.state.errorAdd, sdt: "SDT không được bỏ trống!" } });
+                return;
+            } else if (!sdtRegex.test(nguoiDungAdd.sdt.trim())) {
+                this.setState({
+                    errorAdd: {
+                        ...this.state.errorAdd,
+                        sdt: "SDT phải là số nguyên, không có kí tự đặc biệt và phải có 10 chữ số!"
+                    }
+                });
+                return;
+            } else if (/\s/.test(nguoiDungAdd.sdt.trim())) {
+                this.setState({ errorAdd: { ...this.state.errorAdd, sdt: "SDT không được chứa khoảng trắng!" } });
+                return;
+            } else if (this.state.nhanVienQuyen1.some(user => user.thongTinNguoiDung.sdt === nguoiDungAdd.sdt)) {
+                this.setState({ errorAdd: { ...this.state.errorAdd, sdt: "SDT đã tồn tại trong hệ thống!" } });
+                return;
+            } else {
+                this.setState({ errorAdd: { ...this.state.errorAdd, sdt: "" } });
+            }
+
+            // check email
+            if (!taiKhoanAdd || !taiKhoanAdd.email || !taiKhoanAdd.email.trim()) {
+                this.setState({ errorAdd: { ...this.state.errorAdd, email: "Email không được bỏ trống!" } });
+                return;
+            } else if (!/^\S+@\S+\.\S+$/.test(taiKhoanAdd.email)) {
+                // Check if email is in correct format
+                this.setState({ errorAdd: { ...this.state.errorAdd, email: "Địa chỉ email không đúng định dạng!" } });
+                return;
+            } else if (/\s/.test(taiKhoanAdd.email)) {
+                // Check if email contains whitespace
+                this.setState({ errorAdd: { ...this.state.errorAdd, email: "Email không được chứa khoảng trắng!" } });
+                return;
+            } else if (this.state.nhanVienQuyen1.some(user => user.taiKhoan && user.taiKhoan.email === taiKhoanAdd.email)) {
+                this.setState({ errorAdd: { ...this.state.errorAdd, email: "Email đã tồn tại trong hệ thống!" } });
+                return;
+            } else {
+                this.setState({ errorAdd: { ...this.state.errorAdd, email: "" } });
+            }
+
+
 
 
             console.log(requestData);
@@ -249,17 +390,19 @@ class TaiKhoanNVComponent extends Component {
         this.setState({errorAdd: errorAdd});
     }
     thayDoiGioiTinhAdd = (event) => {
-        this.setState(
-            prevState => ({
-                nguoiDungAdd: {
-                    ...prevState.nguoiDungAdd,
-                    gioiTinh: event.target.value
-                }
-            })
-        );
+        // Allow manual selection of radio buttons even after scanning
+        const gioiTinh = parseInt(event.target.value, 10);
+
+        this.setState((prevState) => ({
+            nguoiDungAdd: {
+                ...prevState.nguoiDungAdd,
+                gioiTinh,
+            },
+            isScanned: false, // Reset the flag when manually changing the radio buttons
+        }));
         let errorAdd = {...this.state.errorAdd, gioiTinh: ""};
         this.setState({errorAdd: errorAdd});
-    }
+    };
     thayDoiNGaySinhAdd = (event) => {
         this.setState(
             prevState => ({
@@ -324,17 +467,26 @@ class TaiKhoanNVComponent extends Component {
         this.setState({errorAdd: errorAdd});
     }
     thayDoiAnhAdd = (event) => {
-        this.setState(
-            prevState => ({
+        const file = event.target.files[0];
+
+        if (file) {
+            // Use URL.createObjectURL to set image URL
+            const imageUrl = URL.createObjectURL(file);
+
+            this.setState((prevState) => ({
                 taiKhoanAdd: {
                     ...prevState.taiKhoanAdd,
-                    anh: event.target.value                }
-            })
-        );
+                    anh: imageUrl,
+                },
+                files: [file],
+            }));
+        }
         this.setState({ files: [ ...event.target.files] })
-        let errorAdd = {...this.state.errorAdd, anh: ""};
-        this.setState({errorAdd: errorAdd});
-    }
+        let errorAdd = { ...this.state.errorAdd, anh: "" };
+        this.setState({ errorAdd: errorAdd });
+    };
+
+
     thayDoiDiaChiAdd = (event) => {
         this.setState(
             prevState => ({
@@ -422,6 +574,8 @@ class TaiKhoanNVComponent extends Component {
         if (selectedCity) {
             this.fetchDistricts(selectedCity); // Chỉ thực hiện fetchDistricts nếu có dữ liệu cho selectedCity
         }
+        let errorAdd = {...this.state.errorAdd, tinhThanhPho: ""};
+        this.setState({errorAdd: errorAdd});
     }
 
     handleDistrictChange(event) {
@@ -435,11 +589,15 @@ class TaiKhoanNVComponent extends Component {
         if (selectedDistrict) {
             this.fetchWards(selectedDistrict); // Chỉ thực hiện fetchWards nếu có dữ liệu cho selectedDistrict
         }
+        let errorAdd = {...this.state.errorAdd, quanHuyen: ""};
+        this.setState({errorAdd: errorAdd});
     }
 
     handleWardChange(event) {
         const selectedWardName = event.target.value;
         this.setState({ xaPhuongThiTran: selectedWardName });
+        let errorAdd = {...this.state.errorAdd, xaPhuongThiTran: ""};
+        this.setState({errorAdd: errorAdd});
     }
 
     render() {
@@ -467,31 +625,81 @@ class TaiKhoanNVComponent extends Component {
                                         <div className="form-group">
                                             <label>Quét mã QR:</label>
                                             <div>
-                                                {isQRReaderOn && (
+                                                {this.state.isQRReaderOn && (
                                                     <QrScanner
                                                         ref={this.myRef}
                                                         onScan={this.handleScan}
                                                         onError={this.handleError}
-                                                        style={{ width: '300px',height:'300px' }}
+                                                        style={{ width: '300px', height: '300px' }}
                                                     />
                                                 )}
 
-                                                {/* Nút để bật/tắt quét QR */}
-                                                <button onClick={this.toggleQRReader}>
-                                                    {isQRReaderOn ? 'Turn Off QR Scanner' : 'Turn On QR Scanner'}
-                                                </button>
+                                                {/* Container for button text and QR code image */}
+                                                <div
+                                                    style={{
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                    }}
+                                                >
+                                                    {/* Nút để bật/tắt quét QR */}
+                                                    <button
+                                                        onClick={this.toggleQRReader}
+                                                        style={{
+                                                            display: 'flex',
+                                                            alignItems: 'center',
+                                                            padding: '10px 10px',
+                                                            fontSize: '16px',
+                                                            backgroundColor: '#FFC0CB', /* Light Pink color */
+                                                            border: 'none',
+                                                            color: 'white',
+                                                            borderRadius: '5px',
+                                                            cursor: 'pointer',
+                                                            margin: '10px 0',
+                                                        }}
+                                                    >
+                                                        {this.state.isQRReaderOn} {/* Text */}
+                                                        <img
+                                                            src="/niceadmin/img/QR.png"
+                                                            alt="QR Code"
+                                                            style={{
+                                                                width: '30px', // Adjust the size as needed
+                                                                height: '30px',
+                                                            }}
+                                                        />
+                                                    </button>
+                                                </div>
                                             </div>
                                         </div>
+
                                         <div className="form-group">
-                                            <label htmlFor="anh">Ảnh:</label>
-                                            <input
-                                                type="file"
-                                                className={`form-control ${this.state.errorAdd.anh ? 'is-invalid' : ''}`}
-                                                id="anh"
-                                                onChange={this.thayDoiAnhAdd}
-                                            />
-                                            {this.state.errorAdd.files && <div className="invalid-feedback">{this.state.errorAdd.files}</div>}
+                                            <label className="avatar-label" htmlFor="anh">
+                                                <input
+                                                    type="file"
+                                                    id="anh"
+                                                    accept="image/*"
+                                                    onChange={this.thayDoiAnhAdd}
+                                                    className="file-input"
+                                                />
+                                                <div className="avatar-preview">
+                                                    {this.state.taiKhoanAdd.anh ? (
+                                                        <img
+                                                            src={this.state.taiKhoanAdd.anh}
+                                                            alt="Selected Avatar"
+                                                            className="avatar-img"
+                                                        />
+                                                    ) : (
+                                                        <div className="avatar-placeholder">
+                                                            <span>Chọn ảnh</span>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </label>
+                                            {this.state.errorAdd.files && (
+                                                <div className="invalid-feedback">{this.state.errorAdd.files}</div>
+                                            )}
                                         </div>
+
+
                                         {/* CCCD */}
                                         <div className="form-group">
                                             <label htmlFor="cccd">CCCD:</label>
@@ -537,7 +745,7 @@ class TaiKhoanNVComponent extends Component {
                                                         type="radio"
                                                         name="gioiTinh"
                                                         value="0"
-                                                        checked={this.state.nguoiDungAdd.gioiTinh === 0}
+                                                        checked={(this.state.isScanned && this.state.nguoiDungAdd.gioiTinh === 0) || (!this.state.isScanned && this.state.nguoiDungAdd.gioiTinh === 0)}
                                                         onChange={this.thayDoiGioiTinhAdd}
                                                     /> Nam
                                                 </label>
@@ -546,7 +754,7 @@ class TaiKhoanNVComponent extends Component {
                                                         type="radio"
                                                         name="gioiTinh"
                                                         value="1"
-                                                        checked={this.state.nguoiDungAdd.gioiTinh === 1}
+                                                        checked={(this.state.isScanned && this.state.nguoiDungAdd.gioiTinh === 1) || (!this.state.isScanned && this.state.nguoiDungAdd.gioiTinh === 1)}
                                                         onChange={this.thayDoiGioiTinhAdd}
                                                     /> Nữ
                                                 </label>
@@ -572,6 +780,9 @@ class TaiKhoanNVComponent extends Component {
                                                             </option>
                                                         ))}
                                                     </select>
+                                                    {this.state.errorAdd.tinhThanhPho && (
+                                                        <div className="text-danger">{this.state.errorAdd.tinhThanhPho}</div>
+                                                    )}
                                                 </div>
                                                 <div className="col-md-4">
                                                     <select
@@ -586,6 +797,9 @@ class TaiKhoanNVComponent extends Component {
                                                             </option>
                                                         ))}
                                                     </select>
+                                                    {this.state.errorAdd.quanHuyen && (
+                                                        <div className="text-danger">{this.state.errorAdd.quanHuyen}</div>
+                                                    )}
                                                 </div>
                                                 <div className="col-md-4">
                                                     <select
@@ -600,6 +814,9 @@ class TaiKhoanNVComponent extends Component {
                                                             </option>
                                                         ))}
                                                     </select>
+                                                    {this.state.errorAdd.xaPhuongThiTran && (
+                                                        <div className="text-danger">{this.state.errorAdd.xaPhuongThiTran}</div>
+                                                    )}
                                                 </div>
                                             </div>
                                         </div>
@@ -626,7 +843,7 @@ class TaiKhoanNVComponent extends Component {
                                                 className={`form-control ${this.state.errorAdd.sdt ? 'is-invalid' : ''}`}
                                                 id="sdt"
                                                 onChange={this.thayDoiSdtAdd}
-                                                // value={this.state.nguoiDungAdd.sdt}
+                                                value={this.state.nguoiDungAdd.sdt}
                                             />
                                             {this.state.errorAdd.sdt && <div className="invalid-feedback">{this.state.errorAdd.sdt}</div>}
                                         </div>
@@ -638,7 +855,7 @@ class TaiKhoanNVComponent extends Component {
                                                 type="email"
                                                 className={`form-control ${this.state.errorAdd.email ? 'is-invalid' : ''}`}
                                                 id="email"
-                                                // value={this.state.taiKhoanAdd.email}
+                                                value={this.state.taiKhoanAdd.email}
                                                 onChange={this.thayDoiEmailAdd}
                                             />
                                             {this.state.errorAdd.email && <div className="invalid-feedback">{this.state.errorAdd.email}</div>}
