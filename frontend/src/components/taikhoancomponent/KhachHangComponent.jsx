@@ -87,18 +87,39 @@ class KhachHangComponent extends Component {
     handleNewAddressChange = (event) => {
         const { name, value, type, checked } = event.target;
 
-        if (type === 'checkbox') {
-            this.handleCheckboxChange(name, checked);
-        } else {
-            // Cập nhật trực tiếp editingData nếu đang chỉnh sửa, ngược lại là newAddress
-            this.setState((prevState) => ({
-                [this.state.isEditing ? 'editingData' : 'newAddress']: {
-                    ...prevState[this.state.isEditing ? 'editingData' : 'newAddress'],
-                    [name]: value,
-                },
-            }));
-        }
+        this.setState((prevState) => {
+            if (type === 'checkbox') {
+                const isDefault = checked;
+
+                const updatedAddresses = prevState.savedAddresses.map((address) => ({
+                    ...address,
+                    isDefaultAddress: address.stt === prevState.editingData.stt ? isDefault : false,
+                }));
+
+                return {
+                    newAddress: {
+                        ...prevState.newAddress,
+                        isDefaultAddress: isDefault,
+                    },
+                    savedAddresses: updatedAddresses,
+                    editingData: {
+                        ...prevState.editingData,
+                        isDefaultAddress: isDefault,
+                    },
+                };
+            } else {
+                return {
+                    newAddress: {
+                        ...prevState.newAddress,
+                        [name]: value,
+                    },
+                };
+            }
+        }, () => {
+            console.log('Updated State:', this.state);
+        });
     };
+
 
 
     handleInputChange = (name, value) => {
@@ -110,15 +131,16 @@ class KhachHangComponent extends Component {
         }));
     };
     handleCheckboxChange = (name, checked) => {
-        if (name === 'isDefaultAddress') {
-            // Đặt trạng thái mặc định của editingData
-            this.setState((prevState) => ({
-                editingData: {
-                    ...prevState.editingData,
-                    isDefaultAddress: checked,
-                },
-            }));
-        }
+        this.setState((prevState) => ({
+            newAddress: {
+                ...prevState.newAddress,
+                [name]: checked,
+            },
+            editingData: {
+                ...prevState.editingData,
+                [name]: checked,
+            },
+        }));
     };
 
 
@@ -133,7 +155,14 @@ class KhachHangComponent extends Component {
 
     handleAddSubmit = () => {
         // Thêm địa chỉ mới vào danh sách đã lưu
-        const newAddressList = [...this.state.savedAddresses, this.state.newAddress];
+        const newAddressList = [
+            ...this.state.savedAddresses,
+            {
+                ...this.state.newAddress,
+                stt: this.state.savedAddresses.length + 1, // Tăng số thứ tự khi thêm địa chỉ mới
+            },
+        ];
+
         this.setState((prevState) => ({
             isAddingAddress: true, // Keep the form open for adding more addresses
             savedAddresses: newAddressList,
@@ -149,36 +178,46 @@ class KhachHangComponent extends Component {
         }));
     };
 
-    handleEditAddress = (address) => {
-        const editingDataCopy = { ...address };
 
-        this.setState((prevState) => ({
-            isAddingAddress: true,
+
+
+    handleEditAddress = (address) => {
+        this.setState({
             isEditing: true,
-            editingData: editingDataCopy,
-            newAddress: {}, // <-- Reset newAddress to an empty object
-        }), () => {
-            console.log('editingData sau khi setState:', this.state.editingData);
+            editingData: { ...address },
         });
     };
-
-
 
 
     handleEditSubmit = (event) => {
         event.preventDefault();
 
-        // Cập nhật danh sách địa chỉ
-        const updatedAddresses = this.state.savedAddresses.map((address) =>
-            address.id === this.state.editingData.id ? { ...this.state.editingData } : { ...address }
-        );
+        // Tạo một bản sao sâu của editingData
+        const editedAddress = { ...this.state.editingData };
 
-        this.setState((prevState) => ({
+        // Cập nhật danh sách địa chỉ
+        const updatedAddresses = this.state.savedAddresses.map((address, index) => {
+            if (index === editedAddress.stt - 1) {
+                return { ...editedAddress };
+            } else {
+                return { ...address };
+            }
+        });
+
+        // Update the isDefaultAddress for newAddress as well
+        const updatedNewAddress = {
+            ...this.state.newAddress,
+            isDefaultAddress: this.state.newAddress.isDefaultAddress || false,
+        };
+
+        this.setState({
             savedAddresses: updatedAddresses,
-            isEditing: false, // Đặt lại trạng thái chỉnh sửa
-            editingData: {},  // Đặt lại dữ liệu chỉnh sửa
-        }));
+            isEditing: false,
+            editingData: {},
+            newAddress: updatedNewAddress,
+        });
     };
+
 
 
 
@@ -267,39 +306,24 @@ class KhachHangComponent extends Component {
     handleEditCheckboxChange = () => {
         const { isEditing, editingData, newAddress } = this.state;
 
-        if (isEditing && editingData.ten) {
-            // Xử lý checkbox khi địa chỉ đang chỉnh sửa
-            let sttCounter = 1; // Biến để theo dõi số thứ tự
-            const updatedAddresses = this.state.savedAddresses.map((address) => ({
+        const isDefault = !isEditing ? newAddress.isDefaultAddress : !editingData.isDefaultAddress;
+
+        this.setState((prevState) => {
+            let sttCounter = 1;
+            const updatedAddresses = prevState.savedAddresses.map((address) => ({
                 ...address,
-                isDefaultAddress: address.ten === editingData.ten ? !address.isDefaultAddress : address.isDefaultAddress,
-                stt: sttCounter++, // Số thứ tự bắt đầu từ 1 và tăng lên mỗi lần lặp
+                isDefaultAddress: address.stt === prevState.editingData.stt ? isDefault : false,
+                stt: isDefault ? sttCounter++ : address.stt,
             }));
 
-            this.setState({
+            return {
+                newAddress: {
+                    ...prevState.newAddress,
+                    isDefaultAddress: isDefault,
+                },
                 savedAddresses: updatedAddresses,
-            });
-        } else {
-            // Xử lý checkbox khi thêm mới địa chỉ
-            const isDefault = !newAddress.isDefaultAddress;
-
-            this.setState((prevState) => {
-                let sttCounter = 1; // Biến để theo dõi số thứ tự
-                const updatedAddresses = prevState.savedAddresses.map((address) => ({
-                    ...address,
-                    isDefaultAddress: false,
-                    stt: sttCounter++, // Số thứ tự bắt đầu từ 1 và tăng lên mỗi lần lặp
-                }));
-
-                return {
-                    newAddress: {
-                        ...prevState.newAddress,
-                        isDefaultAddress: isDefault,
-                    },
-                    savedAddresses: updatedAddresses,
-                };
-            });
-        }
+            };
+        });
     };
 
 
@@ -614,12 +638,12 @@ class KhachHangComponent extends Component {
                                                             </div>
                                                         </div>
                                                         <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                                                            <label>
+                                                            <label htmlFor="isDefaultAddress">
                                                                 <input
                                                                     type="checkbox"
                                                                     id="isDefaultAddress"
                                                                     name="isDefaultAddress"
-                                                                    checked={isEditing ? editingData.isDefaultAddress : newAddress.isDefaultAddress}
+                                                                    checked={editingData.isDefaultAddress}
                                                                     onChange={this.handleNewAddressChange}
                                                                 />
                                                                 Mặc định
@@ -643,17 +667,17 @@ class KhachHangComponent extends Component {
                                                             <ul>
                                                                 {this.state.savedAddresses.map((address, index) => (
                                                                     <li key={index}>
-                                                                        {`${address.ten},${address.sdt} ,${address.diaChiCuThe}, ${address.xaPhuongThiTran}, ${address.quanHuyen}, ${address.tinhThanhPho}`}
+                                                                        {`DC: ${address.stt}, ${address.ten}, ${address.sdt}, ${address.diaChiCuThe}, ${address.xaPhuongThiTran}, ${address.quanHuyen}, ${address.tinhThanhPho}`}
                                                                         {address.isDefaultAddress && (
                                                                             <span style={{ color: 'red' }}> - Mặc định</span>
                                                                         )}
                                                                         <button onClick={() => this.handleEditAddress(address)}>Chỉnh sửa</button>
-
                                                                     </li>
                                                                 ))}
                                                             </ul>
                                                         </div>
                                                     )}
+
                                                     {/*</form>*/}
                                                 </div>
                                             )}
