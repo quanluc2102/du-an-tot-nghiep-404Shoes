@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import KhuyenMaiService from '../../services/khuyenmaiservice/KhuyenMaiService';
 import {toast} from 'react-toastify';
 import "./KhuyenMaiComponentStyle.css"
+
 class KhuyenMaiComponent extends Component {
     constructor(props) {
         super(props);
@@ -243,7 +244,7 @@ class KhuyenMaiComponent extends Component {
             errorUpdate.ma = 'Mã không được bỏ trống hoặc chứa khoảng trắng hoặc kí tự đặc biệt!';
         }
 
-        if (!ten || !ten.trim() || !/^[a-zA-Z\sàáảãạăắằẳẵặâấầẩẫậèéẹêềếểễệđìíỉĩịòóỏõọôồốổỗộơờớởỡợùúủũụưừứửữựỳýỷỹỵÀÁẢÃẠĂẮẰẲẴẶÂẤẦẨẪẬÈÉẺẼẸÊỀẾỂỄỆĐÌÍỈĨỊÒÓỎÕỌÔỒỐỔỖỘƠỜỚỞỠỢÙÚỦŨỤƯỪỨỬỮỰỲÝỶỸỴ]+$/.test(ten)) {
+        if (!ten || !ten.trim() || !/^[a-zA-Z\sàáảãạăắằẳẵặâấầẩẫậèéẹêềếểễệđìíỉĩịòóỏõọôồốổỗộơờớởỡợùúủũụưừứửữựỳýỷỹỵÀÁẢÃẠĂẮẰẲẴẶÂẤẦẨẪẬÈÉẺẼẸÊỀẾỂỄỆĐÌÍỈĨỊÒÓỎÕỌÔỒỐỔỖỘƠỜỚỞỠỢÙÚỦŨỤƯỪỨỬỮỰỲÝỶỸỴ0-9]+$/.test(ten)) {
             errorUpdate.ten = 'Tên không được bỏ trống hoặc chứa kí tự đặc biệt!';
         }
 
@@ -267,29 +268,39 @@ class KhuyenMaiComponent extends Component {
         }
 
         if (batDauDate > ketThuc) {
-            errorUpdate.batDau = 'Ngày bắt đầu không được nhỏ hơn ngày kết thúc!';
+            toast.error('Ngày bắt đầu không được nhỏ hơn ngày kết thúc!');
             return;
         } else {
             khuyenMaiUpdate.batDau = batDauDate.toISOString(); // Chuyển đổi sang định dạng ISO 8601
         }
 
-        if (!giamGia || isNaN(parseFloat(giamGia)) || /[a-zA-Z]+/.test(giamGia)) {
+        var ngayHienTai = new Date();
+        console.log(ngayHienTai)
+
+        if (batDauDate < ngayHienTai) {
+            toast.error('Ngày bắt đầu không được nhỏ hơn ngày hiện tại!');
+            return;
+        } else {
+            khuyenMaiUpdate.batDau = batDauDate.toISOString();
+        }
+
+        if (!giamGia.trim() || isNaN(parseFloat(giamGia)) || /[a-zA-Z]+/.test(giamGia)) {
             errorUpdate.giamGia = 'Giảm giá không hợp lệ!';
         }
 
 
         if (kieuKhuyenMai === '1' && giamGia <= 0 || giamGia > 100) {
-            // errorUpdate.giamGia = 'Phần trăm giảm giá phải nằm trong khoảng 1-100!';
+            // errorAdd.giamGia = 'Phần trăm giảm giá phải nằm trong khoảng 1-100!';
             errorUpdate.giamGia = ('Phần trăm giảm giá phải nằm trong khoảng 1-100!');
             console.log("lỗi nè má")
-        }else
+        }
         if (kieuKhuyenMai === '0' && giamGia <= 0 || kieuKhuyenMai === '0' && giamGia > dieuKien) {
             errorUpdate.giamGia = 'Số tiền giảm giá phải lớn hơn 0 và không được lớn hơn điều kiện!!';
 
         }
 
 
-        if (!dieuKien|| isNaN(parseInt(dieuKien)) || parseInt(dieuKien) < 0 || /[a-zA-Z]+/.test(dieuKien)) {
+        if (!dieuKien || isNaN(parseInt(dieuKien)) || parseInt(dieuKien) < 0 || /[a-zA-Z]+/.test(dieuKien)) {
             errorUpdate.dieuKien = 'Điều kiện không hợp lệ!';
         }
 
@@ -377,11 +388,12 @@ class KhuyenMaiComponent extends Component {
                                     </h5>
 
                                     <div className="tab-content pt-2" id="myTabContent">
-                                        <div className="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                                        <div className="tab-pane fade show active" id="home" role="tabpanel"
+                                             aria-labelledby="home-tab">
                                             <form>
                                                 <div className="form-row">
                                                     <div className="form-group col-md-6">
-                                                        <label>Mã <span style={{ color: 'red' }}>*</span></label>
+                                                        <label>Mã <span style={{color: 'red'}}>*</span></label>
                                                         <input
                                                             className={`form-control ${this.state.errorUpdate.ma ? 'is-invalid' : ''}`}
                                                             name="ma"
@@ -392,7 +404,7 @@ class KhuyenMaiComponent extends Component {
                                                         <div className="text-danger">{this.state.errorUpdate.ma}</div>}
                                                     </div>
                                                     <div className="form-group col-md-6">
-                                                        <label>Tên: <span style={{ color: 'red' }}>*</span></label>
+                                                        <label>Tên: <span style={{color: 'red'}}>*</span></label>
                                                         <input
                                                             className={`form-control ${this.state.errorUpdate.ten ? 'is-invalid' : ''}`}
                                                             name="ten"
@@ -404,7 +416,7 @@ class KhuyenMaiComponent extends Component {
                                                     </div>
                                                 </div>
                                                 <div className="form-group">
-                                                    <label>Mô tả: <span style={{ color: 'red' }}>*</span></label>
+                                                    <label>Mô tả: <span style={{color: 'red'}}>*</span></label>
                                                     <input
                                                         className={`form-control ${this.state.errorUpdate.moTa ? 'is-invalid' : ''}`}
                                                         name="moTa"
@@ -416,7 +428,8 @@ class KhuyenMaiComponent extends Component {
                                                 </div>
                                                 <div className="form-row">
                                                     <div className="form-group col-md-6">
-                                                        <label>Ngày bắt đầu: <span style={{ color: 'red' }}>*</span></label>
+                                                        <label>Ngày bắt đầu: <span
+                                                            style={{color: 'red'}}>*</span></label>
                                                         <input
                                                             className={`form-control ${this.state.errorUpdate.batDau ? 'is-invalid' : ''}`}
                                                             name="batDau"
@@ -425,10 +438,11 @@ class KhuyenMaiComponent extends Component {
                                                             onChange={(e) => this.handleFieldChange(e, 'khuyenMaiUpdate')}
                                                         />
                                                         {this.state.errorUpdate.batDau &&
-                                                        <div className="text-danger">{this.state.errorUpdate.batDau}</div>}
+                                                        <div
+                                                            className="text-danger">{this.state.errorUpdate.batDau}</div>}
                                                     </div>
                                                     <div className="form-group col-md-6">
-                                                        <label>Kết thúc: <span style={{ color: 'red' }}>*</span></label>
+                                                        <label>Kết thúc: <span style={{color: 'red'}}>*</span></label>
                                                         <input
                                                             className={`form-control ${this.state.errorUpdate.ketThuc ? 'is-invalid' : ''}`}
                                                             name="ketThuc"
@@ -437,11 +451,13 @@ class KhuyenMaiComponent extends Component {
                                                             onChange={(e) => this.handleFieldChange(e, 'khuyenMaiUpdate')}
                                                         />
                                                         {this.state.errorUpdate.ketThuc &&
-                                                        <div className="text-danger">{this.state.errorUpdate.ketThuc}</div>}
+                                                        <div
+                                                            className="text-danger">{this.state.errorUpdate.ketThuc}</div>}
                                                     </div>
                                                 </div>
                                                 <div className="form-group">
-                                                    <label>Giảm giá <span className="small-text"> (Nhập sao cho phù hợp với kiểu khuyến mãi đã chọn)</span>:<span style={{ color: 'red' }}>*</span></label>
+                                                    <label>Giảm giá <span className="small-text"> (Nhập sao cho phù hợp với kiểu khuyến mãi đã chọn)</span>:<span
+                                                        style={{color: 'red'}}>*</span></label>
                                                     <input
                                                         className={`form-control ${this.state.errorUpdate.giamGia ? 'is-invalid' : ''}`}
                                                         name="giamGia"
@@ -452,7 +468,7 @@ class KhuyenMaiComponent extends Component {
                                                     <div className="text-danger">{this.state.errorUpdate.giamGia}</div>}
                                                 </div>
                                                 <div className="form-group">
-                                                    <label>Kiểu khuyến mãi <span style={{ color: 'red' }}>*</span></label>
+                                                    <label>Kiểu khuyến mãi <span style={{color: 'red'}}>*</span></label>
                                                     <select
                                                         name="kieuKhuyenMai"
                                                         id="kieuKhuyenMai"
@@ -461,14 +477,15 @@ class KhuyenMaiComponent extends Component {
                                                         onChange={(e) => this.handleFieldChange(e, 'khuyenMaiUpdate')}
                                                     >
                                                         <option value="">Chọn kiểu khuyến mãi</option>
-                                                        <option value="1">Phần trăm</option>
-                                                        <option value="0">Tiền</option>
+                                                        <option value="0">Giảm giá theo số tiền</option>
+                                                        <option value="1">Giảm giá theo phần trăm</option>
                                                     </select>
                                                     {this.state.errorUpdate.kieuKhuyenMai && <div
                                                         className="text-danger">{this.state.errorUpdate.kieuKhuyenMai}</div>}
                                                 </div>
                                                 <div className="form-group">
-                                                    <label>Điều kiện <span className="small-text"> (Nhập tổng tiền tối thiểu hóa đơn để áp dụng khuyến mãi này)</span>:<span style={{ color: 'red' }}>*</span></label>
+                                                    <label>Điều kiện <span className="small-text"> (Nhập tổng tiền tối thiểu hóa đơn để áp dụng khuyến mãi này)</span>:<span
+                                                        style={{color: 'red'}}>*</span></label>
                                                     <input
                                                         className={`form-control ${this.state.errorUpdate.dieuKien ? 'is-invalid' : ''}`}
                                                         name="dieuKien"
@@ -479,7 +496,7 @@ class KhuyenMaiComponent extends Component {
                                                         className="text-danger">{this.state.errorUpdate.dieuKien}</div>}
                                                 </div>
                                                 <div className="form-group">
-                                                    <label>Số lượng <span style={{ color: 'red' }}>*</span></label>
+                                                    <label>Số lượng <span style={{color: 'red'}}>*</span></label>
                                                     <input
                                                         className={`form-control ${this.state.errorUpdate.soLuong ? 'is-invalid' : ''}`}
                                                         name="soLuong"
@@ -489,7 +506,8 @@ class KhuyenMaiComponent extends Component {
                                                     {this.state.errorUpdate.soLuong &&
                                                     <div className="text-danger">{this.state.errorUpdate.soLuong}</div>}
                                                 </div>
-                                                <button className="btn btn-primary" style={{ marginTop: '10px' }} onClick={this.update}>
+                                                <button className="btn btn-primary" style={{marginTop: '10px'}}
+                                                        onClick={this.update}>
                                                     Update
                                                 </button>
                                             </form>
@@ -501,7 +519,6 @@ class KhuyenMaiComponent extends Component {
                     </div>
                 </section>
             </div>
-
 
 
         )

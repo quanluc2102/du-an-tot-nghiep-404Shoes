@@ -75,9 +75,10 @@ class KhuyenMaiComponent extends Component {
             errorAdd.ma = 'Mã không được bỏ trống hoặc chứa khoảng trắng hoặc kí tự đặc biệt!';
         }
 
-        if (!ten || !ten.trim() || !/^[a-zA-Z\sàáảãạăắằẳẵặâấầẩẫậèéẹêềếểễệđìíỉĩịòóỏõọôồốổỗộơờớởỡợùúủũụưừứửữựỳýỷỹỵÀÁẢÃẠĂẮẰẲẴẶÂẤẦẨẪẬÈÉẺẼẸÊỀẾỂỄỆĐÌÍỈĨỊÒÓỎÕỌÔỒỐỔỖỘƠỜỚỞỠỢÙÚỦŨỤƯỪỨỬỮỰỲÝỶỸỴ]+$/.test(ten)) {
-            errorAdd.ten = 'Tên không được bỏ trống hoặc chứa kí tự đặc biệt!';
+        if (!ten || !ten.trim() || !/^[a-zA-Z\sàáảãạăắằẳẵặâấầẩẫậèéẹêềếểễệđìíỉĩịòóỏõọôồốổỗộơờớởỡợùúủũụưừứửữựỳýỷỹỵÀÁẢÃẠĂẮẰẲẴẶÂẤẦẨẪẬÈÉẺẼẸÊỀẾỂỄỆĐÌÍỈĨỊÒÓỎÕỌÔỒỐỔỖỘƠỜỚỞỠỢÙÚỦŨỤƯỪỨỬỮỰỲÝỶỸỴ0-9]+$/.test(ten)) {
+            errorAdd.ten = 'Tên không được bỏ trống, chứa kí tự đặc biệt!';
         }
+
 
         if (!moTa || !moTa.trim() || moTa.trim() === '') {
             errorAdd.moTa = 'Mô tả không được bỏ trống hoặc chỉ chứa khoảng trắng!';
@@ -101,11 +102,21 @@ class KhuyenMaiComponent extends Component {
             khuyenMaiAdd.ketThuc = ketThucDate.toISOString();
         }
 
-        if (batDauDate > ketThuc) {
-            errorAdd.batDau = 'Ngày bắt đầu không được nhỏ hơn ngày kết thúc!';
+        if (batDauDate > ketThucDate) {
+            toast.error('Ngày bắt đầu không được nhỏ hơn ngày kết thúc!');
             return;
         } else {
             khuyenMaiAdd.batDau = batDauDate.toISOString(); // Chuyển đổi sang định dạng ISO 8601
+        }
+
+        var ngayHienTai = new Date();
+        console.log(ngayHienTai)
+
+        if (batDauDate < ngayHienTai) {
+            toast.error('Ngày bắt đầu không được nhỏ hơn ngày hiện tại!');
+            return;
+        } else {
+            khuyenMaiAdd.batDau = batDauDate.toISOString();
         }
 
         if (!giamGia.trim() || isNaN(parseFloat(giamGia)) || /[a-zA-Z]+/.test(giamGia)) {
@@ -117,8 +128,8 @@ class KhuyenMaiComponent extends Component {
             // errorAdd.giamGia = 'Phần trăm giảm giá phải nằm trong khoảng 1-100!';
             errorAdd.giamGia = ('Phần trăm giảm giá phải nằm trong khoảng 1-100!');
             console.log("lỗi nè má")
-        }else
-        if (kieuKhuyenMai === '0' && giamGia <= 0 || kieuKhuyenMai === '0' && giamGia > dieuKien) {
+        }
+        if (kieuKhuyenMai === '0' && giamGia <= 0) {
             errorAdd.giamGia = 'Số tiền giảm giá phải lớn hơn 0 và không được lớn hơn điều kiện!!';
 
         }
@@ -300,13 +311,13 @@ class KhuyenMaiComponent extends Component {
                                                 <div className="col-md-3">
                                                     <label>Kiểu khuyến mãi <span style={{color: 'red'}}>*</span></label>
                                                     <select
-                                                        className={`form-control ${this.state.errorAdd.kieu ? 'is-invalid' : ''}`}
-                                                        name="kieu"
+                                                        className={`form-control ${this.state.errorAdd.kieuKhuyenMai ? 'is-invalid' : ''}`}
+                                                        name="kieuKhuyenMai"
                                                         onChange={this.thayDoiTruongAdd}
                                                     >
                                                         <option value="">Chọn kiểu khuyến mãi</option>
-                                                        <option value="1">Giảm giá theo phần trăm</option>
                                                         <option value="0">Giảm giá theo số tiền</option>
+                                                        <option value="1">Giảm giá theo phần trăm</option>
                                                         {/*<option value="3">Tặng quà</option>*/}
                                                     </select>
                                                     {this.state.errorAdd.kieuKhuyenMai && (
@@ -353,7 +364,7 @@ class KhuyenMaiComponent extends Component {
                                                 </div>
                                             </div>
                                         </div>
-                                        <input type="submit" className="btn btn-primary" value="Add"
+                                        <input type="submit" className="btn btn-primary" value="Thêm khuyến mãi"
                                                style={{marginTop: '10px'}} onClick={this.add}/>
                                     </form>
                                 </div>

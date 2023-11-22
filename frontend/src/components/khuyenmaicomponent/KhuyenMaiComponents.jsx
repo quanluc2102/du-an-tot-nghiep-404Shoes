@@ -263,7 +263,8 @@ class KhuyenMaiComponents extends Component {
                                             <table className="table table-borderless datatable">
                                                 <thead>
                                                 <tr>
-                                                    <th>Mã</th>
+                                                    <th>Số thứ tự</th>
+                                                    <th>Mã giảm giá</th>
                                                     <th>Tên</th>
                                                     <th>Mô tả</th>
                                                     <th>Ngày bắt đầu</th>
@@ -277,32 +278,29 @@ class KhuyenMaiComponents extends Component {
                                                 </tr>
                                                 </thead>
                                                 <tbody>
-                                                {this.state.khuyenMai.map((km) => (
+                                                {this.state.khuyenMai.map((km, index) => (
                                                     <tr key={km.id}>
+                                                        <td>{index + 1}</td>
                                                         <td>{km.ma}</td>
                                                         <td>{km.ten}</td>
                                                         <td>{km.moTa}</td>
                                                         <td>
-                                                            {moment(km.batDau).format(
-                                                                'YYYY-MM-DD HH:mm:ss'
-                                                            )}
+                                                            {moment(km.batDau).format('YYYY-MM-DD HH:mm:ss')}
                                                         </td>
                                                         <td>
-                                                            {moment(km.ketThuc).format(
-                                                                'YYYY-MM-DD HH:mm:ss'
-                                                            )}
+                                                            {moment(km.ketThuc).format('YYYY-MM-DD HH:mm:ss')}
                                                         </td>
-                                                        <td>{km.giamGia}</td>
+                                                        <td>{km.kieuKhuyenMai===1?km.giamGia + '%': km.giamGia + 'VND'}</td>
                                                         <td>
-                                                            {km.kieuKhuyenMai === 0
-                                                                ? 'Phần trăm'
-                                                                : km.kieuKhuyenMai === 1
-                                                                    ? 'Tiền'
+                                                            {km.kieuKhuyenMai === 1
+                                                                ? 'Giảm giá theo phần trăm'
+                                                                : km.kieuKhuyenMai === 0
+                                                                    ? 'Giảm giá theo số tiền'
                                                                     : 'Khuyến mãi khác'}
                                                         </td>
                                                         <td>{km.dieuKien}</td>
                                                         <td>{km.soLuong}</td>
-                                                        <td className={km.trangThai===0?'badge bg-warning text-dark':km.trangThai===1?'badge bg-success':'badge bg-danger'}>
+                                                        <td className={km.trangThai === 0 ? 'badge bg-warning text-dark' : km.trangThai === 1 ? 'badge bg-success' : 'badge bg-danger'}>
                                                             {km.trangThai === 0
                                                                 ? 'Chưa diễn ra'
                                                                 : km.trangThai === 1
@@ -321,6 +319,7 @@ class KhuyenMaiComponents extends Component {
                                                 ))}
                                                 </tbody>
                                             </table>
+
                                             <div className="pagination-container">
                                                 <ReactPaginate
                                                     previousLabel={'<'}
