@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import taikhoanservice from "../../services/taikhoanservice/taikhoanservice";
 import ReactPaginate from 'react-paginate';
 import { toast } from "react-toastify";
-
+import axios from "axios";
+import "./themKH.css";
 class KhachHangComponent extends Component {
     constructor(props) {
         super(props);
@@ -13,10 +14,33 @@ class KhachHangComponent extends Component {
             currentPage: 1,
             filterStatus: 'all',
             searchValue: '',
+            provinces: [],
+            districts: [],
+            cities: [],
+            diaChi: [],
+            wards: [],
+            addresses: [],
+            savedAddresses: [],
+            isDefaultAddress: false,
+            isAddingAddress: false,
+            isEditing: false,
+            editingData: {},
+            newAddress: {
+                ten: '',
+                sdt: '',
+                diaChiCuThe: '',
+                tinhThanhPho: '',
+                quanHuyen: '',
+                xaPhuongThiTran: '',
+                isDefaultAddress: false,
+            },
+
         };
     }
 
     componentDidMount(pageNumber) {
+        const storedAddresses = localStorage.getItem('addresses');
+        this.fetchCities();
         taikhoanservice.getKhachHang(pageNumber)
             .then(res => {
                 this.setState({
@@ -30,6 +54,13 @@ class KhachHangComponent extends Component {
                 this.setState({taiKhoanUpdate: res.data});
             })
         }
+        axios.get("https://provinces.open-api.vn/api/?depth=1")
+            .then((response) => {
+                this.setState({ provinces: response.data });
+            })
+            .catch((error) => {
+                console.error('Error fetching provinces:', error);
+            });
 
     }
 
@@ -53,9 +84,121 @@ class KhachHangComponent extends Component {
             });
     }
 
+    handleNewAddressChange = (event) => {
+        const { name, value, type, checked } = event.target;
+
+        if (type === 'checkbox') {
+            this.handleCheckboxChange(name, checked);
+        } else {
+            // Cập nhật trực tiếp editingData nếu đang chỉnh sửa, ngược lại là newAddress
+            this.setState((prevState) => ({
+                [this.state.isEditing ? 'editingData' : 'newAddress']: {
+                    ...prevState[this.state.isEditing ? 'editingData' : 'newAddress'],
+                    [name]: value,
+                },
+            }));
+        }
+    };
+
+
+    handleInputChange = (name, value) => {
+        this.setState((prevState) => ({
+            newAddress: {
+                ...prevState.newAddress,
+                [name]: value,
+            },
+        }));
+    };
+    handleCheckboxChange = (name, checked) => {
+        if (name === 'isDefaultAddress') {
+            // Đặt trạng thái mặc định của editingData
+            this.setState((prevState) => ({
+                editingData: {
+                    ...prevState.editingData,
+                    isDefaultAddress: checked,
+                },
+            }));
+        }
+    };
+
+
+    handleSubmit = (event) => {
+        event.preventDefault();
+        if (this.state.isEditing) {
+            this.handleEditSubmit(event); // Pass the event parameter
+        } else {
+            this.handleAddSubmit();
+        }
+    };
+
+    handleAddSubmit = () => {
+        // Thêm địa chỉ mới vào danh sách đã lưu
+        const newAddressList = [...this.state.savedAddresses, this.state.newAddress];
+        this.setState((prevState) => ({
+            isAddingAddress: true, // Keep the form open for adding more addresses
+            savedAddresses: newAddressList,
+            newAddress: {
+                ten: '',
+                sdt: '',
+                diaChiCuThe: '',
+                tinhThanhPho: '',
+                quanHuyen: '',
+                xaPhuongThiTran: '',
+                isDefaultAddress: false,
+            },
+        }));
+    };
+
+    handleEditAddress = (address) => {
+        const editingDataCopy = { ...address };
+
+        this.setState((prevState) => ({
+            isAddingAddress: true,
+            isEditing: true,
+            editingData: editingDataCopy,
+            newAddress: {}, // <-- Reset newAddress to an empty object
+        }), () => {
+            console.log('editingData sau khi setState:', this.state.editingData);
+        });
+    };
+
+
+
+
+    handleEditSubmit = (event) => {
+        event.preventDefault();
+
+        // Cập nhật danh sách địa chỉ
+        const updatedAddresses = this.state.savedAddresses.map((address) =>
+            address.id === this.state.editingData.id ? { ...this.state.editingData } : { ...address }
+        );
+
+        this.setState((prevState) => ({
+            savedAddresses: updatedAddresses,
+            isEditing: false, // Đặt lại trạng thái chỉnh sửa
+            editingData: {},  // Đặt lại dữ liệu chỉnh sửa
+        }));
+    };
+
+
+
     handlePageChange = (pageNumber) => {
         this.setState({
             currentPage: pageNumber,
+        });
+    };
+    handleCloseEditDialog = () => {
+        this.setState({
+            isEditing: false,
+            isAddingAddress: false,
+            editingData: {
+                ten: '',
+                sdt: '',
+                diaChiCuThe: '',
+                tinhThanhPho: '',
+                quanHuyen: '',
+                xaPhuongThiTran: '',
+            },
         });
     };
 
@@ -80,23 +223,193 @@ class KhachHangComponent extends Component {
     detail(id) {
         window.location.href = `/khachhangdetail/${id}`;
     }
+    toggleThemDiaChiMoi = () => {
+        const { isEditing, editingData } = this.state;
+        this.setState({
+            isAddingAddress: !isEditing, // Đặt isAddingAddress thành ngược của isEditing
+            editingData: isEditing ? editingData : {}, // Nếu đang chỉnh sửa, sử dụng editingData, ngược lại là đặt về trạng thái rỗng
+        });
+    };
+
 
 
     toggleTaiKhoan = (id, currentTaiKhoan) => {
-        const newTrangThai = !currentTaiKhoan === true ? false : true; // Chuyển đổi trạng thái;
-        taikhoanservice.updateTaiKhoanTrangThai({trangThai: newTrangThai}, id)
+        const newTrangThai = !currentTaiKhoan; // Simply toggle the status
+
+        taikhoanservice.updateTaiKhoanTrangThai({ trangThai: newTrangThai }, id)
             .then((res) => {
-                let taiKhoanCapNhat = res.data;
-                this.setState(prevState => ({
+                const taiKhoanCapNhat = res.data;
+
+                this.setState((prevState) => ({
                     nhanVienQuyen3: prevState.nhanVienQuyen3.map(tk =>
                         tk.id === taiKhoanCapNhat.id ? taiKhoanCapNhat : tk
-                    )
+                    ),
                 }));
+            })
+            .catch((error) => {
+                console.error('Error updating account status:', error);
+            });
+        if (this.state.isEditing && this.state.editingData.id === id) {
+            const updatedEditingData = {
+                ...this.state.editingData,
+                isDefaultAddress: newTrangThai,
+            };
+
+            this.setState((prevState) => ({
+                editingData: updatedEditingData,
+                savedAddresses: prevState.savedAddresses.map((address) =>
+                    address.id === prevState.editingData.id ? updatedEditingData : address
+                ),
+            }));
+        }
+    };
+
+    handleEditCheckboxChange = () => {
+        const { isEditing, editingData, newAddress } = this.state;
+
+        if (isEditing && editingData.ten) {
+            // Xử lý checkbox khi địa chỉ đang chỉnh sửa
+            let sttCounter = 1; // Biến để theo dõi số thứ tự
+            const updatedAddresses = this.state.savedAddresses.map((address) => ({
+                ...address,
+                isDefaultAddress: address.ten === editingData.ten ? !address.isDefaultAddress : address.isDefaultAddress,
+                stt: sttCounter++, // Số thứ tự bắt đầu từ 1 và tăng lên mỗi lần lặp
+            }));
+
+            this.setState({
+                savedAddresses: updatedAddresses,
+            });
+        } else {
+            // Xử lý checkbox khi thêm mới địa chỉ
+            const isDefault = !newAddress.isDefaultAddress;
+
+            this.setState((prevState) => {
+                let sttCounter = 1; // Biến để theo dõi số thứ tự
+                const updatedAddresses = prevState.savedAddresses.map((address) => ({
+                    ...address,
+                    isDefaultAddress: false,
+                    stt: sttCounter++, // Số thứ tự bắt đầu từ 1 và tăng lên mỗi lần lặp
+                }));
+
+                return {
+                    newAddress: {
+                        ...prevState.newAddress,
+                        isDefaultAddress: isDefault,
+                    },
+                    savedAddresses: updatedAddresses,
+                };
+            });
+        }
+    };
+
+
+    fetchCities() {
+        axios.get('https://provinces.open-api.vn/api/?depth=1')
+            .then((response) => {
+                this.setState({ cities: response.data }, () => {
+                    // Fetch districts for the first city in the list
+                    const firstCity = this.state.cities[0];
+                    if (firstCity) {
+                        this.fetchDistricts(firstCity);
+                    }
+                });
+            })
+            .catch((error) => {
+                console.error('Error fetching cities:', error);
             });
     }
 
+    fetchDistricts(selectedCity) {
+        axios.get(`https://provinces.open-api.vn/api/p/${selectedCity.code}?depth=2`)
+            .then((response) => {
+                console.log('Đã lấy danh sách quận huyện:', response.data.districts);
+                this.setState({ districts: response.data.districts }, () => {
+                    // Fetch wards for the first district in the list
+                    const firstDistrict = this.state.districts[0];
+                    if (firstDistrict) {
+                        this.fetchWards(firstDistrict);
+                    }
+                });
+            })
+            .catch((error) => {
+                console.error('Lỗi khi lấy danh sách quận huyện:', error);
+            });
+    }
+
+    fetchWards(selectedDistrict) {
+        axios.get(`https://provinces.open-api.vn/api/d/${selectedDistrict.code}?depth=2`)
+            .then((response) => {
+                const wards = response.data.wards || [];
+                this.setState({ wards: wards });
+            })
+            .catch((error) => {
+                console.error('Lỗi khi lấy danh sách phường/xã:', error);
+            });
+    }
+    handleCityChange(event) {
+        const selectedCityName = event.target.value;
+        const selectedCity = this.state.cities.find(city => city.name === selectedCityName);
+
+        console.log('Tỉnh/thành phố được chọn:', selectedCity);
+
+        this.setState((prevState) => ({
+            newAddress: {
+                ...prevState.newAddress,
+                tinhThanhPho: selectedCityName,
+            },
+            editingData: {
+                ...prevState.editingData,
+                tinhThanhPho: selectedCityName,
+            }
+        }));
+
+        if (selectedCity) {
+            this.fetchDistricts(selectedCity);
+        }
+    }
+
+
+
+    handleDistrictChange(event) {
+        const selectedDistrictName = event.target.value;
+        const selectedDistrict = this.state.districts.find(district => district.name === selectedDistrictName);
+
+        console.log('Quận/huyện được chọn:', selectedDistrict);
+
+        this.setState((prevState) => ({
+            newAddress: {
+                ...prevState.newAddress,
+                quanHuyen: selectedDistrict ? selectedDistrict.name : '',
+            },
+            editingData: {
+                ...prevState.editingData,
+                quanHuyen: selectedDistrict ? selectedDistrict.name : '',
+            }
+        }));
+
+        if (selectedDistrict) {
+            this.fetchWards(selectedDistrict);
+        }
+    }
+
+    handleWardChange(event) {
+        const selectedWardName = event.target.value;
+        this.setState(prevState => ({
+            newAddress: {
+                ...prevState.newAddress,
+                xaPhuongThiTran: selectedWardName,
+            },
+            editingData: {
+                ...prevState.editingData,
+                xaPhuongThiTran: selectedWardName,
+            }
+        }));
+    }
     render() {
-        const {nhanVienQuyen3, itemsPerPage, currentPage, filterStatus, searchValue} = this.state;
+        const { nhanVienQuyen3, itemsPerPage, currentPage, filterStatus, searchValue} = this.state;
+        const { provinces, districts, wards } = this.state;
+        const { isAddingAddress, isEditing, editingData, newAddress } = this.state;
+        console.log('isAddingAddress:', this.state.isAddingAddress);
 
         // Filter employees based on filterStatus
         const filteredEmployees = nhanVienQuyen3.filter((employee) => {
@@ -155,34 +468,20 @@ class KhachHangComponent extends Component {
                                             </div>
                                             <div>
                                                 <input
-                                                    type="radio"
-                                                    id="filterAll"
-                                                    name="filterStatus"
-                                                    value="all"
-                                                    checked={filterStatus === 'all'}
+                                                    type="radio" id="filterAll" name="filterStatus" value="all" checked={filterStatus === 'all'}
                                                     onChange={this.handleFilterChange}
                                                 />
                                                 <label htmlFor="filterAll">Tất cả</label>
                                             </div>
                                             <div>
-                                                <input
-                                                    type="radio"
-                                                    id="filterActive"
-                                                    name="filterStatus"
-                                                    value="active"
-                                                    checked={filterStatus === 'active'}
-                                                    onChange={this.handleFilterChange}
+                                                <input type="radio" id="filterActive" name="filterStatus" value="active" checked={filterStatus === 'active'}
+                                                       onChange={this.handleFilterChange}
                                                 />
                                                 <label htmlFor="filterActive">Hoạt động</label>
                                             </div>
                                             <div>
-                                                <input
-                                                    type="radio"
-                                                    id="filterInactive"
-                                                    name="filterStatus"
-                                                    value="inactive"
-                                                    checked={filterStatus === 'inactive'}
-                                                    onChange={this.handleFilterChange}
+                                                <input type="radio" id="filterInactive" name="filterStatus" value="inactive" checked={filterStatus === 'inactive'}
+                                                       onChange={this.handleFilterChange}
                                                 />
                                                 <label htmlFor="filterInactive">Ngừng hoạt động</label>
                                             </div>
@@ -221,11 +520,145 @@ class KhachHangComponent extends Component {
                                                             <button onClick={() => this.detail(tk.id)}
                                                                     className='btn btn-primary'>Detail
                                                             </button>
+                                                            <button onClick={this.toggleThemDiaChiMoi} className='btn btn-success'>
+                                                                Thêm Địa Chỉ Mới
+                                                            </button>
                                                         </td>
                                                     </tr>
+
                                                 ))}
                                                 </tbody>
+
                                             </table>
+                                            {(isAddingAddress || isEditing) && (
+                                                <div className="form-dialog">
+                                                    <form onSubmit={this.handleSubmit}>
+                                                        <div className="form-group">
+                                                            <label htmlFor="ten">Tên:</label>
+                                                            <input
+                                                                type="text"
+                                                                id="ten"
+                                                                name="ten"
+                                                                value={isEditing ? editingData.ten : newAddress.ten}
+                                                                onChange={this.handleNewAddressChange}
+                                                            />
+                                                        </div>
+                                                        <div className="form-group">
+                                                            <label htmlFor="sdt">Số điện thoại:</label>
+                                                            <input
+                                                                type="text"
+                                                                id="sdt"
+                                                                name="sdt"
+                                                                value={isEditing ? editingData.sdt : newAddress.sdt}
+                                                                onChange={this.handleNewAddressChange}
+                                                            />
+                                                        </div>
+                                                        <div className="form-group">
+                                                            <label htmlFor="diaChiCuThe">Địa chỉ cụ thể:</label>
+                                                            <input
+                                                                type="text"
+                                                                id="diaChiCuThe"
+                                                                name="diaChiCuThe"
+                                                                value={isEditing ? editingData.diaChiCuThe : newAddress.diaChiCuThe}
+                                                                onChange={this.handleNewAddressChange}
+                                                            />
+                                                        </div>
+                                                        <div className="form-group form-inline">
+                                                            <label>Địa chỉ:</label>
+                                                            <div className="row">
+                                                                <div className="col-md-4">
+                                                                    <select
+                                                                        className="form-control"
+                                                                        name="tinhThanhPho"
+                                                                        onChange={(event) => this.handleCityChange(event)}
+                                                                        value={isEditing ? editingData.tinhThanhPho : (newAddress.tinhThanhPho || '')}
+                                                                    >
+                                                                        <option value="">Chọn tỉnh thành</option>
+                                                                        {this.state.cities.map(city => (
+                                                                            <option key={city.code} value={city.name}>
+                                                                                {city.name}
+                                                                            </option>
+                                                                        ))}
+                                                                    </select>
+                                                                </div>
+                                                                <div className="col-md-4">
+                                                                    <select
+                                                                        className="form-control"
+                                                                        name="quanHuyen"
+                                                                        onChange={(event) => this.handleDistrictChange(event)}
+                                                                        value={isEditing ? editingData.quanHuyen : (newAddress.quanHuyen || '')}
+                                                                    >
+                                                                        <option value="">Chọn quận huyện</option>
+                                                                        {this.state.districts.map(district => (
+                                                                            <option key={district.code} value={district.name}>
+                                                                                {district.name}
+                                                                            </option>
+                                                                        ))}
+                                                                    </select>
+                                                                </div>
+                                                                <div className="col-md-4">
+                                                                    <select
+                                                                        className="form-control"
+                                                                        name="xaPhuongThiTran"
+                                                                        onChange={(event) => this.handleWardChange(event)}
+                                                                        value={isEditing ? editingData.xaPhuongThiTran : (newAddress.xaPhuongThiTran || '')}
+                                                                    >
+                                                                        <option value="">Chọn phường xã</option>
+                                                                        {this.state.wards.map(ward => (
+                                                                            <option key={ward.code} value={ward.name}>
+                                                                                {ward.name}
+                                                                            </option>
+                                                                        ))}
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                                                            <label>
+                                                                <input
+                                                                    type="checkbox"
+                                                                    id="isDefaultAddress"
+                                                                    name="isDefaultAddress"
+                                                                    checked={isEditing ? editingData.isDefaultAddress : newAddress.isDefaultAddress}
+                                                                    onChange={this.handleNewAddressChange}
+                                                                />
+                                                                Mặc định
+                                                            </label>
+                                                        </div>
+
+
+                                                        <button type="submit">
+                                                            {isEditing ? 'Lưu Chỉnh Sửa' : 'Lưu Địa Chỉ'}
+                                                        </button>
+                                                        <button type="button" onClick={this.handleCloseEditDialog}>
+                                                            Đóng
+                                                        </button>
+                                                    </form>
+
+
+                                                    {/* Danh sách địa chỉ đã lưu */}
+                                                    {this.state.savedAddresses.length > 0 && (
+                                                        <div>
+                                                            <h4>Danh sách địa chỉ đã lưu:</h4>
+                                                            <ul>
+                                                                {this.state.savedAddresses.map((address, index) => (
+                                                                    <li key={index}>
+                                                                        {`${address.ten},${address.sdt} ,${address.diaChiCuThe}, ${address.xaPhuongThiTran}, ${address.quanHuyen}, ${address.tinhThanhPho}`}
+                                                                        {address.isDefaultAddress && (
+                                                                            <span style={{ color: 'red' }}> - Mặc định</span>
+                                                                        )}
+                                                                        <button onClick={() => this.handleEditAddress(address)}>Chỉnh sửa</button>
+
+                                                                    </li>
+                                                                ))}
+                                                            </ul>
+                                                        </div>
+                                                    )}
+                                                    {/*</form>*/}
+                                                </div>
+                                            )}
+
+
                                             <ul className="pagination justify-content-center">
                                                 {Array.from({length: Math.ceil(nhanVienQuyen3.length / itemsPerPage)}, (_, i) => (
                                                     <li key={i}

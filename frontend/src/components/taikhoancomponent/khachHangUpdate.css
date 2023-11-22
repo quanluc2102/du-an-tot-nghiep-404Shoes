@@ -7,13 +7,6 @@ body {
     padding: 0;
 }
 
-.pagetitle {
-    background-color: #3498db;
-    color: #fff;
-    text-align: center;
-    padding: 20px;
-    margin-bottom: 20px;
-}
 
 .section {
     margin: 20px auto;
@@ -112,4 +105,82 @@ button:hover {
     background-color: yellow; /* Màu nền */
     color: black; /* Màu chữ */
     /* Thêm các kiểu khác nếu cần thiết */
+}
+.form-dialog {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #fff;
+    padding: 20px;
+    border: 2px solid #3498db;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    max-width: 60%; /* Độ rộng tối đa là 80% của màn hình */
+    width: 550px; /* Độ rộng của form */
+    box-sizing: border-box;
+}
+
+.form-dialog label {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 10px;
+}
+
+.form-dialog label input {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 15px;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.form-dialog button {
+    background-color: #3498db;
+    color: #fff;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.form-dialog button:hover {
+    background-color: #2980b9;
+}
+.checkbox-label {
+    display: flex;
+    align-items: center;
+}
+
+.checkbox-label input {
+    margin-right: 5px; /* Thêm khoảng cách giữa input và nội dung */
+}
+
+
+
+/* CSS */
+.label-input-container {
+    margin-bottom: 10px;
+}
+
+.label-input-container label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.label-input-container input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    margin-bottom: 10px;
+}
+
+/* Optional: Add styles for the phone number input */
+.label-input-container .phone-input {
+    /* Add specific styles for the phone input if needed */
 }
