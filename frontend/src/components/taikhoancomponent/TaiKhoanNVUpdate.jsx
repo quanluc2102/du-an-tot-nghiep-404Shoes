@@ -116,6 +116,7 @@ class TaiKhoanNVUpdate extends Component {
                 quanHuyen: this.state.quanHuyen,
                 xaPhuongThiTran: this.state.xaPhuongThiTran,
             };
+
             // Log the request data for debugging purposes
             console.log('Request Data: ' + JSON.stringify(requestData));
             taikhoanservice.updateNhanVien(requestData, this.state.taiKhoanUpdate.id)
@@ -215,17 +216,24 @@ class TaiKhoanNVUpdate extends Component {
         }));
     };
     thayDoiAnhUpdate = (event) => {
-        this.setState(
-            prevState => ({
+        const file = event.target.files[0];
+
+        if (file) {
+            // Use URL.createObjectURL to set image URL
+            const imageUrl = URL.createObjectURL(file);
+
+            this.setState((prevState) => ({
                 taiKhoanUpdate: {
                     ...prevState.taiKhoanUpdate,
-                    anh: event.target.value                }
-            })
-        );
+                    anh: imageUrl,
+                },
+                files: [file],
+            }));
+        }
         this.setState({ files: [ ...event.target.files] })
-        let errorUpdate = {...this.state.errorUpdate, anh: ""};
-        this.setState({errorUpdate: errorUpdate});
-    }
+        let errorUpdate = { ...this.state.errorUpdate, anh: "" };
+        this.setState({ errorUpdate: errorUpdate });
+    };
     thayDoiDiaChiUpdate = (event) => {
         this.setState(
             prevState => ({
@@ -358,21 +366,45 @@ class TaiKhoanNVUpdate extends Component {
 
                                         {/* Ảnh */}
                                         <div className="form-group">
-                                            <label htmlFor="anh">Ảnh:</label>
-                                            {this.state.taiKhoanUpdate && this.state.taiKhoanUpdate.anh ? (
-                                                <img src={`/niceadmin/img/${this.state.taiKhoanUpdate.anh}`} width="100px" height="100px" />
-                                            ) : (
-                                                <img src="/default-image.jpg" width="100px" height="100px" alt="Default" />
+                                            <label className="avatar-label" htmlFor="anh">
+                                                <input
+                                                    type="file"
+                                                    id="anh"
+                                                    accept="image/*"
+                                                    onChange={this.thayDoiAnhUpdate}
+                                                    className="file-input"
+                                                />
+                                                <div className="avatar-preview">
+                                                    {this.state.taiKhoanUpdate.anh ? (
+                                                        <img
+                                                            src={`/niceadmin/img/${this.state.taiKhoanUpdate.anh}`}
+                                                            alt="Selected Avatar"
+                                                            className="avatar-img"
+                                                        />
+                                                    ) : (
+                                                        <div className="avatar-placeholder">
+                                                            <span>Chọn ảnh <span style={{ color: 'red' }}>*</span></span>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </label>
+                                            {this.state.errorUpdate.files && (
+                                                <div className="invalid-feedback">{this.state.errorUpdate.files}</div>
                                             )}
-                                            <input
-                                                type="file"
-                                                className={`form-control ${this.state.errorUpdate.anh ? 'is-invalid' : ''}`}
-                                                id="anh"
-                                                onChange={this.thayDoiAnhUpdate}
-                                            />
-                                            {this.state.errorUpdate.anh && <div className="invalid-feedback">{this.state.errorUpdate.anh}</div>}
                                         </div>
 
+                                        <div className="form-group">
+                                            <label htmlFor="ten">CCCD:</label>
+                                            <input
+                                                type="text"
+                                                className={`form-control ${this.state.errorUpdate.cccd ? 'is-invalid' : ''}`}
+                                                id="cccd"
+                                                value={this.state.nguoiDungUpdate.cccd}
+                                                // onChange={this.thayDoiTenUpdate}d
+                                                disabled
+                                            />
+                                            {this.state.errorUpdate.cccd && <div className="invalid-feedback">{this.state.errorUpdate.cccd}</div>}
+                                        </div>
 
                                         {/* Họ và tên */}
                                         <div className="form-group">
@@ -520,34 +552,6 @@ class TaiKhoanNVUpdate extends Component {
                                             />
                                             {this.state.errorUpdate.email && <div className="invalid-feedback">{this.state.errorUpdate.email}</div>}
                                         </div>
-                                            <div className="form-group">
-                                                <label htmlFor="password">PassWord:</label>
-                                                <div className="input-group">
-                                                    <input
-                                                        type={this.state.showPassword ? 'text' : 'password'}
-                                                        className={`form-control ${this.state.errorUpdate.password ? 'is-invalid' : ''}`}
-                                                        id="password"
-                                                        value={this.state.taiKhoanUpdate.password}
-                                                        onChange={this.thayDoiPassUpdate}
-                                                    />
-                                                    <div className="input-group-append">
-                                                        <button
-                                                            className="btn btn-outline-secondary"
-                                                            type="button"
-                                                            onClick={this.toggleShowPassword}
-                                                        >
-                                                            {this.state.showPassword ? (
-                                                                <i className="far fa-eye-slash"></i>
-                                                            ) : (
-                                                                <i className="far fa-eye"></i>
-                                                            )}
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                                {this.state.errorUpdate.password && (
-                                                    <div className="invalid-feedback">{this.state.errorUpdate.password}</div>
-                                                )}
-                                            </div>
 
                                         <input type="submit" className="btn btn-primary" value="Update" style={{ marginTop: '10px' }} />
 

@@ -17,6 +17,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -55,6 +57,8 @@ public class TaiKhoanController {
     private TaiKhoanResponsitory taiKhoanRepository;
     @Autowired
     private DiaChiServiceimpl diaChiServiceimpl;
+    @Autowired
+    private JavaMailSender javaMailSender;
     private final Path root = Paths.get("frontend/src/img");
 
     @GetMapping("index")
@@ -72,38 +76,6 @@ public class TaiKhoanController {
         return ResponseEntity.ok(serviceimpl.add(taiKhoan));
     }
 
-//    @PostMapping("addNhanVien")
-//    public ResponseEntity<?> addNhanVien(Model model,
-//                                         @RequestBody TaiKhoan taiKhoan) {
-//        serviceimpl.add(taiKhoan);
-//        PhanQuyen phanQuyen = new PhanQuyen();
-//        phanQuyen.setTaiKhoan(TaiKhoan.builder().id(taiKhoan.getId()).build());
-//        phanQuyen.setQuyen(Quyen.builder().id(1).build());
-//        phanQuyenServiceimpl.add(phanQuyen);
-//        return ResponseEntity.ok(serviceimpl.add(taiKhoan));
-//    }
-//
-//    @PostMapping("addKhachHang")
-//    public ResponseEntity<?> addKhachHang(Model model,
-//                                          @RequestBody TaiKhoan taiKhoan) {
-//        serviceimpl.add(taiKhoan);
-//        PhanQuyen phanQuyen = new PhanQuyen();
-//        phanQuyen.setTaiKhoan(TaiKhoan.builder().id(taiKhoan.getId()).build());
-//        phanQuyen.setQuyen(Quyen.builder().id(3).build());
-//        phanQuyenServiceimpl.add(phanQuyen);
-//        return ResponseEntity.ok(serviceimpl.add(taiKhoan));
-//    }
-
-    //    @PostMapping("addQuanLy")
-//    public ResponseEntity<?> addQuanLy(Model model,
-//                                          @RequestBody TaiKhoan taiKhoan) {
-//        serviceimpl.add(taiKhoan);
-//        PhanQuyen phanQuyen = new PhanQuyen();
-//        phanQuyen.setTaiKhoan(TaiKhoan.builder().id(taiKhoan.getId()).build());
-//        phanQuyen.setQuyen(Quyen.builder().id(2).build());
-//        phanQuyenServiceimpl.add(phanQuyen);
-//        return ResponseEntity.ok(serviceimpl.add(taiKhoan));
-//    }
     @PostMapping("addQuanLy")
     public ResponseEntity<?> addQuanLy(Model model,
                                        @RequestBody TaiKhoanVaThongTin taiKhoanVaThongTin) {
@@ -145,14 +117,13 @@ public class TaiKhoanController {
     }
 
     @PostMapping("addNhanVien")
-    public ResponseEntity<?> addNhanVien(Model model,
-                                         @RequestBody TaiKhoanVaThongTin taiKhoanVaThongTin) {
+    public ResponseEntity<?> addNhanVien(Model model, @RequestBody TaiKhoanVaThongTin taiKhoanVaThongTin) {
         ThongTinNguoiDung thongTinNguoiDung = taiKhoanVaThongTin.getThongTinNguoiDung();
         TaiKhoan taiKhoan = taiKhoanVaThongTin.getTaiKhoan();
         Long list = taiKhoanRepository.count();
         taiKhoan.setMaTaiKhoan("NV" + (list + 1));
         taiKhoan.setTrangThai(true);
-        String employeeName = thongTinNguoiDung.getTen(); // Replace this with the actual name
+        String employeeName = thongTinNguoiDung.getTen();
         String generatedPassword = generatePasswordFromName(employeeName);
         taiKhoan.setPassword(generatedPassword);
         var b = thongTinNguoiDungServiceimpl.add(thongTinNguoiDung);
@@ -174,7 +145,30 @@ public class TaiKhoanController {
         phanQuyen.setQuyen(Quyen.builder().id(1).build());
         phanQuyenServiceimpl.add(phanQuyen);
 
+        // Send an email to the newly added employee
+        sendEmail(taiKhoan.getEmail(), "Chào mừng bạn gia nhập gia đình 404Shoes", "Dear " + b.getTen() +
+                ".\n\nTôi hy vọng bạn đang có một ngày tốt lành. Chúng tôi muốn thông báo với bạn về việc thêm một thành viên mới vào đội ngũ của chúng tôi."+
+                ".\n\nTên nhân viên : " + b.getTen()+
+                ".\n\nChức vụ : Nhân viên bán hàng" +
+                ".\n\nChúng tôi đã tạo một tài khoản cho bạn , mật khẩu là : " + taiKhoan.getPassword()+
+                ".\n\nNếu bạn có bất kỳ câu hỏi hoặc thắc mắc gì , đừng ngần ngại liên hệ với chúng tôi theo Hotline: 0257xxxxx."+
+                ".\n\nTrân trọng !" );
         return ResponseEntity.ok(serviceimpl.add(taiKhoan));
+    }
+
+    private void sendEmail(String to, String subject, String text) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(to);
+        message.setSubject(subject);
+        message.setText(text);
+
+        try {
+            javaMailSender.send(message);
+            System.out.println("Email sent successfully.");
+        } catch (Exception e) {
+            System.err.println("Error sending email: " + e.getMessage());
+            // Handle the exception, you might want to log it or take other actions
+        }
     }
     private String generatePasswordFromName(String ten) {
         String nameWithoutDiacritics = removeDiacritics(ten);
@@ -218,7 +212,7 @@ public class TaiKhoanController {
             PhanQuyen phanQuyen = new PhanQuyen();
             phanQuyen.setTaiKhoan(TaiKhoan.builder().id(taiKhoan.getId()).build());
             phanQuyen.setQuyen(Quyen.builder().id(1).build());
-            phanQuyenServiceimpl.update(id, phanQuyen);
+            phanQuyenServiceimpl.add(phanQuyen);
 
             return ResponseEntity.ok(serviceimpl.update(id, taiKhoan));
         } else {
