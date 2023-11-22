@@ -57,6 +57,10 @@ public class SanPhamController {
     public Page<SanPham> index(Pageable pageable){
         return sanPhamServiceimpl.getAllPhanTrang(pageable);
     }
+    @GetMapping("phan_trang")
+    public Page<SanPham> phanTrang(@RequestParam(defaultValue = "0") int page){
+        return sanPhamServiceimpl.phanTrangNew(page);
+    }
     @GetMapping("index1")
     public List<SanPham> index1(){
         return sanPhamServiceimpl.getAll();

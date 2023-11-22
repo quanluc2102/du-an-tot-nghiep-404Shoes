@@ -1,25 +1,41 @@
 import React, { Fragment, useEffect ,useState} from "react"
 import { Link } from "react-router-dom/cjs/react-router-dom.min"
+import InfiniteScroll from 'react-infinite-scroll-component';
 import './style.css'
 import {SanPhamService} from "../../service/SanPhamService";
 
 function ProductList() {
     const [listSP, setListSP] = useState([]);
+    const [hasMore, setHasMore] = useState(true);
+    const [page, setPage] = useState(0);
+    const [loading, setLoading] = useState(true);
+    const fetchData = async () => {
+        try {
+            // Lấy danh sách sản phẩm và danh mục từ service.js
+            // const data = await SanPhamService.getSPActive();
+
+            // const data = await SanPhamService.getSPPhanTrang(page);
+            const response = await fetch(`http://localhost:8080/san_pham/phan_trang?page=${page}`);
+            const data = await response.json();
+            console.log(data);
+            if (data.length === 0) {
+                setHasMore(false);
+            } else {
+                setListSP([...listSP, ...data.content]); // Assume your API returns an array of products
+                setPage(page + 1);
+            }
+            // setListSP(data);
+            setLoading(false);
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    };
+
+    const changeDetail = () =>{
+        window.location.href=(`/product-detail`);
+    }
 
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                // Lấy danh sách sản phẩm và danh mục từ service.js
-                const data = await SanPhamService.getSPActive();
-                // const response = await fetch('http://localhost:8080/san_pham/index');
-                // const data = await response.json();
-                // console.log(data);
-                setListSP(data);
-            } catch (error) {
-                console.error('Error fetching data:', error);
-            }
-        };
-
         const obse = new IntersectionObserver((enti) => {
             enti.forEach((enty) => {
                 if (enty.isIntersecting) {
@@ -82,6 +98,7 @@ function ProductList() {
         });
         fetchData();
     }, [])
+
 
     return (
         <Fragment>
@@ -368,141 +385,79 @@ function ProductList() {
                                 </div>
                                 <hr />
                                 <div class="row">
-                                    {/* start product card*/}
-                                    <div class="col-4 mt-4">
-                                        <div class="cardProductList text-start ">
-                                            <div class="position-relative">
-
-                                                <img class="card-img-top"
-                                                    src="https://ananas.vn/wp-content/uploads/Pro_A6T014_2-500x500.jpeg"
-                                                    alt="Title" />
-                                                <div class="position-absolute top-0 end-0 mt-1 me-1">
-                                                    <button class="badge bg-danger">Mới !</button>
+                                    <InfiniteScroll
+                                        dataLength={listSP.length}
+                                        next={fetchData}
+                                        hasMore={hasMore}
+                                        loader={loading ? (
+                                            <div className="text-center" style={{ marginTop: "25%", marginBottom: "25%" }}>
+                                                <div className="spinner-border" role="status">
+                                                    <span className="sr-only">Loading...</span>
                                                 </div>
-                                                <div class="position-absolute bottom-0 start-0 mb-1 ms-1 shopBtn">
-                                                    <button class="btn btn-success ">Mua Ngay!</button>
-                                                </div>
-
+                                                <div>Loading...</div>
                                             </div>
-                                            <br />
-                                            <div class="card-body text-center">
+                                        ) : null}
+                                    >
+                                        {/* start product card*/}
+                                        {/* Display your products here */}
+                                        {listSP.map((sp)=> (
+                                            <div className="col-lg-4 mt-4 float-start" key={sp.id} onClick={changeDetail}>
+                                                <div className="cardProductList text-start " >
+                                                    <div className="position-relative">
 
-                                                <h4 class="card-title"><strong>Tên Sản Phẩm</strong></h4>
-                                                <h6 class="card-text">Hãng - Dòng</h6>
-                                                <h5 class="card-text">1.000.000 VND</h5>
+                                                        <img className="card-img-top"
+                                                             src={'/img/'+sp.anh}
+                                                            // src={'/frontend/public/niceadmin/img/'+sp.anh}
+                                                             alt="Title"
+                                                             height={270}
+                                                             width={335}
+                                                        />
 
-                                            </div>
-                                        </div>
-                                    </div>
-                                    {/* end product card*/}
-                                    <div class="col-4 mt-4">
-                                        <div class="cardProductList text-start ">
-                                            <div class="position-relative">
+                                                        <div className="position-absolute top-0 end-0 mt-1 me-1">
+                                                            <button className="badge bg-danger">Mới !</button>
+                                                        </div>
+                                                        <div className="position-absolute bottom-0 start-0 mb-1 ms-1 shopBtn">
+                                                            <button className="btn btn-success ">Mua Ngay!</button>
+                                                        </div>
 
-                                                <img class="card-img-top"
-                                                    src="https://ananas.vn/wp-content/uploads/Pro_A6T015_2-500x500.jpeg"
-                                                    alt="Title" />
-                                                <div class="position-absolute top-0 end-0 mt-1 me-1">
-                                                    <button class="badge bg-danger">Mới !</button>
-                                                </div>
-                                                <div class="position-absolute bottom-0 start-0 mb-1 ms-1 shopBtn">
-                                                    <button class="btn btn-success ">Mua Ngay!</button>
-                                                </div>
-
-                                            </div>
-                                            <br />
-                                            <div class="card-body text-center">
-
-                                                <h4 class="card-title"><strong>Tên Sản Phẩm</strong></h4>
-                                                <h6 class="card-text">Hãng - Dòng</h6>
-                                                <h5 class="card-text">1.000.000 VND</h5>
-
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-4 mt-4">
-                                        <div class="cardProductList text-start ">
-                                            <div class="position-relative">
-
-                                                <img class="card-img-top"
-                                                    src="https://ananas.vn/wp-content/uploads/Pro_A6T014_2-500x500.jpeg"
-                                                    alt="Title" />
-                                                <div class="position-absolute top-0 end-0 mt-1 me-1">
-                                                    <button class="badge bg-danger">Cũ !</button>
-                                                </div>
-
-                                                <div class="position-absolute bottom-0 start-0 mb-1 ms-1 shopBtn">
-                                                    <button class="btn btn-success ">Mua Ngay!</button>
-                                                </div>
-
-                                            </div>
-                                            <br />
-                                            <div class="card-body text-center">
-
-                                                <h4 class="card-title"><strong>Tên Sản Phẩm</strong></h4>
-                                                <h6 class="card-text">Hãng - Dòng</h6>
-                                                <h5 class="card-text">1.000.000 VND</h5>
-
-                                            </div>
-                                        </div>
-                                    </div>
-                                {/*   start list sp mới*/}
-                                    {listSP.map((sp)=> (
-                                        <div className="col-4 mt-4" key={sp.id}>
-                                            <div className="cardProductList text-start ">
-                                                <div className="position-relative">
-
-                                                    <img className="card-img-top"
-                                                         src={'/img/'+sp.anh}
-                                                         // src={'/frontend/public/niceadmin/img/'+sp.anh}
-                                                         alt="Title"
-                                                         height={270}
-                                                         width={335}
-                                                    />
-
-                                                    <div className="position-absolute top-0 end-0 mt-1 me-1">
-                                                        <button className="badge bg-danger">Mới !</button>
                                                     </div>
-                                                    <div className="position-absolute bottom-0 start-0 mb-1 ms-1 shopBtn">
-                                                        <button className="btn btn-success ">Mua Ngay!</button>
+                                                    <br/>
+                                                    <div className="card-body text-center">
+
+                                                        <h4 className="card-title" style={{fontSize:22}}><strong>{sp.ten}</strong></h4>
+                                                        <h7 className="card-text">{sp.thuongHieu.ten}</h7>
+                                                        <h5 className="card-text" style={{color:"red"}}>1.000.000 VND</h5>
+
                                                     </div>
-
-                                                </div>
-                                                <br/>
-                                                <div className="card-body text-center">
-
-                                                    <h4 className="card-title" style={{fontSize:20}}><strong>{sp.ten}</strong></h4>
-                                                    <h7 className="card-text">{sp.thuongHieu.ten}</h7>
-                                                    <h5 className="card-text" style={{color:"red"}}>1.000.000 VND</h5>
-
                                                 </div>
                                             </div>
-                                        </div>
                                         ))}
 
-                                {/*    end*/}
-                                </div>
-
-                                <div class="d-flex justify-content-center  pt-5">
-                                    <nav aria-label="Page navigation ">
-                                        <ul class="pagination">
-                                            <li class="page-item">
-                                                <a class="page-link" href="#" aria-label="Previous">
-                                                    <span aria-hidden="true">&laquo;</span>
-                                                </a>
-                                            </li>
-                                            <li class="page-item"><a class="page-link" href="#div2">1</a></li>
-                                            <li class="page-item"><a class="page-link" href="#div2">2</a></li>
-                                            <li class="page-item"><a class="page-link" href="#div2">3</a></li>
-                                            <li class="page-item">
-                                                <a class="page-link" href="#" aria-label="Next">
-                                                    <span aria-hidden="true">&raquo;</span>
-                                                </a>
-                                            </li>
-                                        </ul>
-                                    </nav>
+                                        {/*    end*/}
+                                    </InfiniteScroll>
 
                                 </div>
+                                <br/>
+                                {/*<div class="d-flex justify-content-center  pt-5">*/}
+                                {/*    <nav aria-label="Page navigation ">*/}
+                                {/*        <ul class="pagination">*/}
+                                {/*            <li class="page-item">*/}
+                                {/*                <a class="page-link" href="#" aria-label="Previous">*/}
+                                {/*                    <span aria-hidden="true">&laquo;</span>*/}
+                                {/*                </a>*/}
+                                {/*            </li>*/}
+                                {/*            <li class="page-item"><a class="page-link" href="#div2">1</a></li>*/}
+                                {/*            <li class="page-item"><a class="page-link" href="#div2">2</a></li>*/}
+                                {/*            <li class="page-item"><a class="page-link" href="#div2">3</a></li>*/}
+                                {/*            <li class="page-item">*/}
+                                {/*                <a class="page-link" href="#" aria-label="Next">*/}
+                                {/*                    <span aria-hidden="true">&raquo;</span>*/}
+                                {/*                </a>*/}
+                                {/*            </li>*/}
+                                {/*        </ul>*/}
+                                {/*    </nav>*/}
+
+                                {/*</div>*/}
                             </div>
 
                         </div>
