@@ -29,7 +29,7 @@ public class ThongKeController {
 
     @GetMapping("thong_ke_theo_doanh_thu_san_pham")
     public List<Object[]> thongKeDoanhThuSanPham(Date startDate, Date endDate) {
-        return hoaDonChiTietRepository.thongKeDoanhThu(startDate, endDate);
+        return hoaDonChiTietRepository.thongKeDoanhThuSanPham(startDate, endDate);
     }
 
     @GetMapping("/doanh_thu_thang_custom")
@@ -42,6 +42,11 @@ public class ThongKeController {
     @GetMapping("/doanh_thu_nam_custom")
     public List<Object[]> getDoanhThuNamCustom(Date startDate) {
         return hoaDonChiTietRepository.thongKeDoanhThuTheoNam(startDate);
+    }
+
+    @GetMapping("/doanh_thu_theo_thang_new")
+    public List<Object[]> thongKeDoanhThuTheoThangNew(Date startDate) {
+        return hoaDonChiTietRepository.thongKeDoanhThuTheoThangNew(startDate);
     }
 
     @GetMapping("/doanh_thu_ngay")
