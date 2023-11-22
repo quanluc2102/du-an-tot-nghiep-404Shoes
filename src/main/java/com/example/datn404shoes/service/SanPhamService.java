@@ -16,6 +16,7 @@ public interface SanPhamService {
 
     Page<SanPham> getAllPhanTrang(Pageable pageable);
 
+    Page<SanPham> phanTrangNew(int page);
 
     List<SanPham> getAll();
 

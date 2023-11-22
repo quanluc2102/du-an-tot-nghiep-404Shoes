@@ -57,6 +57,11 @@ public class SanPhamServiceimpl implements SanPhamService {
     }
 
     @Override
+    public Page<SanPham> phanTrangNew(int page) {
+        return sanPhamRespository.findAll(PageRequest.of(page,6));
+    }
+
+    @Override
     public List<SanPham> getAll() {
         Sort sort=Sort.by(Sort.Direction.DESC,"id");
         return sanPhamRespository.findAll(sort);
