@@ -42,6 +42,17 @@ class ThongKeService {
             });
     }
 
+    getDoanhThuThangNew(date) {
+        const url = `${API_BASE_URL}/doanh_thu_theo_thang_new`;
+        const startDate =  date+'-01-01'
+        return axios.get(url, {params: {startDate}})
+            .then(response => response.data)
+            .catch(error => {
+                console.error("Error in getDoanhThuThangCustom:", error);
+                throw error;
+            });
+    }
+
     getDoanhThuNgay() {
         const url = `${API_BASE_URL}/doanh_thu_ngay`;
         return axios.get(url)
