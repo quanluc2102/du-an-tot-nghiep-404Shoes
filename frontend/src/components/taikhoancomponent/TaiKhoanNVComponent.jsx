@@ -142,16 +142,41 @@ class TaiKhoanNVComponent extends Component {
 
 
     }
+    sendEmail = (recipientEmail) => {
+        const emailData = {
+            to: recipientEmail,
+            subject: 'Subject of the email',
+            text: 'Body of the email',
+        };
+
+        axios.post('http://localhost:3000/tai_khoan/addNhanVien', emailData)
+            .then(response => {
+                console.log('Email sent successfully:', response.data);
+                // Handle success, e.g., show a success message to the user
+            })
+            .catch(error => {
+                console.error('Error sending email:', error);
+                // Handle error, e.g., show an error message to the user
+            });
+    };
+
     add = (e) => {
         e.preventDefault();
 
         let listFile = [];
+
+        if (!this.state.files || this.state.files.length === 0) {
+            this.setState({ errorAdd: { ...this.state.errorAdd, files: "Chọn ít nhất 1 ảnh!" } });
+            return;
+        } else {
+            // Reset error message if files are selected
+            this.setState({ errorAdd: { ...this.state.errorAdd, files: "" } });
+        }
         for (let i = 0; i < this.state.files.length; i++) {
             listFile.push(this.state.files[i].name);
+        }
 
             const {taiKhoanAdd, nguoiDungAdd} = this.state;
-
-
             const requestData = {
                 taiKhoan: {
                     email : taiKhoanAdd.email,
@@ -309,44 +334,38 @@ class TaiKhoanNVComponent extends Component {
                 this.setState({ errorAdd: { ...this.state.errorAdd, email: "" } });
             }
 
-
-
-
             console.log(requestData);
             // Gọi API để thêm tài khoản
             taikhoanservice.addNhanVien(requestData)
                 .then((res) => {
                     if (res.status === 200) {
                         // Xử lý khi thêm thành công
-                        let taiKhoanMoi = res.data.taiKhoan; // Chỉ lấy tài khoản từ kết quả API
+                        let taiKhoanMoi = res.data.taiKhoan;
+                        let nguoiDungMoi = res.data.thongTinNguoiDung;
+                        let diaChiMoi = res.data.diaChi;
 
-                        // Thêm taiKhoanMoi vào state (nếu đang sử dụng React)
                         this.setState((prevState) => ({
                             nhanVienQuyen1: [...prevState.nhanVienQuyen1, taiKhoanMoi],
-                        }));
-
-                        let nguoiDungMoi = res.data.thongTinNguoiDung; // Chỉ lấy tài khoản từ kết quả API
-
-                        // Thêm taiKhoanMoi vào state (nếu đang sử dụng React)
-                        this.setState((prevState) => ({
                             thongTinNguoiDung: [...prevState.thongTinNguoiDung, nguoiDungMoi],
-                        }));
-
-                        let diaChiMoi = res.data.diaChi
-                        this.setState((prevState) => ({
                             diaChi: [...prevState.diaChi, diaChiMoi],
                         }));
+
+                        this.sendEmail(
+                            taiKhoanAdd.email,
+                            "Welcome to Our Company",
+                            "Dear " + nguoiDungAdd.ten +
+                            ",\n\nWelcome to our company! Your account has been successfully created."
+                        );
+
                         setTimeout(() => {
                             window.location.href = (`/nhanvien`);
                         }, 2000);
                         toast.success("Thêm thành công!");
-
-                        // Chuyển hướng (sử dụng props.history nếu có)
                     } else {
                         // Xử lý khi có lỗi trả về từ API
                         const errorMessage = res.data.message || "Có lỗi xảy ra khi thêm danh mục.";
-                        toast.error("Lỗi: " + errorMessage); // Hiển thị lỗi bằng Toast hoặc cách khác
-                        console.log(res.data.error)
+                        toast.error("Lỗi: " + errorMessage);
+                        console.log(res.data.error);
                     }
                 })
                 .catch((error) => {
@@ -358,7 +377,6 @@ class TaiKhoanNVComponent extends Component {
                     }
                 });
         }
-    }
 
     detail(id) {
         window.location.href = (`/nhanviendetail/${id}`);
@@ -623,7 +641,7 @@ class TaiKhoanNVComponent extends Component {
                                     <h5 className="card-title">ADD<span>| xx</span></h5>
                                     <form onSubmit={this.add}>
                                         <div className="form-group">
-                                            <label>Quét mã QR:</label>
+                                            <label>Quét mã QR :</label>
                                             <div>
                                                 {this.state.isQRReaderOn && (
                                                     <QrScanner
@@ -689,7 +707,7 @@ class TaiKhoanNVComponent extends Component {
                                                         />
                                                     ) : (
                                                         <div className="avatar-placeholder">
-                                                            <span>Chọn ảnh</span>
+                                                            <span>Chọn ảnh <span style={{ color: 'red' }}>*</span></span>
                                                         </div>
                                                     )}
                                                 </div>
@@ -702,7 +720,7 @@ class TaiKhoanNVComponent extends Component {
 
                                         {/* CCCD */}
                                         <div className="form-group">
-                                            <label htmlFor="cccd">CCCD:</label>
+                                            <label htmlFor="cccd">CCCD:<span style={{ color: 'red' }}>*</span></label>
                                             <input
                                                 type="text"
                                                 className={`form-control ${this.state.errorAdd.cccd ? 'is-invalid' : ''}`}
@@ -714,7 +732,7 @@ class TaiKhoanNVComponent extends Component {
                                         </div>
                                         {/* Họ và tên */}
                                         <div className="form-group">
-                                            <label htmlFor="ten">Họ và tên:</label>
+                                            <label htmlFor="ten">Họ và tên: <span style={{ color: 'red' }}>*</span></label>
                                             <input
                                                 type="text"
                                                 className={`form-control ${this.state.errorAdd.ten ? 'is-invalid' : ''}`}
@@ -726,7 +744,7 @@ class TaiKhoanNVComponent extends Component {
                                         </div>
                                         {/* Ngày Sinh */}
                                         <div className="form-group">
-                                            <label htmlFor="ngaySinh">Ngày Sinh:</label>
+                                            <label htmlFor="ngaySinh">Ngày Sinh: <span style={{ color: 'red' }}>*</span></label>
                                             <input
                                                 type="date"
                                                 className={`form-control ${this.state.errorAdd.ngaySinh ? 'is-invalid' : ''}`}
@@ -738,7 +756,7 @@ class TaiKhoanNVComponent extends Component {
                                         </div>
                                         {/* Giới tính */}
                                         <div className="form-group">
-                                            <label>Giới tính:</label>
+                                            <label>Giới tính: <span style={{ color: 'red' }}>*</span></label>
                                             <div>
                                                 <label className="form-check-label">
                                                     <input
@@ -756,6 +774,7 @@ class TaiKhoanNVComponent extends Component {
                                                         value="1"
                                                         checked={(this.state.isScanned && this.state.nguoiDungAdd.gioiTinh === 1) || (!this.state.isScanned && this.state.nguoiDungAdd.gioiTinh === 1)}
                                                         onChange={this.thayDoiGioiTinhAdd}
+                                                        style={{ marginLeft : '10px' }}
                                                     /> Nữ
                                                 </label>
                                             </div>
@@ -765,7 +784,7 @@ class TaiKhoanNVComponent extends Component {
                                         </div>
                                         {/* Địa chỉ */}
                                         <div className="form-group">
-                                            <label>Địa chỉ:</label>
+                                            <label>Địa chỉ: <span style={{ color: 'red' }}>*</span></label>
                                             <div className="row">
                                                 <div className="col-md-4">
                                                     <select
@@ -823,7 +842,7 @@ class TaiKhoanNVComponent extends Component {
 
                                         {/* Số nhà/Thôn */}
                                         <div className="form-group">
-                                            <label htmlFor="diaChiCuThe">Số nhà/Thôn:</label>
+                                            <label htmlFor="diaChiCuThe">Địa chỉ cụ thể : <span style={{ color: 'red' }}>*</span></label>
                                             <input
                                                 type="text"
                                                 className={`form-control ${this.state.errorAdd.diaChiCuThe ? 'is-invalid' : ''}`}
@@ -837,7 +856,7 @@ class TaiKhoanNVComponent extends Component {
 
                                         {/* SDT */}
                                         <div className="form-group">
-                                            <label htmlFor="sdt">SDT:</label>
+                                            <label htmlFor="sdt">SDT: <span style={{ color: 'red' }}>*</span></label>
                                             <input
                                                 type="text"
                                                 className={`form-control ${this.state.errorAdd.sdt ? 'is-invalid' : ''}`}
@@ -850,7 +869,7 @@ class TaiKhoanNVComponent extends Component {
 
                                         {/* Email */}
                                         <div className="form-group">
-                                            <label htmlFor="email">Email:</label>
+                                            <label htmlFor="email">Email: <span style={{ color: 'red' }}>*</span></label>
                                             <input
                                                 type="email"
                                                 className={`form-control ${this.state.errorAdd.email ? 'is-invalid' : ''}`}
