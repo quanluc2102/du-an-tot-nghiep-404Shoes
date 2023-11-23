@@ -21,29 +21,33 @@ import org.springframework.web.bind.annotation.*;
 public class HoaDonController {
     @Autowired
     HoaDonImpl hoaDonImpl;
-@Autowired
+    @Autowired
     ThanhToanRepository thanhToanRepository;
-@Autowired
+    @Autowired
     TaiKhoanRepository taiKhoanRepository;
-@Autowired
+    @Autowired
     SanPhamChiTietRepository sanPhamChiTietRepository;
     @Autowired
     PhanQuyenRepository phanQuyenRepository;
+
     @GetMapping("hien-thi")
-    public ResponseEntity<?> hienThi(Model model){
+    public ResponseEntity<?> hienThi(Model model) {
         return ResponseEntity.ok(hoaDonImpl.getAll());
     }
+
     @GetMapping("hien-thi-taiKhoanKH/{id}")
-    public ResponseEntity<?> hienThiKH(Model model, @PathVariable("id") Long id){
+    public ResponseEntity<?> hienThiKH(Model model, @PathVariable("id") Long id) {
         ;
         return ResponseEntity.ok(phanQuyenRepository.findPhanQuyenByQuyenId(id));
     }
+
     @GetMapping("hien-SPCT")
-    public ResponseEntity<?> hienThiSPChiTiet(Model model, @PathVariable("id") Long id){
+    public ResponseEntity<?> hienThiSPChiTiet(Model model, @PathVariable("id") Long id) {
         ;
         return ResponseEntity.ok(phanQuyenRepository.findPhanQuyenByQuyenId(id));
     }
-//    @PostMapping("create")
+
+    //    @PostMapping("create")
 //    public  ResponseEntity<?> create(Model model,@RequestBody HoaDon hoaDon){
 //
 //        return ResponseEntity.ok(hoaDonImpl.add(hoaDon));
@@ -68,11 +72,12 @@ public class HoaDonController {
 //        return "redirect:/hoa_don/hien-thi";
 //    }
     @GetMapping("detail/{id}")
-    public ResponseEntity<?> detail(Model model, @PathVariable("id") Long id){
+    public ResponseEntity<?> detail(Model model, @PathVariable("id") Long id) {
 
         return ResponseEntity.ok(hoaDonImpl.getOne(id));
     }
-//    @PostMapping("update/{id}")
+
+    //    @PostMapping("update/{id}")
 //    public String update(Model model,
 //                         @PathVariable("id") Long id,
 //                         @RequestParam("ghiChu") String ghiChu,
@@ -89,11 +94,11 @@ public class HoaDonController {
 //        hoaDonImpl.update(hoaDon);
 //        return "redirect:/hoa_don/hien-thi";
 //    }
-@PutMapping("update/{id}")
-public ResponseEntity<?> update(Model model,
-                                @PathVariable("id") Long id,
-                                @RequestBody HoaDon hoaDon) {
+    @PutMapping("update/{id}")
+    public ResponseEntity<?> update(Model model,
+                                    @PathVariable("id") Long id,
+                                    @RequestBody HoaDon hoaDon) {
 
-    return ResponseEntity.ok(hoaDonImpl.update(id, hoaDon));
-}
+        return ResponseEntity.ok(hoaDonImpl.update(id, hoaDon));
+    }
 }

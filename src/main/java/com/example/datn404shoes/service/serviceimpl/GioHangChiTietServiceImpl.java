@@ -6,6 +6,7 @@ import com.example.datn404shoes.service.GioHangChiTietService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -41,5 +42,11 @@ public class GioHangChiTietServiceImpl implements GioHangChiTietService {
     @Override
     public GioHangChiTiet getOne(Long id) {
         return giohangchitietRepository.findById(id).get();
+    }
+
+    @Override
+    public ArrayList<GioHangChiTiet> getGioHangChiTietByKhachHang(Long idKhachHang) {
+        List<GioHangChiTiet>gioHangChiTiets =  giohangchitietRepository.findAllByTaiKhoanKhachHang(idKhachHang);
+        return (ArrayList<GioHangChiTiet>) gioHangChiTiets;
     }
 }

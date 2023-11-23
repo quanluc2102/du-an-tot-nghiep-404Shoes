@@ -117,6 +117,11 @@ public class TaiKhoanServiceimpl implements TaiKhoanService {
     }
 
     @Override
+    public TaiKhoan getOneByEmail(String email) {
+        return responsitory.findByEmail(email);
+    }
+
+    @Override
     public Page<TaiKhoan> findAll(Pageable pageable) {
         return responsitory.findAll(pageable);
     }

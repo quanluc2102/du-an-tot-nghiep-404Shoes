@@ -58,9 +58,9 @@ public class KhuyenMaiController {
 //                System.out.println("Đã trùng");
 //                return ResponseEntity.badRequest().body("Mã  khuyến mãi đã tồn tại.");
 //            }
-            else if (khuyenMaiServiceImpl.isKhuyenMaiNameUnique(khuyenMai.getTen())) {
+            else if (khuyenMaiServiceImpl.isKhuyenMaiNameUnique(khuyenMai.getMa())) {
                 System.out.println("Đã trùng");
-                return ResponseEntity.badRequest().body("Tên khuyến mãi đã tồn tại.");
+                return ResponseEntity.badRequest().body("Mã khuyến mãi đã tồn tại.");
             } else {
                 khuyenMai.setTrangThai(0);
                 return ResponseEntity.ok(khuyenMaiServiceImpl.add(khuyenMai));
