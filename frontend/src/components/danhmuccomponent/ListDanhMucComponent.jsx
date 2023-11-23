@@ -3,7 +3,6 @@ import danhmucservice from '../../services/danhmucservice/danhmucservice';
 import {toast} from 'react-toastify';
 import "./danhmuccom.css";
 import ReactPaginate from 'react-paginate';
-import './listdanhmucsection.css'
 
 class ListDanhMucComponent extends Component {
     constructor(props) {
@@ -264,7 +263,7 @@ class ListDanhMucComponent extends Component {
                 </div>
 
 
-                <section className="section_list_danh_muc dashboard">
+                <section className="section dashboard">
                     <div className="row">
 
                         <div className="col-lg-8">

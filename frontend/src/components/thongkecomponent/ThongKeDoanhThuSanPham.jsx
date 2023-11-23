@@ -875,7 +875,7 @@ class ThongKeDoanhThuSanPham extends Component {
 
 
 
-                <section className="section_thongke dashboard">
+                <section className="section dashboard">
                     <Tabs>
                         <TabList>
                             <Tab>Thống kê theo sản phẩm đã bán</Tab>

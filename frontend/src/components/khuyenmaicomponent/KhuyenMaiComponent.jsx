@@ -378,7 +378,7 @@ class KhuyenMaiComponent extends Component {
                     <h1>Sửa phiếu giảm giá</h1>
                 </div>
 
-                <section className="section_khuyen_mai_detail dashboard">
+                <section className="section dashboard">
                     <div className="row">
                         <div className="col-lg-10">
                             <div className="card">
