@@ -28,6 +28,12 @@ public class GioHang {
     @Column(name = "ngay_tao", nullable = false)
     private Date ngayTao;
 
+    @Column(name = "ngay_cap_nhat", nullable = false)
+    private Date ngayCapNhat;
+
+    @Column(name = "tong_tien")
+    private float tongTien;
+
     @Column(name = "ghi_chu", nullable = false, length = 255)
     private String ghiChu;
 
@@ -36,5 +42,5 @@ public class GioHang {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "tai_khoan_id", referencedColumnName = "id")
-    private TaiKhoan taiKhoan ;
+    private TaiKhoan taiKhoan;
 }

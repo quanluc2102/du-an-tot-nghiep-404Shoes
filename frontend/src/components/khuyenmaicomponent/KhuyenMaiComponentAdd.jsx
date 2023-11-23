@@ -103,7 +103,7 @@ class KhuyenMaiComponent extends Component {
         }
 
         if (batDauDate > ketThucDate) {
-            toast.error('Ngày bắt đầu không được nhỏ hơn ngày kết thúc!');
+            toast.error('Ngày bắt đầu không được lớn hơn ngày kết thúc!');
             return;
         } else {
             khuyenMaiAdd.batDau = batDauDate.toISOString(); // Chuyển đổi sang định dạng ISO 8601
@@ -124,14 +124,24 @@ class KhuyenMaiComponent extends Component {
         }
 
 
-        if (kieuKhuyenMai === '1' && giamGia <= 0 || giamGia > 100) {
+        if (kieuKhuyenMai === '1' && giamGia <= 0 || kieuKhuyenMai === '1'&& giamGia > 100) {
             // errorAdd.giamGia = 'Phần trăm giảm giá phải nằm trong khoảng 1-100!';
             errorAdd.giamGia = ('Phần trăm giảm giá phải nằm trong khoảng 1-100!');
             console.log("lỗi nè má")
         }
         if (kieuKhuyenMai === '0' && giamGia <= 0) {
-            errorAdd.giamGia = 'Số tiền giảm giá phải lớn hơn 0 và không được lớn hơn điều kiện!!';
+            errorAdd.giamGia = 'Số tiền giảm giá phải lớn hơn 0 !!';
 
+        }
+
+        if (kieuKhuyenMai === '') {
+            errorAdd.kieuKhuyenMai = 'Không được bỏ trống kiểu khuyến mãi';
+
+        }
+         if (this.state.khuyenMai.some(km => km.ma === khuyenMaiAdd.ma)) {
+            // Kiểm tra trùng căn cước
+            this.setState({ errorAdd: { ...this.state.errorAdd, ma: "Mã khuyến mãi đã tồn tại !" } });
+            return;
         }
 
 
@@ -174,12 +184,12 @@ class KhuyenMaiComponent extends Component {
                     }));
                     window.location.href = '/khuyenmai'; // Redirect using props.history if available
                 } else {
-                    toast.error('Có lỗi xảy ra khi thêm.');
+                    toast.error('Mã khuyến mãi đã tồn tại !');
                 }
             })
             .catch((error) => {
                 console.error('Lỗi khi thêm khuyến mãi:', error);
-                toast.error('Có lỗi xảy ra khi thêm.');
+                toast.error(error.response.data);
             });
     };
 
