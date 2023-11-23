@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Repository
@@ -14,4 +15,10 @@ public interface GioHangChiTietRepository extends JpaRepository<GioHangChiTiet,L
 
     @Query(value = "SELECT sp FROM SanPham sp INNER JOIN GioHangChiTiet ghct WHERE ghct.id =:id")
             public List<SanPham> getSanPham(@Param("id") Long id);
+
+    @Query("SELECT ghct FROM GioHangChiTiet ghct " +
+            "JOIN GioHang gh ON ghct.gioHangId.id = gh.id " +
+            "JOIN SanPhamChiTiet spct ON ghct.sanPhamChiTietId.id = spct.id " +
+            "WHERE gh.taiKhoan.id = ?1")
+    ArrayList<GioHangChiTiet> findAllByTaiKhoanKhachHang(Long idKhachHang);
 }
