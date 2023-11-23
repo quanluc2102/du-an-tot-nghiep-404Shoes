@@ -1,0 +1,90 @@
+.wrapper-sell {
+    width: 100%;
+    height: 100%;
+}
+
+.header-sell {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #0964cf;
+}
+
+.header_sell_content_left {
+    display: flex;
+    flex-direction: row;
+    width: 600px;
+    height: 40px;
+
+}
+
+.header_sell_content_right {
+    display: flex;
+    flex-direction: row;
+
+}
+
+.content_sell {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    padding-top: 27px;
+    flex-direction: row;
+}
+
+.content_sell_left {
+    width: 70%;
+    border-right: 5px solid #e5e5e5;
+}
+
+.content_sell_right {
+    width: 30%;
+    height: 100%;
+    padding: 0 3px 0 3px;
+    border-left: 2.5px solid #e5e5e5;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.checkbox_sell {
+    margin: 1px 1px;
+    padding: 2px 2px;
+    border-top: 1px solid black;
+    border-bottom: 1px solid black;
+    border-left: none;
+    border-right: none;
+}
+
+.payment_sell {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.container_sell {
+    border: 1px solid #ddd;
+    margin: 5px;
+    padding: 10px;
+    transition: box-shadow 0.3s, border-color 0.3s;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+}
+
+.container_sell:hover {
+    border-color: #2c7605;
+    background-color: 369ff18;
+    border-radius: 10px;
+    box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3);
+}
+
+.container_sell .anticon-delete {
+    cursor: pointer;
+    transition: color 0.3s;
+}
+
+.container:hover .anticon-delete {
+    color: red;
+}

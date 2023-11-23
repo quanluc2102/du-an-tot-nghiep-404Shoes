@@ -77,4 +77,9 @@ public class SanPhamChiTietController {
 
         return ResponseEntity.ok(repository.saveAll(list));
     }
+
+    @GetMapping("hien-thi")
+    public ResponseEntity<?> hienThi(Model model){
+        return ResponseEntity.ok(serviceimpl.getAll());
+    }
 }

@@ -49,7 +49,7 @@ function App() {
           <Route
             render={({ location }) =>
               !location.pathname.includes('/banhangoffline') && <Sidebar />
-            }/>
+            } />
 
           <Switch>
             <Route path='/' exact component={SanPhamComponent} />

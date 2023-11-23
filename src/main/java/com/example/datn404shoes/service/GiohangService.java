@@ -1,6 +1,7 @@
 package com.example.datn404shoes.service;
 
 import com.example.datn404shoes.entity.GioHang;
+import com.example.datn404shoes.entity.GioHangChiTiet;
 
 import java.util.List;
 
@@ -12,7 +13,7 @@ public interface GiohangService {
 
     void update(GioHang gioHang);
 
-    List<GioHang> getAll();
+    List<GioHangChiTiet> getAll(Long id);
 
-    GioHang getOne(Long id);
+    GioHang findById(Long id);
 }
