@@ -1,0 +1,49 @@
+/* CSS */
+/* Không ẩn đi phần tử chứa ô checkbox mặc định */
+
+/* Thêm đoạn mã CSS sau vào file của bạn */
+
+.display-block {
+    display: block;
+}
+
+.hidden {
+    display: none;
+}
+
+.form-dialog {
+    background-color: #f2f2f2;
+    padding: 20px;
+    border-radius: 10px;
+    margin-top: 20px;
+}
+
+.form-dialog label {
+    margin-right: 10px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.text-danger {
+    color: red;
+    font-weight: bold;
+}
+
+/* Các nút lưu và đóng form */
+button {
+    margin-right: 10px;
+    padding: 10px;
+    cursor: pointer;
+}
+
+/* Hiển thị danh sách địa chỉ đã lưu */
+ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+ul li {
+    margin-bottom: 5px;
+}
