@@ -2,7 +2,7 @@
 
 body {
     font-family: 'Roboto', sans-serif;
-    color: rgb(0, 69, 52);
+    color: rgb(0, 0, 0);
 }
 
 p {
@@ -21,7 +21,7 @@ header{
 }
 
 .nav-link:hover {
-    background-color: rgb(16, 101, 116);
+    background-color: rgb(185, 233, 241);
     border-radius: 50px;
     white-space: nowrap;
     transition: 500ms;

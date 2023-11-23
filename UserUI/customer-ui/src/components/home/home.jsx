@@ -198,7 +198,6 @@ function Home() {
                         <p>DANH MỤC MUA HÀNG</p>
                     </div>
                     <br />
-
                     <Box sx={{ display: 'flex', flexWrap: 'wrap', minWidth: 300, width: '100%' }}>
                         {images.map((image) => (
                             <ImageButton
@@ -338,7 +337,7 @@ function Home() {
                 <div className="contentHome trang6-home">
                     <div className="row container" id="div6">
                         <div className="col-6 content-left">
-                            <h1 className="font-monospace fw-bolder"><strong>👈 BÀI VIẾT FACEBOOK</strong></h1>
+                            <h1 className="font-monospace fw-bolder"><strong>👉 BÀI VIẾT FACEBOOK</strong></h1>
                             <hr />
                             <p className="font-monospace">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
                                 tempor incididunt ut
@@ -358,7 +357,7 @@ function Home() {
                             </div>
                         </div>
                         <div className="col-6 content-right">
-                            <h1 className="font-monospace fw-bolder"><strong>TRANG INSTAGRAM CỦA SHOP 👉</strong></h1>
+                            <h1 className="font-monospace fw-bolder"><strong>👉 TRANG INSTAGRAM</strong></h1>
                             <hr />
                             <p className="font-monospace">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
                                 tempor incididunt ut

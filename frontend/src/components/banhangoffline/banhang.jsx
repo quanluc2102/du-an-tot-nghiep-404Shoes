@@ -14,6 +14,7 @@ import {
     Flex
 } from "antd";
 import { ProfileOutlined, DeleteOutlined } from "@ant-design/icons/lib/icons";
+import BanHangService from "../../services/banhangservice/BanHangService";
 
 const { Search } = Input;
 class BanHangOffline extends Component {
@@ -22,92 +23,33 @@ class BanHangOffline extends Component {
 
 
         this.state = {
+            selectedProducts: [],
+            sanPhamChiTiet: [],
             tabList: [],
             selectedRowKeys: [],
             loading: false,
+
             productList: [
                 {
                     id: 1,
                     masp: 'sp1',
                     image: 'https://static.nike.com/a/images/t_PDP_1280_v1/f_auto,q_auto:eco/67031162-9cc5-481d-8ffe-7ada8f3d78bd/custom-nike-air-force-1-high-by-you-shoes.png',
-                    name: 'Nike',
+                    name: 'Nike 1',
                     price: 500.000
-                },
-                {
-                    id: 2,
-                    masp: 'sp1',
-                    image: 'https://static.nike.com/a/images/t_PDP_1280_v1/f_auto,q_auto:eco/67031162-9cc5-481d-8ffe-7ada8f3d78bd/custom-nike-air-force-1-high-by-you-shoes.png',
-                    name: 'Nike',
-                    price: 500.000
-                },
-                {
-                    id: 3,
-                    masp: 'sp1',
-                    image: 'https://static.nike.com/a/images/t_PDP_1280_v1/f_auto,q_auto:eco/67031162-9cc5-481d-8ffe-7ada8f3d78bd/custom-nike-air-force-1-high-by-you-shoes.png',
-                    name: 'Nike',
-                    price: 500.000
-                },
-                {
-                    id: 4,
-                    masp: 'sp1',
-                    image: 'https://static.nike.com/a/images/t_PDP_1280_v1/f_auto,q_auto:eco/67031162-9cc5-481d-8ffe-7ada8f3d78bd/custom-nike-air-force-1-high-by-you-shoes.png',
-                    name: 'Nike',
-                    price: 500.000
-                },
-                {
-                    id: 5,
-                    masp: 'sp1',
-                    image: 'https://static.nike.com/a/images/t_PDP_1280_v1/f_auto,q_auto:eco/67031162-9cc5-481d-8ffe-7ada8f3d78bd/custom-nike-air-force-1-high-by-you-shoes.png',
-        name: 'Nike',
-                    price: 500.000
-                },
-                {
-                    id: 6,
-                    masp: 'sp1',
-                    image: 'https://static.nike.com/a/images/t_PDP_1280_v1/f_auto,q_auto:eco/67031162-9cc5-481d-8ffe-7ada8f3d78bd/custom-nike-air-force-1-high-by-you-shoes.png',
-                    name: 'Nike',
-                    price: 500.000
-                },
-                {
-                    id: 7,
-                    masp: 'sp1',
-                    image: 'https://static.nike.com/a/images/t_PDP_1280_v1/f_auto,q_auto:eco/67031162-9cc5-481d-8ffe-7ada8f3d78bd/custom-nike-air-force-1-high-by-you-shoes.png',
-                    name: 'Nike',
-                    price: 500.000
-                },
-                {
-                    id: 8,
-                    masp: 'sp1',
-                    image: 'https://static.nike.com/a/images/t_PDP_1280_v1/f_auto,q_auto:eco/67031162-9cc5-481d-8ffe-7ada8f3d78bd/custom-nike-air-force-1-high-by-you-shoes.png',
-                    name: 'Nike',
-                    price: 500.000
-                }
-            ],
-            options: [
-                {
-                    label: 'Tiến Hùng',
-                    value: 'Tiến Hùng',
-                    desc: 'Tiến Hùng(0123456789)',
-                },
-                {
-                    label: 'Tiến Hùng',
-                    value: 'Tiến Hùng',
-                    desc: 'Tiến Hùng(0123456789)',
-                },
-                {
-                    label: 'Tiến Hùng',
-                    value: 'Tiến Hùng',
-                    desc: 'Tiến Hùng(0123456789)',
-                },
-                {
-                    label: 'Tiến Hùng',
-                    value: 'Tiến Hùng',
-                    desc: 'Tiến Hùng(0123456789)',
                 },
             ],
+
             priceDemo: ['100.000', '150.000', '200.000', '250.000', '300.000', '350.000'],
         };
-        this.nextTabIndex = 1
+
+        this.nextTabIndex = 0
+    }
+    componentDidMount() {
+        BanHangService.getSPCT().then((res) => {
+            this.setState({ sanPhamChiTiet: res.data })
+        }).catch((error) => {
+            console.error("Error fetching data:", error);
+        });
     }
 
     onEdit = (tabKey, action) => {
@@ -126,7 +68,7 @@ class BanHangOffline extends Component {
             this.setState(prevState => {
                 const newTabList = prevState.tabList.filter(tab => tab.key !== tabKey);
                 if (newTabList.length === 0) {
-                    this.nextTabIndex = 1;
+                    this.nextTabIndex = 0;
                 }
                 return { tabList: newTabList };
             });
@@ -135,21 +77,6 @@ class BanHangOffline extends Component {
         }
     };
 
-    // onAddProduct = (product) => {
-    //     let cart = localStorage.getItem('cart');
-    //     cart = cart ? JSON.parse(cart) : [];
-        
-    //     let existingProduct = cart.find(item => item.id === product.id);
-    //     if (existingProduct) {
-    //         existingProduct.quantity += 1;
-    //     } else {
-    //         cart.push(product);
-    //     }
-    
-    //     localStorage.setItem('cart', JSON.stringify(cart));
-    //     console.log('cart', cart);
-    // }
-    
     onDelete = tabKey => {
         this.setState(prevState => {
             const newTabList = prevState.tabList.filter(tab => tab.key !== tabKey);
@@ -182,18 +109,9 @@ class BanHangOffline extends Component {
 
     render() {
         return (
-            <div id="wrapper">
-                <div id="header">
-                    <div id="header_content_left">
-                        <Search placeholder="Thêm sản phẩm vào đơn" enterButton />
-
-                    </div>
-                    <div id="header_content_right">
-
-                    </div>
-                </div>
-                <div id="content">
-                    <div id="content_left">
+            <div className="wrapper-sell">
+                <div className="content_sell">
+                    <div className="content_sell_left">
                         <Tabs defaultActiveKey="1" type="editable-card" onEdit={this.onEdit}>
                             {this.state.tabList && this.state.tabList.map((tabinfo, index) => {
                                 return (
@@ -214,11 +132,11 @@ class BanHangOffline extends Component {
                                             <Col style={{ backgroundColor: '#fff', height: '75px', padding: '10px', display: 'flex', alignItems: 'center' }}>
                                                 <Col span={1} style={{ fontWeight: 'bold', fontSize: '15px' }} >1</Col>
                                                 <Col span={3} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center' }} ><img style={{ height: '60px', width: '60px' }} src="https://assets.adidas.com/images/h_840,f_auto,q_auto,fl_lossy,c_fill,g_auto/dda507d6073c4f44abb5d314d617250e_9366/Ultra_4DFWD_Running_Shoes_Grey_ID1686_HM1.jpg" /></Col>
-                                                <Col span={3} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center', textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }} >SP007</Col>
-                                                <Col span={5} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center', textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }} >Giày thể thao adidas siêu vjp </Col>
+                                                <Col span={3} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center', textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }} >  </Col>
+                                                <Col span={5} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center', textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }} >  </Col>
                                                 <Col span={2} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center' }} > <input type="number" className="soLuong" min="1" style={{ width: '50px' }} /></Col>
-                                                <Col span={4} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center' }} >150.000 VND</Col>
-                                                <Col span={5} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center' }} >450.000 VND</Col>
+                                                <Col span={4} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center' }} > VND</Col>
+                                                <Col span={5} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center' }} > VND</Col>
                                                 <Col span={1} style={{ transition: 'color 0.3s' }}>
                                                     <DeleteOutlined
                                                         onClick={() => this.onDelete(tabinfo.key)}
@@ -228,6 +146,7 @@ class BanHangOffline extends Component {
                                                     />
                                                 </Col>
                                             </Col>
+
                                         </div>
                                     </Tabs.TabPane>
                                 )
@@ -235,23 +154,50 @@ class BanHangOffline extends Component {
                         </Tabs>
 
                         <div>
-                            <p>Danh sách sản phẩm</p>
+                            <hr />
+                            <div>
+                                <p style={{ fontWeight: 'bolder', fontSize: '20px' }}>Danh sách sản phẩm</p>
+                                <Select
+                                    mode="multiple"
+                                    style={{ width: '100%', maxWidth: '500px' }}
+                                    dropdownStyle={{ maxHeight: '300px', overflowY: 'auto' }}
+                                    optionLabelProp="ma"
+                                    placeholder="Tìm kiếm sản phẩm"
+                                    options={this.state.sanPhamChiTiet.map((option, index) => ({
+                                        label: (
+                                            <div style={{ overflowX: 'auto', overflowY: 'auto' }}>
+                                                <div>{index + 1}</div>
+                                                <img style={{ height: '60px', width: '60px', float: 'left' }} src={option.sanPham.anh} />
+                                                <div style={{ marginLeft: '75px' }}>{option.sanPham.ten} <br /> {'Size: '}{option.kichThuoc.giaTri} - {'Màu: '}{option.mauSac.ten}</div>
+                                                <div style={{ marginLeft: '75px' }}> {'Giá: '}{option.donGia}{' VND'} - SL: {option.soLuong}</div>
+                                            </div>
+                                        ),
+                                        value: option.ma,
+                                    }))}
+
+                                />
+                                <Button style={{color: 'black', backgroundColor: '#fff'}}>Thêm</Button>
+                                
+                                <Button style={{float: 'right', marginRight: '20px', color: 'black', backgroundColor: '#fff'}}>Quét QR</Button>
+
+                                </div>
                             <Flex wrap="wrap">
-                                {this.state.productList && this.state.productList.map((item, index) => {
+                                {this.state.sanPhamChiTiet && this.state.sanPhamChiTiet.map((sanPhamChiTiet, index) => {
                                     return (
-                                        <Flex key={index} style={{ width: '20%' }} flex={'row'}>
-                                            <img style={{ width: '100px', height: '100px' }} src={item.image} alt={item.masp} />
-                                            <Flex flex={'column'}>
-                                                <p>{item.name}</p>
-                                                <p>{item.price}</p>
-                                            </Flex>
+                                        <Flex key={index} style={{ width: '50%', overflowX: 'auto', overflowY: 'auto', cursor: 'pointer' }} flex={'row'}>
+                                            <div style={{ overflowX: 'auto', overflowY: 'auto' }} className="container_sell">
+                                                <div> <img style={{ height: '60px', width: '60px', float: 'left' }} src="https://assets.adidas.com/images/h_840,f_auto,q_auto,fl_lossy,c_fill,g_auto/dda507d6073c4f44abb5d314d617250e_9366/Ultra_4DFWD_Running_Shoes_Grey_ID1686_HM1.jpg" /></div>
+                                                <div style={{ marginLeft: '75px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{sanPhamChiTiet.sanPham.ten}</div>
+                                                <div style={{ marginLeft: '75px' }}>Size: {sanPhamChiTiet.kichThuoc.giaTri} - Màu: {sanPhamChiTiet.mauSac.ten}</div>
+                                                <div style={{ marginLeft: '75px' }}>Giá: {sanPhamChiTiet.donGia} VND - SL: {sanPhamChiTiet.soLuong}</div>
+                                            </div>
                                         </Flex>
                                     )
                                 })}
                             </Flex>
                         </div>
                     </div>
-                    <div id="content_right">
+                    <div className="content_sell_right">
                         <div>
                             <Select
                                 mode="multiple"
@@ -260,28 +206,28 @@ class BanHangOffline extends Component {
                                     borderBottomWidth: '10px'
                                 }}
                                 placeholder="Thêm khách hàng vào đơn"
-                                // onChange={handleChange}
                                 optionLabelProp="label"
                                 options={this.state.options}
                                 optionRender={(option) => (
                                     <Space>
+
                                         {option.data.desc}
                                     </Space>
                                 )}
                             />
-                            <div id="checkbox">
+                            <div className="checkbox_sell">
                                 <Checkbox onChange={this.onChangeCheckbox}>Giao hàng</Checkbox>
                             </div>
-                            <div id="payment">
+                            <div className="payment_sell">
                                 <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', width: '100%' }}>
                                     <Col>
-                                        <Col style={{ fontSize: '16px', margin: '5px 0px 5px 0px' }}>Tổng tiền: (8 sản phẩm)</Col>
-                                        <Col style={{ fontSize: '16px' }}>VAT(%)</Col>
-                                        <Col style={{ fontSize: '16px', marginTop: '5px ' }}>Chiết khấu</Col>
+                                        <Col style={{ fontSize: '16px', margin: '5px 0px 5px 0px' }}>Tổng tiền: (0 sản phẩm)</Col>
+                                        <Col style={{ fontSize: '16px' }}>Mã khuyến mãi: </Col>
+                                        <Col style={{ fontSize: '16px', marginTop: '5px ' }}>Giảm giá:</Col>
                                     </Col>
-                                    <Col style={{ width: '20%', borderStyle: 'solid', borderTop: 'none', borderRight: 'none', borderLeft: 'none', borderWidth: '1px' }}>
-                                        <Col style={{ fontSize: '16px', textAlign: 'right', margin: '5px 0px 5px 0px' }}>222.500</Col>
-                                        <Col style={{ fontSize: '16px', textAlign: 'right' }}>0</Col>
+                                    <Col style={{ width: '55%', borderStyle: 'solid', borderTop: 'none', borderRight: 'none', borderLeft: 'none', borderWidth: '1px' }}>
+                                        <Col style={{ fontSize: '16px', textAlign: 'right', margin: '5px 0px 5px 0px' }}><span style={{ color: 'red' }}>222.500</span></Col>
+                                        <Col style={{ fontSize: '16px', textAlign: 'right' }}><Input type="text" placeholder="Nhập mã..." style={{ width: '120px', float: 'left' }} /> <Button>Áp dụng</Button></Col>
                                         <Col style={{ fontSize: '16px', textAlign: 'right', marginTop: '5px' }}>0</Col>
                                     </Col>
                                 </div>
@@ -291,28 +237,30 @@ class BanHangOffline extends Component {
                                         <Col style={{ fontWeight: 'bold', fontSize: '16px' }}>Tiền khách đưa</Col>
                                     </Col>
                                     <Col style={{ borderStyle: 'solid', borderTop: 'none', borderRight: 'none', borderLeft: 'none', borderWidth: '1px', paddingBottom: '10px' }}>
-                                        <Col style={{ fontWeight: 'bold', fontSize: '16px', textAlign: 'right', margin: '5px 0px 5px 0px' }}>222.500</Col>
-                                        <Col style={{ fontWeight: 'bold', fontSize: '16px', textAlign: 'right' }}><InputNumber onChange={this.onChangePay} style={{ border: 'none', fontSize: '19px' }} /></Col>
+                                        <Col style={{ fontWeight: 'bold', fontSize: '16px', textAlign: 'right', margin: '5px 0px 5px 0px' }}><span style={{ color: 'red' }}>222.500</span></Col>
+                                        <Col style={{ fontWeight: 'bold', fontSize: '16px', textAlign: 'right' }}><InputNumber min={1} onChange={this.onChangePay} style={{ border: 'none', fontSize: '19px', width: '210px' }} /></Col>
                                     </Col>
                                 </div>
                             </div>
                             <Flex style={{ marginTop: '10px', marginBottom: '10px', borderStyle: 'solid', borderWidth: '1px', borderTop: 'none', borderLeft: 'none', borderRight: 'none', paddingBottom: '10px' }} justify="space-between" wrap="wrap" gap={"small"} align="center">
                                 {this.state.priceDemo && this.state.priceDemo.map((item, index) => {
                                     return (
-                                        <Button key={index} style={{ width: '120px' }} shape="round">{item}</Button>
+                                        <Button key={index} style={{ width: '120px', color: 'black', backgroundColor: 'rgba(0,0,0,0.02)' }} shape="round">{item}</Button>
                                     )
                                 })}
                             </Flex>
                             <Flex flex={"row"} align="center" justify="space-between">
                                 <p style={{ fontSize: '16px', fontWeight: 'bold' }}>Tiền thừa trả khách</p>
-                                <p style={{ fontSize: '20px', fontWeight: 'bold' }}>4.500</p>
+                                <p style={{ fontSize: '20px', fontWeight: 'bold' }}><span style={{color: 'red'}}>250.000</span></p>
                             </Flex>
                         </div>
                         <div>
                             <Input placeholder="Nhập ghi chú đơn hàng" />
+                            <br />
+                            <br />
                             <Flex justify="space-between">
-                                <Button style={{ width: '40%', height: '70px' }}>In tạm tính</Button>
-                                <Button style={{ width: '55%', height: '70px' }}>Thanh toán</Button>
+                                <Button style={{ width: '40%', height: '70px', backgroundColor: 'rgba(255, 255, 0, 0.3)', fontWeight: 'bolder', fontSize: '20px' }}>In tạm tính</Button>
+                                <Button style={{ width: '55%', height: '70px', backgroundColor: 'rgba(144, 238, 144)', fontWeight: 'bolder', fontSize: '20px' }}>Thanh toán</Button>
                             </Flex>
                         </div>
                     </div>

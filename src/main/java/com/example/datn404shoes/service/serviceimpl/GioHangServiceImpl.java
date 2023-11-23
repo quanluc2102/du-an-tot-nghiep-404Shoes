@@ -1,7 +1,9 @@
 package com.example.datn404shoes.service.serviceimpl;
 
 import com.example.datn404shoes.entity.GioHang;
+import com.example.datn404shoes.entity.GioHangChiTiet;
 import com.example.datn404shoes.repository.GioHangRepository;
+import com.example.datn404shoes.repository.TaiKhoanResponsitory;
 import com.example.datn404shoes.service.GiohangService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,8 +13,15 @@ import java.util.List;
 @Service
 public class GioHangServiceImpl implements GiohangService {
 
+    private final GioHangRepository giohangRepository;
+
+    private final TaiKhoanResponsitory taiKhoanResponsitory;
+
     @Autowired
-    private GioHangRepository giohangRepository;
+    private GioHangServiceImpl(GioHangRepository giohangRepository, TaiKhoanResponsitory taiKhoanResponsitory){
+        this.giohangRepository = giohangRepository;
+        this.taiKhoanResponsitory = taiKhoanResponsitory;
+    }
 
     @Override
     public void add(GioHang giohang) {
@@ -34,14 +43,17 @@ public class GioHangServiceImpl implements GiohangService {
         this.giohangRepository.save(gioHang);
     }
 
+
     @Override
-    public List<GioHang> getAll() {
-        return giohangRepository.findAll();
+    public List<GioHangChiTiet> getAll(Long id) {
+
+        return giohangRepository.getAllGioHangCTByTaiKhoanId(id);
     }
 
     @Override
-    public GioHang getOne(Long id) {
-        return giohangRepository.findById(id).get();
+    public GioHang findById(Long id) {
+        return giohangRepository.findById(id).orElse(null);
     }
+
 
 }
