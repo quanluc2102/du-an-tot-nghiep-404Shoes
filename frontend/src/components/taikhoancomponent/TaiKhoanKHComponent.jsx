@@ -37,7 +37,7 @@ class TaiKhoanKHComponent extends Component {
                 // diaChiCuThe: '',
                 sdt: '',
                 ten: '',
-                cccd: '',
+                // cccd: '',
                 gioiTinh: '0',
                 ngaySinh: '',
                 tinhThanhPho: '',
@@ -50,7 +50,7 @@ class TaiKhoanKHComponent extends Component {
                 diaChiCuThe: '',
                 sdt: '',
                 ten: '',
-                cccd: '',
+                // cccd: '',
                 gioiTinh: '0',
                 ngaySinh: '',
             },
@@ -58,7 +58,7 @@ class TaiKhoanKHComponent extends Component {
                 diaChi: '',
                 sdt: '',
                 ten: '',
-                cccd: '',
+                // cccd: '',
                 gioiTinh: '',
                 ngaySinh: '',
                 maTaiKhoan: '',
@@ -75,7 +75,7 @@ class TaiKhoanKHComponent extends Component {
                 diaChiCuThe: '',
                 sdt: '',
                 ten: '',
-                cccd: '',
+                // cccd: '',
                 gioiTinh: '',
                 ngaySinh: '',
                 maTaiKhoan: '',
@@ -95,7 +95,7 @@ class TaiKhoanKHComponent extends Component {
         this.thayDoiNGaySinhAdd = this.thayDoiNGaySinhAdd.bind(this);
         this.thayDoiMaKHAdd = this.thayDoiMaKHAdd.bind(this);
         this.thayDoiAnhAdd = this.thayDoiAnhAdd.bind(this);
-        this.thayDoiCCCDAdd = this.thayDoiCCCDAdd.bind(this);
+        // this.thayDoiCCCDAdd = this.thayDoiCCCDAdd.bind(this);
         this.thayDoiEmailAdd = this.thayDoiEmailAdd.bind(this);
         this.thayDoiTinhAdd = this.thayDoiTinhAdd.bind(this);
         this.thayDoiHuyenAdd = this.thayDoiHuyenAdd.bind(this);
@@ -126,7 +126,7 @@ class TaiKhoanKHComponent extends Component {
             diaChiCuThe: '',
             sdt: '',
             ten: '',
-            cccd: '',
+            // cccd: '',
             gioiTinh: '',
             ngaySinh: '',
             maTaiKhoan: '',
@@ -148,7 +148,20 @@ class TaiKhoanKHComponent extends Component {
             } else {
                 errorAdd.ten = '';
             }
+            if (!this.state.nguoiDungAdd.ngaySinh) {
+                errorAdd.ngaySinh = 'Ngày sinh không được bỏ trống';
+                isValid = false;
+            } else {
+                // Compare ngaySinh with the current date
+                const currentDate = new Date().toISOString().split('T')[0]; // Format: 'YYYY-MM-DD'
 
+                if (this.state.nguoiDungAdd.ngaySinh === currentDate) {
+                    errorAdd.ngaySinh = 'Ngày sinh không được là ngày hôm nay';
+                    isValid = false;
+                } else {
+                    errorAdd.ngaySinh = '';
+                }
+            }
             // Kiểm tra tỉnh thành phố, quận huyện, xã phường thị trấn được chọn
             if (!this.state.tinhThanhPho || !this.state.quanHuyen || !this.state.xaPhuongThiTran) {
                 // Có thể hiển thị thông báo lỗi ở đây
@@ -163,22 +176,7 @@ class TaiKhoanKHComponent extends Component {
                 errorAdd.diaChiCuThe = '';
             }
 
-            // Kiểm tra căn cước công dân không được bỏ trống
-            // Kiểm tra căn cước công dân không được bỏ trống
-            if (!this.state.nguoiDungAdd.cccd) {
-                errorAdd.cccd = 'Căn cước công dân không được bỏ trống';
-                isValid = false;
-            } else {
-                errorAdd.cccd = '';
-            }
 
-// Kiểm tra số điện thoại không được bỏ trống
-            if (!this.state.nguoiDungAdd.sdt) {
-                errorAdd.sdt = 'Số điện thoại không được bỏ trống';
-                isValid = false;
-            } else {
-                errorAdd.sdt = '';
-            }
 
 // Kiểm tra trùng email
             if (!this.state.taiKhoanAdd || !this.state.taiKhoanAdd.email) {
@@ -198,25 +196,29 @@ class TaiKhoanKHComponent extends Component {
                 }
             }
 
-// Kiểm tra trùng số điện thoại
+
             if (!this.state.nguoiDungAdd || !this.state.nguoiDungAdd.sdt) {
                 errorAdd.sdt = 'Số điện thoại không được bỏ trống';
                 isValid = false;
             } else {
-                errorAdd.sdt = '';
-
-                // Kiểm tra trùng số điện thoại
-                const isPhoneDuplicate = this.state.thongTinNguoiDung.some(
-                    (nguoiDung) => nguoiDung.sdt === this.state.nguoiDungAdd.sdt
-                );
-
-                if (isPhoneDuplicate) {
-                    errorAdd.sdt = 'Số điện thoại đã tồn tại. Vui lòng chọn một số điện thoại khác.';
+                // Kiểm tra độ dài số điện thoại
+                if (this.state.nguoiDungAdd.sdt.length !== 10) {
+                    errorAdd.sdt = 'Số điện thoại phải có độ dài 10 số';
                     isValid = false;
+                } else {
+                    errorAdd.sdt = '';
+
+                    // Kiểm tra trùng số điện thoại
+                    const isPhoneDuplicate = this.state.thongTinNguoiDung.some(
+                        (nguoiDung) => nguoiDung.sdt === this.state.nguoiDungAdd.sdt
+                    );
+
+                    if (isPhoneDuplicate) {
+                        errorAdd.sdt = 'Số điện thoại đã tồn tại. Vui lòng chọn một số điện thoại khác.';
+                        isValid = false;
+                    }
                 }
             }
-
-
 
 
             // Thực hiện thêm các kiểm tra khác nếu cần
@@ -298,22 +300,9 @@ class TaiKhoanKHComponent extends Component {
         );
         let errorAdd = {...this.state.errorAdd, ten: ""};
         this.setState({errorAdd: errorAdd});
-        // console.log(this.state.tinhThanhPho)
-        // console.log(this.state.quanHuyen)
-        // console.log(this.state.xaPhuongThiTran)
+
     }
-    // thayDoiDiaChiAdd = (event) => {
-    //     this.setState(
-    //         prevState => ({
-    //             nguoiDungAdd: {
-    //                 ...prevState.nguoiDungAdd,
-    //                 diaChi: event.target.value
-    //             }
-    //         })
-    //     );
-    //     let errorAdd = {...this.state.errorAdd, diaChi: ""};
-    //     this.setState({errorAdd: errorAdd});
-    // }
+
     thayDoiDiaChiAdd = (event) => {
         this.setState(
             prevState => ({
@@ -375,18 +364,7 @@ class TaiKhoanKHComponent extends Component {
         this.setState({errorAdd: errorAdd});
     }
 
-    thayDoiCCCDAdd = (event) => {
-        this.setState(
-            prevState => ({
-                nguoiDungAdd: {
-                    ...prevState.nguoiDungAdd,
-                    cccd: event.target.value
-                }
-            })
-        );
-        let errorAdd = {...this.state.errorAdd, cccd: ""};
-        this.setState({errorAdd: errorAdd});
-    }
+
     thayDoiEmailAdd = (event) => {
         this.setState(
             prevState => ({
@@ -424,14 +402,7 @@ class TaiKhoanKHComponent extends Component {
         let errorAdd = {...this.state.errorAdd, tinhThanhPho: ""};
         this.setState({errorAdd: errorAdd});
     }
-    // fetchData = () => {
-    //    taikhoanservice.getKhachHangAll().then((res) => {
-    //         this.setState({
-    //             listThayThe: res.data,
-    //         });
-    //         this.timKiemMoi();
-    //     });
-    // };
+
     thayDoiHuyenAdd = (event) => {
         this.setState(
             prevState => ({
@@ -591,17 +562,7 @@ class TaiKhoanKHComponent extends Component {
                                         </div>
 
 
-                                        <div>
-                                            <label>CCCD: <span style={{color: 'red'}}>*</span></label>
-                                            <input
-                                                className={`form-control ${this.state.errorAdd.cccd ? 'is-invalid' : ''}`}
-                                                name="cccd" style={{}}
-                                                onChange={this.thayDoiCCCDAdd}
-                                                value={this.state.nguoiDungAdd.cccd}/>
 
-                                            {this.state.errorAdd.cccd &&
-                                            <div className="text-danger">{this.state.errorAdd.cccd}</div>}
-                                        </div>
                                         <div>
                                             <label>SDT: <span style={{color: 'red'}}>*</span></label>
                                             <input
