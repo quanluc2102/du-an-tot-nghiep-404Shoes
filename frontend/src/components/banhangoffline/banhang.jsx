@@ -129,6 +129,7 @@ class BanHangOffline extends Component {
                                                 <Col span={5} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center' }} >Thành tiền</Col>
                                             </Col>
 
+
                                             <Col style={{ backgroundColor: '#fff', height: '75px', padding: '10px', display: 'flex', alignItems: 'center' }}>
                                                 <Col span={1} style={{ fontWeight: 'bold', fontSize: '15px' }} >1</Col>
                                                 <Col span={3} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center' }} ><img style={{ height: '60px', width: '60px' }} src="https://assets.adidas.com/images/h_840,f_auto,q_auto,fl_lossy,c_fill,g_auto/dda507d6073c4f44abb5d314d617250e_9366/Ultra_4DFWD_Running_Shoes_Grey_ID1686_HM1.jpg" /></Col>
