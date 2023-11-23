@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import kichthuocservice from '../../services/kichthuocservice/kichthuocservice';
 import { toast } from 'react-toastify';
 import ReactPaginate from 'react-paginate';
+import './kichthuocsection.css'
 class KichThuocComponent extends Component {
     constructor(props) {
         super(props);
@@ -258,7 +259,7 @@ class KichThuocComponent extends Component {
                 </div>
 
 
-                <section className="section dashboard">
+                <section className="section_kich_thuoc dashboard">
                     <div className="row">
 
                         <div className="col-lg-8">

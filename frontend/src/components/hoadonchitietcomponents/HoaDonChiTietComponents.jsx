@@ -4,6 +4,7 @@ import HoaDonService from '../../services/hoadonservice/HoaDonService';
 import { Modal, Button } from 'react-bootstrap';
 // import { tichDiemDaCoTaiKhoan, tichDiemMoi } from "../tichdiemcomponent/TichDiemService";
 import 'font-awesome/css/font-awesome.min.css';
+import './hoadonchitiet.css'
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.0/css/all.min.css"></link>
 class HoaDonChiTietComponents extends Component {
     constructor(props) {
@@ -193,7 +194,7 @@ class HoaDonChiTietComponents extends Component {
 
                 <div>
                     {/* ... Các phần mã khác ở đây ... */}
-                    <div>
+                    <div style={{maxWidth: '960px', marginLeft: '330px'}}>
                         {/* ... Các phần mã khác ở đây ... */}
 
                         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -267,7 +268,7 @@ class HoaDonChiTietComponents extends Component {
                 </div>
                 <br />
 
-                <section className="section dashboard">
+                <section className="section_hoa_don_chi_tiet dashboard">
                     <div className="row">
                         <div className="col-lg-8">
                             <div className="row">

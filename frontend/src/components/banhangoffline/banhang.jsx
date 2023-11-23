@@ -21,7 +21,6 @@ class BanHangOffline extends Component {
     constructor(props) {
         super(props);
 
-
         this.state = {
             selectedProducts: [],
             sanPhamChiTiet: [],

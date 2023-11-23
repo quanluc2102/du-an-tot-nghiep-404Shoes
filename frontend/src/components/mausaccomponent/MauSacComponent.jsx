@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import mausacservice from '../../services/mausacservice/mausacservice';
 import {toast} from 'react-toastify';
 import ReactPaginate from 'react-paginate';
-
+import './mausacsection.css'
 class MauSacComponent extends Component {
     constructor(props) {
         super(props);
@@ -273,7 +273,7 @@ class MauSacComponent extends Component {
                 </div>
 
 
-                <section className="section dashboard">
+                <section className="section_mau_sac dashboard">
                     <div className="row">
 
                         <div className="col-lg-8">

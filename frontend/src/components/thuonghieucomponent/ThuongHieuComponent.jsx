@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import thuonghieuservice from '../../services/thuonghieuservice/thuonghieuservice';
 import { toast } from 'react-toastify';
 import ReactPaginate from 'react-paginate';
-
+import './thuonghieucom.css'
 class ThuongHieuComponent extends Component {
     constructor(props) {
         super(props);
@@ -251,7 +251,7 @@ class ThuongHieuComponent extends Component {
                 </div>
 
 
-                <section className="section dashboard">
+                <section className="section_thuong_hieu dashboard">
                     <div className="row">
 
                         <div className="col-lg-8">

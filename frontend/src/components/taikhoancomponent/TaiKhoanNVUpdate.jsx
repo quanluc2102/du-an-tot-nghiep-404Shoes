@@ -356,7 +356,7 @@ class TaiKhoanNVUpdate extends Component {
                     </nav>
                 </div>
 
-                <section className="section dashboard">
+                <section className="section_nhanvien_detail dashboard">
                     <div className="row">
                         <div className="col-lg-10">
                             <div className="card">

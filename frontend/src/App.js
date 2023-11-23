@@ -93,7 +93,6 @@ function App() {
             <Route path='/banhangoffline' component={BanHangOffline} />
           </Switch>
         </main>
-        <Footer />
       </Router>
     </div>
   );

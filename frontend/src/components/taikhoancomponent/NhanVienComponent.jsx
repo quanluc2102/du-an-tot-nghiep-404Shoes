@@ -186,7 +186,7 @@ class NhanVienComponent extends Component {
                     </nav>
                 </div>
 
-                <section className="section dashboard">
+                <section className="section_nhanvien dashboard">
                     <div className="row">
 
                         <div className="col-lg-12">

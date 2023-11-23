@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import xuatxuservice from '../../services/xuatxuservice/xuatxuservice';
 import { toast } from 'react-toastify';
 import ReactPaginate from "react-paginate";
-
+import './xuatxusection.css'
 
 class XuatXuComponent extends Component {
     constructor(props) {
@@ -244,7 +244,7 @@ class XuatXuComponent extends Component {
                 </div>
 
 
-                <section className="section dashboard">
+                <section className="section_xuat_xu dashboard">
                     <div className="row">
 
                         <div className="col-lg-8">

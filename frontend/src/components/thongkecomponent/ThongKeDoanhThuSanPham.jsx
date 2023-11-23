@@ -8,6 +8,7 @@ import {FaFileExcel} from 'react-icons/fa';
 import {Tabs, TabList, Tab, TabPanel} from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
 import ThongKeInfo from "./ThongKeInfo";
+import './style.css'
 
 class ThongKeDoanhThuSanPham extends Component {
     constructor(props) {
@@ -783,7 +784,7 @@ class ThongKeDoanhThuSanPham extends Component {
 
                 </div>
 
-                <div className="row">
+                <div className="row" style={{minWidth: '1000px', float: 'right', marginRight: '5px'}}>
                     <div className="col-xxl-4 col-md-6">
                         <div className="card info-card sales-card">
                             <div className="card-body">
@@ -874,7 +875,7 @@ class ThongKeDoanhThuSanPham extends Component {
 
 
 
-                <section className="section dashboard">
+                <section className="section_thongke dashboard">
                     <Tabs>
                         <TabList>
                             <Tab>Thống kê theo sản phẩm đã bán</Tab>
