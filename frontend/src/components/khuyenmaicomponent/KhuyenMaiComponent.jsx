@@ -284,7 +284,7 @@ class KhuyenMaiComponent extends Component {
             khuyenMaiUpdate.batDau = batDauDate.toISOString();
         }
 
-        if (!giamGia.trim() || isNaN(parseFloat(giamGia)) || /[a-zA-Z]+/.test(giamGia)) {
+        if (!giamGia || isNaN(parseFloat(giamGia)) || /[a-zA-Z]+/.test(giamGia)) {
             errorUpdate.giamGia = 'Giảm giá không hợp lệ!';
         }
 
@@ -300,7 +300,7 @@ class KhuyenMaiComponent extends Component {
         }
 
 
-        if (!dieuKien || isNaN(parseInt(dieuKien)) || parseInt(dieuKien) < 0 || /[a-zA-Z]+/.test(dieuKien)) {
+        if (!dieuKien || isNaN(parseInt(dieuKien)) || /[a-zA-Z]+/.test(dieuKien)) {
             errorUpdate.dieuKien = 'Điều kiện không hợp lệ!';
         }
 
@@ -326,7 +326,7 @@ class KhuyenMaiComponent extends Component {
             })
             .catch((error) => {
                 console.error('Lỗi khi cập nhật khuyến mãi:', error);
-                toast.error('Có lỗi xảy ra khi cập nhật.');
+                toast.error(error.response.data);
             });
     };
 

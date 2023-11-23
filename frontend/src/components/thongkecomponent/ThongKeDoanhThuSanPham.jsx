@@ -35,9 +35,11 @@ class ThongKeDoanhThuSanPham extends Component {
             hoaDonNam: 0,
             selectedMonth:'',
             selectedYear:currentYear,
-            thongKeType:'nam'
+            thongKeType:'nam',
+            thongKeDoanhThuType:'nam'
         };
         this.combinedChartRef = React.createRef();
+        this.combinedChartRefDoanhThu = React.createRef();
     }
 
     componentDidMount() {
@@ -103,11 +105,11 @@ class ThongKeDoanhThuSanPham extends Component {
     };
 
 
-    fetchDataThongKeThangNew = (page = 1) => {
-        const { startDate, endDate, thongKeType, selectedMonth,selectedYear} = this.state;
+    fetchDataThongKeThangNew = (page = 2) => {
+        const { startDate, endDate, thongKeDoanhThuType, selectedMonth,selectedYear} = this.state;
         console.log(selectedMonth)
         console.log(selectedYear)
-         if (thongKeType === 'nam') {
+         if (thongKeDoanhThuType === 'nam') {
             thongkeservice.getDoanhThuThangNew(selectedYear, page)
                 .then(data => {
                     this.setState({thongKeThangNew: data}, () => {
@@ -303,6 +305,45 @@ class ThongKeDoanhThuSanPham extends Component {
         }
     };
 
+    handleExportToExcelDoanhThuTheoThang = async () => {
+        const  thongKeDoanhThu= this.state.thongKeThangNew;
+        const  selectYear = this.state.selectedYear;
+        if (!thongKeDoanhThu || thongKeDoanhThu.length === 0) {
+            toast.warn('Dữ liệu bảng đang trống.');
+            return;
+        }
+
+        this.setState({exportingToExcelDoanhThuThang: true});
+
+        try {
+            const workbook = XLSX.utils.book_new();
+            const worksheet = XLSX.utils.json_to_sheet(thongKeDoanhThu);
+
+            const colNames = ['Tháng', 'Tổng số sản phẩm đã bán', 'Tổng tiền', 'Giá mua nhỏ nhất', 'Giá mua lớn nhất', 'Giá mua trung bình'];
+            colNames.forEach((col, index) => {
+                const cellAddress = XLSX.utils.encode_cell({c: index, r: 0});
+                worksheet[cellAddress].v = col;
+            });
+
+
+            XLSX.utils.book_append_sheet(workbook, worksheet, 'ThongKeDoanhThuTheoThang');
+
+            const formattedStartDate = new Date(selectYear).toLocaleDateString();
+
+            const timeRange = `${formattedStartDate}`;
+
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            XLSX.writeFile(workbook, `ThongKeDoanhThuTheoThang${timeRange}.xlsx`);
+
+            console.log('Exporting to Excel completed!');
+        } catch (error) {
+            console.error('Error exporting to Excel:', error);
+            toast.error('Error exporting to Excel. Please try again.');
+        } finally {
+            this.setState({exportingToExcelDoanhThuThang: false});
+        }
+    };
+
     combinedChart = null;
 
     renderCombinedChart() {
@@ -480,7 +521,7 @@ class ThongKeDoanhThuSanPham extends Component {
             },
         };
 
-        const ctx = this.combinedChartRef.current?.getContext('2d');
+        const ctx = this.combinedChartRefDoanhThu.current?.getContext('2d');
 
         if (this.combinedChart) {
             this.combinedChart.destroy();
@@ -619,6 +660,7 @@ class ThongKeDoanhThuSanPham extends Component {
     handleThongKeTypeChange = (event) => {
         this.setState({
             thongKeType: event.target.value,
+            thongKeDoanhThuType: event.target.value,
             startDate: '',
             endDate: '',
             selectedMonth: '', // Thêm dòng này để đặt lại giá trị selectedMonth khi thay đổi kiểu thống kê
@@ -922,9 +964,9 @@ class ThongKeDoanhThuSanPham extends Component {
                                     </div>
                                     <button className="btn btn-outline-secondary" onClick={this.handleToggleTable}>
                                         {this.state.showTable ? (
-                                            <i className="bi bi-eye-slash"></i>
+                                            <i className="bi bi-eye-slash">Ẩn bảng</i>
                                         ) : (
-                                            <i className="bi bi-eye"></i>
+                                            <i className="bi bi-eye">Xuất bảng</i>
                                         )}
                                     </button>
                                 </div>
@@ -1003,7 +1045,7 @@ class ThongKeDoanhThuSanPham extends Component {
                                 {/*</select>*/}
 
 
-                                {this.state.thongKeType === 'nam' && (
+                                {this.state.thongKeDoanhThuType === 'nam' && (
                                     <>
                                         <label>Chọn năm:</label>
                                         <select
@@ -1027,37 +1069,22 @@ class ThongKeDoanhThuSanPham extends Component {
 
                                 <button onClick={this.handleThongKeThangNewClick}>Thống kê</button>
                             </div>
-
-                            <div className="card combined-chart overflow-auto">
-                                <div className="card-body">
-                                    <h5 className="card-title">
-                                        Biểu đồ thống kê doanh thu <span>| </span>
-                                    </h5>
-                                    <div className="row">
-                                        <div className="col-md-12">
-                                            <canvas id="combinedChart" ref={this.combinedChartRef} width="400"
-                                                    height="200"></canvas>
-                                        </div>
-                                    </div>
-                                    <button className="btn btn-outline-secondary" onClick={this.handleToggleTable}>
-                                        {this.state.showTable ? (
-                                            <i className="bi bi-eye-slash"></i>
-                                        ) : (
-                                            <i className="bi bi-eye"></i>
-                                        )}
-                                    </button>
-                                </div>
-                            </div>
-
+                            <button className="btn btn-outline-secondary" onClick={this.handleToggleTable}>
+                                {this.state.showTable ? (
+                                    <i className="bi bi-eye-slash">Ẩn bảng</i>
+                                ) : (
+                                    <i className="bi bi-eye">Xuất bảng</i>
+                                )}
+                            </button>
                             {this.state.showTable && (
                                 <div className="card">
                                     <div className="card-body">
                                         <div className="d-flex justify-content-between align-items-center mb-3">
-                                            <h5 className="card-title">Bảng thống kê theo sản phẩm <span>|</span></h5>
+                                            <h5 className="card-title">Bảng thống kê doanh thu theo tháng <span>|</span></h5>
                                             <div>
-                                                <button onClick={this.handleExportToExcel}
-                                                        disabled={this.state.exportingToExcel}>
-                                                    {this.state.exportingToExcel ? 'Exporting...' : <FaFileExcel/>}
+                                                <button onClick={this.handleExportToExcelDoanhThuTheoThang}
+                                                        disabled={this.state.handleExportToExcelDoanhThuTheoThang}>
+                                                    {this.state.handleExportToExcelDoanhThuTheoThang ? 'Exporting...' : <FaFileExcel/>}
                                                 </button>
                                             </div>
                                         </div>
@@ -1066,9 +1093,12 @@ class ThongKeDoanhThuSanPham extends Component {
                                                 <thead>
                                                 <tr>
                                                     <th>STT</th>
-                                                    <th>Sản phẩm</th>
-                                                    <th>Số lượng đã bán</th>
+                                                    <th>Tháng</th>
+                                                    <th>Tổng số sản phẩm đã bán</th>
                                                     <th>Tổng tiền</th>
+                                                    <th>Giá mua nhỏ nhất</th>
+                                                    <th>Giá mua lớn nhất</th>
+                                                    <th>Giá mua trung bình</th>
                                                 </tr>
                                                 </thead>
                                                 <tbody>
@@ -1078,33 +1108,32 @@ class ThongKeDoanhThuSanPham extends Component {
                                                         <td>{th[0]}</td>
                                                         <td>{th[1]}</td>
                                                         <td>{this.formatCurrency(th[2])} VND</td>
+                                                        <td>{this.formatCurrency(th[3])} VND</td>
+                                                        <td>{this.formatCurrency(th[4])} VND</td>
+                                                        <td>{this.formatCurrency(th[5])} VND</td>
+
                                                     </tr>
                                                 ))}
                                                 </tbody>
                                             </table>
                                         </div>
-                                        <ReactPaginate
-                                            previousLabel={"<"}
-                                            nextLabel={">"}
-                                            breakLabel={"..."}
-                                            breakClassName={"page-item"}
-                                            breakLinkClassName={"page-link"}
-                                            pageClassName={"page-item"}
-                                            pageLinkClassName={"page-link"}
-                                            previousClassName={"page-item"}
-                                            previousLinkClassName={"page-link"}
-                                            nextClassName={"page-item"}
-                                            nextLinkClassName={"page-link"}
-                                            pageCount={this.state.pageCount}
-                                            marginPagesDisplayed={2}
-                                            pageRangeDisplayed={5}
-                                            onPageChange={this.handlePageClick}
-                                            containerClassName={"pagination justify-content-center"}
-                                            activeClassName={"active"}
-                                        />
                                     </div>
                                 </div>
                             )}
+
+                            <div className="card combined-chart overflow-auto">
+                                <div className="card-body">
+                                    <h5 className="card-title">
+                                        Biểu đồ thống kê doanh thu <span>| </span>
+                                    </h5>
+                                    <div className="row">
+                                        <div className="col-md-12">
+                                            <canvas id="combinedChart" ref={this.combinedChartRefDoanhThu} width="400"
+                                                    height="200"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </TabPanel>
                     </Tabs>
                 </section>
