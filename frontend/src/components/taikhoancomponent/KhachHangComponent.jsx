@@ -477,38 +477,21 @@ class KhachHangComponent extends Component {
                                     <div className="card recent-sales overflow-auto">
                                         <div className="card-body">
                                             <h5 className="card-title">Danh sách khách hàng</h5>
-                                            <div style={{display: 'flex', justifyContent: 'flex-end'}}>
-                                                <button onClick={this.add} className='btn btn-success'>
-                                                    Thêm khách hàng
-                                                </button>
-                                            </div>
-                                            <div className="search-container">
-                                                <input
-                                                    type="text"
-                                                    placeholder="Tìm kiếm theo tên, mã, SDT, hoặc email"
-                                                    value={searchValue} // Bind the search input value to the state
-                                                    onChange={this.handleSearch} // Attach the search event handler
-                                                />
-                                            </div>
+
+
+                                            <h5 className="card-title" style={{margin:10}}>Lọc và tìm kiếm</h5>
+                                            <label style={{margin:10}}>Tìm kiếm</label>
+                                            <br/>
+                                            <input className="col-lg-8" type="search" name="search" style={{borderRadius:5,height:38,margin:10}} placeholder="Tìm kiếm theo tên, mã, SDT, hoặc email"  onChange={this.handleSearch}/>
+                                            <button className="btn btn-primary " style={{margin:10}} onClick={this.add}> Thêm khách hàng  </button>
+
                                             <div>
-                                                <input
-                                                    type="radio" id="filterAll" name="filterStatus" value="all" checked={filterStatus === 'all'}
-                                                    onChange={this.handleFilterChange}
-                                                />
-                                                <label htmlFor="filterAll">Tất cả</label>
+                                                <label style={{margin:10}}>Trạng thái</label>
+                                                <label style={{margin:10,color:"blue"}}><input type="radio" value="all" name="filterStatus" id="filterAll" checked={filterStatus === 'all'} onChange={this.handleFilterChange}/> Tất cả</label>
+                                                <label style={{margin:10,color:"green"}}><input type="radio" value="active" name="filterStatus" id="filterActive" checked={filterStatus === 'active'} onChange={this.handleFilterChange}/> Hoạt động</label>
+                                                <label style={{margin:10,color:"red"}}><input type="radio" value="inactive" name="filterStatus" id="filterInactive" checked={filterStatus === 'inactive'} onChange={this.handleFilterChange}/> Ngừng hoạt động</label>
                                             </div>
-                                            <div>
-                                                <input type="radio" id="filterActive" name="filterStatus" value="active" checked={filterStatus === 'active'}
-                                                       onChange={this.handleFilterChange}
-                                                />
-                                                <label htmlFor="filterActive">Hoạt động</label>
-                                            </div>
-                                            <div>
-                                                <input type="radio" id="filterInactive" name="filterStatus" value="inactive" checked={filterStatus === 'inactive'}
-                                                       onChange={this.handleFilterChange}
-                                                />
-                                                <label htmlFor="filterInactive">Ngừng hoạt động</label>
-                                            </div>
+
                                             <table className="table table-borderless datatable">
                                                 <thead>
                                                 <tr>
