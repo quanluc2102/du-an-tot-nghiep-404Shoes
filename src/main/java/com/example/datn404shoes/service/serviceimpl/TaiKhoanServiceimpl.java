@@ -112,6 +112,12 @@ public class TaiKhoanServiceimpl implements TaiKhoanService {
     }
 
     @Override
+    public List<TaiKhoan> getAllNoPage() {
+        Sort sort = Sort.by(Sort.Direction.DESC, "id");
+        return responsitory.findAll(sort);
+    }
+
+    @Override
     public TaiKhoan getOne(Long id) {
         return responsitory.findById(id).get();
     }
