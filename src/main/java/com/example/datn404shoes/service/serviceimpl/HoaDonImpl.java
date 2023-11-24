@@ -17,11 +17,19 @@ public class HoaDonImpl implements HoaDonService {
     HoaDonRepository hoaDonRepository;
 
     @Override
-    public HoaDon add(HoaDon sp) {
-        sp.setNgayTao(Date.valueOf(LocalDate.now()));
-        sp.setNgayCapNhat(Date.valueOf(LocalDate.now()));
-        hoaDonRepository.save(sp);
-        return sp;
+    public HoaDon add(HoaDon hd) {
+        hd.setKieuHoaDon(0);
+        hd.setTen(null);
+        hd.setSdt(null);
+        hd.setEmail(null);
+        hd.setDiaChiCuThe(null);
+        hd.setTinhThanhPho(null);
+        hd.setQuanHuyen(null);
+        hd.setXaPhuongThiTran(null);
+        hd.setNgayTao(Date.valueOf(LocalDate.now()));
+        hd.setNgayCapNhat(Date.valueOf(LocalDate.now()));
+
+        return hoaDonRepository.save(hd);
     }
 
     @Override

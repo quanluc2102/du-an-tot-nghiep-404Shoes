@@ -129,8 +129,8 @@ class KhuyenMaiComponent extends Component {
                     ...prevState.khuyenMaiUpdate,
                     [name]: giaTriCuoiCung || giaTriCuoiCungMin,
                 },
-                errorAdd: {
-                    ...prevState.errorAdd,
+                errorUpdate: {
+                    ...prevState.errorUpdate,
                     [name]: '',
                 },
             }));
@@ -245,12 +245,16 @@ class KhuyenMaiComponent extends Component {
         }
 
         if (!ten || !ten.trim() || !/^[a-zA-Z\sàáảãạăắằẳẵặâấầẩẫậèéẹêềếểễệđìíỉĩịòóỏõọôồốổỗộơờớởỡợùúủũụưừứửữựỳýỷỹỵÀÁẢÃẠĂẮẰẲẴẶÂẤẦẨẪẬÈÉẺẼẸÊỀẾỂỄỆĐÌÍỈĨỊÒÓỎÕỌÔỒỐỔỖỘƠỜỚỞỠỢÙÚỦŨỤƯỪỨỬỮỰỲÝỶỸỴ0-9]+$/.test(ten)) {
-            errorUpdate.ten = 'Tên không được bỏ trống hoặc chứa kí tự đặc biệt!';
+            errorUpdate.ten = 'Tên không được bỏ trống, chứa kí tự đặc biệt!';
         }
+
 
         if (!moTa || !moTa.trim() || moTa.trim() === '') {
             errorUpdate.moTa = 'Mô tả không được bỏ trống hoặc chỉ chứa khoảng trắng!';
         }
+
+        // const batDauDate = new Date(batDau);
+        // const ketThucDate = new Date(ketThuc);
 
 
         if (!batDauDate || isNaN(batDauDate.getTime())) {
@@ -267,8 +271,8 @@ class KhuyenMaiComponent extends Component {
             khuyenMaiUpdate.ketThuc = ketThucDate.toISOString();
         }
 
-        if (batDauDate > ketThuc) {
-            toast.error('Ngày bắt đầu không được nhỏ hơn ngày kết thúc!');
+        if (batDauDate > ketThucDate) {
+            toast.error('Ngày bắt đầu không được lớn hơn ngày kết thúc!');
             return;
         } else {
             khuyenMaiUpdate.batDau = batDauDate.toISOString(); // Chuyển đổi sang định dạng ISO 8601
@@ -284,23 +288,33 @@ class KhuyenMaiComponent extends Component {
             khuyenMaiUpdate.batDau = batDauDate.toISOString();
         }
 
-        if (!giamGia || isNaN(parseFloat(giamGia)) || /[a-zA-Z]+/.test(giamGia)) {
+        if (!giamGia.trim() || isNaN(parseFloat(giamGia)) || /[a-zA-Z]+/.test(giamGia)) {
             errorUpdate.giamGia = 'Giảm giá không hợp lệ!';
         }
 
 
-        if (kieuKhuyenMai === '1' && giamGia <= 0 || giamGia > 100) {
-            // errorAdd.giamGia = 'Phần trăm giảm giá phải nằm trong khoảng 1-100!';
+        if (kieuKhuyenMai === '1' && giamGia <= 0 || kieuKhuyenMai === '1'&& giamGia > 100) {
+            // errorUpdate.giamGia = 'Phần trăm giảm giá phải nằm trong khoảng 1-100!';
             errorUpdate.giamGia = ('Phần trăm giảm giá phải nằm trong khoảng 1-100!');
             console.log("lỗi nè má")
         }
-        if (kieuKhuyenMai === '0' && giamGia <= 0 || kieuKhuyenMai === '0' && giamGia > dieuKien) {
-            errorUpdate.giamGia = 'Số tiền giảm giá phải lớn hơn 0 và không được lớn hơn điều kiện!!';
+        if (kieuKhuyenMai === '0' && giamGia <= 0) {
+            errorUpdate.giamGia = 'Số tiền giảm giá phải lớn hơn 0 !!';
 
         }
 
+        if (kieuKhuyenMai === '') {
+            errorUpdate.kieuKhuyenMai = 'Không được bỏ trống kiểu khuyến mãi';
 
-        if (!dieuKien || isNaN(parseInt(dieuKien)) || /[a-zA-Z]+/.test(dieuKien)) {
+        }
+        if (this.state.khuyenMai.some(km => km.ma === khuyenMaiUpdate.ma)) {
+            // Kiểm tra trùng căn cước
+            this.setState({ errorUpdate: { ...this.state.errorUpdate, ma: "Mã khuyến mãi đã tồn tại !" } });
+            return;
+        }
+
+
+        if (!dieuKien.trim() || isNaN(parseInt(dieuKien)) || parseInt(dieuKien) < 0 || /[a-zA-Z]+/.test(dieuKien)) {
             errorUpdate.dieuKien = 'Điều kiện không hợp lệ!';
         }
 
@@ -349,8 +363,8 @@ class KhuyenMaiComponent extends Component {
                     ...prevState.khuyenMaiUpdate,
                     [name]: giaTriCuoiCung || giaTriCuoiCungMin,
                 },
-                errorAdd: {
-                    ...prevState.errorAdd,
+                errorUpdate: {
+                    ...prevState.errorUpdate,
                     [name]: '',
                 },
             }));

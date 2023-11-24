@@ -1,19 +1,23 @@
 package com.example.datn404shoes.controller;
 
-import com.example.datn404shoes.entity.DanhMuc;
-import com.example.datn404shoes.entity.HoaDon;
-import com.example.datn404shoes.entity.TaiKhoan;
-import com.example.datn404shoes.entity.ThanhToan;
+import com.example.datn404shoes.entity.*;
 import com.example.datn404shoes.repository.PhanQuyenRepository;
 import com.example.datn404shoes.repository.SanPhamChiTietRepository;
 import com.example.datn404shoes.repository.TaiKhoanRepository;
 import com.example.datn404shoes.repository.ThanhToanRepository;
+import com.example.datn404shoes.request.SanPhamChiTietRequest;
+import com.example.datn404shoes.service.serviceimpl.HoaDonChiTietimpl;
 import com.example.datn404shoes.service.serviceimpl.HoaDonImpl;
+import com.example.datn404shoes.service.serviceimpl.SanPhamChiTietServiceimpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
+import java.sql.Date;
+import java.time.LocalDate;
+import java.util.List;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:3000")
@@ -21,6 +25,10 @@ import org.springframework.web.bind.annotation.*;
 public class HoaDonController {
     @Autowired
     HoaDonImpl hoaDonImpl;
+    @Autowired
+    HoaDonChiTietimpl hoaDonChiTietimpl;
+    @Autowired
+    SanPhamChiTietServiceimpl sanPhamChiTietServiceimpl;
     @Autowired
     ThanhToanRepository thanhToanRepository;
     @Autowired
@@ -52,25 +60,28 @@ public class HoaDonController {
 //
 //        return ResponseEntity.ok(hoaDonImpl.add(hoaDon));
 //    }
-//    @PostMapping("add")
-//    public  String addNew(Model model,
-////                          @RequestParam("ngayTao")Date ngayTao,
-//                          @RequestParam("ghiChu") String ghiChu,
-////                          @RequestParam("ngayCapNhat") Date ngayCapNhat,
-//                          @RequestParam("trangThai") int trangThai,
-//                          @RequestParam("taiKhoan")TaiKhoan taiKhoan,
-//                          @RequestParam("thanhToan")ThanhToan thanhToan){
-//
-//        HoaDon hoaDon = new HoaDon();
-////        hoaDon.setNgayTao(ngayTao);
-//        hoaDon.setGhiChu(ghiChu);
-////        hoaDon.setNgayCapNhat(ngayCapNhat);
-//        hoaDon.setTrangThai(trangThai);
-//        hoaDon.setTaiKhoan(taiKhoan);
-//        hoaDon.setThanhToan(thanhToan);
-//        hoaDonImpl.add(hoaDon);
-//        return "redirect:/hoa_don/hien-thi";
-//    }
+    @PostMapping("/add")
+    public ResponseEntity<?> addNew(Model model,
+                                    @RequestBody HoaDon hoaDon,
+                                    @RequestBody List<SanPhamChiTiet> sanPhamChiTiet) {
+        Date ngayTao = Date.valueOf(LocalDate.now());
+        hoaDon.setNgayTao(ngayTao);
+        for (var lstItem : sanPhamChiTiet) {
+            SanPhamChiTiet sanPhamChiTiet1 = sanPhamChiTietServiceimpl.getOne(lstItem.getId());
+            sanPhamChiTiet1.setSoLuong(sanPhamChiTiet1.getSoLuong() - lstItem.getSoLuong());
+            HoaDonChiTiet hoaDonChiTiet = new HoaDonChiTiet();
+            hoaDonChiTiet.setSanPhamChiTiet(sanPhamChiTiet1);
+            hoaDonChiTiet.setSoLuong(lstItem.getSoLuong());
+            hoaDonChiTiet.setHd(hoaDon);
+            hoaDonChiTiet.setGhiChu(hoaDon.getGhiChu());
+            SanPhamChiTietRequest sanPhamChiTietRequest = new SanPhamChiTietRequest() ;
+            sanPhamChiTietRequest.setSoLuong(sanPhamChiTiet1.getSoLuong());
+            hoaDonChiTietimpl.addNewHDCT(hoaDonChiTiet);
+            sanPhamChiTietServiceimpl.update(sanPhamChiTiet1.getId(),sanPhamChiTietRequest);
+        }
+        return ResponseEntity.ok(hoaDonImpl.add(hoaDon));
+    }
+
     @GetMapping("detail/{id}")
     public ResponseEntity<?> detail(Model model, @PathVariable("id") Long id) {
 
