@@ -265,60 +265,45 @@ public class TaiKhoanController {
         taiKhoan.setPassword("");
         return ResponseEntity.ok(serviceimpl.add(taiKhoan));
     }
-    @PutMapping("updateKhachHang/{id}")
-    public ResponseEntity<?> updateKhachHang(@PathVariable Long id, @RequestBody TaiKhoanVaThongTin taiKhoanVaThongTin) {
+
+@PutMapping("updateKhachHang/{id}")
+public ResponseEntity<?> updateKhachHang(@PathVariable Long id, @RequestBody TaiKhoanVaThongTin taiKhoanVaThongTin) {
         ThongTinNguoiDung thongTinNguoiDung = taiKhoanVaThongTin.getThongTinNguoiDung();
         TaiKhoan taiKhoan = taiKhoanVaThongTin.getTaiKhoan();
-        DiaChi diaChiMoi = taiKhoanVaThongTin.getDiaChiMoi(); // Lấy thông tin địa chỉ mới
 
-        // Tính toán mã tài khoản mới và thêm Thông Tin Người Dùng
-//        Long list = taiKhoanRepository.count();
-//        taiKhoan.setMaTaiKhoan("KH" + (list + 1));
-        var b = thongTinNguoiDungServiceimpl.add(thongTinNguoiDung);
-        taiKhoan.setTrangThai(true);
-        taiKhoan.setThongTinNguoiDung(b);
-        taiKhoan.setAnh(taiKhoanVaThongTin.getFiles().get(0));
-        // Kiểm tra xem trường files có giá trị không
-//        if (taiKhoanVaThongTin.getFiles() != null && !taiKhoanVaThongTin.getFiles().isEmpty()) {
-//            taiKhoan.setAnh(taiKhoanVaThongTin.getFiles().get(0));
-//        } else {
-//            // Xử lý khi files là null hoặc trống
-//            // Có thể throw một exception hoặc xử lý theo ý bạn
-//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Danh sách files không được trống.");
-//        }
-        System.out.println("Before if statement");
-        serviceimpl.update(id, taiKhoan);
+        Optional<ThongTinNguoiDung> optionalThongTinNguoiDung = Optional.ofNullable(thongTinNguoiDungServiceimpl.add(thongTinNguoiDung));
 
-        DiaChi diaChi = new DiaChi();
-        diaChi.setTen(b.getTen());
-        diaChi.setSdt(b.getSdt());
-        diaChi.setThongTinNguoiDung(b);
-        diaChi.setTrangThai(0);
-        diaChi.setDiaChiCuThe(taiKhoanVaThongTin.getDiaChiCuThe());
-        diaChi.setTinhThanhPho(taiKhoanVaThongTin.getTinhThanhPho());
-        diaChi.setQuanHuyen(taiKhoanVaThongTin.getQuanHuyen());
-        diaChi.setXaPhuongThiTran(taiKhoanVaThongTin.getXaPhuongThiTran());
-        // Thêm hoặc cập nhật Địa chỉ mới
-        if (diaChiMoi != null) {
-            System.out.println("diaChiMoi: " + diaChiMoi.toString());
-            diaChiMoi.setThongTinNguoiDung(b);
-            diaChiServiceimpl.updateOrAdd(diaChiMoi);
-            System.out.println("Đã thêm hoặc cập nhật địa chỉ mới: " + diaChiMoi.toString());
+        if (optionalThongTinNguoiDung.isPresent()) {
+            ThongTinNguoiDung b = optionalThongTinNguoiDung.get();
+
+            taiKhoan.setThongTinNguoiDung(b);
+            taiKhoan.setTrangThai(true);
+            taiKhoan.setAnh(taiKhoanVaThongTin.getFiles().get(0));
+            serviceimpl.update(id, taiKhoan);
+
+            DiaChi diaChi = new DiaChi();
+            diaChi.setTen(b.getTen());
+            diaChi.setSdt(b.getSdt());
+            diaChi.setThongTinNguoiDung(b);
+            diaChi.setTrangThai(0);
+            diaChi.setDiaChiCuThe(taiKhoanVaThongTin.getDiaChiCuThe());
+            diaChi.setTinhThanhPho(taiKhoanVaThongTin.getTinhThanhPho());
+            diaChi.setQuanHuyen(taiKhoanVaThongTin.getQuanHuyen());
+            diaChi.setXaPhuongThiTran(taiKhoanVaThongTin.getXaPhuongThiTran());
+            diaChiServiceimpl.update(diaChi);
+
+            PhanQuyen phanQuyen = new PhanQuyen();
+            phanQuyen.setTaiKhoan(TaiKhoan.builder().id(taiKhoan.getId()).build());
+            phanQuyen.setQuyen(Quyen.builder().id(1).build());
+            phanQuyenServiceimpl.add(phanQuyen);
+            taiKhoan.setPassword("");
+            return ResponseEntity.ok(serviceimpl.update(id, taiKhoan));
         } else {
-            System.out.println("diaChiMoi là null, không thực hiện thêm hoặc cập nhật.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Không tìm thấy thông tin người dùng");
         }
-
-        // Tạo Phân Quyền mới
-        PhanQuyen phanQuyen = new PhanQuyen();
-        phanQuyen.setTaiKhoan(TaiKhoan.builder().id(taiKhoan.getId()).build());
-        phanQuyen.setQuyen(quyenServiceimpl.findOne(Long.valueOf(3)));
-        phanQuyenServiceimpl.add(phanQuyen);
-
-        // Đặt mật khẩu trống trước khi trả về response
-        taiKhoan.setPassword("");
-
-        return ResponseEntity.ok(serviceimpl.update(id, taiKhoan));
     }
+
+
 
     @DeleteMapping("delete")
     public String delete(Model model,

@@ -38,9 +38,49 @@ class KhachHangComponent extends Component {
         };
     }
 
-    componentDidMount(pageNumber) {
+    // componentDidMount(pageNumber) {
+    //     const storedAddresses = localStorage.getItem('addresses');
+    //     const storedAddressList = localStorage.getItem('newAddressList');
+    //     this.fetchCities();
+    //     taikhoanservice.getKhachHang(pageNumber)
+    //         .then(res => {
+    //             this.setState({
+    //                 nhanVienQuyen3: res.data,
+    //                 pageCount: res.data.totalPages,
+    //             });
+    //         });
+    //     const id = this.props.match.params.id;
+    //     if (id) {
+    //         taikhoanservice.getTaiKhoanById(this.state.id).then((res) => {
+    //             this.setState({taiKhoanUpdate: res.data});
+    //         })
+    //     }
+    //     axios.get("https://provinces.open-api.vn/api/?depth=1")
+    //         .then((response) => {
+    //             this.setState({ provinces: response.data });
+    //         })
+    //         .catch((error) => {
+    //             console.error('Error fetching provinces:', error);
+    //         });
+    //     if (storedAddressList) {
+    //         this.setState({
+    //             savedAddresses: JSON.parse(storedAddressList),
+    //         });
+    //     }
+    // }
+
+    componentDidMount() {
+        // Lấy giá trị của pageNumber từ trạng thái hoặc sử dụng giá trị cố định
+        const pageNumber = this.state.pageNumber || 1;
+
+        // Lấy dữ liệu địa chỉ từ localStorage
         const storedAddresses = localStorage.getItem('addresses');
+        const storedAddressList = localStorage.getItem('newAddressList');
+
+        // Fetch dữ liệu từ API
         this.fetchCities();
+
+        // Fetch dữ liệu khách hàng
         taikhoanservice.getKhachHang(pageNumber)
             .then(res => {
                 this.setState({
@@ -48,12 +88,16 @@ class KhachHangComponent extends Component {
                     pageCount: res.data.totalPages,
                 });
             });
+
+        // Nếu có id, lấy thông tin tài khoản từ API
         const id = this.props.match.params.id;
         if (id) {
-            taikhoanservice.getTaiKhoanById(this.state.id).then((res) => {
-                this.setState({taiKhoanUpdate: res.data});
-            })
+            taikhoanservice.getTaiKhoanById(id).then((res) => {
+                this.setState({ taiKhoanUpdate: res.data });
+            });
         }
+
+        // Fetch dữ liệu tỉnh thành phố
         axios.get("https://provinces.open-api.vn/api/?depth=1")
             .then((response) => {
                 this.setState({ provinces: response.data });
@@ -62,6 +106,12 @@ class KhachHangComponent extends Component {
                 console.error('Error fetching provinces:', error);
             });
 
+        // Nếu có dữ liệu địa chỉ trong localStorage, cập nhật state
+        if (storedAddressList) {
+            this.setState({
+                savedAddresses: JSON.parse(storedAddressList),
+            });
+        }
     }
 
     handlePageClick = (selectedPage) => {
@@ -99,11 +149,12 @@ class KhachHangComponent extends Component {
                 return {
                     newAddress: {
                         ...prevState.newAddress,
-                        isDefaultAddress: isDefault,
+                        isDefaultAddress: prevState.isEditing ? isDefault : false,
                     },
                     savedAddresses: updatedAddresses,
                     editingData: {
                         ...prevState.editingData,
+                        [name]: value,
                         isDefaultAddress: isDefault,
                     },
                 };
@@ -116,7 +167,7 @@ class KhachHangComponent extends Component {
                 };
             }
         }, () => {
-            console.log('Updated State:', this.state);
+            console.log('Trạng thái đã cập nhật:', this.state);
         });
     };
 
@@ -128,8 +179,14 @@ class KhachHangComponent extends Component {
                 ...prevState.newAddress,
                 [name]: value,
             },
+            editingData: {
+                ...prevState.editingData,
+                [name]: value,
+            },
         }));
     };
+
+
     handleCheckboxChange = (name, checked) => {
         this.setState((prevState) => ({
             newAddress: {
@@ -163,8 +220,11 @@ class KhachHangComponent extends Component {
             },
         ];
 
-        this.setState((prevState) => ({
-            isAddingAddress: true, // Keep the form open for adding more addresses
+        // Cập nhật danh sách địa chỉ trong localStorage
+        this.updateLocalStorageAddresses(newAddressList);
+
+        this.setState({
+            isAddingAddress: true, // Đóng biểu mẫu thêm địa chỉ mới
             savedAddresses: newAddressList,
             newAddress: {
                 ten: '',
@@ -175,18 +235,28 @@ class KhachHangComponent extends Component {
                 xaPhuongThiTran: '',
                 isDefaultAddress: false,
             },
-        }));
+        });
     };
+
+// Hàm cập nhật localStorage
+    updateLocalStorageAddresses = (newAddressList) => {
+        localStorage.setItem('newAddressList', JSON.stringify(newAddressList));
+    };
+
 
 
 
 
     handleEditAddress = (address) => {
+        console.log('Editing data:', address);
         this.setState({
             isEditing: true,
-            editingData: { ...address },
+            editingData: {
+                ...address, // Đảm bảo rằng bạn đang cập nhật tất cả các trường cần thiết
+            },
         });
     };
+
 
 
     handleEditSubmit = (event) => {
@@ -203,6 +273,8 @@ class KhachHangComponent extends Component {
                 return { ...address };
             }
         });
+        // Lưu trạng thái vào localStorage
+        localStorage.setItem('editedData', JSON.stringify(this.state));
 
         // Update the isDefaultAddress for newAddress as well
         const updatedNewAddress = {
@@ -215,10 +287,13 @@ class KhachHangComponent extends Component {
             isEditing: false,
             editingData: {},
             newAddress: updatedNewAddress,
+        }, () => {
+            // Đặt lại giá trị của các trường sau khi chỉnh sửa xong
+            this.handleInputChange("ten", ""); // Đặt lại giá trị của trường "Tên"
+            this.handleInputChange("sdt", ""); // Đặt lại giá trị của trường "Số điện thoại"
+            this.handleInputChange("diaChiCuThe", ""); // Đặt lại giá trị của trường "Địa chỉ cụ thể"
         });
     };
-
-
 
 
     handlePageChange = (pageNumber) => {
@@ -238,8 +313,19 @@ class KhachHangComponent extends Component {
                 quanHuyen: '',
                 xaPhuongThiTran: '',
             },
+            newAddress: {
+                ten: '', // Đặt lại giá trị của trường "Tên" khi đóng form chỉnh sửa
+                sdt: '',
+                diaChiCuThe: '',
+                tinhThanhPho: '',
+                quanHuyen: '',
+                xaPhuongThiTran: '',
+                isDefaultAddress: false,
+            },
         });
     };
+
+
 
     handleFilterChange = (event) => {
         const filterStatus = event.target.value;
@@ -540,34 +626,36 @@ class KhachHangComponent extends Component {
                                             {(isAddingAddress || isEditing) && (
                                                 <div className="form-dialog">
                                                     <form onSubmit={this.handleSubmit}>
-                                                        <div className="form-group">
+                                                        <div className="form-group form-inline">
                                                             <label htmlFor="ten">Tên:</label>
                                                             <input
                                                                 type="text"
                                                                 id="ten"
                                                                 name="ten"
-                                                                value={isEditing ? editingData.ten : newAddress.ten}
-                                                                onChange={this.handleNewAddressChange}
+                                                                value={this.state.isEditing ? this.state.editingData.ten : this.state.newAddress.ten}
+                                                                onChange={(e) => this.handleInputChange("ten", e.target.value)}
                                                             />
                                                         </div>
+
                                                         <div className="form-group">
                                                             <label htmlFor="sdt">Số điện thoại:</label>
                                                             <input
                                                                 type="text"
                                                                 id="sdt"
                                                                 name="sdt"
-                                                                value={isEditing ? editingData.sdt : newAddress.sdt}
-                                                                onChange={this.handleNewAddressChange}
+                                                                value={this.state.isEditing ? this.state.editingData.sdt : this.state.newAddress.sdt}
+                                                                onChange={(e) => this.handleInputChange("sdt", e.target.value)}
                                                             />
                                                         </div>
+
                                                         <div className="form-group">
                                                             <label htmlFor="diaChiCuThe">Địa chỉ cụ thể:</label>
                                                             <input
                                                                 type="text"
                                                                 id="diaChiCuThe"
                                                                 name="diaChiCuThe"
-                                                                value={isEditing ? editingData.diaChiCuThe : newAddress.diaChiCuThe}
-                                                                onChange={this.handleNewAddressChange}
+                                                                value={this.state.isEditing ? this.state.editingData.diaChiCuThe : this.state.newAddress.diaChiCuThe}
+                                                                onChange={(e) => this.handleInputChange("diaChiCuThe", e.target.value)}
                                                             />
                                                         </div>
                                                         <div className="form-group form-inline">
@@ -626,11 +714,12 @@ class KhachHangComponent extends Component {
                                                                     type="checkbox"
                                                                     id="isDefaultAddress"
                                                                     name="isDefaultAddress"
-                                                                    checked={editingData.isDefaultAddress}
-                                                                    onChange={this.handleNewAddressChange}
+                                                                    checked={this.state.isEditing ? this.state.editingData.isDefaultAddress : this.state.newAddress.isDefaultAddress}
+                                                                    onChange={(e) => this.handleInputChange("isDefaultAddress", e.target.checked)}
                                                                 />
                                                                 Mặc định
                                                             </label>
+
                                                         </div>
 
 
@@ -693,3 +782,4 @@ class KhachHangComponent extends Component {
 }
 
 export default KhachHangComponent;
+
