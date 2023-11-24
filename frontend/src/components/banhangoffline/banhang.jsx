@@ -262,7 +262,6 @@ class BanHangOffline extends Component {
                                         ),
                                         value: option.ma,
                                     }))}
-
                                 />
                                 <Button style={{ color: 'black', backgroundColor: '#fff' }}>Thêm</Button>
 
