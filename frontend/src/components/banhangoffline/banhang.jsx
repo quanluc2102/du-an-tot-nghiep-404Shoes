@@ -76,6 +76,18 @@ class BanHangOffline extends Component {
         });
     };
 
+    handlePayment = () => {
+        this.closeCurrentTab();
+    }
+
+    closeCurrentTab = () => {
+        const { tabList } = this.state;
+        const activeTabKey = tabList.find(tab => tab.active)?.key;
+        if (activeTabKey) {
+            this.onEdit(activeTabKey, 'remove');
+        }
+    }
+
     addToCurrentTab = (product, tabKey) => {
         const { tabList } = this.state;
         console.log(product, tabKey)
@@ -124,15 +136,32 @@ class BanHangOffline extends Component {
             }));
             this.nextTabIndex += 1;
         } else if (action === 'remove') {
-            this.setState(prevState => {
-                const newTabList = prevState.tabList.filter(tab => tab.key !== tabKey);
+
+            const tabIndexToRemove = this.state.tabList.findIndex(tab => tab.key === tabKey);
+
+            if (tabIndexToRemove !== -1) {
+
+                const newTabList = [...this.state.tabList];
+                newTabList.splice(tabIndexToRemove, 1);
+
+                this.setState({ tabList: newTabList });
+
+
                 if (newTabList.length === 0) {
                     this.nextTabIndex = 0;
                 }
-                return { tabList: newTabList };
-            });
-        } else {
+            }
+        } else if (action === 'add') {
+
             alert('Hàng chờ đã đầy');
+
+        } else if (action === 'prev') {
+
+            this.nextTabIndex -= 1;
+
+        } else if (action === 'next') {
+
+            this.nextTabIndex += 1;
         }
     };
 
@@ -168,7 +197,7 @@ class BanHangOffline extends Component {
             <div className="wrapper-sell">
                 <div className="content_sell">
                     <div className="content_sell_left">
-                        <Tabs defaultActiveKey="1" type="editable-card" onEdit={this.onEdit}>
+                        <Tabs defaultActiveKey="1" type="editable-card" onEdit={this.onEdit} activeKey={this.nextTabIndex.toString()}>
                             {this.state.tabList && this.state.tabList.map((tabinfo, index) => {
                                 return (
                                     <Tabs.TabPane tab={<span><ProfileOutlined /> {tabinfo.tab}</span>}
@@ -194,7 +223,7 @@ class BanHangOffline extends Component {
                                                     <Col span={5} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center', textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }} > {product.sanPham.ten} </Col>
                                                     <Col span={2} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center' }} > <input type="number" className="soLuong" min="1" style={{ width: '50px' }} value={product.quantity} /></Col>
                                                     <Col span={4} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center' }} >{product.donGia} VND</Col>
-                                                    <Col span={5} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center' }} > {product.donGia * product.quantity}VND</Col>
+                                                    <Col span={5} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center' }} > {product.donGia * product.quantity} VND</Col>
                                                     <Col span={1} style={{ transition: 'color 0.3s' }}>
                                                         <DeleteOutlined
                                                             onClick={() => this.onDelete(product.ma)}
@@ -297,7 +326,7 @@ class BanHangOffline extends Component {
                                     </Col>
                                     <Col style={{ borderStyle: 'solid', borderTop: 'none', borderRight: 'none', borderLeft: 'none', borderWidth: '1px', paddingBottom: '10px' }}>
                                         <Col style={{ fontWeight: 'bold', fontSize: '16px', textAlign: 'right', margin: '5px 0px 5px 0px' }}><span style={{ color: 'red' }}> {Math.max(0, this.getTotalAmount() - 0)}</span></Col>
-                                        <Col style={{ fontWeight: 'bold', fontSize: '16px', textAlign: 'right' }}><InputNumber min={1} onChange={this.onChangePay} style={{ border: 'none', fontSize: '19px', width: '210px' }} /></Col>
+                                        <Col style={{ fontWeight: 'bold', fontSize: '16px', textAlign: 'right' }}> <InputNumber min={1} onChange={this.onChangePay} style={{ border: 'none', fontSize: '19px', width: '210px' }} /></Col>
                                     </Col>
                                 </div>
                             </div>
