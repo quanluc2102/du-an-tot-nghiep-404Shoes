@@ -1,5 +1,6 @@
 import React, { Component } from "react";
-import './banhangoff.css'
+import './banhangoff.css';
+import { toast } from 'react-toastify';
 import {
     Button,
     Col,
@@ -27,7 +28,7 @@ class BanHangOffline extends Component {
             tabList: [],
             selectedRowKeys: [],
             loading: false,
-
+            sanPhamChiTietList:[],
             productList: [
                 {
                     id: 1,
@@ -45,11 +46,59 @@ class BanHangOffline extends Component {
     }
 
     componentDidMount() {
+
         BanHangService.getSPCT().then((res) => {
             this.setState({ sanPhamChiTiet: res.data })
         }).catch((error) => {
             console.error("Error fetching data:", error);
         });
+
+    }
+
+    add = async (e) => {
+        e.preventDefault();
+
+        const confirm = window.confirm('Bạn xác nhận muốn thanh toán hóa đơn này chứ?');
+        if (!confirm) {
+            return;
+        }
+
+        const ngayTao = new Date().toISOString();
+
+        const thanhToan = {
+
+            sanPhamChiTietList: this.state.selectedProducts,
+            
+            hoaDon: {
+                tongTien: this.getTotalAmount(),
+                ghiChu: document.getElementById("ghiChuDonHang").value
+            },
+        };
+
+        try {
+
+            const response = await BanHangService.createHoaDon(thanhToan, {
+                // headers: { 'Content-Type': 'application/json' }
+            });
+
+            if (response.status === 200) {
+                toast.done('Thanh toán thành công!!!!');
+                console.log(thanhToan);
+
+            } else {
+                toast.error('Thanh toán thất bại!!!!');
+                console.log(thanhToan);
+            }
+        } catch (error) {
+            if (error.response && error.response.status === 400) {
+                toast.error('Lỗi dữ liệu không hợp lệ, vui lòng kiểm tra lại.');
+                console.log(thanhToan);
+            } else {
+                console.error('Error', error);
+                console.log(thanhToan);
+                toast.error('Có lỗi khi thanh toán, vui lòng thử lại!!!!');
+            }
+        }
     }
 
     getTotalQuantity = () => {
@@ -313,7 +362,7 @@ class BanHangOffline extends Component {
                                         <Col style={{ fontSize: '16px', marginTop: '5px ' }}>Giảm giá:</Col>
                                     </Col>
                                     <Col style={{ width: '55%', borderStyle: 'solid', borderTop: 'none', borderRight: 'none', borderLeft: 'none', borderWidth: '1px' }}>
-                                        <Col style={{ fontSize: '16px', textAlign: 'right', margin: '5px 0px 5px 0px' }}><span style={{ color: 'red' }}>{this.getTotalAmount()}</span></Col>
+                                        <Col style={{ fontSize: '16px', textAlign: 'right', margin: '5px 0px 5px 0px' }}><span id="tongTien" style={{ color: 'red' }}>{this.getTotalAmount()}</span></Col>
                                         <Col style={{ fontSize: '16px', textAlign: 'right' }}><Input type="text" placeholder="Nhập mã..." style={{ width: '120px', float: 'left' }} /> <Button style={{ maxWidth: '75px', textAlign: 'center' }}>Áp dụng</Button></Col>
                                         <Col style={{ fontSize: '16px', textAlign: 'right', marginTop: '5px' }}>0</Col>
                                     </Col>
@@ -342,12 +391,12 @@ class BanHangOffline extends Component {
                             </Flex>
                         </div>
                         <div>
-                            <Input placeholder="Nhập ghi chú đơn hàng" />
+                            <Input id="ghiChuDonHang" placeholder="Nhập ghi chú đơn hàng" />
                             <br />
                             <br />
                             <Flex justify="space-between">
                                 <Button style={{ width: '40%', height: '70px', backgroundColor: 'rgba(255, 255, 0, 0.3)', fontWeight: 'bolder', fontSize: '20px' }}>In tạm tính</Button>
-                                <Button style={{ width: '55%', height: '70px', backgroundColor: 'rgba(144, 238, 144)', fontWeight: 'bolder', fontSize: '20px' }}>Thanh toán</Button>
+                                <Button style={{ width: '55%', height: '70px', backgroundColor: 'rgba(144, 238, 144)', fontWeight: 'bolder', fontSize: '20px' }} onClick={this.add}>Thanh toán</Button>
                             </Flex>
                         </div>
                     </div>

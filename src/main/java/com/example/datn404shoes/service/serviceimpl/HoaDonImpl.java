@@ -19,6 +19,7 @@ public class HoaDonImpl implements HoaDonService {
     @Override
     public HoaDon add(HoaDon hd) {
         hd.setKieuHoaDon(0);
+        hd.setMaHoaDon("HD" + hd.getId());
         hd.setTen(null);
         hd.setSdt(null);
         hd.setEmail(null);
