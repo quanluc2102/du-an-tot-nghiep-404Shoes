@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import './banhangoff.css';
 import { toast } from 'react-toastify';
 import {
-    Button,
     Col,
     Table,
     Tabs,
@@ -16,6 +15,8 @@ import {
 } from "antd";
 import { ProfileOutlined, DeleteOutlined } from "@ant-design/icons/lib/icons";
 import BanHangService from "../../services/banhangservice/BanHangService";
+import QrScanner from 'react-qr-scanner';
+import { Modal, Button } from 'react-bootstrap';
 
 const { Search } = Input;
 class BanHangOffline extends Component {
@@ -28,7 +29,10 @@ class BanHangOffline extends Component {
             tabList: [],
             selectedRowKeys: [],
             loading: false,
-            sanPhamChiTietList:[],
+            sanPhamChiTietList: [],
+            isQRReaderOn: false,
+            showModal: false,
+            result: 'No QR code scanned yet',
             productList: [
                 {
                     id: 1,
@@ -55,6 +59,55 @@ class BanHangOffline extends Component {
 
     }
 
+    handleCloseModal = () => {
+        this.setState({ showModal: false });
+    };
+    handleShowModal = () => {
+        this.setState({ showModal: true });
+    };
+    handleError = (err) => {
+        console.error(err);
+    };
+    toggleQRReader = () => {
+        this.setState((prevState) => ({
+            isQRReaderOn: !prevState.isQRReaderOn,
+            isQRCodeScanned: false, // Reset the flag when turning off the QR scanner
+            result: 'No QR code scanned yet', // Clear the previous QR code result
+        }));
+    };
+
+    handleScan = (data) => {
+        const { isQRCodeScanned, selectedProducts, sanPhamChiTiet } = this.state;
+
+        if (data && data.text && typeof data.text === 'string' && !isQRCodeScanned) {
+            // Set the flag to true to prevent further scans until the product is added
+            this.setState({ isQRCodeScanned: true });
+
+            // Assuming the slicedMaQR is the value you want to extract from the QR code
+            const slicedMaQR = data.text.slice(5);
+
+            // Check if the product is already in selectedProducts
+            const existingProduct = selectedProducts.find(product => product.ma === slicedMaQR);
+
+            if (!existingProduct) {
+                // If the product is not in selectedProducts, add it with quantity 1
+                const productToAdd = sanPhamChiTiet.find(product => product.ma === slicedMaQR);
+
+                if (productToAdd) {
+                    const updatedSelectedProducts = [...selectedProducts, { ...productToAdd, quantity: 1 }];
+                    this.setState({ selectedProducts: updatedSelectedProducts, showModal: false });
+                } else {
+                    console.error("Product not found with ma:", slicedMaQR);
+                }
+            }
+
+            // Reset the flag after a delay (e.g., 1 second) to allow for the next scan
+            setTimeout(() => {
+                this.setState({ isQRCodeScanned: false });
+            }, 1000);
+        }
+    };
+
     add = async (e) => {
         e.preventDefault();
 
@@ -68,7 +121,7 @@ class BanHangOffline extends Component {
         const thanhToan = {
 
             sanPhamChiTietList: this.state.selectedProducts,
-            
+
             hoaDon: {
                 tongTien: this.getTotalAmount(),
                 ghiChu: document.getElementById("ghiChuDonHang").value
@@ -77,9 +130,7 @@ class BanHangOffline extends Component {
 
         try {
 
-            const response = await BanHangService.createHoaDon(thanhToan, {
-                // headers: { 'Content-Type': 'application/json' }
-            });
+            const response = await BanHangService.createHoaDon(thanhToan);
 
             if (response.status === 200) {
                 toast.done('Thanh toán thành công!!!!');
@@ -242,6 +293,14 @@ class BanHangOffline extends Component {
     };
 
     render() {
+        const { isQRReaderOn, result } = this.state;
+        // Kiểm tra xem result có giá trị và có thuộc tính 'text' không
+        if (result && result.text) {
+            const slicedMaQR = result.text.slice(5); // hoặc result.text.substring(4);
+            console.log(slicedMaQR);
+        } else {
+            console.error("Biến result không có giá trị hoặc không có thuộc tính 'text'.");
+        }
         return (
             <div className="wrapper-sell">
                 <div className="content_sell">
@@ -314,8 +373,34 @@ class BanHangOffline extends Component {
                                 />
                                 <Button style={{ color: 'black', backgroundColor: '#fff' }}>Thêm</Button>
 
-                                <Button style={{ float: 'right', marginRight: '20px', color: 'black', backgroundColor: '#fff' }}>Quét QR</Button>
+                                <Button style={{ color: 'black', backgroundColor: '#fff' }}>Thêm</Button>
 
+
+                                <Button variant="btn btn-outline-primary" onClick={this.handleShowModal}>
+                                    Quét QR
+                                </Button>
+                                <Modal show={this.state.showModal} onHide={this.handleCloseModal} backdrop="static">
+                                    <Modal.Header closeButton>
+                                        <Modal.Title>Quét QR</Modal.Title>
+                                    </Modal.Header>
+                                    <Modal.Body>
+                                        <Button style={{ float: 'right', marginRight: '20px', color: 'black', backgroundColor: '#fff' }} onClick={this.toggleQRReader}>
+                                            {isQRReaderOn ? 'Turn Off QR Scanner' : 'Turn On QR Scanner'}
+                                        </Button>
+                                        <div>
+                                            {isQRReaderOn && (
+                                                <QrScanner
+                                                    ref={this.myRef}
+                                                    onScan={this.handleScan}
+                                                    onError={this.handleError}
+                                                    style={{ width: '300px', height: '300px' }}
+                                                />
+                                            )}
+                                            <p>QR Code Result: {result.text}</p>
+                                        </div>
+                                        {this.popupContent}
+                                    </Modal.Body>
+                                </Modal>
                             </div>
                             <Flex wrap="wrap">
                                 {this.state.sanPhamChiTiet && this.state.sanPhamChiTiet.map((sanPhamChiTiet, index) => {
