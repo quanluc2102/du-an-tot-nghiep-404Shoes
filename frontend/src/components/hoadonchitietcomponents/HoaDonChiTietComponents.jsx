@@ -268,7 +268,7 @@ class HoaDonChiTietComponents extends Component {
                 </div>
                 <br />
 
-                <section className="section_hoa_don_chi_tiet dashboard">
+                <section className="section dashboard">
                     <div className="row">
                         <div className="col-lg-8">
                             <div className="row">

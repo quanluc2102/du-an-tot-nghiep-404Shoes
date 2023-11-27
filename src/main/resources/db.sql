@@ -189,7 +189,7 @@ CREATE TABLE hoa_don (
                          phi_ship FLOAT,
                          tien_giam FLOAT,
                          tong_tien_sau_giam FLOAT,
-                         ten NVARCHAR(255) NOT NULL,
+                         ten NVARCHAR(255) NULL,
                          sdt NVARCHAR(11),
                          email NVARCHAR(255),
                          dia_chi_cu_the NVARCHAR(255),

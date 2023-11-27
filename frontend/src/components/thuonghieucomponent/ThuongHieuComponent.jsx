@@ -251,7 +251,7 @@ class ThuongHieuComponent extends Component {
                 </div>
 
 
-                <section className="section_thuong_hieu dashboard">
+                <section className="section dashboard">
                     <div className="row">
 
                         <div className="col-lg-8">

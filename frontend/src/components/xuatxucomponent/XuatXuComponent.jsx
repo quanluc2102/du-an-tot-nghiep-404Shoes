@@ -244,7 +244,7 @@ class XuatXuComponent extends Component {
                 </div>
 
 
-                <section className="section_xuat_xu dashboard">
+                <section className="section dashboard">
                     <div className="row">
 
                         <div className="col-lg-8">

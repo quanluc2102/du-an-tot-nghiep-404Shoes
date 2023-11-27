@@ -1,12 +1,9 @@
 package com.example.datn404shoes.controller;
 
 import com.example.datn404shoes.entity.HoaDonChiTiet;
-import com.example.datn404shoes.entity.SanPhamChiTiet;
 import com.example.datn404shoes.service.serviceimpl.HoaDonChiTietimpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
