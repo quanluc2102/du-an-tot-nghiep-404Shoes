@@ -106,7 +106,7 @@ class ListDanhMucComponent extends Component {
             this.setState({errorsAdd: {...this.state.errorsAdd, ten: ""}});
         }
 
-        if (!isNaN(this.state.danhMucAdd.ten)) {
+        if (!/^[a-zA-Z\sàáảãạăắằẳẵặâấầẩẫậèéẹêềếểễệđìíỉĩịòóỏõọôồốổỗộơờớởỡợùúủũụưừứửữựỳýỷỹỵÀÁẢÃẠĂẮẰẲẴẶÂẤẦẨẪẬÈÉẺẼẸÊỀẾỂỄỆĐÌÍỈĨỊÒÓỎÕỌÔỒỐỔỖỘƠỜỚỞỠỢÙÚỦŨỤƯỪỨỬỮỰỲÝỶỸỴ]+$/.test(this.state.danhMucAdd.ten)) {
             this.setState({errorsAdd: {...this.state.errorsAdd, ten: "Tên phải là chữ!"}});
             toast.error("Tên phải là chữ!"); // Hiển thị thông báo lỗi
             return;
@@ -166,6 +166,13 @@ class ListDanhMucComponent extends Component {
             this.setState({errorsUpdate: {...this.state.errorsUpdate, ten: ""}});
         }
 
+        if (!/^[a-zA-Z\sàáảãạăắằẳẵặâấầẩẫậèéẹêềếểễệđìíỉĩịòóỏõọôồốổỗộơờớởỡợùúủũụưừứửữựỳýỷỹỵÀÁẢÃẠĂẮẰẲẴẶÂẤẦẨẪẬÈÉẺẼẸÊỀẾỂỄỆĐÌÍỈĨỊÒÓỎÕỌÔỒỐỔỖỘƠỜỚỞỠỢÙÚỦŨỤƯỪỨỬỮỰỲÝỶỸỴ]+$/.test(this.state.danhMucUpdate.ten)) {
+            this.setState({errorsUpdate: {...this.state.errorsUpdate, ten: "Tên phải là chữ!"}});
+            toast.error("Tên phải là chữ!"); // Hiển thị thông báo lỗi
+            return;
+        } else {
+            this.setState({errorsUpdate: {...this.state.errorsUpdate, ten: ""}});
+        }
 
         if (!this.state.danhMucUpdate.trangThai) {
             this.setState({errorsUpdate: {...this.state.errorsUpdate, trangThai: "Trạng thái không được bỏ trống!"}});
