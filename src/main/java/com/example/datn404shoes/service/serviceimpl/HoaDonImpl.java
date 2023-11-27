@@ -29,7 +29,6 @@ public class HoaDonImpl implements HoaDonService {
         hd.setXaPhuongThiTran(null);
         hd.setNgayTao(Date.valueOf(LocalDate.now()));
         hd.setNgayCapNhat(Date.valueOf(LocalDate.now()));
-
         return hoaDonRepository.save(hd);
     }
 

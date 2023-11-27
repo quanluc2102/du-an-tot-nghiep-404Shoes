@@ -65,11 +65,11 @@ public class HoaDonController {
             HoaDon hoaDon = thanhToanDTO.getHoaDon();
 
             // Đặt ngày tạo là ngày hiện tại
-            hoaDon.setNgayTao(Date.valueOf(LocalDate.now()));
+            // hoaDon.setNgayTao(Date.valueOf(LocalDate.now()));
 
             // Đặt trạng thái và kiểu đơn hàng theo yêu cầu
-            hoaDon.setTrangThai(6);
-            hoaDon.setKieuHoaDon(0);
+//            hoaDon.setTrangThai(6);
+//            hoaDon.setKieuHoaDon(0);
 
             // Thêm mới đơn hàng và lấy về đơn hàng mới nhất
             HoaDon hoaDonMoiNhat = hoaDonImpl.add(hoaDon);
