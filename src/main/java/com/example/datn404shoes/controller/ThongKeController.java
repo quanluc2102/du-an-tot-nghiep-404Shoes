@@ -105,4 +105,40 @@ public class ThongKeController {
         return thongKeRepository.countHoaDonNam();
     }
 
+
+
+
+
+    //hoadon huy
+
+
+    @GetMapping("/hoa_don_huy_ngay")
+    public Long getHoaDonHuyNgay() {
+        return thongKeRepository.countHoaDonHuyNgay();
+    }
+
+    @GetMapping("/hoa_don_huy_tuan")
+    public Long getHoaDonHuyTuan() {
+        LocalDate currentDate = LocalDate.now();
+        LocalDate startOfWeek = currentDate.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
+        Date startDate = Date.valueOf(startOfWeek);
+        Date endDate = Date.valueOf(currentDate);
+        return thongKeRepository.countHoaDonHuyTuan(startDate, endDate);
+    }
+
+    @GetMapping("/hoa_don_huy_thang")
+    public Long getHoaDonHuyThang() {
+        return thongKeRepository.countHoaDonHuyThang();
+    }
+
+    @GetMapping("/hoa_don_huy_quy")
+    public Long getHoaDonHuyQuy() {
+        return thongKeRepository.countHoaDonHuyQuy();
+    }
+
+    @GetMapping("/hoa_don_huy_nam")
+    public Long getHoaDonHuyNam() {
+        return thongKeRepository.countHoaDonHuyNam();
+    }
+
 }

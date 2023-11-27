@@ -149,7 +149,7 @@ class KichThuocComponent extends Component {
             this.setState({ errorsUpdate: { ...this.state.errorsUpdate, giaTri: "" } });
         }
 
-        if (isNaN(this.state.kichThuocUpdate.giaTri)) {
+        if (/^[a-zA-Z\sàáảãạăắằẳẵặâấầẩẫậèéẹêềếểễệđìíỉĩịòóỏõọôồốổỗộơờớởỡợùúủũụưừứửữựỳýỷỹỵÀÁẢÃẠĂẮẰẲẴẶÂẤẦẨẪẬÈÉẺẼẸÊỀẾỂỄỆĐÌÍỈĨỊÒÓỎÕỌÔỒỐỔỖỘƠỜỚỞỠỢÙÚỦŨỤƯỪỨỬỮỰỲÝỶỸỴ]+$/.test(this.state.kichThuocUpdate.giaTri)) {
             this.setState({ errorsUpdate: { ...this.state.errorsUpdate, giaTri: "Giá trị phải là số!" } });
             return;
         } else {
