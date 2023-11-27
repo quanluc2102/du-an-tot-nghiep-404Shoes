@@ -12,4 +12,5 @@ public interface HoaDonService {
     List<HoaDon> getAll();
     HoaDon getOne(Long id);
     void chuyenTrangThai(HoaDonService hoaDon);
+    HoaDon huyHoaDon(Long id);
 }

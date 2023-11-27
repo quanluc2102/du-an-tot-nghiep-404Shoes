@@ -66,4 +66,11 @@ public class HoaDonImpl implements HoaDonService {
     public void chuyenTrangThai(HoaDonService hoaDon) {
 
     }
+
+    @Override
+    public HoaDon huyHoaDon(Long id) {
+        HoaDon hoaDon1 = hoaDonRepository.findById(id).get();
+        hoaDon1.setTrangThai(5);
+        return hoaDonRepository.save(hoaDon1);
+    }
 }
