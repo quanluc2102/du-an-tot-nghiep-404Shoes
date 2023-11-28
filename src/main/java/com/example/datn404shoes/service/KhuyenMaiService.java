@@ -1,5 +1,6 @@
 package com.example.datn404shoes.service;
 
+import com.example.datn404shoes.entity.DanhMuc;
 import com.example.datn404shoes.entity.KhuyenMai;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -30,7 +31,7 @@ public interface KhuyenMaiService {
 
     void imPortExcel(MultipartFile file);
 
-    void thayDoiTrangThai(Long id);
+    KhuyenMai thayDoiTrangThai(Long id, KhuyenMai khuyenMai);
 
     boolean isKhuyenMaiNameUnique(String name);
 }

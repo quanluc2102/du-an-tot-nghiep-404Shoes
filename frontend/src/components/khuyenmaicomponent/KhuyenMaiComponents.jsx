@@ -3,6 +3,7 @@ import KhuyenMaiService from '../../services/khuyenmaiservice/KhuyenMaiService';
 import ReactPaginate from 'react-paginate';
 import moment from 'moment';
 import './KhuyenMaiComponentStyle.css';
+import danhmucservice from "../../services/danhmucservice/danhmucservice";
 
 class KhuyenMaiComponents extends Component {
     constructor(props) {
@@ -146,6 +147,22 @@ class KhuyenMaiComponents extends Component {
         window.location.href = `/khuyenMaiDetail/${id}`;
     };
 
+    toggleKhuyenMai(id, currentTrangThai) {
+        const confirmed = window.confirm('Bạn có chắc chắn muốn thay đổi trạng thái?');
+        if (!confirmed) {
+            return; // Người dùng bấm "Cancel", không thực hiện thêm
+        }
+        const newTrangThai = currentTrangThai === 0 ? 3 : currentTrangThai === 1 ? 3 : 3 ; // Chuyển đổi trạng thái
+        KhuyenMaiService.updateDanhMucTrangThai({trangThai: newTrangThai}, id).then((res) => {
+            let khuyenMaiCapNhat = res.data;
+            this.setState(prevState => ({
+                khuyenMai: prevState.khuyenMai.map(km =>
+                    km.id === khuyenMaiCapNhat.id ? khuyenMaiCapNhat : km
+                )
+            }));
+        });
+    }
+
     add = () => {
         window.location.href = `/khuyenMaiAdd`;
     };
@@ -265,13 +282,13 @@ class KhuyenMaiComponents extends Component {
                                                 <tr>
                                                     <th>Số thứ tự</th>
                                                     <th>Mã giảm giá</th>
-                                                    <th>Tên</th>
+                                                    {/*<th>Tên</th>*/}
                                                     <th>Mô tả</th>
                                                     <th>Ngày bắt đầu</th>
                                                     <th>Ngày kết thúc</th>
                                                     <th>Giảm giá</th>
-                                                    <th>Kiểu khuyến mãi</th>
-                                                    <th>Điều kiện</th>
+                                                    {/*<th>Kiểu khuyến mãi</th>*/}
+                                                    <th>Điều kiện áp dụng</th>
                                                     <th>Số lượng</th>
                                                     <th>Trạng thái</th>
                                                     <th>Thao tác</th>
@@ -282,7 +299,7 @@ class KhuyenMaiComponents extends Component {
                                                     <tr key={km.id}>
                                                         <td>{index + 1}</td>
                                                         <td>{km.ma}</td>
-                                                        <td>{km.ten}</td>
+                                                        {/*<td>{km.ten}</td>*/}
                                                         <td>{km.moTa}</td>
                                                         <td>
                                                             {moment(km.batDau).format('YYYY-MM-DD HH:mm:ss')}
@@ -291,14 +308,14 @@ class KhuyenMaiComponents extends Component {
                                                             {moment(km.ketThuc).format('YYYY-MM-DD HH:mm:ss')}
                                                         </td>
                                                         <td>{km.kieuKhuyenMai===1?km.giamGia + '%': km.giamGia + 'VND'}</td>
-                                                        <td>
-                                                            {km.kieuKhuyenMai === 1
-                                                                ? 'Giảm giá theo phần trăm'
-                                                                : km.kieuKhuyenMai === 0
-                                                                    ? 'Giảm giá theo số tiền'
-                                                                    : 'Khuyến mãi khác'}
-                                                        </td>
-                                                        <td>{km.dieuKien}</td>
+                                                        {/*<td>*/}
+                                                        {/*    {km.kieuKhuyenMai === 1*/}
+                                                        {/*        ? 'Giảm giá theo phần trăm'*/}
+                                                        {/*        : km.kieuKhuyenMai === 0*/}
+                                                        {/*            ? 'Giảm giá theo số tiền'*/}
+                                                        {/*            : 'Khuyến mãi khác'}*/}
+                                                        {/*</td>*/}
+                                                        <td>{km.dieuKien} VNĐ</td>
                                                         <td>{km.soLuong}</td>
                                                         <td className={km.trangThai === 0 ? 'badge bg-warning text-dark' : km.trangThai === 1 ? 'badge bg-success' : 'badge bg-danger'}>
                                                             {km.trangThai === 0
@@ -314,6 +331,17 @@ class KhuyenMaiComponents extends Component {
                                                             >
                                                                 <span className="bi bi-info-circle"></span>
                                                             </button>
+                                                            <td>
+                                                                <label className="switch">
+                                                                    <input
+                                                                        type="checkbox"
+                                                                        checked={km.trangThai === 0}
+                                                                        onChange={() => this.toggleKhuyenMai(km.id, km.trangThai)}
+                                                                    />
+
+                                                                    <span className="slider round"></span>
+                                                                </label>
+                                                            </td>
                                                         </td>
                                                     </tr>
                                                 ))}

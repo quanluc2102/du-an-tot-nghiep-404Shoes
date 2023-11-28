@@ -66,19 +66,19 @@ public interface ThongKeRepository extends JpaRepository<HoaDon, Long> {
 
 
 
-    @Query("SELECT COUNT(hd) FROM HoaDon hd WHERE CAST(hd.ngayTao AS DATE) = CURRENT_DATE AND hd.trangThai=6")
+    @Query("SELECT COUNT(hd) FROM HoaDon hd WHERE CAST(hd.ngayTao AS DATE) = CURRENT_DATE AND hd.trangThai=5")
     Long countHoaDonHuyNgay();
 
-    @Query("SELECT COUNT(hd) FROM HoaDon hd WHERE hd.ngayTao >= :startOfWeek AND hd.ngayTao < :endOfWeek AND hd.trangThai=6")
+    @Query("SELECT COUNT(hd) FROM HoaDon hd WHERE hd.ngayTao >= :startOfWeek AND hd.ngayTao < :endOfWeek AND hd.trangThai=5")
     Long countHoaDonHuyTuan(@Param("startOfWeek") Date startOfWeek, @Param("endOfWeek") Date endOfWeek);
 
-    @Query("SELECT COUNT(hd) FROM HoaDon hd WHERE MONTH(hd.ngayTao) = MONTH(CURRENT_DATE) AND YEAR(hd.ngayTao) = YEAR(CURRENT_DATE) AND hd.trangThai=6")
+    @Query("SELECT COUNT(hd) FROM HoaDon hd WHERE MONTH(hd.ngayTao) = MONTH(CURRENT_DATE) AND YEAR(hd.ngayTao) = YEAR(CURRENT_DATE) AND hd.trangThai=5")
     Long countHoaDonHuyThang();
 
-    @Query("SELECT COUNT(hd) FROM HoaDon hd WHERE QUARTER(hd.ngayTao) = QUARTER(CURRENT_DATE) AND YEAR(hd.ngayTao) = YEAR(CURRENT_DATE) AND hd.trangThai=6")
+    @Query("SELECT COUNT(hd) FROM HoaDon hd WHERE QUARTER(hd.ngayTao) = QUARTER(CURRENT_DATE) AND YEAR(hd.ngayTao) = YEAR(CURRENT_DATE) AND hd.trangThai=5")
     Long countHoaDonHuyQuy();
 
-    @Query("SELECT COUNT(hd) FROM HoaDon hd WHERE YEAR(hd.ngayTao) = YEAR(CURRENT_DATE) AND hd.trangThai=6")
+    @Query("SELECT COUNT(hd) FROM HoaDon hd WHERE YEAR(hd.ngayTao) = YEAR(CURRENT_DATE) AND hd.trangThai=5")
     Long countHoaDonHuyNam();
 
 }
