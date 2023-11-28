@@ -6,11 +6,22 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+
+import java.sql.Date;
+import java.util.List;
 
 @Repository
 public interface KhuyenMaiRepository extends JpaRepository<KhuyenMai,Long> {
     boolean existsKhuyenMaiByTen(String name);
 
     Page<KhuyenMai> findAll(Specification<KhuyenMai> specification, Pageable pageable);
+
+    @Query("SELECT km FROM KhuyenMai km " +
+            "WHERE km.trangThai = 1 " +
+            "AND km.soLuong > 0 " +
+            "AND CURRENT_TIMESTAMP BETWEEN km.batDau AND km.ketThuc")
+    List<KhuyenMai> findActivePromotions();
+
 }

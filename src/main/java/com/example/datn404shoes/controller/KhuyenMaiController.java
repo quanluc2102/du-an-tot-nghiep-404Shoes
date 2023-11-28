@@ -44,6 +44,11 @@ public class KhuyenMaiController {
         return ResponseEntity.ok(khuyenMaiServiceImpl.getAllNoPage());
     }
 
+    @GetMapping("hien-thiKMTT")
+    public ResponseEntity<?> getKMTT(Model model) {
+        return ResponseEntity.ok(khuyenMaiServiceImpl.getKMTT());
+    }
+
     @PostMapping("add")
     public ResponseEntity<?> add(Model model,
                                  @RequestBody KhuyenMai khuyenMai, BindingResult bindingResult) {
