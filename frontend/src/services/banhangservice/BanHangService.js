@@ -17,7 +17,6 @@ class BanHangService{
     }
 
     async createHoaDon(thanhToan) {
-        console.log(thanhToan);
         try {
             const response = await axios.post(CREATE_HOA_DON_URL, thanhToan);
             console.log(response.data);
