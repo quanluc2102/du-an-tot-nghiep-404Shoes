@@ -219,6 +219,12 @@ public class SanPhamController {
         return ResponseEntity.ok(b);
     }
 
+    @GetMapping("detail_user/{id}")
+    public ResponseEntity<?> detailUser(@PathVariable("id") long id){
+        SanPham a = sanPhamServiceimpl.getOne(id);
+        return ResponseEntity.ok(a);
+    }
+
     @PutMapping("update/{id}")
     public ResponseEntity<?> update(Model model,
                                     @PathVariable("id") long id, @RequestBody SanPhamRequest sanPham){

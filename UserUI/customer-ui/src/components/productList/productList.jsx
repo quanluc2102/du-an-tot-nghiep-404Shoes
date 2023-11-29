@@ -31,8 +31,8 @@ function ProductList() {
         }
     };
 
-    const changeDetail = () =>{
-        window.location.href=(`/product-detail`);
+    const changeDetail = (id) =>{
+        window.location.href=(`/product-detail/${id}`);
     }
 
     useEffect(() => {
@@ -401,7 +401,7 @@ function ProductList() {
                                         {/* start product card*/}
                                         {/* Display your products here */}
                                         {listSP.map((sp)=> (
-                                            <div className="col-lg-4 mt-4 float-start" key={sp.id} onClick={changeDetail}>
+                                            <div className="col-lg-4 mt-4 float-start" key={sp.id} onClick={()=>changeDetail(sp.id)}>
                                                 <div className="cardProductList text-start " >
                                                     <div className="position-relative">
 
@@ -426,7 +426,7 @@ function ProductList() {
 
                                                         <h4 className="card-title" style={{fontSize:22}}><strong>{sp.ten}</strong></h4>
                                                         <h7 className="card-text">{sp.thuongHieu.ten}</h7>
-                                                        <h5 className="card-text" style={{color:"red"}}>1.000.000 VND</h5>
+                                                        {/*<h5 className="card-text" style={{color:"red"}}>1.000.000 VND</h5>*/}
 
                                                     </div>
                                                 </div>

@@ -1,19 +1,20 @@
 package com.example.datn404shoes.controller;
 
 import com.example.datn404shoes.entity.*;
+import com.example.datn404shoes.repository.GioHangRepository;
+import com.example.datn404shoes.request.AddGioHangRequest;
 import com.example.datn404shoes.service.serviceimpl.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.List;
 
+@CrossOrigin(origins = {"http://localhost:3000","http://localhost:3006"})
 @RestController
 @RequestMapping("payment")
 public class MuaHangController {
@@ -24,6 +25,8 @@ public class MuaHangController {
     HoaDonImpl hoaDonImpl;
     @Autowired
     GioHangServiceImpl gioHangService;
+    @Autowired
+    GioHangRepository gioHangRepository;
     @Autowired
     GioHangChiTietServiceImpl gioHangChiTietService;
     @Autowired
@@ -73,5 +76,25 @@ public class MuaHangController {
         hoaDonChiTietimpl.addNewHDCT(hoaDonChiTiet);
 
         return ResponseEntity.ok(hoaDonImpl.getAll());
+    }
+
+    @PostMapping("add_gio_hang")
+    public ResponseEntity<?> addGioHang(Model model, @RequestBody AddGioHangRequest request) {
+        GioHangChiTiet gioHangChiTiet = new GioHangChiTiet();
+        gioHangChiTiet.setSanPhamChiTietId(request.getSpct());
+//        TaiKhoan tk = TaiKhoan.builder().id(request.getNguoiDung()).build();
+        TaiKhoan tk = TaiKhoan.builder().id(1).build();
+        List<GioHang> listGioHang = gioHangRepository.findAll();
+        Long gioHangId = Long.valueOf(1);
+        for(GioHang list:listGioHang){
+            if(list.getTaiKhoan()==tk){
+                gioHangId=list.getId();
+            }
+        }
+        gioHangChiTiet.setSoLuong(request.getSoLuong());
+        gioHangChiTiet.setGioHangId(GioHang.builder().id(gioHangId).build());
+        gioHangChiTietService.add(gioHangChiTiet);
+        System.out.println(gioHangChiTiet);
+        return ResponseEntity.ok(gioHangChiTiet);
     }
 }
