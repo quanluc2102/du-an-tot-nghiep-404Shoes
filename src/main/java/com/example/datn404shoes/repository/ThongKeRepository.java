@@ -81,4 +81,35 @@ public interface ThongKeRepository extends JpaRepository<HoaDon, Long> {
     @Query("SELECT COUNT(hd) FROM HoaDon hd WHERE YEAR(hd.ngayTao) = YEAR(CURRENT_DATE) AND hd.trangThai=5")
     Long countHoaDonHuyNam();
 
+
+    @Query("SELECT COUNT(spct) FROM SanPhamChiTiet spct")
+    Long countSanPhamChiTietTQ();
+
+    @Query("SELECT COUNT(hoaDon) FROM HoaDon hoaDon")
+    Long countHoaDonTQ();
+
+    @Query("SELECT COUNT(DISTINCT tk.id) FROM TaiKhoan tk WHERE EXISTS (SELECT 1 FROM PhanQuyen pq WHERE pq.taiKhoan = tk AND pq.quyen.id = 2)")
+    Long countDistinctTaiKhoanIdTQ();
+
+
+    @Query("SELECT COUNT(tk) FROM HoaDon tk WHERE tk.trangThai <> 4")
+    Long countHoaDonChuaHoanThanhTQ();
+
+
+    @Query("SELECT spct.id AS san_pham_chi_tiet_id, " +
+            "SUM(hdct.soLuong) AS so_luong_da_ban, " +
+            "CONCAT(sp.ten, ' - ', ms.ten) AS ten_san_pham, " +
+            "spct.donGia, " +
+            "spct.anh " +
+            "FROM HoaDonChiTiet hdct " +
+            "JOIN SanPhamChiTiet spct ON hdct.sanPhamChiTiet.id = spct.id " +
+            "JOIN SanPham sp ON spct.sanPham.id = sp.id " +
+            "JOIN MauSac ms ON spct.mauSac.id = ms.id " +
+            "GROUP BY spct.id, sp.ten, ms.ten, spct.donGia, spct.anh " +
+            "ORDER BY so_luong_da_ban DESC " +
+            "LIMIT 10")
+    List<Object[]> findTop10SanPhamBanChay();
+
+
+
 }

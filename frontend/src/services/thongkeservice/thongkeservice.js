@@ -237,6 +237,46 @@ class ThongKeService {
             });
     }
 
+    countSanPhamChiTietTQ() {
+        const url = `${API_BASE_URL}/tong_so_san_pham`;
+        return axios.get(url)
+            .then(response => response.data)
+            .catch(error => {
+                console.error("Error in getHoaDonNam:", error);
+                throw error;
+            });
+    }
+
+    countHoaDonTQ() {
+        const url = `${API_BASE_URL}/tong_so_hoa_don`;
+        return axios.get(url)
+            .then(response => response.data)
+            .catch(error => {
+                console.error("Error in getHoaDonNam:", error);
+                throw error;
+            });
+    }
+
+    countHoaDonChuaHoanThanhTQ() {
+        const url = `${API_BASE_URL}/hoa_don_chua_hoan_thanh`;
+        return axios.get(url)
+            .then(response => response.data)
+            .catch(error => {
+                console.error("Error in getHoaDonNam:", error);
+                throw error;
+            });
+    }
+
+    countDistinctTaiKhoanIdTQ() {
+        const url = `${API_BASE_URL}/tong_so_nguoi_dung`;
+        return axios.get(url)
+            .then(response => response.data)
+            .catch(error => {
+                console.error("Error in getHoaDonNam:", error);
+                throw error;
+            });
+    }
+
 }
 
 export default new ThongKeService();

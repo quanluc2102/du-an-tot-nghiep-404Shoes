@@ -141,4 +141,28 @@ public class ThongKeController {
         return thongKeRepository.countHoaDonHuyNam();
     }
 
+    @GetMapping("/tong_so_san_pham")
+    public Long countSanPhamChiTietTQ() {
+        return thongKeRepository.countSanPhamChiTietTQ();
+    }
+
+    @GetMapping("/tong_so_hoa_don")
+    public Long countHoaDonTQ() {
+        return thongKeRepository.countHoaDonTQ();
+    }
+
+    @GetMapping("/tong_so_nguoi_dung")
+    public Long countDistinctTaiKhoanIdTQ() {
+        return thongKeRepository.countDistinctTaiKhoanIdTQ();
+    }
+
+    @GetMapping("/hoa_don_chua_hoan_thanh")
+    public Long countHoaDonChuaHoanThanhTQ() {
+        return thongKeRepository.countHoaDonChuaHoanThanhTQ();
+    }
+
+    @GetMapping("/top_san_pham_ban_chay")
+    public List<Object[]> countTopSanPhamBanCHay() {
+        return thongKeRepository.findTop10SanPhamBanChay();
+    }
 }
