@@ -2,6 +2,7 @@ package com.example.datn404shoes.controller;
 
 import com.example.datn404shoes.entity.KhuyenMai;
 import com.example.datn404shoes.service.serviceimpl.BanHangOfflineServiceImpl;
+import com.example.datn404shoes.service.serviceimpl.TaiKhoanServiceimpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -20,6 +21,8 @@ public class BanHangOfflineController {
     @Autowired
     private BanHangOfflineServiceImpl banHangOfflineService;
 
+    @Autowired
+    private TaiKhoanServiceimpl taiKhoanServiceimpl;
     @GetMapping("/danh_sach_km")
     public ResponseEntity<?> danhsachKM(){
        List<KhuyenMai> listKM = banHangOfflineService.danhsachKM();
@@ -30,4 +33,10 @@ public class BanHangOfflineController {
     public ResponseEntity<?> getKhuyenMaiByMa(@PathVariable("ma") String ma){
         return ResponseEntity.ok(banHangOfflineService.getOneByMa(ma));
     }
+
+    @GetMapping("/hienthiKH")
+    public ResponseEntity<?> geKH(){
+        return ResponseEntity.ok(taiKhoanServiceimpl.getNhanVienByQuyenId3());
+    }
+
 }
