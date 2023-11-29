@@ -118,32 +118,31 @@ BanHangService.getKMTT().then((res) => {
 
     add = async (e) => {
         e.preventDefault();
-
+    
+        const { tabProducts, activeTabKey } = this.state;
+        const selectedProducts = tabProducts[activeTabKey] || [];
+    
         const confirm = window.confirm('Bạn xác nhận muốn thanh toán hóa đơn này chứ?');
         if (!confirm) {
             return;
         }
-
+    
         const ngayTao = new Date().toISOString();
-
+    
         const thanhToan = {
-
-            sanPhamChiTietList: this.state.selectedProducts,
-
+            sanPhamChiTietList: selectedProducts,
             hoaDon: {
-                tongTien: this.getTotalAmount(),
+                tongTien: this.getTotalAmount(selectedProducts),
                 ghiChu: document.getElementById("ghiChuDonHang").value
             },
         };
-
+    
         try {
-
             const response = await BanHangService.createHoaDon(thanhToan);
-
+    
             if (response.status === 200) {
                 toast.done('Thanh toán thành công!!!!');
                 console.log(thanhToan);
-
             } else {
                 toast.error('Thanh toán thất bại!!!!');
                 console.log(thanhToan);
@@ -158,7 +157,7 @@ BanHangService.getKMTT().then((res) => {
                 toast.error('Có lỗi khi thanh toán, vui lòng thử lại!!!!');
             }
         }
-    }
+    };
 
     onChangeEnteredAmount = (e) => {
         const enteredAmount = parseFloat(e.target.value) || 0; // Ensure it's a valid number
