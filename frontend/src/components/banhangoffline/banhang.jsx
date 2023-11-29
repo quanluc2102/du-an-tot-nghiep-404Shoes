@@ -24,21 +24,24 @@ class BanHangOffline extends Component {
         super(props);
 
         this.state = {
+            khuyenMai: [],
             selectedProducts: [],
             sanPhamChiTiet: [],
+            activeTabKey: 'tabKey1',
             tabList: [
                 {
                     tab: 'Đơn hàng 1',
                     key: 'tabKey1',
                 },
             ],
+            enteredAmount: 0,
             selectedRowKeys: [],
             loading: false,
             sanPhamChiTietList: [],
             isQRReaderOn: false,
             showModal: false,
             result: 'No QR code scanned yet',
-            activeTabKey: 'tabKey1',
+            
             tabProducts: {
                 tabKey1: [],
                 tabKey2: [],
@@ -58,7 +61,11 @@ class BanHangOffline extends Component {
         }).catch((error) => {
             console.error("Error fetching data:", error);
         });
-
+BanHangService.getKMTT().then((res) => {
+            this.setState({ khuyenMai: res.data })
+        }).catch((error) => {
+            console.error("Error fetching data:", error);
+        });
     }
 
     handleCloseModal = () => {
@@ -153,14 +160,20 @@ class BanHangOffline extends Component {
         }
     }
 
-    getTotalQuantity = () => {
-        const { selectedProducts } = this.state;
-        return selectedProducts.reduce((total, product) => total + product.quantity, 0);
+    onChangeEnteredAmount = (e) => {
+        const enteredAmount = parseFloat(e.target.value) || 0; // Ensure it's a valid number
+        this.setState({ enteredAmount });
+    };
+    getTotalQuantity = (products) => {
+        return products.reduce((total, product) => total + product.quantity, 0);
     };
 
-    getTotalAmount = () => {
-        const { selectedProducts } = this.state;
-        return selectedProducts.reduce((total, product) => total + product.donGia * product.quantity, 0);
+    getTotalAmount = (products) => {
+        if (products) {
+            return products.reduce((total, product) => total + product.donGia * product.quantity, 0);
+        } else {
+            return 0; // or handle it based on your logic
+        }
     };
 
     handlePayment = () => {
@@ -318,7 +331,49 @@ class BanHangOffline extends Component {
         console.log('selectedRowKeys changed: ', newSelectedRowKeys);
         this.setState({ selectedRowKeys: newSelectedRowKeys });
     };
+    handleAddToCart = () => {
+        const { tabProducts, selectedRowKeys, activeTabKey } = this.state;
 
+        // Get the selected products from the state based on selectedRowKeys
+        const selectedProductsToAdd = this.state.sanPhamChiTiet
+            .filter(product => selectedRowKeys.includes(product.ma))
+            .map(product => ({ ...product, quantity: 1 }));
+
+        // Get the existing products in the active tab
+        const existingProducts = tabProducts[activeTabKey] || [];
+
+        // Check if each selected product is already in the active tab
+        selectedProductsToAdd.forEach(selectedProduct => {
+            const existingProductIndex = existingProducts.findIndex(
+                product => product.ma === selectedProduct.ma
+            );
+
+            if (existingProductIndex !== -1) {
+                // If the product is already in the tab, increase its quantity by 1
+                existingProducts[existingProductIndex].quantity += 1;
+            } else {
+                // If the product is not in the tab, add it with quantity 1
+                existingProducts.push(selectedProduct);
+            }
+        });
+
+        // Update the state with the modified tabProducts and clear selectedRowKeys
+        this.setState(prevState => ({
+            tabProducts: {
+                ...prevState.tabProducts,
+                [activeTabKey]: existingProducts,
+            },
+            selectedRowKeys: [], // Clear selectedRowKeys after adding to the cart
+        }));
+
+        // Reset the input value
+        this.setState({ inputValue: '' });
+    };
+    
+    onChangeSearchInput = (e) => {
+        const inputValue = e.target.value;
+        this.setState({ inputValue });
+    };
     render() {
         const { isQRReaderOn, result } = this.state;
 
@@ -328,6 +383,8 @@ class BanHangOffline extends Component {
         } else {
             console.error("Biến result không có giá trị hoặc không có thuộc tính 'text'.");
         }
+        const activeTabKey = this.state.activeTabKey;
+        const activeTabProducts = this.state.tabProducts[activeTabKey] || [];
         return (
             <div className="wrapper-sell">
                 <div className="content_sell">
@@ -358,29 +415,34 @@ class BanHangOffline extends Component {
                         <div>
                             <hr />
                             <div>
-                                <p style={{ fontWeight: 'bolder', fontSize: '20px' }}>Danh sách sản phẩm</p>
+                            <p style={{ fontWeight: 'bolder', fontSize: '20px' }}>Danh sách sản phẩm</p>
                                 <Select
                                     mode="multiple"
                                     style={{ width: '100%', maxWidth: '500px' }}
                                     dropdownStyle={{ maxHeight: '300px', overflowY: 'auto' }}
-                                    optionLabelProp="ma"
+                                    optionLabelProp="label"
+                                    onChange={this.onChangeSearchInput}
                                     placeholder="Tìm kiếm sản phẩm"
                                     options={this.state.sanPhamChiTiet.map((option, index) => ({
                                         label: (
                                             <div style={{ overflowX: 'auto', overflowY: 'auto' }}>
                                                 <div>{index + 1}</div>
-                                                <img style={{ height: '60px', width: '60px', float: 'left' }} src="https://assets.adidas.com/images/h_840,f_auto,q_auto,fl_lossy,c_fill,g_auto/dda507d6073c4f44abb5d314d617250e_9366/Ultra_4DFWD_Running_Shoes_Grey_ID1686_HM1.jpg" />  {/** src={option.sanPham.anh} */}
+                                                <div>
+                                                            {option.anh && <img src={`/niceadmin/img/${option.anh}`} width="100px" height="100px" />}
+
+                                                        </div>
                                                 <div style={{ marginLeft: '75px' }}>{option.sanPham.ten} <br /> {'Size: '}{option.kichThuoc.giaTri} - {'Màu: '}{option.mauSac.ten}</div>
                                                 <div style={{ marginLeft: '75px' }}> {'Giá: '}{option.donGia}{' VND'} - SL: {option.soLuong}</div>
                                             </div>
                                         ),
-                                        value: option.ma,
+                                        value: option.ma+option.sanPham.ten ,
                                     }))}
+
+                                    onChange={(selectedRowKeys) => this.setState({ selectedRowKeys })}
                                 />
-
-                                <Button style={{ color: 'black', backgroundColor: '#fff' }}>Thêm</Button>
-
-
+                                <Button style={{ color: 'black', backgroundColor: '#fff' }} onClick={this.handleAddToCart}>
+                                    Thêm
+                                </Button>
                                 <Button variant="btn btn-outline-primary" onClick={this.handleShowModal}>
                                     Quét QR
                                 </Button>
@@ -427,19 +489,27 @@ class BanHangOffline extends Component {
                         <div>
                             <Select
                                 mode="multiple"
-                                style={{
-                                    width: '100%',
-                                    borderBottomWidth: '10px'
-                                }}
-                                placeholder="Thêm khách hàng vào đơn"
+                                style={{ width: '100%', maxWidth: '500px' }}
+                                dropdownStyle={{ maxHeight: '300px', overflowY: 'auto' }}
                                 optionLabelProp="label"
-                                options={this.state.options}
-                                optionRender={(option) => (
-                                    <Space>
+                                onChange={this.onChangeSearchInput}
+                                placeholder="Thêm khách hàng vào hóa đơn"
+                                options={this.state.khuyenMai.map((option, index) => ({
+                                    label: (
+                                        <div style={{ overflowX: 'auto', overflowY: 'auto' }}>
+                                            <div style={{  color: 'red' }}>Cho hóa đơn tối thiểu :<b> {option.dieuKien}</b> </div>
+                                            <div >Mã giảm giá: {option.ma} <br /> {'Số lượng còn: '}{option.soLuong}</div>
+                                            <div > Giá trị: <b>{option.giamGia} {option.kieuKhuyenMai === 1 ? "%" : option.kieuKhuyenMai === 2 ? "VND" : ""}</b></div>
+                                            <div className={option.trangThai === 0 ? 'badge bg-warning text-dark' : option.trangThai === 1 ? 'badge bg-success' : 'badge bg-danger'}>{option.trangThai === 0
+                                                ? 'Chưa diễn ra'
+                                                : option.trangThai === 1
+                                                    ? 'Đang diễn ra'
+                                                    : 'Đã kết thúc'}</div>
+                                        </div>
 
-                                        {option.data.desc}
-                                    </Space>
-                                )}
+                                    ),
+                                    value: option.ma,
+                                }))}
                             />
                             <div className="checkbox_sell">
                                 <Checkbox onChange={this.onChangeCheckbox}>Giao hàng</Checkbox>
@@ -447,40 +517,77 @@ class BanHangOffline extends Component {
                             <div className="payment_sell">
                                 <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', width: '100%' }}>
                                     <Col>
-                                        <Col style={{ fontSize: '16px', margin: '5px 0px 5px 0px' }}>Tổng tiền: ({this.getTotalQuantity()} sản phẩm)</Col>
+                                        <Col style={{ fontSize: '16px', margin: '5px 0px 5px 0px' }}>Tổng tiền: ({this.getTotalQuantity(activeTabProducts)} sản phẩm)</Col>
                                         <Col style={{ fontSize: '16px' }}>Mã khuyến mãi: </Col>
                                         <Col style={{ fontSize: '16px', marginTop: '5px ' }}>Giảm giá:</Col>
+                                        <Col style={{ fontSize: '16px' }}>Tiền khách đưa </Col>
                                     </Col>
                                     <Col style={{ width: '55%', borderStyle: 'solid', borderTop: 'none', borderRight: 'none', borderLeft: 'none', borderWidth: '1px' }}>
-                                        <Col style={{ fontSize: '16px', textAlign: 'right', margin: '5px 0px 5px 0px' }}><span id="tongTien" style={{ color: 'red' }}>{this.getTotalAmount()}</span></Col>
-                                        <Col style={{ fontSize: '16px', textAlign: 'right' }}><Input type="text" placeholder="Nhập mã..." style={{ width: '120px', float: 'left' }} /> <Button style={{ maxWidth: '75px', textAlign: 'center' }}>Áp dụng</Button></Col>
-                                        <Col style={{ fontSize: '16px', textAlign: 'right', marginTop: '5px' }}>0</Col>
-                                    </Col>
-                                </div>
-                                <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', marginTop: '5px' }}>
-                                    <Col>
-                                        <Col style={{ fontWeight: 'bold', fontSize: '16px', margin: '5px 0px 5px 0px' }}>KHÁCH PHẢI TRẢ </Col>
-                                        <Col style={{ fontWeight: 'bold', fontSize: '16px' }}>Tiền khách đưa</Col>
-                                    </Col>
-                                    <Col style={{ borderStyle: 'solid', borderTop: 'none', borderRight: 'none', borderLeft: 'none', borderWidth: '1px', paddingBottom: '10px' }}>
-                                        <Col style={{ fontWeight: 'bold', fontSize: '16px', textAlign: 'right', margin: '5px 0px 5px 0px' }}><span style={{ color: 'red' }}> {Math.max(0, this.getTotalAmount() - 0)}</span></Col>
-                                        <Col style={{ fontWeight: 'bold', fontSize: '16px', textAlign: 'right' }}> <InputNumber min={1} onChange={this.onChangePay} style={{ border: 'none', fontSize: '19px', width: '210px' }} /></Col>
-                                    </Col>
-                                </div>
-                            </div>
+                                        <Col style={{ fontSize: '16px', textAlign: 'right', margin: '5px 0px 5px 0px' }}><span style={{ color: 'red' }}>{this.getTotalAmount(activeTabProducts)}</span></Col>
+                                        <Col style={{ fontSize: '16px', textAlign: 'left' }}><Select
+                                mode="multiple"
+                                style={{ width: '100%', maxWidth: '500px' }}
+                                dropdownStyle={{ maxHeight: '300px', overflowY: 'auto' }}
+                                optionLabelProp="label"
+                                onChange={this.onChangeSearchInput}
+                                placeholder="thêm khuyến mãi"
+                                options={this.state.khuyenMai.map((option, index) => ({
+                                    label: (
+                                        <div style={{ overflowX: 'auto', overflowY: 'auto' }}>
+                                            <div style={{  color: 'red' }}>Cho hóa đơn tối thiểu :<b> {option.dieuKien} VND</b> </div>
+                                            <div >Mã giảm giá: {option.ma} <br /> {'Số lượng còn: '}{option.soLuong}</div>
+                                            <div > Giá trị: <b>{option.giamGia} {option.kieuKhuyenMai === 1 ? "%" : option.kieuKhuyenMai === 0 ? "VND" : ""}</b></div>
+                                            <div className={option.trangThai === 0 ? 'badge bg-warning text-dark' : option.trangThai === 1 ? 'badge bg-success' : 'badge bg-danger'}>{option.trangThai === 0
+                                                ? 'Chưa diễn ra'
+                                                : option.trangThai === 1
+                                                    ? 'Đang diễn ra'
+                                                    : 'Đã kết thúc'}</div>
+                                        </div>
 
+                                    ),
+                                    value: option.ma + option.soLuong,
+                                }))}
+                            /><Button style={{ maxWidth: '75px', textAlign: 'center' }}>Áp dụng</Button></Col>
+                                        <Col style={{ fontSize: '16px', textAlign: 'right', marginTop: '5px' }}>0</Col>
+                                        <Col style={{ fontSize: '16px', textAlign: 'right' }}><Input
+                                            type="text"
+                                            placeholder="Nhập tiền khách đưa..."
+                                            style={{ width: '240px', float: 'left' }}
+                                            onChange={this.onChangeEnteredAmount}
+                                        /></Col>
+                                    </Col>
+                                </div>
+
+                            </div>
+                            <Flex style={{ marginTop: '10px', marginBottom: '10px', borderStyle: 'solid', borderWidth: '1px', borderTop: 'none', borderLeft: 'none', borderRight: 'none', paddingBottom: '10px' }} justify="space-between" wrap="wrap" gap={"small"} align="center">
+                                {this.state.priceDemo && this.state.priceDemo.map((item, index) => {
+                                    return (
+                                        <Button key={index} style={{ width: '120px', color: 'black', backgroundColor: 'rgba(0,0,0,0.02)' }} shape="round">{item}</Button>
+                                    )
+                                })}
+                            </Flex>
                             <Flex flex={"row"} align="center" justify="space-between">
                                 <p style={{ fontSize: '16px', fontWeight: 'bold' }}>Tiền thừa trả khách</p>
-                                <p style={{ fontSize: '20px', fontWeight: 'bold' }}><span style={{ color: 'red' }}>250.000</span></p>
+                                <p style={{ fontSize: '20px', fontWeight: 'bold' }}>
+                                    {this.state.enteredAmount >= this.getTotalAmount(activeTabProducts) ? (
+                                        <span style={{ color: 'red' }}>
+                                            {this.state.enteredAmount - this.getTotalAmount(activeTabProducts)}
+                                        </span>
+                                    ) : (
+                                        <span style={{ color: 'red' }}>
+                                            Thiếu {this.getTotalAmount(activeTabProducts) - this.state.enteredAmount} VND
+                                        </span>
+                                    )}
+                                </p>
                             </Flex>
                         </div>
                         <div>
-                            <Input id="ghiChuDonHang" placeholder="Nhập ghi chú đơn hàng" />
+                        <Input id="ghiChuDonHang" placeholder="Nhập ghi chú đơn hàng" />
                             <br />
                             <br />
                             <Flex justify="space-between">
                                 <Button style={{ width: '40%', height: '70px', backgroundColor: 'rgba(255, 255, 0, 0.3)', fontWeight: 'bolder', fontSize: '20px' }}>In tạm tính</Button>
-                                <Button style={{ width: '55%', height: '70px', backgroundColor: 'rgba(144, 238, 144)', fontWeight: 'bolder', fontSize: '20px' }} onClick={this.add}>Thanh toán</Button>
+                                <Button style={{ width: '55%', height: '70px', backgroundColor: 'rgba(144, 238, 144)', fontWeight: 'bolder', fontSize: '20px' }}onClick={this.add}>Thanh toán</Button>
                             </Flex>
                         </div>
                     </div>

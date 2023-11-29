@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Date;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -18,10 +19,12 @@ public class HoaDonImpl implements HoaDonService {
 
     @Override
     public HoaDon add(HoaDon hd) {
+long count = hoaDonRepository.count()+1;
         hd.setKieuHoaDon(0);
-        hd.setMaHoaDon("HD" + hd.getId());
+        hd.setMaHoaDon("HD00" + count);
         hd.setTen(null);
         hd.setSdt(null);
+        hd.setTrangThai(6);
         hd.setEmail(null);
         hd.setDiaChiCuThe(null);
         hd.setTinhThanhPho(null);
@@ -80,5 +83,10 @@ public class HoaDonImpl implements HoaDonService {
         HoaDon hoaDon1 = hoaDonRepository.findById(id).get();
         hoaDon1.setTrangThai(5);
         return hoaDonRepository.save(hoaDon1);
+    }
+
+    @Override
+    public long countHoaDons() {
+        return hoaDonRepository.count();
     }
 }
