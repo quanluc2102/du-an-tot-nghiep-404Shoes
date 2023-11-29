@@ -24,7 +24,7 @@ class BanHangOffline extends Component {
         super(props);
 
         this.state = {
-            taiKhoan:[],
+            taiKhoan: [],
             khuyenMai: [],
             selectedProducts: [],
             sanPhamChiTiet: [],
@@ -42,7 +42,7 @@ class BanHangOffline extends Component {
             isQRReaderOn: false,
             showModal: false,
             result: 'No QR code scanned yet',
-            
+
             tabProducts: {
                 tabKey1: [],
                 tabKey2: [],
@@ -58,6 +58,7 @@ class BanHangOffline extends Component {
         };
         this.onChangeSearchInput = this.onChangeSearchInput.bind(this);
         this.nextTabIndex = 0
+        this.handleQuantityChange = this.handleQuantityChange.bind(this);
     }
 
     componentDidMount() {
@@ -264,7 +265,14 @@ class BanHangOffline extends Component {
                 <Col span={2} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center', }}>{product.kichThuoc.giaTri}</Col>
                 <Col span={6} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center', }}>{product.sanPham.ten}</Col>
                 <Col span={2} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center' }}>
-                    <input type="number" className="soLuong" min="1" style={{ width: '50px' }} value={product.quantity} />
+                    <input
+                        type="number"
+                        className="soLuong"
+                        min="1"
+                        style={{ width: '50px' }}
+                        value={product.quantity}
+                        onChange={(e) => this.handleQuantityChange(e, product.ma)}
+                    />
                 </Col>
                 <Col span={3} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center' }}>{product.donGia} VND</Col>
                 <Col span={4} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center' }}>{product.donGia * product.quantity} VND</Col>
@@ -279,7 +287,27 @@ class BanHangOffline extends Component {
             </Col>
         ));
     };
-
+    handleQuantityChange = (e, productId) => {
+        const newQuantity = parseInt(e.target.value, 10);
+        // Update the state with the new quantity for the product with the given productId
+        this.setState((prevState) => {
+           const { activeTabKey, tabProducts } = prevState; // Access activeTabKey from prevState
+           // Update the quantity in the state for the specific product
+           const updatedProducts = tabProducts[activeTabKey].map((product) => {
+              if (product.ma === productId) {
+                 return { ...product, quantity: newQuantity };
+              }
+              return product;
+           });
+           // Update the state with the modified products
+           return {
+              tabProducts: {
+                 ...tabProducts,
+                 [activeTabKey]: updatedProducts,
+              },
+           };
+        });
+    };
     onEdit = (tabKey, action) => {
         if (action === 'add' && this.state.tabList.length < 5) {
             this.setState(prevState => ({
@@ -322,14 +350,14 @@ class BanHangOffline extends Component {
                 if (product.ma === productId) {
                     // Decrease the quantity by 1 if it's greater than 0
                     const newQuantity = Math.max(product.quantity - 1, 0);
-    
+
                     // If the quantity is greater than 0, update the quantity
                     // Otherwise, remove the product from the list
                     return newQuantity > 0 ? { ...product, quantity: newQuantity } : null;
                 }
                 return product;
             });
-    
+
             const updatedTabList = prevState.tabList.map((tab) => {
                 if (tab.key === tabKey) {
                     // Remove the product from the tabList if its quantity becomes 0
@@ -340,7 +368,7 @@ class BanHangOffline extends Component {
                 }
                 return tab;
             });
-    
+
             return {
                 tabProducts: {
                     ...prevState.tabProducts,
@@ -437,7 +465,7 @@ class BanHangOffline extends Component {
                                         key={tabinfo.key}
                                         closable={index >= 0}
                                         forceRender={true}>
-                                        <div style={{ overflowX: 'auto', overflowY: 'auto',width:'750px' }}>
+                                        <div style={{ overflowX: 'auto', overflowY: 'auto', width: '750px' }}>
                                             <Col style={{ backgroundColor: 'rgb(0,0,0,0.2)', height: '50px', padding: '10px', display: 'flex' }}>
                                                 <Col span={1} style={{ fontWeight: 'bold', fontSize: '15px' }} >STT</Col>
                                                 <Col span={2} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center' }} >Ảnh SP</Col>
@@ -516,16 +544,16 @@ class BanHangOffline extends Component {
                                         sanPhamChiTiet.soLuong -= 1
                                     }
                                     return (
-                                        sanPhamChiTiet.soLuong <= 0 ? <></> 
-                                        : (<Flex onClick={() => this.handleProductClick(sanPhamChiTiet, this.state.activeTabKey)} key={index} style={{ width: '50%', overflowX: 'auto', overflowY: 'auto', cursor: 'pointer' }} flex={'row'}>
-                                        <div onClick={handleChangeQuantity} style={{ overflowX: 'auto', overflowY: 'auto' }} className="container_sell">
-                                            <div> <img style={{ height: '60px', width: '60px', float: 'left' }} src={`/niceadmin/img/${sanPhamChiTiet.anh}`} /></div>
-                                            <div style={{ marginLeft: '75px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{sanPhamChiTiet.sanPham.ten}</div>
-                                            <div style={{ marginLeft: '75px' }}>Size: {sanPhamChiTiet.kichThuoc.giaTri} - Màu: {sanPhamChiTiet.mauSac.ten}</div>
-                                            <div style={{ marginLeft: '75px' }}>Giá: {sanPhamChiTiet.donGia} VND</div>
-                                            <div style={{ marginLeft: '75px' }}>SL: {sanPhamChiTiet.soLuong}VND</div>
-                                        </div>
-                                    </Flex>)
+                                        sanPhamChiTiet.soLuong <= 0 ? <></>
+                                            : (<Flex onClick={() => this.handleProductClick(sanPhamChiTiet, this.state.activeTabKey)} key={index} style={{ width: '50%', overflowX: 'auto', overflowY: 'auto', cursor: 'pointer' }} flex={'row'}>
+                                                <div onClick={handleChangeQuantity} style={{ overflowX: 'auto', overflowY: 'auto' }} className="container_sell">
+                                                    <div> <img style={{ height: '60px', width: '60px', float: 'left' }} src={`/niceadmin/img/${sanPhamChiTiet.anh}`} /></div>
+                                                    <div style={{ marginLeft: '75px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{sanPhamChiTiet.sanPham.ten}</div>
+                                                    <div style={{ marginLeft: '75px' }}>Size: {sanPhamChiTiet.kichThuoc.giaTri} - Màu: {sanPhamChiTiet.mauSac.ten}</div>
+                                                    <div style={{ marginLeft: '75px' }}>Giá: {sanPhamChiTiet.donGia} VND</div>
+                                                    <div style={{ marginLeft: '75px' }}>SL: {sanPhamChiTiet.soLuong}VND</div>
+                                                </div>
+                                            </Flex>)
                                     )
                                 })}
                             </Flex>
@@ -544,9 +572,9 @@ class BanHangOffline extends Component {
                                     label: (
                                         <div style={{ overflowX: 'auto', overflowY: 'auto' }}>
                                             <div >{option.thongTinNguoiDung.ten} {option.thongTinNguoiDung.sdt}</div>
-                                            
 
-                                            
+
+
                                         </div>
 
                                     ),
@@ -569,7 +597,7 @@ class BanHangOffline extends Component {
                                         <Col style={{ fontSize: '16px', textAlign: 'left' }}><Select
                                             mode="multiple"
                                             style={{ width: '100%', maxWidth: '500px' }}
-                                            dropdownStyle={{ maxHeight: '300px', overflowY: 'auto',width:'350px' }}
+                                            dropdownStyle={{ maxHeight: '300px', overflowY: 'auto', width: '350px' }}
                                             optionLabelProp="label"
                                             onChange={this.onChangeSearchInput}
                                             placeholder="thêm khuyến mãi"
@@ -629,8 +657,8 @@ class BanHangOffline extends Component {
                             <br />
                             <br />
                             <Flex justify="space-between">
-                                <Button className="customButton" style={{ width: '40%', height: '70px', backgroundColor: 'white',color:'black', fontWeight: 'bolder', borderColor:'black', fontSize: '20px' }}>In tạm tính</Button>
-                                <Button className="customButton" style={{ width: '55%', height: '70px', backgroundColor: 'white',color:'black', fontWeight: 'bolder', borderColor:'black', fontSize: '20px' }} onClick={this.add}>Thanh toán</Button>
+                                <Button className="customButton" style={{ width: '40%', height: '70px', backgroundColor: 'white', color: 'black', fontWeight: 'bolder', borderColor: 'black', fontSize: '20px' }}>In tạm tính</Button>
+                                <Button className="customButton" style={{ width: '55%', height: '70px', backgroundColor: 'white', color: 'black', fontWeight: 'bolder', borderColor: 'black', fontSize: '20px' }} onClick={this.add}>Thanh toán</Button>
                             </Flex>
                         </div>
                     </div>
