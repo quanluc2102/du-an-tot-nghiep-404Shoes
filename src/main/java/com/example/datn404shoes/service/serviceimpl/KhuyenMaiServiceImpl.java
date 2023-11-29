@@ -157,4 +157,9 @@ public class KhuyenMaiServiceImpl implements KhuyenMaiService {
     public boolean isKhuyenMaiNameUnique(String name) {
         return khuyenMaiRepository.existsKhuyenMaiByTen(name);
     }
+
+    @Override
+    public List<KhuyenMai> getKMTT() {
+        return khuyenMaiRepository.findActivePromotions();
+    }
 }

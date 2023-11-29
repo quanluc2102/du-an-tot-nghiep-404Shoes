@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -34,4 +35,6 @@ public interface KhuyenMaiService {
     KhuyenMai thayDoiTrangThai(Long id, KhuyenMai khuyenMai);
 
     boolean isKhuyenMaiNameUnique(String name);
+
+    List<KhuyenMai> getKMTT ();
 }
