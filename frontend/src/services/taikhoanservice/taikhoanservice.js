@@ -14,7 +14,7 @@ const API_BASE_URL_DELETE = "http://localhost:8080/tai_khoan/delete";
 const API_BASE_URL_UPDATE = "http://localhost:8080/tai_khoan/update";
 const API_BASE_URL_UPDATE_QUAN_LY = "http://localhost:8080/tai_khoan/updateQuanLy";
 const API_BASE_URL_UPDATE_NHAN_VIEN = "http://localhost:8080/tai_khoan/updateNhanVien";
-const API_BASE_URL_UPDATE_KHACH_HANG = "http://localhost:8080/tai_khoan/updateKhacHang";
+const API_UPDATE_URL = "http://localhost:8080/tai_khoan/updateKhachHang";
 const TAIKHOAN_API_UPDATEtt_URL = "http://localhost:8080/tai_khoan/updatett";
 class taikhoanservice {
 
@@ -108,9 +108,9 @@ class taikhoanservice {
         return axios.put(API_BASE_URL_UPDATE_NHAN_VIEN + "/" + id, taiKhoan)
     }
 
-    updateKhachHang(taiKhoan, id) {
+    updateKhachHang(id,taiKhoan) {
         console.log(id)
-        return axios.put(API_BASE_URL_UPDATE_KHACH_HANG + "/" + id, taiKhoan)
+        return axios.put(API_UPDATE_URL + "/" + id, taiKhoan)
     }
 
     updateTaiKhoan(taiKhoan, id) {

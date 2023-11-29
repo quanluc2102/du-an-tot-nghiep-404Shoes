@@ -306,7 +306,7 @@ public ResponseEntity<?> updateKhachHang(@PathVariable Long id, @RequestBody Tai
 
             taiKhoan.setThongTinNguoiDung(b);
             taiKhoan.setTrangThai(true);
-            taiKhoan.setAnh(taiKhoanVaThongTin.getFiles().get(0));
+//            taiKhoan.setAnh(taiKhoanVaThongTin.getFiles().get(0));
             serviceimpl.update(id, taiKhoan);
 
             DiaChi diaChi = new DiaChi();
