@@ -335,7 +335,7 @@ class KhuyenMaiComponents extends Component {
                                                                 <label className="switch">
                                                                     <input
                                                                         type="checkbox"
-                                                                        checked={km.trangThai === 0}
+                                                                        checked={km.trangThai === 0||km.trangThai === 1}
                                                                         onChange={() => this.toggleKhuyenMai(km.id, km.trangThai)}
                                                                     />
 

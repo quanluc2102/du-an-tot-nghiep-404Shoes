@@ -34,6 +34,7 @@ import TaiKhoanNVUpdate from "./components/taikhoancomponent/TaiKhoanNVUpdate";
 import TaiKhoanKHComponent from "./components/taikhoancomponent/TaiKhoanKHComponent";
 import TaiKhoanKHUpdate from "./components/taikhoancomponent/TaiKhoanKHUpdate";
 import BanHangOffline from './components/banhangoffline/banhang';
+import TrangTongQuan from "./components/trangtongquan/TrangTongQuan";
 function App() {
   return (
 
@@ -90,6 +91,7 @@ function App() {
             <Route path='/HoaDonChiTiet/:id' component={HoaDonChiTietComponents} />
             <Route path='/thongkedoanhthusanpham' component={ThongKeDoanhThuSanPham} />
             <Route path='/banhangoffline' component={BanHangOffline} />
+            <Route path='/tongquan' component={TrangTongQuan} />
           </Switch>
         </main>
       </Router>
