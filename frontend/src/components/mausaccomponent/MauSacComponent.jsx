@@ -99,7 +99,7 @@ class MauSacComponent extends Component {
         if (!this.state.mauSacAdd.ten) {
             this.setState({errorsAdd: {...this.state.errorsAdd, ten: "Tên màu không được bỏ trống!"}});
             return;
-        } else if (!isNaN(this.state.mauSacAdd.ten)) {
+        } else if (!/^[a-zA-Z\sàáảãạăắằẳẵặâấầẩẫậèéẹêềếểễệđìíỉĩịòóỏõọôồốổỗộơờớởỡợùúủũụưừứửữựỳýỷỹỵÀÁẢÃẠĂẮẰẲẴẶÂẤẦẨẪẬÈÉẺẼẸÊỀẾỂỄỆĐÌÍỈĨỊÒÓỎÕỌÔỒỐỔỖỘƠỜỚỞỠỢÙÚỦŨỤƯỪỨỬỮỰỲÝỶỸỴ]+$/.test(this.state.mauSacAdd.ten)) {
             this.setState({errorsAdd: {...this.state.errorsAdd, ten: "Tên phải là chữ!"}});
             return;
         }
@@ -144,7 +144,7 @@ class MauSacComponent extends Component {
         console.log('nsx' + JSON.stringify(mauSac));
         let id = this.state.mauSacUpdate.id;
 
-        if (!this.state.mauSacUpdate.ten) {
+        if (!/^[a-zA-Z\sàáảãạăắằẳẵặâấầẩẫậèéẹêềếểễệđìíỉĩịòóỏõọôồốổỗộơờớởỡợùúủũụưừứửữựỳýỷỹỵÀÁẢÃẠĂẮẰẲẴẶÂẤẦẨẪẬÈÉẺẼẸÊỀẾỂỄỆĐÌÍỈĨỊÒÓỎÕỌÔỒỐỔỖỘƠỜỚỞỠỢÙÚỦŨỤƯỪỨỬỮỰỲÝỶỸỴ]+$/.test(this.state.mauSacUpdate.ten)) {
             this.setState({errorsUpdate: {...this.state.errorsUpdate, ten: "Tên màu không được bỏ trống!"}});
             return;
         } else if (!isNaN(this.state.mauSacUpdate.ten)) {

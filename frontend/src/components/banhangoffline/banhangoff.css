@@ -1,69 +1,75 @@
-.wrapper-sell {
-    width: 100%;
-    height: 100%;
+/* Reset some default styles */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
 
-.header-sell {
+body {
+    font-family: 'Arial', sans-serif;
+}
+
+/* Make wrapper-sell responsive */
+.wrapper-sell {
     width: 100%;
+    height: auto;
+}
+
+/* Header styling */
+.header-sell {
     display: flex;
-    flex-direction: row;
     align-items: center;
     justify-content: space-between;
     background-color: #0964cf;
+    padding: 10px;
 }
 
 .header_sell_content_left {
     display: flex;
-    flex-direction: row;
-    width: 600px;
-    height: 40px;
-
+    align-items: center;
+    width: 50%; /* Adjust as needed */
 }
 
 .header_sell_content_right {
     display: flex;
-    flex-direction: row;
-
+    align-items: center;
+    justify-content: flex-end;
+    width: 50%; /* Adjust as needed */
 }
 
+/* Content styling */
 .content_sell {
-    width: 100%;
-    height: 100%;
     display: flex;
+    flex-wrap: wrap; /* Allow content to wrap to the next line */
     padding-top: 27px;
-    flex-direction: row;
 }
 
 .content_sell_left {
-    width: 70%;
-    border-right: 5px solid #e5e5e5;
+    flex: 1; /* Take up remaining space */
+    border-right: 2px solid #e5e5e5;
+    padding-right: 10px; /* Add some spacing */
 }
 
 .content_sell_right {
-    width: 30%;
-    height: 100%;
-    padding: 0 3px 0 3px;
-    border-left: 2.5px solid #e5e5e5;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+    flex: 1; /* Take up remaining space */
+    padding: 0 10px 0 10px; /* Add some spacing */
 }
 
+/* Checkbox styling */
 .checkbox_sell {
-    margin: 1px 1px;
-    padding: 2px 2px;
-    border-top: 1px solid black;
-    border-bottom: 1px solid black;
-    border-left: none;
-    border-right: none;
+    margin: 1px;
+    padding: 5px;
+    border: 1px solid black;
 }
 
+/* Payment styling */
 .payment_sell {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
 }
 
+/* Container styling */
 .container_sell {
     border: 1px solid #ddd;
     margin: 5px;
@@ -75,16 +81,17 @@
 
 .container_sell:hover {
     border-color: #2c7605;
-    background-color: 369ff18;
+    background-color: #69ff18; /* Fix the typo in background color */
     border-radius: 10px;
     box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3);
 }
 
+/* Delete icon styling */
 .container_sell .anticon-delete {
     cursor: pointer;
     transition: color 0.3s;
 }
 
-.container:hover .anticon-delete {
+.container_sell:hover .anticon-delete {
     color: red;
 }

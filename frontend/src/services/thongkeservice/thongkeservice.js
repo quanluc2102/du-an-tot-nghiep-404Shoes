@@ -174,6 +174,69 @@ class ThongKeService {
                 throw error;
             });
     }
+
+
+    getHoaDonHuyNgay() {
+        const url = `${API_BASE_URL}/hoa_don_huy_ngay`;
+        return axios.get(url)
+            .then(response => response.data)
+            .catch(error => {
+                console.error("Error in getHoaDonNgay:", error);
+                throw error;
+            });
+    }
+
+    getHoaDonHuyTuan() {
+        // Lấy ngày hiện tại
+        const currentDate = new Date();
+        // Lấy ngày đầu tiên của tuần hiện tại (thứ 2)
+        const startOfWeek = new Date(currentDate);
+        startOfWeek.setDate(currentDate.getDate() - currentDate.getDay() + (currentDate.getDay() === 0 ? -6 : 1));
+
+        // Lấy ngày cuối cùng của tuần hiện tại (Chủ nhật)
+        const endOfWeek = new Date(currentDate);
+        endOfWeek.setDate(currentDate.getDate() - currentDate.getDay() + 7);
+
+        const url = `${API_BASE_URL}/hoa_don_huy_tuan`;
+        return axios.get(url, {params: {startDate: startOfWeek, endDate: endOfWeek}})
+            .then(response => response.data)
+            .catch(error => {
+                console.error("Error in getHoaDonTuan:", error);
+                throw error;
+            });
+    }
+
+
+    getHoaDonHuyThang() {
+        const url = `${API_BASE_URL}/hoa_don_huy_thang`;
+        return axios.get(url)
+            .then(response => response.data)
+            .catch(error => {
+                console.error("Error in getHoaDonThang:", error);
+                throw error;
+            });
+    }
+
+    getHoaDonHuyQuy() {
+        const url = `${API_BASE_URL}/hoa_don_huy_quy`;
+        return axios.get(url)
+            .then(response => response.data)
+            .catch(error => {
+                console.error("Error in getHoaDonQuy:", error);
+                throw error;
+            });
+    }
+
+    getHoaDonHuyNam() {
+        const url = `${API_BASE_URL}/hoa_don_huy_nam`;
+        return axios.get(url)
+            .then(response => response.data)
+            .catch(error => {
+                console.error("Error in getHoaDonNam:", error);
+                throw error;
+            });
+    }
+
 }
 
 export default new ThongKeService();

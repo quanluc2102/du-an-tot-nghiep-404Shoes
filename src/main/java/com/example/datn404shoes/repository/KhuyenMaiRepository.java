@@ -9,7 +9,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+
 import java.sql.Date;
+
 import java.util.List;
 
 @Repository
@@ -18,10 +20,18 @@ public interface KhuyenMaiRepository extends JpaRepository<KhuyenMai,Long> {
 
     Page<KhuyenMai> findAll(Specification<KhuyenMai> specification, Pageable pageable);
 
+
     @Query("SELECT km FROM KhuyenMai km " +
             "WHERE km.trangThai = 1 " +
             "AND km.soLuong > 0 " +
             "AND CURRENT_TIMESTAMP BETWEEN km.batDau AND km.ketThuc")
     List<KhuyenMai> findActivePromotions();
+
+
+    @Query(value = "select km from KhuyenMai km where km.soLuong >= 1 and km.trangThai = 1")
+    List<KhuyenMai> getAllKhuyenMai();
+
+    @Query(value = "select km from KhuyenMai km where km.ma =:ma and km.soLuong >= 1 and km.trangThai = 2")
+    KhuyenMai getOneKmByMa(String ma);
 
 }

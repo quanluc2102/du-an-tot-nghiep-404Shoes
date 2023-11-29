@@ -142,12 +142,17 @@ class TaiKhoanKHComponent extends Component {
             if (!this.state.nguoiDungAdd.ten) {
                 errorAdd.ten = 'Tên không được bỏ trống';
                 isValid = false;
-            } else if (!/^[a-zA-Z ]+$/.test(this.state.nguoiDungAdd.ten)) {
-                errorAdd.ten = 'Tên không được chứa kí tự đặc biệt';
+            } else if (/[!@#$%^&*()_+|~=`{}\[\]:";'<>?,.\\/-]+/.test(this.state.nguoiDungAdd.ten)) {
+                errorAdd.ten = 'Tên không được chứa các kí tự đặc biệt';
+                isValid = false;
+            } else if (/\d/.test(this.state.nguoiDungAdd.ten)) {
+                errorAdd.ten = 'Tên không được chứa số';
                 isValid = false;
             } else {
                 errorAdd.ten = '';
             }
+
+
             if (!this.state.nguoiDungAdd.ngaySinh) {
                 errorAdd.ngaySinh = 'Ngày sinh không được bỏ trống';
                 isValid = false;
@@ -172,9 +177,13 @@ class TaiKhoanKHComponent extends Component {
             if (!this.state.nguoiDungAdd.diaChiCuThe) {
                 errorAdd.diaChiCuThe = 'Địa chỉ cụ thể không được bỏ trống';
                 isValid = false;
+            } else if (/[!@#$%^&*()_+|~=`{}\[\]:";'<>?,.\\/-]+/.test(this.state.nguoiDungAdd.diaChiCuThe)) {
+                errorAdd.diaChiCuThe = 'Địa chỉ cụ thể không được chứa các kí tự đặc biệt';
+                isValid = false;
             } else {
                 errorAdd.diaChiCuThe = '';
             }
+
 
 
 
@@ -199,6 +208,9 @@ class TaiKhoanKHComponent extends Component {
 
             if (!this.state.nguoiDungAdd || !this.state.nguoiDungAdd.sdt) {
                 errorAdd.sdt = 'Số điện thoại không được bỏ trống';
+                isValid = false;
+            } else if (!/^\d+$/.test(this.state.nguoiDungAdd.sdt)) {
+                errorAdd.sdt = 'Số điện thoại chỉ được chứa các chữ số';
                 isValid = false;
             } else {
                 // Kiểm tra độ dài số điện thoại

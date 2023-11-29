@@ -164,7 +164,7 @@ class KhuyenMaiComponents extends Component {
                                     <div className="card recent-sales overflow-auto">
                                         <div className="card-body">
                                             <h5 className="card-title">Phiếu giảm giá</h5>
-                                            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                                            <div >
                                                 <div className="col-lg-12">
                                                     <h5 className="card-title" style={{ margin: 10 }}>
                                                         Lọc và tìm kiếm

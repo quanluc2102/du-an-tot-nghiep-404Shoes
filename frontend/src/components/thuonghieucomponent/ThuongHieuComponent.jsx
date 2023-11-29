@@ -95,7 +95,7 @@ class ThuongHieuComponent extends Component {
         if (!this.state.thuongHieuAdd.ten) {
             this.setState({ errorsAdd: { ...this.state.errorsAdd, ten: "Tên màu không được bỏ trống!" } });
             return;
-        } else if (!isNaN(this.state.thuongHieuAdd.ten)) {
+        } else if (!/^[a-zA-Z\sàáảãạăắằẳẵặâấầẩẫậèéẹêềếểễệđìíỉĩịòóỏõọôồốổỗộơờớởỡợùúủũụưừứửữựỳýỷỹỵÀÁẢÃẠĂẮẰẲẴẶÂẤẦẨẪẬÈÉẺẼẸÊỀẾỂỄỆĐÌÍỈĨỊÒÓỎÕỌÔỒỐỔỖỘƠỜỚỞỠỢÙÚỦŨỤƯỪỨỬỮỰỲÝỶỸỴ]+$/.test(this.state.thuongHieuAdd.ten)) {
             this.setState({ errorsAdd: { ...this.state.errorsAdd, ten: "Tên phải là chữ!" } });
             return;
         }
@@ -144,7 +144,7 @@ class ThuongHieuComponent extends Component {
         if (!this.state.thuongHieuUpdate.ten) {
             this.setState({ errorsUpdate: { ...this.state.errorsUpdate, ten: "Tên thương hiệu không được bỏ trống!" } });
             return;
-        } else if (!isNaN(this.state.thuongHieuUpdate.ten)) {
+        } else if (!/^[a-zA-Z\sàáảãạăắằẳẵặâấầẩẫậèéẹêềếểễệđìíỉĩịòóỏõọôồốổỗộơờớởỡợùúủũụưừứửữựỳýỷỹỵÀÁẢÃẠĂẮẰẲẴẶÂẤẦẨẪẬÈÉẺẼẸÊỀẾỂỄỆĐÌÍỈĨỊÒÓỎÕỌÔỒỐỔỖỘƠỜỚỞỠỢÙÚỦŨỤƯỪỨỬỮỰỲÝỶỸỴ]+$/.test(this.state.thuongHieuUpdate.ten)) {
             this.setState({ errorsUpdate: { ...this.state.errorsUpdate, ten: "Tên phải là chữ!" } });
             return;
         }

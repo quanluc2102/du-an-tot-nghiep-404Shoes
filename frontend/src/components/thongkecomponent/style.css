@@ -1,23 +1,178 @@
 
 /* TichDiemComponent.css */
-.popup-entering,
-.popup-exiting,
-.popup-exited {
-    opacity: 0;
-    display: none;
-    transition: opacity 0.5s ease-in-out;
+/*.popup-entering,*/
+/*.popup-exiting,*/
+/*.popup-exited {*/
+/*    opacity: 0;*/
+/*    display: none;*/
+/*    transition: opacity 0.5s ease-in-out;*/
+/*}*/
+
+/*.popup-entered {*/
+/*    opacity: 1;*/
+/*    display: block;*/
+/*}*/
+
+/*.section_thongke{*/
+/*    margin: 20px auto;*/
+/*    padding: 20px;*/
+/*    background-color: #fff;*/
+/*    float: right;*/
+/*    min-width: 1010px;*/
+/*    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);*/
+/*}*/
+
+/* CSS cho phần tựa đề */
+.pagetitle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
 }
 
-.popup-entered {
-    opacity: 1;
-    display: block;
+.pagetitle h1 {
+    font-size: 24px;
 }
 
-.section_thongke{
-    margin: 20px auto;
+/* CSS cho breadcrumb */
+.breadcrumb {
+    list-style: none;
+    display: flex;
+    font-size: 14px;
+}
+
+.breadcrumb li {
+    margin-right: 5px;
+}
+
+/* CSS cho card info */
+.card.info-card {
+    margin-bottom: 20px;
+}
+
+.card.info-card .card-body {
     padding: 20px;
-    background-color: #fff;
-    float: right;
-    min-width: 1010px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
+
+.card.info-card h5.card-title {
+    font-size: 18px;
+    margin-bottom: 15px;
+}
+
+.card.info-card .filter {
+    display: inline-block;
+    float: right;
+}
+
+.card.info-card .filter a.icon {
+    color: #6c757d;
+    text-decoration: none;
+    margin-left: 10px;
+}
+
+.card.info-card .filter a.icon:hover {
+    color: #495057;
+}
+
+.card.info-card .dropdown-menu {
+    border: none;
+}
+
+.card.info-card .dropdown-menu h6 {
+    font-size: 14px;
+    margin: 5px 0;
+}
+
+/* CSS cho biểu đồ và bảng */
+.combined-chart,
+.table-responsive {
+    margin-top: 20px;
+}
+
+/* CSS cho tab và controls thống kê */
+.section.dashboard {
+    margin-top: 20px;
+}
+
+.thongke-controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.thongke-controls label {
+    font-size: 14px;
+    margin-right: 10px;
+}
+
+.thongke-controls select,
+.thongke-controls input {
+    padding: 5px;
+    margin-right: 10px;
+}
+
+.thongke-controls button {
+    padding: 8px 15px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.thongke-controls button:hover {
+    background-color: #0056b3;
+}
+
+/* CSS cho button ẩn/hiện bảng */
+.btn.btn-outline-secondary {
+    margin-bottom: 20px;
+}
+
+/* Pagination styling */
+.pagination {
+    margin-top: 20px;
+}
+
+.pagination .page-item .page-link {
+    color: #007bff;
+    border: 1px solid #007bff;
+}
+
+.pagination .page-item.active .page-link {
+    background-color: #007bff;
+    border-color: #007bff;
+    color: #fff;
+}
+
+.pagination .page-item.disabled .page-link {
+    color: #6c757d;
+    pointer-events: none;
+    cursor: not-allowed;
+}
+
+.background-section {
+    background: white;
+}
+
+/*!* Responsive styling for smaller screens *!*/
+/*@media (max-width: 768px) {*/
+/*    .header_sell_content_left,*/
+/*    .header_sell_content_right {*/
+/*        width: 50%;*/
+/*    }*/
+
+/*    .row {*/
+/*        flex-direction: column;*/
+/*        align-items: center;*/
+/*        text-align: center;*/
+/*        margin-right: 0;*/
+/*    }*/
+
+/*    .col-xxl-4,*/
+/*    .col-md-6 {*/
+/*        width: 100%;*/
+/*        margin-bottom: 20px;*/
+/*    }*/
+/*}*/

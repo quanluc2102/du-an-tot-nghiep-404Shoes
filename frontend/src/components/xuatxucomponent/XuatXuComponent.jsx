@@ -93,7 +93,7 @@ class XuatXuComponent extends Component {
         if (!this.state.xuatXuAdd.ten.trim()) {
             this.setState({ errorsAdd: { ...this.state.errorsAdd, ten: "Tên không được bỏ trống!" } });
             return;
-        }else if (!isNaN(this.state.xuatXuAdd.ten.trim())) {
+        }else if (!/^[a-zA-Z\sàáảãạăắằẳẵặâấầẩẫậèéẹêềếểễệđìíỉĩịòóỏõọôồốổỗộơờớởỡợùúủũụưừứửữựỳýỷỹỵÀÁẢÃẠĂẮẰẲẴẶÂẤẦẨẪẬÈÉẺẼẸÊỀẾỂỄỆĐÌÍỈĨỊÒÓỎÕỌÔỒỐỔỖỘƠỜỚỞỠỢÙÚỦŨỤƯỪỨỬỮỰỲÝỶỸỴ]+$/.test(this.state.xuatXuAdd.ten)) {
             this.setState({ errorsAdd: { ...this.state.errorsAdd, ten: "Tên phải là chữ" } });
             return;
         }else {
@@ -145,7 +145,7 @@ class XuatXuComponent extends Component {
         if (!this.state.xuatXuUpdate.ten.trim()) {
             this.setState({ errorsUpdate: { ...this.state.errorsUpdate, ten: "Tên không được bỏ trống!" } });
             return;
-        }else if (!isNaN(this.state.xuatXuUpdate.ten.trim())) {
+        }else if (!/^[a-zA-Z\sàáảãạăắằẳẵặâấầẩẫậèéẹêềếểễệđìíỉĩịòóỏõọôồốổỗộơờớởỡợùúủũụưừứửữựỳýỷỹỵÀÁẢÃẠĂẮẰẲẴẶÂẤẦẨẪẬÈÉẺẼẸÊỀẾỂỄỆĐÌÍỈĨỊÒÓỎÕỌÔỒỐỔỖỘƠỜỚỞỠỢÙÚỦŨỤƯỪỨỬỮỰỲÝỶỸỴ]+$/.test(this.state.xuatXuUpdate.ten)) {
             this.setState({ errorsUpdate: { ...this.state.errorsUpdate, ten: "Tên phải là chữ!" } });
             return;
         }

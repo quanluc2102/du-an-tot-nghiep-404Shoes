@@ -43,7 +43,7 @@ h6 {
 --------------------------------------------------------------*/
 #main {
   margin-top: 60px;
-  /* padding: 20px 30px; */
+   padding: 20px 30px;
   transition: all 0.3s;
 }
 
@@ -382,7 +382,7 @@ h6 {
   height: 60px;
   box-shadow: 0px 2px 20px rgba(1, 41, 112, 0.1);
   background-color: #fff;
-  /* padding-left: 20px; */
+   padding-left: 20px;
   /* Toggle Sidebar Button */
   /* Search Bar */
 }
@@ -628,14 +628,14 @@ h6 {
 .sidebar::-webkit-scrollbar-thumb {
   background-color: #aab7cf;
 }
-/*
+
 @media (min-width: 1200px) {
   #main,
   #footer {
     margin-left: 300px;
   }
-} 
-*/
+}
+
 @media (max-width: 1199px) {
   .toggle-sidebar .sidebar {
     left: 0;
