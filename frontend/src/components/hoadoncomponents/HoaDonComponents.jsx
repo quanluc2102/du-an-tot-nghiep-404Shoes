@@ -49,7 +49,7 @@ class HoaDonComponents extends Component {
             const searchValues = (
                 (item.ten && item.ten !== null ? item.ten : "Khách lẻ") +
                 (item.maHoaDon) + (item.ngayTao) + (item.ghiChu) +
-                (item.sdt) + (item.taiKhoan.maTaiKhoan) +
+                (item.sdt) + (item.taiKhoan && item.taiKhoan.maTaiKhoan) +
                 (item.trangThai === 4 ? "Hoàn thành" : item.trangThai === 0 ? "Chờ xác nhận" : item.trangThai === 1 ? "Đã xác nhận" : item.trangThai === 2 ? "Chuẩn bị giao" : item.trangThai === 3 ? "Đang giao" : item.trangThai === 4 ? "Hoàn thành" : item.trangThai === 5 ? "Đã Hủy" : "Chờ")
             ).toLowerCase();
 
@@ -288,7 +288,7 @@ class HoaDonComponents extends Component {
 
                                                                     <td>{index + 1}</td>
                                                                     <td>{hoaDon.maHoaDon}</td>
-                                                                    <td>{hoaDon.taiKhoan.maTaiKhoan===null?"Tạm":""}</td>
+                                                                    <td>{hoaDon.taiKhoan && hoaDon.taiKhoan.maTaiKhoan ? hoaDon.taiKhoan.maTaiKhoan : "Tạm"}</td>
                                                                     <td>{hoaDon && hoaDon.ten !== null ? hoaDon.ten : "Khách lẻ"}</td>
                                                                     <td>{hoaDon && hoaDon.sdt !== null ? hoaDon.sdt : "Khách lẻ"}</td>
                                                                     <td>{hoaDon.ngayTao}</td>
