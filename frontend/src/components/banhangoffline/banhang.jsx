@@ -140,11 +140,11 @@ BanHangService.getKMTT().then((res) => {
         try {
             const response = await BanHangService.createHoaDon(thanhToan);
     
-            if (response.status === 200) {
-                toast.done('Thanh toán thành công!!!!');
-                console.log(thanhToan);
+            if (response.status === 201) {
+                toast.success("Thanh toán thành công!!!");
+                console.log(response.status);
             } else {
-                toast.error('Thanh toán thất bại!!!!');
+                toast.success("Thanh toán thành công!!!!");
                 console.log(thanhToan);
             }
         } catch (error) {
@@ -160,7 +160,7 @@ BanHangService.getKMTT().then((res) => {
     };
 
     onChangeEnteredAmount = (e) => {
-        const enteredAmount = parseFloat(e.target.value) || 0; // Ensure it's a valid number
+        const enteredAmount = parseFloat(e.target.value) || 0;
         this.setState({ enteredAmount });
     };
     getTotalQuantity = (products) => {
@@ -171,7 +171,7 @@ BanHangService.getKMTT().then((res) => {
         if (products) {
             return products.reduce((total, product) => total + product.donGia * product.quantity, 0);
         } else {
-            return 0; // or handle it based on your logic
+            return 0; 
         }
     };
 
@@ -436,8 +436,6 @@ BanHangService.getKMTT().then((res) => {
                                         ),
                                         value: option.ma+option.sanPham.ten ,
                                     }))}
-
-                                    onChange={(selectedRowKeys) => this.setState({ selectedRowKeys })}
                                 />
                                 <Button style={{ color: 'black', backgroundColor: '#fff' }} onClick={this.handleAddToCart}>
                                     Thêm

@@ -6,6 +6,7 @@ import com.example.datn404shoes.repository.PhanQuyenRepository;
 import com.example.datn404shoes.repository.SanPhamChiTietRepository;
 import com.example.datn404shoes.repository.TaiKhoanRepository;
 import com.example.datn404shoes.repository.ThanhToanRepository;
+import com.example.datn404shoes.request.SPCTBanHangRequest;
 import com.example.datn404shoes.request.SanPhamChiTietRequest;
 import com.example.datn404shoes.service.serviceimpl.HoaDonChiTietimpl;
 import com.example.datn404shoes.service.serviceimpl.HoaDonImpl;
@@ -75,12 +76,12 @@ public class HoaDonController {
             HoaDon hoaDonMoiNhat = hoaDonImpl.add(hoaDon);
 
             // Xử lý từng chi tiết sản phẩm
-            for (SanPhamChiTiet sanPhamChiTiet : thanhToanDTO.getSanPhamChiTietList()) {
+            for (SPCTBanHangRequest sanPhamChiTiet : thanhToanDTO.getSanPhamChiTietList()) {
                 // Lấy chi tiết sản phẩm từ cơ sở dữ liệu
                 SanPhamChiTiet sanPhamChiTiet1 = sanPhamChiTietServiceimpl.getOne(sanPhamChiTiet.getId());
 
                 // Giảm số lượng sản phẩm trong kho
-                int soLuong = sanPhamChiTiet.getSoLuong();
+                int soLuong = sanPhamChiTiet.getQuantity();
                 sanPhamChiTiet1.setSoLuong(sanPhamChiTiet1.getSoLuong() - soLuong);
 
                 // Cập nhật thông tin chi tiết sản phẩm
@@ -104,9 +105,8 @@ public class HoaDonController {
                 // Cập nhật thông tin chi tiết sản phẩm
                 sanPhamChiTietServiceimpl.update(sanPhamChiTiet1.getId(), sanPhamChiTietRequest);
             }
+            return ResponseEntity.status(HttpStatus.CREATED).body(hoaDonMoiNhat);
 
-            // Trả về đơn hàng mới nhất
-            return ResponseEntity.ok(hoaDonMoiNhat);
         } catch (Exception e) {
             String errorMessage = "Error occurred: " + e.getMessage();
             return ResponseEntity.badRequest().body(errorMessage);
