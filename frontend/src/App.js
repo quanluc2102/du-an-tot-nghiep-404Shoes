@@ -52,7 +52,7 @@ function App() {
               !location.pathname.includes('/banhangoffline') && <Sidebar />
             } />
           <Switch>
-            <Route path='/' exact component={SanPhamComponent} />
+            <Route path='/' exact component={TrangTongQuan} />
             <Route path='/index' component={SanPhamComponent} />
             <Route path='/detail/:id' component={ChiTietComponent} />
             <Route path='/sanpham/formadd' component={SanPhamAddComponent} />

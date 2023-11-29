@@ -88,7 +88,7 @@ public interface ThongKeRepository extends JpaRepository<HoaDon, Long> {
     @Query("SELECT COUNT(hoaDon) FROM HoaDon hoaDon")
     Long countHoaDonTQ();
 
-    @Query("SELECT COUNT(DISTINCT tk.id) FROM TaiKhoan tk WHERE EXISTS (SELECT 1 FROM PhanQuyen pq WHERE pq.taiKhoan = tk AND pq.quyen.id = 2)")
+    @Query("SELECT COUNT(DISTINCT tk.id) FROM TaiKhoan tk WHERE EXISTS (SELECT 1 FROM PhanQuyen pq WHERE pq.taiKhoan = tk AND pq.quyen.id = 3)")
     Long countDistinctTaiKhoanIdTQ();
 
 
@@ -109,6 +109,13 @@ public interface ThongKeRepository extends JpaRepository<HoaDon, Long> {
             "ORDER BY so_luong_da_ban DESC " +
             "LIMIT 10")
     List<Object[]> findTop10SanPhamBanChay();
+
+
+    @Query("SELECT hd.id, hd.maHoaDon , tk.thongTinNguoiDung.ten , hd.ngayTao " +
+            "FROM HoaDon hd " +
+            "JOIN TaiKhoan tk ON hd.taiKhoan.id = tk.id " +
+            "WHERE hd.trangThai = 0")
+    List<Object[]> hoaDonChuaXuLyhe();
 
 
 

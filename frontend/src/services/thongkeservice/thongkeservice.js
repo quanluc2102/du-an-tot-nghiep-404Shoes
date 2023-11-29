@@ -277,6 +277,26 @@ class ThongKeService {
             });
     }
 
+    countTopSanPhamBanChay() {
+        const url = `${API_BASE_URL}/top_san_pham_ban_chay`;
+        return axios.get(url)
+            .then(response => response.data)
+            .catch(error => {
+                console.error("Error in getHoaDonNam:", error);
+                throw error;
+            });
+    }
+
+    hoaDonChuaXuLy() {
+        const url = `${API_BASE_URL}/hoa_don_chua_xu_ly`;
+        return axios.get(url)
+            .then(response => response.data)
+            .catch(error => {
+                console.error("Error in getHoaDonNam:", error);
+                throw error;
+            });
+    }
+
 }
 
 export default new ThongKeService();

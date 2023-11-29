@@ -34,7 +34,7 @@ public class ThongKeController {
 
     @GetMapping("/doanh_thu_thang_custom")
     public List<Object[]> getDoanhThuThangCustom(Date startDate) {
-        System.out.println("meo meo"+startDate);
+        System.out.println("meo meo" + startDate);
 
         return hoaDonChiTietRepository.thongKeDoanhThuTheoThang(startDate);
     }
@@ -106,9 +106,6 @@ public class ThongKeController {
     }
 
 
-
-
-
     //hoadon huy
 
 
@@ -164,5 +161,10 @@ public class ThongKeController {
     @GetMapping("/top_san_pham_ban_chay")
     public List<Object[]> countTopSanPhamBanCHay() {
         return thongKeRepository.findTop10SanPhamBanChay();
+    }
+
+    @GetMapping("/hoa_don_chua_xu_ly")
+    public List<Object[]> hoaDonChuaXuLy() {
+        return thongKeRepository.hoaDonChuaXuLyhe();
     }
 }

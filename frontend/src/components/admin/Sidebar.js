@@ -5,7 +5,7 @@ function Sidebar() {
             <ul className="sidebar-nav" id="sidebar-nav">
 
                 <li className="nav-item">
-                    <a className="nav-link " href="index.html">
+                    <a className="nav-link " href="/tongquan">
                         <i className="bi bi-grid"></i>
                         <span>Tổng quan</span>
                     </a>
