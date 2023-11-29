@@ -676,6 +676,33 @@ class ThongKeDoanhThuSanPham extends Component {
         }
     };
 
+    handleFilterChangeSoHoaDonHuy = async (filterOption) => {
+        // Handle filter change logic here based on the selected option
+        // Update state or perform other actions accordingly
+        this.setState({currentDateRangeHDHuy: filterOption});
+
+        // Fetch the corresponding data based on the selected option
+        switch (filterOption) {
+            case 'Theo ngày':
+                await this.fetchHoaDonHuyNgay();
+                break;
+            case 'Trong tuần':
+                await this.fetchHoaDonHuyTuan();
+                break;
+            case 'Trong tháng':
+                await this.fetchHoaDonHuyThang();
+                break;
+            case 'Trong quý':
+                await this.fetchHoaDonHuyQuy();
+                break;
+            case 'Trong năm':
+                await this.fetchHoaDonHuyNam();
+                break;
+            default:
+                break;
+        }
+    };
+
     fetchDoanhThuNgay = () => {
         thongkeservice.getDoanhThuNgay()
             .then(data => {
@@ -803,6 +830,39 @@ class ThongKeDoanhThuSanPham extends Component {
                 </li>
                 <li>
                     <a className="dropdown-item" href="#" onClick={() => this.handleFilterChangeSoHoaDon('Trong năm')}>
+                        Trong năm
+                    </a>
+                </li>
+            </>
+        );
+    }
+
+    renderFilterOptionsHDHuy() {
+        return (
+            <>
+                <li>
+                    <a className="dropdown-item" href="#" onClick={() => this.handleFilterChangeSoHoaDonHuy('Theo ngày')}>
+                        Theo ngày
+                    </a>
+                </li>
+                <li>
+                    <a className="dropdown-item" href="#" onClick={() => this.handleFilterChangeSoHoaDonHuy('Trong tuần')}>
+                        Trong tuần
+                    </a>
+                </li>
+                <li>
+                    <a className="dropdown-item" href="#"
+                       onClick={() => this.handleFilterChangeSoHoaDonHuy('Trong tháng')}>
+                        Trong tháng
+                    </a>
+                </li>
+                <li>
+                    <a className="dropdown-item" href="#" onClick={() => this.handleFilterChangeSoHoaDonHuy('Trong quý')}>
+                        Trong quý
+                    </a>
+                </li>
+                <li>
+                    <a className="dropdown-item" href="#" onClick={() => this.handleFilterChangeSoHoaDonHuy('Trong năm')}>
                         Trong năm
                     </a>
                 </li>
@@ -968,7 +1028,7 @@ class ThongKeDoanhThuSanPham extends Component {
                         <div className="card info-card sales-card">
                             <div className="card-body">
                                 <h5 className="card-title">
-                                    Đã hủy <span>| {this.state.currentDateRangeHD}</span>
+                                    Đã hủy <span>| {this.state.currentDateRangeHDHuy}</span>
                                     <div className="filter">
                                         <a className="icon" href="#" data-bs-toggle="dropdown" aria-expanded="false">
                                             <i className="bi bi-chevron-compact-down"></i>
@@ -977,7 +1037,7 @@ class ThongKeDoanhThuSanPham extends Component {
                                             <li className="dropdown-header">
                                                 <h6>Thống kê theo</h6>
                                             </li>
-                                            {this.renderFilterOptionsHD()}
+                                            {this.renderFilterOptionsHDHuy()}
                                         </ul>
                                     </div>
                                 </h5>
@@ -1009,7 +1069,7 @@ class ThongKeDoanhThuSanPham extends Component {
                 </div>
 
 
-                <section className="section dashboard background-section">
+                <section className="section dashboard">
                     <Tabs>
                         <TabList>
                             <Tab>Thống kê theo sản phẩm đã bán</Tab>
@@ -1018,7 +1078,7 @@ class ThongKeDoanhThuSanPham extends Component {
                         </TabList>
 
                         <TabPanel>
-                            <div className="thongke-controls1">
+                            <div className="thongke-controls">
                                 <label>Chọn kiểu thống kê:</label>
                                 <select
                                     name="thongKeType"
@@ -1069,6 +1129,7 @@ class ThongKeDoanhThuSanPham extends Component {
                                             value={this.state.selectedYear}
                                             onChange={this.handleInputChange}
                                         >
+                                            {/* Tạo các option từ năm 1990 đến 10 năm sau tính từ thời điểm hiện tại */}
                                             {Array.from({ length: new Date().getFullYear() - 1990 + 11 }, (_, index) => {
                                                 const year = 1990 + index;
                                                 return (
@@ -1081,6 +1142,7 @@ class ThongKeDoanhThuSanPham extends Component {
                                     </>
                                 )}
 
+
                                 <button onClick={this.handleThongKeClick}>Thống kê</button>
                             </div>
 
@@ -1091,7 +1153,8 @@ class ThongKeDoanhThuSanPham extends Component {
                                     </h5>
                                     <div className="row">
                                         <div className="col-md-12">
-                                            <canvas id="combinedChart" ref={this.combinedChartRef} width="400" height="200"></canvas>
+                                            <canvas id="combinedChart" ref={this.combinedChartRef} width="400"
+                                                    height="200"></canvas>
                                         </div>
                                     </div>
                                     <button className="btn btn-outline-secondary" onClick={this.handleToggleTable}>
@@ -1106,7 +1169,58 @@ class ThongKeDoanhThuSanPham extends Component {
 
                             {this.state.showTable && (
                                 <div className="card">
-                                    {/* ... */}
+                                    <div className="card-body">
+                                        <div className="d-flex justify-content-between align-items-center mb-3">
+                                            <h5 className="card-title">Bảng thống kê theo sản phẩm <span>|</span></h5>
+                                            <div>
+                                                <button onClick={this.handleExportToExcel}
+                                                        disabled={this.state.exportingToExcel}>
+                                                    {this.state.exportingToExcel ? 'Exporting...' : <FaFileExcel/>}
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div className="table-responsive">
+                                            <table className="table table-borderless datatable">
+                                                <thead>
+                                                <tr>
+                                                    <th>STT</th>
+                                                    <th>Sản phẩm</th>
+                                                    <th>Số lượng đã bán</th>
+                                                    <th>Tổng tiền</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                {this.state.thongKeSanPham.map((th, index) => (
+                                                    <tr key={index}>
+                                                        <td>{index + 1}</td>
+                                                        <td>{th[0]}</td>
+                                                        <td>{th[1]}</td>
+                                                        <td>{this.formatCurrency(th[2])} VND</td>
+                                                    </tr>
+                                                ))}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <ReactPaginate
+                                            previousLabel={"<"}
+                                            nextLabel={">"}
+                                            breakLabel={"..."}
+                                            breakClassName={"page-item"}
+                                            breakLinkClassName={"page-link"}
+                                            pageClassName={"page-item"}
+                                            pageLinkClassName={"page-link"}
+                                            previousClassName={"page-item"}
+                                            previousLinkClassName={"page-link"}
+                                            nextClassName={"page-item"}
+                                            nextLinkClassName={"page-link"}
+                                            pageCount={this.state.pageCount}
+                                            marginPagesDisplayed={2}
+                                            pageRangeDisplayed={5}
+                                            onPageChange={this.handlePageClick}
+                                            containerClassName={"pagination justify-content-center"}
+                                            activeClassName={"active"}
+                                        />
+                                    </div>
                                 </div>
                             )}
                         </TabPanel>
@@ -1114,7 +1228,18 @@ class ThongKeDoanhThuSanPham extends Component {
                         {/* Add new TabPanel for "Thống kê doanh thu" */}
                         <TabPanel>
                             <div className="thongke-controls">
-                                {/* No need to show the "Chọn kiểu thống kê" dropdown in this panel */}
+                                {/*<label>Chọn kiểu thống kê:</label>*/}
+                                {/*<select*/}
+                                {/*    name="thongKeType"*/}
+                                {/*    value={this.state.thongKeType}*/}
+                                {/*    onChange={this.handleThongKeTypeChange}*/}
+                                {/*>*/}
+                                {/*    <option value="ngay">Theo ngày</option>*/}
+                                {/*    <option value="thang">Theo tháng</option>*/}
+                                {/*    <option value="nam">Theo năm</option>*/}
+                                {/*</select>*/}
+
+
                                 {this.state.thongKeDoanhThuType === 'nam' && (
                                     <>
                                         <label>Chọn năm:</label>
@@ -1123,11 +1248,12 @@ class ThongKeDoanhThuSanPham extends Component {
                                             value={this.state.selectedYearDoanhThu}
                                             onChange={this.handleInputChangeDoanhThu}
                                         >
-                                            {Array.from({ length: new Date().getFullYear() - 1990 + 11 }, (_, index1) => {
-                                                const year1 = 1990 + index1;
+                                            {/* Tạo các option từ năm 1990 đến 10 năm sau tính từ thời điểm hiện tại */}
+                                            {Array.from({ length: new Date().getFullYear() - 1990 + 11 }, (_, index) => {
+                                                const year = 1990 + index;
                                                 return (
-                                                    <option key={year1} value={year1}>
-                                                        {year1}
+                                                    <option key={year} value={year}>
+                                                        {year}
                                                     </option>
                                                 );
                                             })}
@@ -1135,9 +1261,9 @@ class ThongKeDoanhThuSanPham extends Component {
                                     </>
                                 )}
 
+
                                 <button onClick={this.handleThongKeThangNewClick}>Thống kê</button>
                             </div>
-
                             <button className="btn btn-outline-secondary" onClick={this.handleToggleTable}>
                                 {this.state.showTable ? (
                                     <i className="bi bi-eye-slash">Ẩn bảng</i>
@@ -1145,10 +1271,48 @@ class ThongKeDoanhThuSanPham extends Component {
                                     <i className="bi bi-eye">Xuất bảng</i>
                                 )}
                             </button>
-
                             {this.state.showTable && (
                                 <div className="card">
-                                    {/* ... */}
+                                    <div className="card-body">
+                                        <div className="d-flex justify-content-between align-items-center mb-3">
+                                            <h5 className="card-title">Bảng thống kê doanh thu theo tháng <span>|</span></h5>
+                                            <div>
+                                                <button onClick={this.handleExportToExcelDoanhThuTheoThang}
+                                                        disabled={this.state.handleExportToExcelDoanhThuTheoThang}>
+                                                    {this.state.handleExportToExcelDoanhThuTheoThang ? 'Exporting...' : <FaFileExcel/>}
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div className="table-responsive">
+                                            <table className="table table-borderless datatable">
+                                                <thead>
+                                                <tr>
+                                                    <th>STT</th>
+                                                    <th>Tháng</th>
+                                                    <th>Tổng số sản phẩm đã bán</th>
+                                                    <th>Tổng tiền</th>
+                                                    <th>Giá mua nhỏ nhất</th>
+                                                    <th>Giá mua lớn nhất</th>
+                                                    <th>Giá mua trung bình</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                {this.state.thongKeThangNew.map((th, index) => (
+                                                    <tr key={index}>
+                                                        <td>{index + 1}</td>
+                                                        <td>{th[0]}</td>
+                                                        <td>{th[1]}</td>
+                                                        <td>{this.formatCurrency(th[2])} VND</td>
+                                                        <td>{this.formatCurrency(th[3])} VND</td>
+                                                        <td>{this.formatCurrency(th[4])} VND</td>
+                                                        <td>{this.formatCurrency(th[5])} VND</td>
+
+                                                    </tr>
+                                                ))}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
                                 </div>
                             )}
 
@@ -1159,14 +1323,14 @@ class ThongKeDoanhThuSanPham extends Component {
                                     </h5>
                                     <div className="row">
                                         <div className="col-md-12">
-                                            <canvas id="combinedChart" ref={this.combinedChartRefDoanhThu} width="400" height="200"></canvas>
+                                            <canvas id="combinedChart" ref={this.combinedChartRefDoanhThu} width="400"
+                                                    height="200"></canvas>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </TabPanel>
-                    </Tabs>;
-
+                    </Tabs>
                 </section>
             </div>
         );

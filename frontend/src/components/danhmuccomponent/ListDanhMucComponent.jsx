@@ -262,9 +262,9 @@ class ListDanhMucComponent extends Component {
                     <h1>Danh mục</h1>
                     <nav>
                         <ol className="breadcrumb">
-                            <li className="breadcrumb-item"><a href="index.html">Home</a></li>
-                            <li className="breadcrumb-item active">Overview</li>
-                            <li className="breadcrumb-item active">Color</li>
+                            {/*<li className="breadcrumb-item"><a href="index.html">Home</a></li>*/}
+                            {/*<li className="breadcrumb-item active">Overview</li>*/}
+                            {/*<li className="breadcrumb-item active">Color</li>*/}
                         </ol>
                     </nav>
                 </div>
@@ -306,6 +306,7 @@ class ListDanhMucComponent extends Component {
                                                         dm =>
                                                             <tr key={dm.id}>
                                                                 <td>{dm.ten}</td>
+                                                                <td>{dm.trangThai==0?"Hoạt động":"Không hoạt động"}</td>
                                                                 <td>
                                                                     <label className="switch">
                                                                         <input

@@ -1,5 +1,6 @@
 package com.example.datn404shoes.service.serviceimpl;
 
+import com.example.datn404shoes.entity.DanhMuc;
 import com.example.datn404shoes.entity.KhuyenMai;
 import com.example.datn404shoes.helper.KhuyenMaiExcelSave;
 import com.example.datn404shoes.repository.KhuyenMaiRepository;
@@ -143,8 +144,11 @@ public class KhuyenMaiServiceImpl implements KhuyenMaiService {
     }
 
     @Override
-    public void thayDoiTrangThai(Long id) {
-       KhuyenMai khuyenMai = khuyenMaiRepository.findById(id).get();
+    public KhuyenMai thayDoiTrangThai(Long id, KhuyenMai khuyenMai) {
+        KhuyenMai khuyenMai1 = khuyenMaiRepository.findById(id).get();
+
+        khuyenMai1.setTrangThai(khuyenMai.getTrangThai());
+        return khuyenMaiRepository.save(khuyenMai1);
 
     }
 

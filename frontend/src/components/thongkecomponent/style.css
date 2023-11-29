@@ -176,3 +176,8 @@
 /*        margin-bottom: 20px;*/
 /*    }*/
 /*}*/
+
+.section.dashboard {
+    padding: 20px;
+    background-color: white; /* Màu nền của section */
+}

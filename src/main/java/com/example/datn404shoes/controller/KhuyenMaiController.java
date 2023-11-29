@@ -1,5 +1,6 @@
 package com.example.datn404shoes.controller;
 
+import com.example.datn404shoes.entity.DanhMuc;
 import com.example.datn404shoes.entity.KhuyenMai;
 import com.example.datn404shoes.helper.KhuyenMaiExcelSave;
 import com.example.datn404shoes.repository.KhuyenMaiRepository;
@@ -96,6 +97,17 @@ public class KhuyenMaiController {
         }
         return ResponseEntity.ok(khuyenMaiServiceImpl.update(id, khuyenMai));
     }
+
+    @PutMapping("updatett/{id}")
+    public ResponseEntity<?> updatett(Model model,
+                                      @PathVariable("id") Long id,
+                                      @RequestBody Map<String, Integer> trangThaiData) {
+        Integer newTrangThai = trangThaiData.get("trangThai");
+        KhuyenMai khuyenMai = khuyenMaiServiceImpl.findOne(id);
+        khuyenMai.setTrangThai(newTrangThai);
+        return ResponseEntity.ok(khuyenMaiServiceImpl.thayDoiTrangThai(id, khuyenMai));
+    }
+
 //    @PostMapping(value = "import", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 //    public String importExecel(@RequestParam("file")MultipartFile file)
 //            throws IOException{

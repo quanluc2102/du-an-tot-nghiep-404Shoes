@@ -62,6 +62,11 @@ function Sidebar() {
                             </a>
                         </li>
                         <li>
+                            <a href="/banhangoffline">
+                                <i className="bi bi-circle"></i><span>Bán hàng tại quầy</span>
+                            </a>
+                        </li>
+                        <li>
                             <a href="forms-layouts.html">
                                 <i className="bi bi-circle"></i><span>Lịch sử hóa đơn</span>
                             </a>

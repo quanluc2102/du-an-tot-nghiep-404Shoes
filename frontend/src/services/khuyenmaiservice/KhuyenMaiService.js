@@ -7,6 +7,8 @@ const BASE_URL_DETAIL = "http://localhost:8080/khuyen_mai/detail";
 const API_DELETE_URL = "http://localhost:8080/khuyen_mai/delete";
 const API_UPDATE_URL = "http://localhost:8080/khuyen_mai/update";
 const API_SAVE_URL = "http://localhost:8080/khuyen_mai/add";
+const DANHMUC_API_UPDATEtt_URL = "http://localhost:8080/khuyen_mai/updatett";
+
 
 class KhuyenMaiService {
 
@@ -44,7 +46,9 @@ class KhuyenMaiService {
     // updateKhuyenMai(khuyenMaiUpdate, id) {
     //     return axios.put(`http://localhost:8080/khuyen_mai/update/${id}`, khuyenMaiUpdate);
     // }
-
+    updateDanhMucTrangThai(trangThai, khuyenMaiId) {
+        return axios.put(DANHMUC_API_UPDATEtt_URL + "/" + khuyenMaiId, trangThai); // Truyền trạng thái thay vì danhMuc
+    }
 
 }
 
