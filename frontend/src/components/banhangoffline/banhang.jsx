@@ -26,24 +26,26 @@ class BanHangOffline extends Component {
         this.state = {
             selectedProducts: [],
             sanPhamChiTiet: [],
-            tabList: [],
+            tabList: [
+                {
+                    tab: 'Đơn hàng 1',
+                    key: 'tabKey1',
+                },
+            ],
             selectedRowKeys: [],
             loading: false,
             sanPhamChiTietList: [],
             isQRReaderOn: false,
             showModal: false,
             result: 'No QR code scanned yet',
-            productList: [
-                {
-                    id: 1,
-                    masp: 'sp1',
-                    image: 'https://static.nike.com/a/images/t_PDP_1280_v1/f_auto,q_auto:eco/67031162-9cc5-481d-8ffe-7ada8f3d78bd/custom-nike-air-force-1-high-by-you-shoes.png',
-                    name: 'Nike 1',
-                    price: 500.000
-                },
-            ],
-
-            priceDemo: ['100.000', '150.000', '200.000', '250.000', '300.000', '350.000'],
+            activeTabKey: 'tabKey1',
+            tabProducts: {
+                tabKey1: [],
+                tabKey2: [],
+                tabKey3: [],
+                tabKey4: [],
+                tabKey5: [],
+            },
         };
 
         this.nextTabIndex = 0
@@ -71,8 +73,8 @@ class BanHangOffline extends Component {
     toggleQRReader = () => {
         this.setState((prevState) => ({
             isQRReaderOn: !prevState.isQRReaderOn,
-            isQRCodeScanned: false, // Reset the flag when turning off the QR scanner
-            result: 'No QR code scanned yet', // Clear the previous QR code result
+            isQRCodeScanned: false,
+            result: 'No QR code scanned yet',
         }));
     };
 
@@ -80,17 +82,17 @@ class BanHangOffline extends Component {
         const { isQRCodeScanned, selectedProducts, sanPhamChiTiet } = this.state;
 
         if (data && data.text && typeof data.text === 'string' && !isQRCodeScanned) {
-            // Set the flag to true to prevent further scans until the product is added
+
             this.setState({ isQRCodeScanned: true });
 
-            // Assuming the slicedMaQR is the value you want to extract from the QR code
+
             const slicedMaQR = data.text.slice(5);
 
-            // Check if the product is already in selectedProducts
+
             const existingProduct = selectedProducts.find(product => product.ma === slicedMaQR);
 
             if (!existingProduct) {
-                // If the product is not in selectedProducts, add it with quantity 1
+
                 const productToAdd = sanPhamChiTiet.find(product => product.ma === slicedMaQR);
 
                 if (productToAdd) {
@@ -101,7 +103,6 @@ class BanHangOffline extends Component {
                 }
             }
 
-            // Reset the flag after a delay (e.g., 1 second) to allow for the next scan
             setTimeout(() => {
                 this.setState({ isQRCodeScanned: false });
             }, 1000);
@@ -162,20 +163,6 @@ class BanHangOffline extends Component {
         return selectedProducts.reduce((total, product) => total + product.donGia * product.quantity, 0);
     };
 
-    handleProductClick = (sanPhamChiTiet) => {
-        const { selectedProducts, indexProduct } = this.state;
-
-        this.setState({
-            indexProduct: indexProduct + 1,
-        }, () => {
-            const totalQuantity = this.getTotalQuantity();
-            console.log('Tổng số sản phẩm:', totalQuantity);
-
-            const totalAmount = this.getTotalAmount();
-            console.log('Tổng số tiền:', totalAmount);
-        });
-    };
-
     handlePayment = () => {
         this.closeCurrentTab();
     }
@@ -207,20 +194,66 @@ class BanHangOffline extends Component {
         console.log(tabList)
     };
 
-    handleProductClick = (productId) => {
-        const { selectedProducts } = this.state;
-        const selectedProduct = selectedProducts.find(item => item.ma === productId.ma);
+    handleTabChange = (activeKey) => {
+        this.setState({ activeTabKey: activeKey })
+    }
+
+
+    handleProductClick = (productId, tabKey) => {
+
+        const { tabProducts } = this.state;
+        const products = tabProducts[tabKey] || [];
+        const selectedProduct = products.find(item => item.id === productId.id);
 
         if (selectedProduct) {
-            const updatedSelectedProducts = selectedProducts.map(item =>
-                item.ma === productId.ma ? { ...item, quantity: item.quantity + 1 } : item
+            const updatedProducts = products.map(item =>
+                item.id === productId.id ? { ...item, quantity: item.quantity + 1 } : item
             );
-            this.setState({ selectedProducts: updatedSelectedProducts });
+            this.setState(prevState => ({
+                tabProducts: {
+                    ...prevState.tabProducts,
+                    [tabKey]: updatedProducts,
+                },
+            }));
         } else {
             const newSelectedProduct = { ...productId, quantity: 1 };
-            const updatedSelectedProducts = [...selectedProducts, newSelectedProduct];
-            this.setState({ selectedProducts: updatedSelectedProducts });
+            const updatedProducts = [...products, newSelectedProduct];
+            this.setState(prevState => ({
+                tabProducts: {
+                    ...prevState.tabProducts,
+                    [tabKey]: updatedProducts,
+                },
+            }));
         }
+    };
+
+    renderProductsForTab = (tabKey) => {
+        const { tabProducts } = this.state;
+        const products = tabProducts[tabKey] || [];
+
+        return products.map((product, index) => (
+            <Col key={index} style={{ backgroundColor: '#fff', height: '75px', padding: '10px', display: 'flex', alignItems: 'center' }}>
+                <Col span={1} style={{ fontWeight: 'bold', fontSize: '15px' }}>{index + 1}</Col>
+                <Col span={3} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center' }}>
+                    <img style={{ height: '60px', width: '60px' }} src="https://assets.adidas.com/images/h_840,f_auto,q_auto,fl_lossy,c_fill,g_auto/dda507d6073c4f44abb5d314d617250e_9366/Ultra_4DFWD_Running_Shoes_Grey_ID1686_HM1.jpg" />
+                </Col>
+                <Col span={3} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center' }}>{product.ma}</Col>
+                <Col span={5} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center', }}>{product.sanPham.ten}</Col>
+                <Col span={2} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center' }}>
+                    <input type="number" className="soLuong" min="1" style={{ width: '50px' }} value={product.quantity} />
+                </Col>
+                <Col span={4} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center' }}>{product.donGia} VND</Col>
+                <Col span={5} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center' }}>{product.donGia * product.quantity} VND</Col>
+                <Col span={1} style={{ transition: 'color 0.3s' }}>
+                    <DeleteOutlined
+                        onClick={() => this.onDelete(tabKey, product.ma)}
+                        style={{ cursor: 'pointer' }}
+                        onMouseEnter={(e) => e.target.style.color = 'red'}
+                        onMouseLeave={(e) => e.target.style.color = 'black'}
+                    />
+                </Col>
+            </Col>
+        ));
     };
 
     onEdit = (tabKey, action) => {
@@ -229,7 +262,7 @@ class BanHangOffline extends Component {
                 tabList: [
                     ...prevState.tabList,
                     {
-                        tab: `Đơn hàng ${this.nextTabIndex}`,
+                        tab: `Đơn hàng ${this.nextTabIndex + 1}`,
                         key: `${this.nextTabIndex}`
                     }
                 ]
@@ -246,21 +279,15 @@ class BanHangOffline extends Component {
 
                 this.setState({ tabList: newTabList });
 
-
                 if (newTabList.length === 0) {
                     this.nextTabIndex = 0;
                 }
             }
         } else if (action === 'add') {
-
             alert('Hàng chờ đã đầy');
-
         } else if (action === 'prev') {
-
             this.nextTabIndex -= 1;
-
         } else if (action === 'next') {
-
             this.nextTabIndex += 1;
         }
     };
@@ -294,9 +321,9 @@ class BanHangOffline extends Component {
 
     render() {
         const { isQRReaderOn, result } = this.state;
-        // Kiểm tra xem result có giá trị và có thuộc tính 'text' không
+
         if (result && result.text) {
-            const slicedMaQR = result.text.slice(5); // hoặc result.text.substring(4);
+            const slicedMaQR = result.text.slice(5);
             console.log(slicedMaQR);
         } else {
             console.error("Biến result không có giá trị hoặc không có thuộc tính 'text'.");
@@ -305,7 +332,7 @@ class BanHangOffline extends Component {
             <div className="wrapper-sell">
                 <div className="content_sell">
                     <div className="content_sell_left">
-                        <Tabs defaultActiveKey="1" type="editable-card" onEdit={this.onEdit} activeKey={this.nextTabIndex.toString()}>
+                        <Tabs onChange={this.handleTabChange} defaultActiveKey="1" type="editable-card" onEdit={this.onEdit}>
                             {this.state.tabList && this.state.tabList.map((tabinfo, index) => {
                                 return (
                                     <Tabs.TabPane tab={<span><ProfileOutlined /> {tabinfo.tab}</span>}
@@ -321,28 +348,7 @@ class BanHangOffline extends Component {
                                                 <Col span={4} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center' }} >Đơn giá</Col>
                                                 <Col span={5} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center' }} >Thành tiền</Col>
                                             </Col>
-
-
-                                            {this.state.selectedProducts.map((product, index) => (
-                                                <Col style={{ backgroundColor: '#fff', height: '75px', padding: '10px', display: 'flex', alignItems: 'center' }}>
-                                                    <Col span={1} style={{ fontWeight: 'bold', fontSize: '15px' }} >{index + 1}</Col>
-                                                    <Col span={3} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center' }} ><img style={{ height: '60px', width: '60px' }} src="https://assets.adidas.com/images/h_840,f_auto,q_auto,fl_lossy,c_fill,g_auto/dda507d6073c4f44abb5d314d617250e_9366/Ultra_4DFWD_Running_Shoes_Grey_ID1686_HM1.jpg" /></Col>
-                                                    <Col span={3} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center', textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }} > {product.ma} </Col>
-                                                    <Col span={5} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center', textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }} > {product.sanPham.ten} </Col>
-                                                    <Col span={2} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center' }} > <input type="number" className="soLuong" min="1" style={{ width: '50px' }} value={product.quantity} /></Col>
-                                                    <Col span={4} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center' }} >{product.donGia} VND</Col>
-                                                    <Col span={5} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center' }} > {product.donGia * product.quantity} VND</Col>
-                                                    <Col span={1} style={{ transition: 'color 0.3s' }}>
-                                                        <DeleteOutlined
-                                                            onClick={() => this.onDelete(product.ma)}
-                                                            style={{ cursor: 'pointer' }}
-                                                            onMouseEnter={(e) => e.target.style.color = 'red'}
-                                                            onMouseLeave={(e) => e.target.style.color = 'black'}
-                                                        />
-                                                    </Col>
-                                                </Col>
-                                            ))}
-
+                                            {this.renderProductsForTab(this.state.activeTabKey)}
                                         </div>
                                     </Tabs.TabPane>
                                 )
@@ -370,7 +376,7 @@ class BanHangOffline extends Component {
                                         ),
                                         value: option.ma,
                                     }))}
-                                />                           
+                                />
 
                                 <Button style={{ color: 'black', backgroundColor: '#fff' }}>Thêm</Button>
 
@@ -404,7 +410,7 @@ class BanHangOffline extends Component {
                             <Flex wrap="wrap">
                                 {this.state.sanPhamChiTiet && this.state.sanPhamChiTiet.map((sanPhamChiTiet, index) => {
                                     return (
-                                        <Flex onClick={() => this.handleProductClick(sanPhamChiTiet)} key={index} style={{ width: '50%', overflowX: 'auto', overflowY: 'auto', cursor: 'pointer' }} flex={'row'}>
+                                        <Flex onClick={() => this.handleProductClick(sanPhamChiTiet, this.state.activeTabKey)} key={index} style={{ width: '50%', overflowX: 'auto', overflowY: 'auto', cursor: 'pointer' }} flex={'row'}>
                                             <div style={{ overflowX: 'auto', overflowY: 'auto' }} className="container_sell">
                                                 <div> <img style={{ height: '60px', width: '60px', float: 'left' }} src="https://assets.adidas.com/images/h_840,f_auto,q_auto,fl_lossy,c_fill,g_auto/dda507d6073c4f44abb5d314d617250e_9366/Ultra_4DFWD_Running_Shoes_Grey_ID1686_HM1.jpg" /></div>
                                                 <div style={{ marginLeft: '75px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{sanPhamChiTiet.sanPham.ten}</div>
@@ -462,13 +468,7 @@ class BanHangOffline extends Component {
                                     </Col>
                                 </div>
                             </div>
-                            <Flex style={{ marginTop: '10px', marginBottom: '10px', borderStyle: 'solid', borderWidth: '1px', borderTop: 'none', borderLeft: 'none', borderRight: 'none', paddingBottom: '10px' }} justify="space-between" wrap="wrap" gap={"small"} align="center">
-                                {this.state.priceDemo && this.state.priceDemo.map((item, index) => {
-                                    return (
-                                        <Button key={index} style={{ width: '120px', color: 'black', backgroundColor: 'rgba(0,0,0,0.02)' }} shape="round">{item}</Button>
-                                    )
-                                })}
-                            </Flex>
+
                             <Flex flex={"row"} align="center" justify="space-between">
                                 <p style={{ fontSize: '16px', fontWeight: 'bold' }}>Tiền thừa trả khách</p>
                                 <p style={{ fontSize: '20px', fontWeight: 'bold' }}><span style={{ color: 'red' }}>250.000</span></p>

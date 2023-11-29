@@ -50,7 +50,7 @@ class HoaDonComponents extends Component {
                 (item.ten && item.ten !== null ? item.ten : "Khách lẻ") +
                 (item.maHoaDon) + (item.ngayTao) + (item.ghiChu) +
                 (item.sdt) + (item.taiKhoan.maTaiKhoan) +
-                (item.trangThai === 4 ? "Hoàn thành" : item.trangThai === 0 ? "Chờ xác nhận" : item.trangThai === 1 ? "Đã xác nhận" : item.trangThai === 2 ? "Chuẩn bị giao" : item.trangThai === 3 ? "Đang giao" : item.trangThai === 4 ? "Hoàn thành" : "Chờ")
+                (item.trangThai === 4 ? "Hoàn thành" : item.trangThai === 0 ? "Chờ xác nhận" : item.trangThai === 1 ? "Đã xác nhận" : item.trangThai === 2 ? "Chuẩn bị giao" : item.trangThai === 3 ? "Đang giao" : item.trangThai === 4 ? "Hoàn thành" : item.trangThai === 5 ? "Đã Hủy" : "Chờ")
             ).toLowerCase();
 
             switch (searchTerm) {
@@ -62,6 +62,8 @@ class HoaDonComponents extends Component {
                     return item.trangThai == 4; // Filter for "Chờ"
                 case "2":
                     return item.trangThai == 2;
+                case "0":
+                    return item.trangThai == 0;
                 case "1":
                     return item.trangThai == 1;
                 default:
@@ -101,8 +103,8 @@ class HoaDonComponents extends Component {
             case 1:
                 return 'black'; // Chờ (màu vàng)
             case 0:
-                    return '#e0e0e0'; // Chờ (màu vàng)
-                      
+                return '#e0e0e0'; // Chờ (màu vàng)
+
             default:
                 return 'white'; // Default color (or another color of your choice)
         }
@@ -184,6 +186,18 @@ class HoaDonComponents extends Component {
                                                             className="form-check-input"
                                                         />
                                                         <label htmlFor="filterAll" className="form-check-label">Tất cả</label>
+                                                    </div>
+                                                    <div className="form-check form-check-inline">
+                                                        <input
+                                                            type="radio"
+                                                            id="filterPaid"
+                                                            name="statusFilter"
+                                                            value="4"
+                                                            checked={this.state.searchTerm === "0"}
+                                                            onChange={() => this.handleStatusFilter("0")}
+                                                            className="form-check-input"
+                                                        />
+                                                        <label htmlFor="filterPaid" className="form-check-label">Chờ xác nhận</label>
                                                     </div>
                                                     <div className="form-check form-check-inline">
                                                         <input
