@@ -413,9 +413,6 @@ function ProductList() {
                                                              width={335}
                                                         />
 
-                                                        <div className="position-absolute top-0 end-0 mt-1 me-1">
-                                                            <button className="badge bg-danger">Mới !</button>
-                                                        </div>
                                                         <div className="position-absolute bottom-0 start-0 mb-1 ms-1 shopBtn">
                                                             <button className="btn btn-success ">Mua Ngay!</button>
                                                         </div>

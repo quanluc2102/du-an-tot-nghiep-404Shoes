@@ -414,7 +414,7 @@ function ProductDetail({ match }) {
                                                    value={soLuong}
                                                     onChange={(e)=>changeSoLuong(e)}/>
                                             <label htmlFor="formId1" className="font-monospace"><strong>Số Lượng
-                                                : </strong></label>
+                                                : {filteredSPCT.length===1 ? filteredSPCT[0].soLuong : "" }</strong></label>
                                         </div>
                                     </div>
                                 </div>
