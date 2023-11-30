@@ -24,6 +24,7 @@ class BanHangOffline extends Component {
         super(props);
 
         this.state = {
+            taiKhoan: [],
             khuyenMai: [],
             selectedProducts: [],
             sanPhamChiTiet: [],
@@ -41,7 +42,7 @@ class BanHangOffline extends Component {
             isQRReaderOn: false,
             showModal: false,
             result: 'No QR code scanned yet',
-            
+
             tabProducts: {
                 tabKey1: [],
                 tabKey2: [],
@@ -49,9 +50,15 @@ class BanHangOffline extends Component {
                 tabKey4: [],
                 tabKey5: [],
             },
+            checked: false,
+            inputValue: '',
+            customerDetail: [],
+            name: '',
+            phone: ''
         };
-
+        this.onChangeSearchInput = this.onChangeSearchInput.bind(this);
         this.nextTabIndex = 0
+        this.handleQuantityChange = this.handleQuantityChange.bind(this);
     }
 
     componentDidMount() {
@@ -61,8 +68,13 @@ class BanHangOffline extends Component {
         }).catch((error) => {
             console.error("Error fetching data:", error);
         });
-BanHangService.getKMTT().then((res) => {
+        BanHangService.getKMTT().then((res) => {
             this.setState({ khuyenMai: res.data })
+        }).catch((error) => {
+            console.error("Error fetching data:", error);
+        });
+        BanHangService.getKhachHang().then((res) => {
+            this.setState({ taiKhoan: res.data })
         }).catch((error) => {
             console.error("Error fetching data:", error);
         });
@@ -118,17 +130,17 @@ BanHangService.getKMTT().then((res) => {
 
     add = async (e) => {
         e.preventDefault();
-    
+
         const { tabProducts, activeTabKey } = this.state;
         const selectedProducts = tabProducts[activeTabKey] || [];
-    
+
         const confirm = window.confirm('Bạn xác nhận muốn thanh toán hóa đơn này chứ?');
         if (!confirm) {
             return;
         }
-    
+
         const ngayTao = new Date().toISOString();
-    
+
         const thanhToan = {
             sanPhamChiTietList: selectedProducts,
             hoaDon: {
@@ -136,10 +148,10 @@ BanHangService.getKMTT().then((res) => {
                 ghiChu: document.getElementById("ghiChuDonHang").value
             },
         };
-    
+
         try {
             const response = await BanHangService.createHoaDon(thanhToan);
-    
+
             if (response.status === 201) {
                 toast.success("Thanh toán thành công!!!");
                 console.log(response.status);
@@ -171,7 +183,7 @@ BanHangService.getKMTT().then((res) => {
         if (products) {
             return products.reduce((total, product) => total + product.donGia * product.quantity, 0);
         } else {
-            return 0; 
+            return 0;
         }
     };
 
@@ -246,6 +258,7 @@ BanHangService.getKMTT().then((res) => {
         return products.map((product, index) => (
             <Col key={index} style={{ backgroundColor: '#fff', height: '75px', padding: '10px', display: 'flex', alignItems: 'center' }}>
                 <Col span={1} style={{ fontWeight: 'bold', fontSize: '15px' }}>{index + 1}</Col>
+<<<<<<< HEAD
                 <Col span={3} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center' }}>
                     <img style={{ height: '60px', width: '60px' }} src="https://assets.adidas.com/images/h_840,f_auto,q_auto,fl_lossy,c_fill,g_auto/dda507d6073c4f44abb5d314d617250e_9366/Ultra_4DFWD_Running_Shoes_Grey_ID1686_HM1.jpg" />
                 </Col>
@@ -253,11 +266,26 @@ BanHangService.getKMTT().then((res) => {
                 <Col span={5} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center', }}>{product.sanPham.ten}</Col>
                 <Col span={3} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center' }}>{product.mauSac.ten}</Col>
                 <Col span={3} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center' }}>{product.kichThuoc.giaTri}</Col>
+=======
+>>>>>>> origin/main
                 <Col span={2} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center' }}>
-                    <input type="number" className="soLuong" min="1" style={{ width: '50px' }} value={product.quantity} />
+                    <img style={{ height: '60px', width: '60px' }} src={`/niceadmin/img/${product.anh}`} />
                 </Col>
-                <Col span={4} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center' }}>{product.donGia} VND</Col>
-                <Col span={5} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center' }}>{product.donGia * product.quantity} VND</Col>
+                <Col span={2} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center' }}>{product.mauSac.ten}</Col>
+                <Col span={2} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center', }}>{product.kichThuoc.giaTri}</Col>
+                <Col span={6} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center', }}>{product.sanPham.ten}</Col>
+                <Col span={2} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center' }}>
+                    <input
+                        type="number"
+                        className="soLuong"
+                        min="1"
+                        style={{ width: '50px' }}
+                        value={product.quantity}
+                        onChange={(e) => this.handleQuantityChange(e, product.ma)}
+                    />
+                </Col>
+                <Col span={3} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center' }}>{product.donGia} VND</Col>
+                <Col span={4} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center' }}>{product.donGia * product.quantity} VND</Col>
                 <Col span={1} style={{ transition: 'color 0.3s' }}>
                     <DeleteOutlined
                         onClick={() => this.onDelete(tabKey, product.ma)}
@@ -269,7 +297,27 @@ BanHangService.getKMTT().then((res) => {
             </Col>
         ));
     };
-
+    handleQuantityChange = (e, productId) => {
+        const newQuantity = parseInt(e.target.value, 10);
+        // Update the state with the new quantity for the product with the given productId
+        this.setState((prevState) => {
+           const { activeTabKey, tabProducts } = prevState; // Access activeTabKey from prevState
+           // Update the quantity in the state for the specific product
+           const updatedProducts = tabProducts[activeTabKey].map((product) => {
+              if (product.ma === productId) {
+                 return { ...product, quantity: newQuantity };
+              }
+              return product;
+           });
+           // Update the state with the modified products
+           return {
+              tabProducts: {
+                 ...tabProducts,
+                 [activeTabKey]: updatedProducts,
+              },
+           };
+        });
+    };
     onEdit = (tabKey, action) => {
         if (action === 'add' && this.state.tabList.length < 5) {
             this.setState(prevState => ({
@@ -306,10 +354,38 @@ BanHangService.getKMTT().then((res) => {
         }
     };
 
-    onDelete = (productId) => {
-        this.setState(prevState => {
-            const updatedSelectedProducts = prevState.selectedProducts.filter(product => product.ma !== productId);
-            return { selectedProducts: updatedSelectedProducts };
+    onDelete = (tabKey, productId) => {
+        this.setState((prevState) => {
+            const updatedProducts = prevState.tabProducts[tabKey].map((product) => {
+                if (product.ma === productId) {
+                    // Decrease the quantity by 1 if it's greater than 0
+                    const newQuantity = Math.max(product.quantity - 1, 0);
+
+                    // If the quantity is greater than 0, update the quantity
+                    // Otherwise, remove the product from the list
+                    return newQuantity > 0 ? { ...product, quantity: newQuantity } : null;
+                }
+                return product;
+            });
+
+            const updatedTabList = prevState.tabList.map((tab) => {
+                if (tab.key === tabKey) {
+                    // Remove the product from the tabList if its quantity becomes 0
+                    return {
+                        ...tab,
+                        products: updatedProducts.filter((product) => product && product.quantity > 0),
+                    };
+                }
+                return tab;
+            });
+
+            return {
+                tabProducts: {
+                    ...prevState.tabProducts,
+                    [tabKey]: updatedProducts.filter((product) => product && product.quantity > 0),
+                },
+                tabList: updatedTabList,
+            };
         });
     };
 
@@ -370,9 +446,11 @@ BanHangService.getKMTT().then((res) => {
         // Reset the input value
         this.setState({ inputValue: '' });
     };
-    
+
     onChangeSearchInput = (e) => {
+        console.log("Event:", e);
         const inputValue = e.target.value;
+        console.log("Input Value:", inputValue);
         this.setState({ inputValue });
     };
     render() {
@@ -395,18 +473,26 @@ BanHangService.getKMTT().then((res) => {
                                 return (
                                     <Tabs.TabPane tab={<span><ProfileOutlined /> {tabinfo.tab}</span>}
                                         key={tabinfo.key}
-                                        closable={index >= 0}>
-                                        <div style={{ overflowX: 'auto', overflowY: 'auto', maxHeight: '350px' }}>
+                                        closable={index >= 0}
+                                        forceRender={true}>
+                                        <div style={{ overflowX: 'auto', overflowY: 'auto', width: '750px' }}>
                                             <Col style={{ backgroundColor: 'rgb(0,0,0,0.2)', height: '50px', padding: '10px', display: 'flex' }}>
                                                 <Col span={1} style={{ fontWeight: 'bold', fontSize: '15px' }} >STT</Col>
+<<<<<<< HEAD
                                                 <Col span={3} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center' }} >Ảnh SP</Col>
                                                 <Col span={3} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center' }} >Mã</Col>
                                                 <Col span={5} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center' }} >Tên SP</Col>
                                                 <Col span={2} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center' }} >Màu Sắc</Col>
                                                 <Col span={2} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center' }} >Size</Col>
+=======
+                                                <Col span={2} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center' }} >Ảnh SP</Col>
+                                                <Col span={2} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center' }} >Màu sắc</Col>
+                                                <Col span={2} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center' }} >Size</Col>
+                                                <Col span={6} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center' }} >Tên SP</Col>
+>>>>>>> origin/main
                                                 <Col span={2} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center' }} >Số lượng</Col>
-                                                <Col span={4} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center' }} >Đơn giá</Col>
-                                                <Col span={5} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center' }} >Thành tiền</Col>
+                                                <Col span={3} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center' }} >Đơn giá</Col>
+                                                <Col span={4} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center' }} >Thành tiền</Col>
                                             </Col>
                                             {this.renderProductsForTab(this.state.activeTabKey)}
                                         </div>
@@ -418,7 +504,7 @@ BanHangService.getKMTT().then((res) => {
                         <div>
                             <hr />
                             <div>
-                            <p style={{ fontWeight: 'bolder', fontSize: '20px' }}>Danh sách sản phẩm</p>
+                                <p style={{ fontWeight: 'bolder', fontSize: '20px' }}>Danh sách sản phẩm</p>
                                 <Select
                                     mode="multiple"
                                     style={{ width: '100%', maxWidth: '500px' }}
@@ -431,14 +517,14 @@ BanHangService.getKMTT().then((res) => {
                                             <div style={{ overflowX: 'auto', overflowY: 'auto' }}>
                                                 <div>{index + 1}</div>
                                                 <div>
-                                                            {option.anh && <img src={`/niceadmin/img/${option.anh}`} width="100px" height="100px" />}
+                                                    {option.anh && <img src={`/niceadmin/img/${option.anh}`} width="100px" height="100px" />}
 
-                                                        </div>
+                                                </div>
                                                 <div style={{ marginLeft: '75px' }}>{option.sanPham.ten} <br /> {'Size: '}{option.kichThuoc.giaTri} - {'Màu: '}{option.mauSac.ten}</div>
                                                 <div style={{ marginLeft: '75px' }}> {'Giá: '}{option.donGia}{' VND'} - SL: {option.soLuong}</div>
                                             </div>
                                         ),
-                                        value: option.ma+option.sanPham.ten ,
+                                        value: option.ma,
                                     }))}
                                 />
                                 <Button style={{ color: 'black', backgroundColor: '#fff' }} onClick={this.handleAddToCart}>
@@ -472,15 +558,20 @@ BanHangService.getKMTT().then((res) => {
                             </div>
                             <Flex wrap="wrap">
                                 {this.state.sanPhamChiTiet && this.state.sanPhamChiTiet.map((sanPhamChiTiet, index) => {
+                                    const handleChangeQuantity = () => {
+                                        sanPhamChiTiet.soLuong -= 1
+                                    }
                                     return (
-                                        <Flex onClick={() => this.handleProductClick(sanPhamChiTiet, this.state.activeTabKey)} key={index} style={{ width: '50%', overflowX: 'auto', overflowY: 'auto', cursor: 'pointer' }} flex={'row'}>
-                                            <div style={{ overflowX: 'auto', overflowY: 'auto' }} className="container_sell">
-                                                <div> <img style={{ height: '60px', width: '60px', float: 'left' }} src="https://assets.adidas.com/images/h_840,f_auto,q_auto,fl_lossy,c_fill,g_auto/dda507d6073c4f44abb5d314d617250e_9366/Ultra_4DFWD_Running_Shoes_Grey_ID1686_HM1.jpg" /></div>
-                                                <div style={{ marginLeft: '75px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{sanPhamChiTiet.sanPham.ten}</div>
-                                                <div style={{ marginLeft: '75px' }}>Size: {sanPhamChiTiet.kichThuoc.giaTri} - Màu: {sanPhamChiTiet.mauSac.ten}</div>
-                                                <div style={{ marginLeft: '75px' }}>Giá: {sanPhamChiTiet.donGia} VND - SL: {sanPhamChiTiet.soLuong}</div>
-                                            </div>
-                                        </Flex>
+                                        sanPhamChiTiet.soLuong <= 0 ? <></>
+                                            : (<Flex onClick={() => this.handleProductClick(sanPhamChiTiet, this.state.activeTabKey)} key={index} style={{ width: '50%', overflowX: 'auto', overflowY: 'auto', cursor: 'pointer' }} flex={'row'}>
+                                                <div onClick={handleChangeQuantity} style={{ overflowX: 'auto', overflowY: 'auto' }} className="container_sell">
+                                                    <div> <img style={{ height: '60px', width: '60px', float: 'left' }} src={`/niceadmin/img/${sanPhamChiTiet.anh}`} /></div>
+                                                    <div style={{ marginLeft: '75px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{sanPhamChiTiet.sanPham.ten}</div>
+                                                    <div style={{ marginLeft: '75px' }}>Size: {sanPhamChiTiet.kichThuoc.giaTri} - Màu: {sanPhamChiTiet.mauSac.ten}</div>
+                                                    <div style={{ marginLeft: '75px' }}>Giá: {sanPhamChiTiet.donGia} VND</div>
+                                                    <div style={{ marginLeft: '75px' }}>SL: {sanPhamChiTiet.soLuong}VND</div>
+                                                </div>
+                                            </Flex>)
                                     )
                                 })}
                             </Flex>
@@ -495,17 +586,13 @@ BanHangService.getKMTT().then((res) => {
                                 optionLabelProp="label"
                                 onChange={this.onChangeSearchInput}
                                 placeholder="Thêm khách hàng vào hóa đơn"
-                                options={this.state.khuyenMai.map((option, index) => ({
+                                options={this.state.taiKhoan.map((option, index) => ({
                                     label: (
                                         <div style={{ overflowX: 'auto', overflowY: 'auto' }}>
-                                            <div style={{  color: 'red' }}>Cho hóa đơn tối thiểu :<b> {option.dieuKien}</b> </div>
-                                            <div >Mã giảm giá: {option.ma} <br /> {'Số lượng còn: '}{option.soLuong}</div>
-                                            <div > Giá trị: <b>{option.giamGia} {option.kieuKhuyenMai === 1 ? "%" : option.kieuKhuyenMai === 2 ? "VND" : ""}</b></div>
-                                            <div className={option.trangThai === 0 ? 'badge bg-warning text-dark' : option.trangThai === 1 ? 'badge bg-success' : 'badge bg-danger'}>{option.trangThai === 0
-                                                ? 'Chưa diễn ra'
-                                                : option.trangThai === 1
-                                                    ? 'Đang diễn ra'
-                                                    : 'Đã kết thúc'}</div>
+                                            <div >{option.thongTinNguoiDung.ten} {option.thongTinNguoiDung.sdt}</div>
+
+
+
                                         </div>
 
                                     ),
@@ -526,34 +613,35 @@ BanHangService.getKMTT().then((res) => {
                                     <Col style={{ width: '55%', borderStyle: 'solid', borderTop: 'none', borderRight: 'none', borderLeft: 'none', borderWidth: '1px' }}>
                                         <Col style={{ fontSize: '16px', textAlign: 'right', margin: '5px 0px 5px 0px' }}><span style={{ color: 'red' }}>{this.getTotalAmount(activeTabProducts)}</span></Col>
                                         <Col style={{ fontSize: '16px', textAlign: 'left' }}><Select
-                                mode="multiple"
-                                style={{ width: '100%', maxWidth: '500px' }}
-                                dropdownStyle={{ maxHeight: '300px', overflowY: 'auto' }}
-                                optionLabelProp="label"
-                                onChange={this.onChangeSearchInput}
-                                placeholder="thêm khuyến mãi"
-                                options={this.state.khuyenMai.map((option, index) => ({
-                                    label: (
-                                        <div style={{ overflowX: 'auto', overflowY: 'auto' }}>
-                                            <div style={{  color: 'red' }}>Cho hóa đơn tối thiểu :<b> {option.dieuKien} VND</b> </div>
-                                            <div >Mã giảm giá: {option.ma} <br /> {'Số lượng còn: '}{option.soLuong}</div>
-                                            <div > Giá trị: <b>{option.giamGia} {option.kieuKhuyenMai === 1 ? "%" : option.kieuKhuyenMai === 0 ? "VND" : ""}</b></div>
-                                            <div className={option.trangThai === 0 ? 'badge bg-warning text-dark' : option.trangThai === 1 ? 'badge bg-success' : 'badge bg-danger'}>{option.trangThai === 0
-                                                ? 'Chưa diễn ra'
-                                                : option.trangThai === 1
-                                                    ? 'Đang diễn ra'
-                                                    : 'Đã kết thúc'}</div>
-                                        </div>
+                                            mode="multiple"
+                                            style={{ width: '100%', maxWidth: '500px' }}
+                                            dropdownStyle={{ maxHeight: '300px', overflowY: 'auto', width: '350px' }}
+                                            optionLabelProp="label"
+                                            onChange={this.onChangeSearchInput}
+                                            placeholder="thêm khuyến mãi"
+                                            options={this.state.khuyenMai.map((option, index) => ({
+                                                label: (
+                                                    <div style={{ overflowX: 'auto', overflowY: 'auto' }}>
+                                                        <div style={{ color: 'red' }}>Cho hóa đơn tối thiểu :<b> {option.dieuKien} VND</b> </div>
+                                                        <div >Mã giảm giá: {option.ma} <br /> {'Số lượng còn: '}{option.soLuong}</div>
+                                                        <div > Giá trị: <b>{option.giamGia} {option.kieuKhuyenMai === 1 ? "%" : option.kieuKhuyenMai === 0 ? "VND" : ""}</b></div>
+                                                        <div className={option.trangThai === 0 ? 'badge bg-warning text-dark' : option.trangThai === 1 ? 'badge bg-success' : 'badge bg-danger'}>{option.trangThai === 0
+                                                            ? 'Chưa diễn ra'
+                                                            : option.trangThai === 1
+                                                                ? 'Đang diễn ra'
+                                                                : 'Đã kết thúc'}</div>
+                                                    </div>
 
-                                    ),
-                                    value: option.ma + option.soLuong,
-                                }))}
-                            /><Button style={{ maxWidth: '75px', textAlign: 'center' }}>Áp dụng</Button></Col>
+                                                ),
+                                                value: option.ma + option.soLuong,
+                                            }))}
+                                        /></Col>
+                                        {/* <Button style={{ maxWidth: '75px', textAlign: 'center' }}>Áp dụng</Button> */}
                                         <Col style={{ fontSize: '16px', textAlign: 'right', marginTop: '5px' }}>0</Col>
                                         <Col style={{ fontSize: '16px', textAlign: 'right' }}><Input
                                             type="text"
                                             placeholder="Nhập tiền khách đưa..."
-                                            style={{ width: '240px', float: 'left' }}
+                                            style={{ width: '194px', float: 'left' }}
                                             onChange={this.onChangeEnteredAmount}
                                         /></Col>
                                     </Col>
@@ -583,12 +671,12 @@ BanHangService.getKMTT().then((res) => {
                             </Flex>
                         </div>
                         <div>
-                        <Input id="ghiChuDonHang" placeholder="Nhập ghi chú đơn hàng" />
+                            <Input id="ghiChuDonHang" placeholder="Nhập ghi chú đơn hàng" />
                             <br />
                             <br />
                             <Flex justify="space-between">
-                                <Button style={{ width: '40%', height: '70px', backgroundColor: 'rgba(255, 255, 0, 0.3)', fontWeight: 'bolder', fontSize: '20px' }}>In tạm tính</Button>
-                                <Button style={{ width: '55%', height: '70px', backgroundColor: 'rgba(144, 238, 144)', fontWeight: 'bolder', fontSize: '20px' }}onClick={this.add}>Thanh toán</Button>
+                                <Button className="customButton" style={{ width: '40%', height: '70px', backgroundColor: 'white', color: 'black', fontWeight: 'bolder', borderColor: 'black', fontSize: '20px' }}>In tạm tính</Button>
+                                <Button className="customButton" style={{ width: '55%', height: '70px', backgroundColor: 'white', color: 'black', fontWeight: 'bolder', borderColor: 'black', fontSize: '20px' }} onClick={this.add}>Thanh toán</Button>
                             </Flex>
                         </div>
                     </div>

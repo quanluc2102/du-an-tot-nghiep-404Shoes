@@ -181,7 +181,7 @@ class HoaDonChiTietComponents extends Component {
     };
     update = (e) => {
         e.preventDefault();
-        const confirmed = window.confirm('Bạn có chắc chắn muốn sửa danh mục?');
+        const confirmed = window.confirm('Bạn có chắc chắn xác nhận' +`${this.state.hoaDon.trangThai === 0 ? '' : this.state.hoaDon.trangThai === 1 ? ' Chuẩn bị giao' : this.state.hoaDon?.trangThai === 2 ? 'Đang giao' : this.state.hoaDon?.trangThai === 3 ? 'Hoàn thành' : ""}` );
         if (!confirmed) {
             return;
         }
@@ -272,10 +272,10 @@ class HoaDonChiTietComponents extends Component {
                                 variant="btn btn-outline-primary"
                                 onClick={this.handleShowModal1}
                                 Visible
-                                disabled={isHoaDonDaHuy || this.state.hoaDon.trangThai === 4}
-                                style={isHoaDonDaHuy ? { color: 'gray', borderColor: 'gray', cursor: 'not-allowed', visible: false } : this.state.hoaDon.trangThai === 4 ? { color: 'green', borderColor: 'green' } : {}}
+                                disabled={isHoaDonDaHuy || this.state.hoaDon.trangThai === 4 || this.state.hoaDon.trangThai === 6}
+                                style={isHoaDonDaHuy ? { color: 'gray', borderColor: 'gray', cursor: 'not-allowed', visible: false } : this.state.hoaDon.trangThai === 4 ? { color: 'green', borderColor: 'green' } : this.state.hoaDon.trangThai === 6 ? { color: 'green', borderColor: 'green' }:{}}
                             >
-                                {this.state.hoaDon.trangThai === 0 ? 'Xác nhận' : this.state.hoaDon.trangThai === 1 ? ' Xác nhận chuẩn bị giao' : this.state.hoaDon?.trangThai === 2 ? ' Xác nhận Đang giao' : this.state.hoaDon?.trangThai === 3 ? 'Xác nhận Hoàn thành' : this.state.hoaDon?.trangThai === 4 ? 'Đã hoàn thành' : this.state.hoaDon?.trangThai === 5 ? '--|--' : ""}
+                                {this.state.hoaDon.trangThai === 0 ? 'Xác nhận' : this.state.hoaDon.trangThai === 1 ? ' Xác nhận chuẩn bị giao' : this.state.hoaDon?.trangThai === 2 ? ' Xác nhận Đang giao' : this.state.hoaDon?.trangThai === 3 ? 'Xác nhận Hoàn thành' : this.state.hoaDon?.trangThai === 4 ? 'Đã hoàn thành' : this.state.hoaDon?.trangThai === 6 ? 'Đã hoàn thành bán tại quầy' : ""}
                             </Button>
                             <h1></h1>
                             <button style={isHoaDonKoDcHuy ? { color: 'gray', borderColor: 'gray', cursor: 'not-allowed' } : {}} disabled={isHoaDonKoDcHuy} type="submit" value="huyHD" className="btn btn-outline-primary" onClick={this.huyHD}> {this.state.hoaDon.trangThai === 5 ? 'Hóa đơn này đã hủy' : "Hủy hóa đơn"}</button>
@@ -331,8 +331,7 @@ class HoaDonChiTietComponents extends Component {
                                                                     <td>{hoaDonChiTiet.soLuong}</td>
                                                                     <td>
                                                                         <img
-                                                                            // src={hoaDonChiTiet.sanPhamChiTiet.sanPham.imageURL}
-                                                                            // alt={hoaDonChiTiet.sanPhamChiTiet.sanPham.ten}
+                                                                            src={`/niceadmin/img/${hoaDonChiTiet.sanPhamChiTiet.sanPham.anh}`}
                                                                             style={{ width: '50px', height: '50px' }}
                                                                         />
                                                                     </td>
