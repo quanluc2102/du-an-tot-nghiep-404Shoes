@@ -62,13 +62,15 @@ class BanHangOffline extends Component {
     }
 
     componentDidMount() {
-
+        const { tabProducts, activeTabKey } = this.state;
+        const selectedProducts = tabProducts[activeTabKey] || [];
+        console.log(this.getTotalAmount(selectedProducts))
         BanHangService.getSPCT().then((res) => {
             this.setState({ sanPhamChiTiet: res.data })
         }).catch((error) => {
             console.error("Error fetching data:", error);
         });
-        BanHangService.getKMTT().then((res) => {
+        BanHangService.getKMTT(100000000000000).then((res) => {
             this.setState({ khuyenMai: res.data })
         }).catch((error) => {
             console.error("Error fetching data:", error);
@@ -79,7 +81,15 @@ class BanHangOffline extends Component {
             console.error("Error fetching data:", error);
         });
     }
-
+    reloadKM = () => {
+        const { tabProducts, activeTabKey } = this.state;
+        const selectedProducts = tabProducts[activeTabKey] || [];
+        BanHangService.getKMTT( this.getTotalAmount(selectedProducts)).then((res) => {
+            this.setState({ khuyenMai: res.data })
+        }).catch((error) => {
+            console.error("Error fetching data:", error);
+        });
+    }
     handleCloseModal = () => {
         this.setState({ showModal: false });
     };
@@ -258,16 +268,6 @@ class BanHangOffline extends Component {
         return products.map((product, index) => (
             <Col key={index} style={{ backgroundColor: '#fff', height: '75px', padding: '10px', display: 'flex', alignItems: 'center' }}>
                 <Col span={1} style={{ fontWeight: 'bold', fontSize: '15px' }}>{index + 1}</Col>
-<<<<<<< HEAD
-                <Col span={3} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center' }}>
-                    <img style={{ height: '60px', width: '60px' }} src="https://assets.adidas.com/images/h_840,f_auto,q_auto,fl_lossy,c_fill,g_auto/dda507d6073c4f44abb5d314d617250e_9366/Ultra_4DFWD_Running_Shoes_Grey_ID1686_HM1.jpg" />
-                </Col>
-                <Col span={3} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center' }}>{product.ma}</Col>
-                <Col span={5} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center', }}>{product.sanPham.ten}</Col>
-                <Col span={3} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center' }}>{product.mauSac.ten}</Col>
-                <Col span={3} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center' }}>{product.kichThuoc.giaTri}</Col>
-=======
->>>>>>> origin/main
                 <Col span={2} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center' }}>
                     <img style={{ height: '60px', width: '60px' }} src={`/niceadmin/img/${product.anh}`} />
                 </Col>
@@ -447,11 +447,15 @@ class BanHangOffline extends Component {
         this.setState({ inputValue: '' });
     };
 
-    onChangeSearchInput = (e) => {
-        console.log("Event:", e);
-        const inputValue = e.target.value;
-        console.log("Input Value:", inputValue);
-        this.setState({ inputValue });
+    onChangeSearchInput = (selectedValues) => {
+        // Use selectedValues directly instead of e.target.value
+        console.log("Selected Values:", selectedValues);
+    
+        // Filter promotions based on the selected values (if needed)
+        const filteredKhuyenMai = this.state.khuyenMai.filter((option) => selectedValues.includes(option.id));
+    
+        // Update the state with the filtered promotions
+        this.setState({ filteredKhuyenMai });
     };
     render() {
         const { isQRReaderOn, result } = this.state;
@@ -478,18 +482,10 @@ class BanHangOffline extends Component {
                                         <div style={{ overflowX: 'auto', overflowY: 'auto', width: '750px' }}>
                                             <Col style={{ backgroundColor: 'rgb(0,0,0,0.2)', height: '50px', padding: '10px', display: 'flex' }}>
                                                 <Col span={1} style={{ fontWeight: 'bold', fontSize: '15px' }} >STT</Col>
-<<<<<<< HEAD
-                                                <Col span={3} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center' }} >Ảnh SP</Col>
-                                                <Col span={3} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center' }} >Mã</Col>
-                                                <Col span={5} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center' }} >Tên SP</Col>
-                                                <Col span={2} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center' }} >Màu Sắc</Col>
-                                                <Col span={2} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center' }} >Size</Col>
-=======
                                                 <Col span={2} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center' }} >Ảnh SP</Col>
                                                 <Col span={2} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center' }} >Màu sắc</Col>
                                                 <Col span={2} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center' }} >Size</Col>
                                                 <Col span={6} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center' }} >Tên SP</Col>
->>>>>>> origin/main
                                                 <Col span={2} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center' }} >Số lượng</Col>
                                                 <Col span={3} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center' }} >Đơn giá</Col>
                                                 <Col span={4} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center' }} >Thành tiền</Col>
@@ -617,6 +613,7 @@ class BanHangOffline extends Component {
                                             style={{ width: '100%', maxWidth: '500px' }}
                                             dropdownStyle={{ maxHeight: '300px', overflowY: 'auto', width: '350px' }}
                                             optionLabelProp="label"
+                                            onClick={() => this.reloadKM()}
                                             onChange={this.onChangeSearchInput}
                                             placeholder="thêm khuyến mãi"
                                             options={this.state.khuyenMai.map((option, index) => ({
@@ -633,7 +630,7 @@ class BanHangOffline extends Component {
                                                     </div>
 
                                                 ),
-                                                value: option.ma + option.soLuong,
+                                                value: option.id,
                                             }))}
                                         /></Col>
                                         {/* <Button style={{ maxWidth: '75px', textAlign: 'center' }}>Áp dụng</Button> */}

@@ -45,11 +45,15 @@ public class KhuyenMaiController {
         return ResponseEntity.ok(khuyenMaiServiceImpl.getAllNoPage());
     }
 
-    @GetMapping("hien-thiKMTT")
-    public ResponseEntity<?> getKMTT(Model model) {
-        return ResponseEntity.ok(khuyenMaiServiceImpl.getKMTT());
-    }
+    @GetMapping("hien-thiKMTT/{tongTien}")
+    public ResponseEntity<?> getKMTT(Model model,@PathVariable("tongTien") int tongTien) {
 
+        return ResponseEntity.ok(khuyenMaiServiceImpl.getKMTT().stream().filter(khuyenMai -> khuyenMai.getDieuKien()<=tongTien).toList());
+    }
+@GetMapping("hien-thiKM/{id}")
+public ResponseEntity<?> getKMById(Model model,@PathVariable("id") Long id) {
+        return ResponseEntity.ok(repository.findById(id));
+}
     @PostMapping("add")
     public ResponseEntity<?> add(Model model,
                                  @RequestBody KhuyenMai khuyenMai, BindingResult bindingResult) {
