@@ -518,7 +518,11 @@ class ThongKeDoanhThuSanPham extends Component {
 
     renderCombinedChartThongKeDoanhThuNew() {
         const chartData = {
-            labels: this.state.thongKeThangNew.map(th => th[0]),
+            labels: this.state.thongKeThangNew.map(th => {
+                const month = th[0];
+                const numberOfMonths = th[3]; // Thêm một cột trong mảng chứa số tháng
+                return `Tháng ${month}`;
+            }),
             datasets: [
                 {
                     label: 'Doanh thu',

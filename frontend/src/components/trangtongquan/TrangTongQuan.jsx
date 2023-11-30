@@ -261,7 +261,7 @@ class TrangTongQuan extends Component {
                         <div className="card info-card sales-card">
                             <div className="card-body">
                                 <h5 className="card-title">
-                                    Hóa đơn hoàn thành
+                                    Hóa đơn chưa xử lý
                                 </h5>
 
                                 <div className="d-flex align-items-center">
