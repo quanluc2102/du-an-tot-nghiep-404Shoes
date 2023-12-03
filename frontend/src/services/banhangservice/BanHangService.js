@@ -3,17 +3,20 @@ const SPCT_API_BASE_URL = "http://localhost:8080/san_pham_chi_tiet/hien-thi";
 const KHACH_HANG_BASE_URL = "http://localhost:8080/ban_hang/hienthiKH";
 const CREATE_HOA_DON_URL = "http://localhost:8080/hoa_don/add";
 const API_GETKMTT = "http://localhost:8080/khuyen_mai/hien-thiKMTT";
+
+const API_GETKM = "http://localhost:8080/khuyen_mai/hien-thiKM";
 class BanHangService{
     getSPCT(){
         return axios.get(SPCT_API_BASE_URL);
     }
-
+    getKM(id){
+        return axios.get(API_GETKM+"/"+id);
+     }
+    getKMTT(tongTien){
+        return axios.get(API_GETKMTT+"/"+tongTien)
+     }
     getKhachHang(){
         return axios.get(KHACH_HANG_BASE_URL);
-    }
-    getKMTT() {
-        // Thực hiện cuộc gọi đến API endpoint mới trả về toàn bộ dữ liệu khuyenMai
-        return axios.get(API_GETKMTT);
     }
 
     async createHoaDon(thanhToan) {
