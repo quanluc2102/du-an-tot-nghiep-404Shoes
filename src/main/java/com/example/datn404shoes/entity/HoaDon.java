@@ -64,8 +64,16 @@ public class HoaDon {
     private String ghiChu;
 
     @ManyToOne
-    @JoinColumn(name = "tai_khoan_id", referencedColumnName = "id", nullable = true)
+    @JoinColumn(name = "tai_khoan_nhan_vien_id", referencedColumnName = "id", nullable = true)
     private TaiKhoan taiKhoan;
+
+    @ManyToOne
+    @JoinColumn(name = "tai_khoan_khach_hang_id", referencedColumnName = "id", nullable = true)
+    private TaiKhoan taiKhoanKhachHang;
+
+    @ManyToOne
+    @JoinColumn(name = "khuyen_mai", referencedColumnName = "id", nullable = true)
+    private KhuyenMai khuyenMai;
 
     @ManyToOne
     @JoinColumn(name = "thanh_toan_id", referencedColumnName = "id", nullable = true)

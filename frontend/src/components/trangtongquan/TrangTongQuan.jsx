@@ -335,12 +335,12 @@ class TrangTongQuan extends Component {
                                         <th scope="col">Mã đơn hàng</th>
                                         <th scope="col">Người mua</th>
                                         <th scope="col">Ngày mua</th>
-                                        <th scope="col">Xử lý đơn hàng</th>
+                                        {/*<th scope="col">Xử lý đơn hàng</th>*/}
                                     </tr>
                                     </thead>
                                     <tbody>
                                     {this.state.listHoaDonChuaXuLy.map((th, index) => (
-                                        <tr key={index}>
+                                        <tr key={index} onClick={() => this.detail(th[0])} className="table-row">
                                             <td>{th[1]}</td>
                                             <td>{this.formatCurrency(th[2])}</td>
                                             <td>{th[3]}</td>
