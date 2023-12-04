@@ -50,10 +50,12 @@ class HoaDonComponents extends Component {
                 (item.ten && item.ten !== null ? item.ten : "Khách lẻ") +
                 (item.maHoaDon) + (item.ngayTao) + (item.ghiChu) +
                 (item.sdt) + (item.taiKhoan && item.taiKhoan.maTaiKhoan) +
-                (item.trangThai === 4 ? "Hoàn thành" : item.trangThai === 0 ? "Chờ xác nhận" : item.trangThai === 1 ? "Đã xác nhận" : item.trangThai === 2 ? "Chuẩn bị giao" : item.trangThai === 3 ? "Đang giao" : item.trangThai === 4 ? "Hoàn thành" : item.trangThai === 5 ? "Đã Hủy" : "Chờ")
+                (item.trangThai === 4 ? "Hoàn thành" : item.trangThai === 0 ? "Chờ xác nhận" : item.trangThai === 1 ? "Đã xác nhận" : item.trangThai === 2 ? "Chuẩn bị giao" : item.trangThai === 3 ? "Đang giao" : item.trangThai === 4 ? "Hoàn thành" : item.trangThai === 5 ? "Đã Hủy": item.trangThai === 6 ? "Tại quầy" : "Chờ")
             ).toLowerCase();
 
             switch (searchTerm) {
+                case "6":
+                    return item.trangThai == 6;
                 case "5":
                     return item.trangThai == 5; // Filter for "Đã thanh toán"
                 case "3":
@@ -92,16 +94,18 @@ class HoaDonComponents extends Component {
     }
     getStatusColor = (status) => {
         switch (status) {
+            case 6:
+                return'#50C7C7';
             case 5:
-                return 'green'; // Đã hoàn thành (màu xanh)
+                return 'red'; // Đã hoàn thành (màu xanh)
             case 3:
                 return 'yellow'; // Chưa thanh toán (màu đỏ)
             case 4:
-                return 'blue'; // Chờ (màu vàng)
+                return 'green'; // Chờ (màu vàng)
             case 2:
                 return 'red'; // Chờ (màu vàng)
             case 1:
-                return 'black'; // Chờ (màu vàng)
+                return 'blue'; // Chờ (màu vàng)
             case 0:
                 return '#e0e0e0'; // Chờ (màu vàng)
 
@@ -124,6 +128,8 @@ class HoaDonComponents extends Component {
                 return 'Hoàn thành';
             case 5:
                 return 'Hủy';
+            case 6:
+                return "Tại quầy";
             default:
                 return 'Không xác định';  // Default text (or another text of your choice)
         }
@@ -132,9 +138,40 @@ class HoaDonComponents extends Component {
         // Đặt trang hiện tại về 0 để nhảy về trang đầu tiên
         this.setState({ currentPage: 0 });
     }
+    getStatusCounts = () => {
+        const { hoaDon } = this.state;
+        const statusCounts = {
+            "": hoaDon.length, // All
+            "0": 0, // Chờ xác nhận
+            "1": 0, // Đã xác nhận
+            "2": 0, // Chuẩn bị giao
+            "3": 0, // Đang giao
+            "4": 0, // Hoàn thành
+            "5": 0  // Hủy
+        };
+
+        hoaDon.forEach(item => {
+            switch (item.trangThai) {
+                case 0:
+                case 1:
+                case 2:
+                case 3:
+                case 4:
+                case 5:
+                    statusCounts[item.trangThai.toString()]++;
+                    break;
+                default:
+                    statusCounts[""]++;
+                    break;
+            }
+        });
+
+        return statusCounts;
+    }
+
     render() {
         const searchTerm = localStorage.getItem('searchTerm') || this.state.searchTerm;
-
+        const statusCounts = this.getStatusCounts();
         const { currentPage, perPage } = this.state;
         const hoaDonList = this.filteredData();
         const offset = currentPage * perPage;
@@ -157,13 +194,13 @@ class HoaDonComponents extends Component {
                     <div className="row">
                         <div className="col-lg-13">
                             <div className="row">
-                                <div className="col-13">
+                                <div className="col-17">
                                     <div className="card recent-sales overflow-auto">
                                         <br />
                                         <br />
-                                        <div className="col-13">
+                                        <div className="col-17">
                                             <div className="row">
-                                                <div className="col-3 container">
+                                                <div className="col-2 container">
                                                     <input
                                                         type="text"
                                                         name="query"
@@ -185,19 +222,19 @@ class HoaDonComponents extends Component {
                                                             onChange={() => this.handleStatusFilter("")}
                                                             className="form-check-input"
                                                         />
-                                                        <label htmlFor="filterAll" className="form-check-label">Tất cả</label>
+                                                        <label htmlFor="filterAll" className="form-check-label">Tất cả  <span class="badge bg-danger translate-middle badge-number rounded-circle">{statusCounts[""]}</span></label>
                                                     </div>
                                                     <div className="form-check form-check-inline">
                                                         <input
                                                             type="radio"
-                                                            id="filterPaid"
+                                                            id="filterPending"
                                                             name="statusFilter"
-                                                            value="4"
+                                                            value="0"
                                                             checked={this.state.searchTerm === "0"}
                                                             onChange={() => this.handleStatusFilter("0")}
                                                             className="form-check-input"
                                                         />
-                                                        <label htmlFor="filterPaid" className="form-check-label">Chờ xác nhận</label>
+                                                        <label htmlFor="filterPending" className="form-check-label">Chờ xác nhận  <span class="badge bg-danger translate-middle badge-number rounded-circle">{statusCounts["0"]}</span></label>
                                                     </div>
                                                     <div className="form-check form-check-inline">
                                                         <input
@@ -209,7 +246,7 @@ class HoaDonComponents extends Component {
                                                             onChange={() => this.handleStatusFilter("1")}
                                                             className="form-check-input"
                                                         />
-                                                        <label htmlFor="filterPaid" className="form-check-label">Đã xác nhận</label>
+                                                        <label htmlFor="filterPaid" className="form-check-label">Đã xác nhận <span class="badge bg-danger translate-middle badge-number rounded-circle">{statusCounts["1"]}</span></label>
                                                     </div>
                                                     <div className="form-check form-check-inline">
                                                         <input
@@ -221,7 +258,7 @@ class HoaDonComponents extends Component {
                                                             onChange={() => this.handleStatusFilter("2")}
                                                             className="form-check-input"
                                                         />
-                                                        <label htmlFor="filterPaid" className="form-check-label">Chuẩn bị giao</label>
+                                                        <label htmlFor="filterPaid" className="form-check-label">Chuẩn bị giao <span class="badge bg-danger translate-middle badge-number rounded-circle">{statusCounts["2"]}</span></label>
                                                     </div>
                                                     <div className="form-check form-check-inline">
                                                         <input
@@ -233,7 +270,7 @@ class HoaDonComponents extends Component {
                                                             onChange={() => this.handleStatusFilter("3")}
                                                             className="form-check-input"
                                                         />
-                                                        <label htmlFor="filterUnpaid" className="form-check-label">Đang giao</label>
+                                                        <label htmlFor="filterUnpaid" className="form-check-label">Đang giao <span class="badge bg-danger translate-middle badge-number rounded-circle">{statusCounts["3"]}</span></label>
                                                     </div>
                                                     <div className="form-check form-check-inline">
                                                         <input
@@ -245,7 +282,7 @@ class HoaDonComponents extends Component {
                                                             onChange={() => this.handleStatusFilter("4")}
                                                             className="form-check-input"
                                                         />
-                                                        <label htmlFor="filterPending" className="form-check-label">Hoàn thành</label>
+                                                        <label htmlFor="filterPending" className="form-check-label">Hoàn thành <span class="badge bg-danger translate-middle badge-number rounded-circle">{statusCounts["4"]}</span></label>
                                                     </div>
                                                     <div className="form-check form-check-inline">
                                                         <input
@@ -257,7 +294,19 @@ class HoaDonComponents extends Component {
                                                             onChange={() => this.handleStatusFilter("5")}
                                                             className="form-check-input"
                                                         />
-                                                        <label htmlFor="filterPending" className="form-check-label">Hủy</label>
+                                                        <label htmlFor="filterPending" className="form-check-label">Hủy  <span class="badge bg-danger translate-middle badge-number rounded-circle">{statusCounts["5"]}</span></label>
+                                                    </div>
+                                                    <div className="form-check form-check-inline">
+                                                        <input
+                                                            type="radio"
+                                                            id="filterPending"
+                                                            name="statusFilter"
+                                                            value="3"
+                                                            checked={this.state.searchTerm === "6"}
+                                                            onChange={() => this.handleStatusFilter("6")}
+                                                            className="form-check-input"
+                                                        />
+                                                        <label htmlFor="filterPending" className="form-check-label">Tại quầy<span class="badge bg-danger translate-middle badge-number rounded-circle">{statusCounts["5"]}</span></label>
                                                     </div>
                                                 </div>
                                             </div>

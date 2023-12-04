@@ -217,7 +217,7 @@ class HoaDonChiTietComponents extends Component {
 
                 <div>
                     {/* ... Các phần mã khác ở đây ... */}
-                    <div style={{ maxWidth: '960px', marginLeft: '330px' }}>
+                    <div style={{ maxWidth: '960px'}}>
                         {/* ... Các phần mã khác ở đây ... */}
 
                         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -232,7 +232,7 @@ class HoaDonChiTietComponents extends Component {
                                                 width: '40px',
                                                 height: '40px',
                                                 backgroundColor: trangThai === 0 ? 'gray' :isActive ? 'green' : '#e0e0e0',
-                                                borderRadius: '50%',
+                                                borderRadius: '100%',
                                                 display: 'flex',
                                                 alignItems: 'center',
                                                 justifyContent: 'center',
@@ -308,6 +308,7 @@ class HoaDonChiTietComponents extends Component {
                                 <div className="col-12">
                                     <div className="card recent-sales overflow-auto">
                                         <div className="card-body">
+                                        
                                             <h5 className="card-title">Thông tin sản phẩm<span>| </span></h5>
                                             <div>
                                                 <table className="table table-borderless datatable">
@@ -343,9 +344,10 @@ class HoaDonChiTietComponents extends Component {
                                                         })}
                                                     </tbody>
                                                 </table>
-                                                <div className="text-right mt-3">
-                                                    <label>Tổng: {total.toLocaleString()} VNĐ</label>
-                                                </div>
+                                                <div className='row'>
+                                                <div className="text-right col-3">
+                                                    <label>Tổng : {total.toLocaleString()} VNĐ</label> 
+                                                </div><div className='col-5'></div><label className="text-left col-4 red">Thành tiền : <strong>{this.state.hoaDon?.tongTien?.toLocaleString()} VNĐ</strong></label></div>
                                             </div>
                                         </div>
                                     </div>
@@ -402,8 +404,7 @@ class HoaDonChiTietComponents extends Component {
                                                                 Avatar
                                                             </h10>
                                                             <img
-                                                                // src={hoaDonChiTiet.sanPhamChiTiet.sanPham.imageURL}
-                                                                // alt={hoaDonChiTiet.sanPhamChiTiet.sanPham.ten}
+                                                                src={`/niceadmin/img/${this.state.hoaDon?.taiKhoan?.thongTinNguoiDung?.anh}`}
                                                                 style={{ width: '55px', height: '70px' }}
                                                             />
                                                             <h10 className="nav-link">
