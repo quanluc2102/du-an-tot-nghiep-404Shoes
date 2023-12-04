@@ -275,14 +275,6 @@ CREATE TABLE lich_su_hoa_don(
                                 FOREIGN KEY (khuyen_mai) REFERENCES khuyen_mai(id)
 );
 
-CREATE TABLE hoa_don_khuyen_mai (
-                                    id BIGINT PRIMARY KEY IDENTITY(1,1),
-                                    hoa_don_id BIGINT,
-                                    khuyen_mai_id BIGINT,
-                                    FOREIGN KEY (hoa_don_id) REFERENCES hoa_don(id),
-                                    FOREIGN KEY (khuyen_mai_id) REFERENCES khuyen_mai(id)
-);
-
 
 use ShopShoe
 
