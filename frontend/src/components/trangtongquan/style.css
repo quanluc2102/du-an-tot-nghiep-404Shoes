@@ -34,6 +34,12 @@
     font-size: 24px;
 }
 
+.table-row:hover {
+    color: red; /* Màu nền khi hover */
+    cursor: pointer; /* Biến con trỏ thành pointer khi hover */
+}
+
+
 /* CSS cho breadcrumb */
 .breadcrumb {
     list-style: none;
