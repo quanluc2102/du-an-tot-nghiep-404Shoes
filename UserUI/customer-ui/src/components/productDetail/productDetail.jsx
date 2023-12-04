@@ -118,7 +118,7 @@ function ProductDetail({ match }) {
     };
     const changeSoLuong = (e) => {
         const maxSoLuong = filteredSPCT.length > 0 ? filteredSPCT[0].soLuong : 1;
-        setSoLuong(Math.min(maxSoLuong, Math.max(1, parseInt(e.target.value, 10))));
+        setSoLuong(Math.min(maxSoLuong, Math.max(1,e.target.value)));
     };
     const formatCurrency = (amount) => {
         return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'VND' }).format(amount);

@@ -18,7 +18,7 @@ function App() {
         <Redirect exact from='/' to='/home' />
         <Route path='/home' component={Home} />
         <Route path='/product-list' component={ProductList} />
-        <Route path='/your-cart' component={Cart} />
+        <Route path='/your-cart/:id' component={Cart} />
         <Route path='/login' component={Login} />
         <Route path='/register' component={Register} />
         <Route path='/product-detail/:id' component={ProductDetail} />
