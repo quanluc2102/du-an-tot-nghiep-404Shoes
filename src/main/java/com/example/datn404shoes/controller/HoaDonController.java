@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:3000")
@@ -76,11 +77,14 @@ public class HoaDonController {
             HoaDon hoaDonMoiNhat = hoaDonImpl.add(hoaDon);
 
             if(khuyenMai != null){
-               KhuyenMai km = khuyenMaiRepository.getOne(khuyenMai);
-               int quantityKM = km.getSoLuong() - 1;
-               km.setSoLuong(quantityKM);
-               hoaDonMoiNhat.setKhuyenMai(km);
-               khuyenMaiRepository.saveAndFlush(km);
+                Optional<KhuyenMai> khuyenMaiOptional = khuyenMaiRepository.findById(khuyenMai);
+                if (khuyenMaiOptional.isPresent()) {
+                    KhuyenMai km = khuyenMaiOptional.get();
+                    int quantityKM = km.getSoLuong() - 1;
+                    km.setSoLuong(quantityKM);
+                    hoaDonMoiNhat.setKhuyenMai(km);
+                    khuyenMaiRepository.saveAndFlush(km);
+                }
             }
 
             for (SPCTBanHangRequest sanPhamChiTiet : thanhToanDTO.getSanPhamChiTietList()) {
