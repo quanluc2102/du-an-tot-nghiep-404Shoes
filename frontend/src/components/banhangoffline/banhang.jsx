@@ -143,7 +143,7 @@ class BanHangOffline extends Component {
     add = async (e) => {
         e.preventDefault();
 
-        const { tabProducts, activeTabKey } = this.state;
+        const { tabProducts, activeTabKey, selectedPromotions } = this.state;
         const selectedProducts = tabProducts[activeTabKey] || [];
         const firstSelectedPromotion = selectedPromotions.length > 0 ? selectedPromotions[0] : null;
 

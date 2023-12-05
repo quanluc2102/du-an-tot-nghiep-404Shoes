@@ -79,7 +79,7 @@ public class HoaDonController {
                km.setSoLuong(quantityKM);
                khuyenMaiRepository.save(km);
             }
-            
+
             for (SPCTBanHangRequest sanPhamChiTiet : thanhToanDTO.getSanPhamChiTietList()) {
 
                 SanPhamChiTiet sanPhamChiTiet1 = sanPhamChiTietServiceimpl.getOne(sanPhamChiTiet.getId());
