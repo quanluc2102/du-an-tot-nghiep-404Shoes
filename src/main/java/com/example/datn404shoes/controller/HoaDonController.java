@@ -71,13 +71,16 @@ public class HoaDonController {
 
             HoaDon hoaDon = thanhToanDTO.getHoaDon();
 
+            Long khuyenMai = thanhToanDTO.getKhuyenMai();
+
             HoaDon hoaDonMoiNhat = hoaDonImpl.add(hoaDon);
 
-            if(hoaDonMoiNhat.getKhuyenMai() != null){
-               KhuyenMai km = khuyenMaiRepository.getOneKmByMa(hoaDonMoiNhat.getKhuyenMai().getMa());
+            if(khuyenMai != null){
+               KhuyenMai km = khuyenMaiRepository.getOne(khuyenMai);
                int quantityKM = km.getSoLuong() - 1;
                km.setSoLuong(quantityKM);
-               khuyenMaiRepository.save(km);
+               hoaDonMoiNhat.setKhuyenMai(km);
+               khuyenMaiRepository.saveAndFlush(km);
             }
 
             for (SPCTBanHangRequest sanPhamChiTiet : thanhToanDTO.getSanPhamChiTietList()) {

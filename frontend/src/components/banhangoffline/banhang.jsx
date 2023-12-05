@@ -156,11 +156,14 @@ class BanHangOffline extends Component {
         const ngayTao = new Date().toISOString();
 
         const thanhToan = {
+
             sanPhamChiTietList: selectedProducts,
+
+            khuyenMai: firstSelectedPromotion ? firstSelectedPromotion : null,
+
             hoaDon: {
                 tongTien: this.getTotalAmount(selectedProducts),
-                ghiChu: document.getElementById("ghiChuDonHang").value,
-                khuyenMai: firstSelectedPromotion ? firstSelectedPromotion : null,
+                ghiChu: document.getElementById("ghiChuDonHang").value,              
             },
         };
 
@@ -197,7 +200,6 @@ class BanHangOffline extends Component {
     getTotalAmount = (products) => {
         let totalAmount = products.reduce((total, product) => total + product.donGia * product.quantity, 0);
 
-        // Apply discounts based on selected promotions
         const { selectedPromotions } = this.state;
 
         selectedPromotions.forEach((promotionId) => {
@@ -205,10 +207,10 @@ class BanHangOffline extends Component {
 
             if (promotion) {
                 if (promotion.kieuKhuyenMai === 1) {
-                    // Discount by percentage
+
                     totalAmount *= (100 - promotion.giamGia) / 100;
                 } else if (promotion.kieuKhuyenMai === 0) {
-                    // Discount by fixed amount
+
                     totalAmount -= promotion.giamGia;
                 }
             }
@@ -319,17 +321,17 @@ class BanHangOffline extends Component {
     };
     handleQuantityChange = (e, productId) => {
         const newQuantity = parseInt(e.target.value, 10);
-        // Update the state with the new quantity for the product with the given productId
+
         this.setState((prevState) => {
-            const { activeTabKey, tabProducts } = prevState; // Access activeTabKey from prevState
-            // Update the quantity in the state for the specific product
+            const { activeTabKey, tabProducts } = prevState; 
+
             const updatedProducts = tabProducts[activeTabKey].map((product) => {
                 if (product.ma === productId) {
                     return { ...product, quantity: newQuantity };
                 }
                 return product;
             });
-            // Update the state with the modified products
+
             return {
                 tabProducts: {
                     ...tabProducts,
@@ -378,11 +380,9 @@ class BanHangOffline extends Component {
         this.setState((prevState) => {
             const updatedProducts = prevState.tabProducts[tabKey].map((product) => {
                 if (product.ma === productId) {
-                    // Decrease the quantity by 1 if it's greater than 0
+
                     const newQuantity = Math.max(product.quantity - 1, 0);
 
-                    // If the quantity is greater than 0, update the quantity
-                    // Otherwise, remove the product from the list
                     return newQuantity > 0 ? { ...product, quantity: newQuantity } : null;
                 }
                 return product;
@@ -390,7 +390,7 @@ class BanHangOffline extends Component {
 
             const updatedTabList = prevState.tabList.map((tab) => {
                 if (tab.key === tabKey) {
-                    // Remove the product from the tabList if its quantity becomes 0
+
                     return {
                         ...tab,
                         products: updatedProducts.filter((product) => product && product.quantity > 0),
@@ -431,59 +431,55 @@ class BanHangOffline extends Component {
     handleAddToCart = () => {
         const { tabProducts, selectedRowKeys, activeTabKey } = this.state;
 
-        // Get the selected products from the state based on selectedRowKeys
+
         const selectedProductsToAdd = this.state.sanPhamChiTiet
             .filter(product => selectedRowKeys.includes(product.ma))
             .map(product => ({ ...product, quantity: 1 }));
 
-        // Get the existing products in the active tab
+
         const existingProducts = tabProducts[activeTabKey] || [];
 
-        // Check if each selected product is already in the active tab
         selectedProductsToAdd.forEach(selectedProduct => {
             const existingProductIndex = existingProducts.findIndex(
                 product => product.ma === selectedProduct.ma
             );
 
             if (existingProductIndex !== -1) {
-                // If the product is already in the tab, increase its quantity by 1
+
                 existingProducts[existingProductIndex].quantity += 1;
             } else {
-                // If the product is not in the tab, add it with quantity 1
+
                 existingProducts.push(selectedProduct);
             }
         });
 
-        // Update the state with the modified tabProducts and clear selectedRowKeys
         this.setState(prevState => ({
             tabProducts: {
                 ...prevState.tabProducts,
                 [activeTabKey]: existingProducts,
             },
-            selectedRowKeys: [], // Clear selectedRowKeys after adding to the cart
+            selectedRowKeys: [],
         }));
 
-        // Reset the input value
         this.setState({ inputValue: '' });
     };
 
     onChangeSearchInput = (selectedValues) => {
-        // Ensure only one promotion is selected
+
         if (selectedValues.length > 1) {
-            // Display a toast notification
+
             toast.error("Chỉ một mã khuyến mãi bạn chọn đầu tiên được áp dụng.", {
                 position: "top-right",
-                autoClose: 3000, // Close the notification after 3 seconds
+                autoClose: 3000, 
                 hideProgressBar: false,
                 closeOnClick: true,
                 pauseOnHover: true,
                 draggable: true,
                 progress: undefined,
             });
-            return; // Do not update state with multiple selections
+            return; 
         }
 
-        // Update the state with the selected promotions
         this.setState({ selectedPromotions: selectedValues });
     };
     render() {
@@ -662,7 +658,6 @@ class BanHangOffline extends Component {
                                                 value: option.id,
                                             }))}
                                         /></Col>
-                                        {/* <Button style={{ maxWidth: '75px', textAlign: 'center' }}>Áp dụng</Button> */}
                                         <Col style={{ fontSize: '16px', textAlign: 'right', marginTop: '5px' }}>0</Col>
                                         <Col style={{ fontSize: '16px', textAlign: 'right' }}><Input
                                             type="text"
