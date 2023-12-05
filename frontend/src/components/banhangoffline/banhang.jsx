@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import './banhangoff.css';
 import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import {
     Col,
     Table,
@@ -24,6 +25,7 @@ class BanHangOffline extends Component {
         super(props);
 
         this.state = {
+            selectedPromotions: [],
             taiKhoan: [],
             khuyenMai: [],
             selectedProducts: [],
@@ -70,7 +72,7 @@ class BanHangOffline extends Component {
         }).catch((error) => {
             console.error("Error fetching data:", error);
         });
-        BanHangService.getKMTT(100000000000000).then((res) => {
+        BanHangService.getKMTT(100000000000).then((res) => {
             this.setState({ khuyenMai: res.data })
         }).catch((error) => {
             console.error("Error fetching data:", error);
@@ -84,7 +86,7 @@ class BanHangOffline extends Component {
     reloadKM = () => {
         const { tabProducts, activeTabKey } = this.state;
         const selectedProducts = tabProducts[activeTabKey] || [];
-        BanHangService.getKMTT( this.getTotalAmount(selectedProducts)).then((res) => {
+        BanHangService.getKMTT(this.getTotalAmount(selectedProducts)).then((res) => {
             this.setState({ khuyenMai: res.data })
         }).catch((error) => {
             console.error("Error fetching data:", error);
@@ -143,6 +145,8 @@ class BanHangOffline extends Component {
 
         const { tabProducts, activeTabKey } = this.state;
         const selectedProducts = tabProducts[activeTabKey] || [];
+        const firstSelectedPromotion = selectedPromotions.length > 0 ? selectedPromotions[0] : null;
+
 
         const confirm = window.confirm('Bạn xác nhận muốn thanh toán hóa đơn này chứ?');
         if (!confirm) {
@@ -155,7 +159,8 @@ class BanHangOffline extends Component {
             sanPhamChiTietList: selectedProducts,
             hoaDon: {
                 tongTien: this.getTotalAmount(selectedProducts),
-                ghiChu: document.getElementById("ghiChuDonHang").value
+                ghiChu: document.getElementById("ghiChuDonHang").value,
+                khuyenMai: firstSelectedPromotion ? firstSelectedPromotion : null,
             },
         };
 
@@ -190,11 +195,26 @@ class BanHangOffline extends Component {
     };
 
     getTotalAmount = (products) => {
-        if (products) {
-            return products.reduce((total, product) => total + product.donGia * product.quantity, 0);
-        } else {
-            return 0;
-        }
+        let totalAmount = products.reduce((total, product) => total + product.donGia * product.quantity, 0);
+
+        // Apply discounts based on selected promotions
+        const { selectedPromotions } = this.state;
+
+        selectedPromotions.forEach((promotionId) => {
+            const promotion = this.state.khuyenMai.find((promo) => promo.id === promotionId);
+
+            if (promotion) {
+                if (promotion.kieuKhuyenMai === 1) {
+                    // Discount by percentage
+                    totalAmount *= (100 - promotion.giamGia) / 100;
+                } else if (promotion.kieuKhuyenMai === 0) {
+                    // Discount by fixed amount
+                    totalAmount -= promotion.giamGia;
+                }
+            }
+        });
+
+        return totalAmount;
     };
 
     handlePayment = () => {
@@ -301,21 +321,21 @@ class BanHangOffline extends Component {
         const newQuantity = parseInt(e.target.value, 10);
         // Update the state with the new quantity for the product with the given productId
         this.setState((prevState) => {
-           const { activeTabKey, tabProducts } = prevState; // Access activeTabKey from prevState
-           // Update the quantity in the state for the specific product
-           const updatedProducts = tabProducts[activeTabKey].map((product) => {
-              if (product.ma === productId) {
-                 return { ...product, quantity: newQuantity };
-              }
-              return product;
-           });
-           // Update the state with the modified products
-           return {
-              tabProducts: {
-                 ...tabProducts,
-                 [activeTabKey]: updatedProducts,
-              },
-           };
+            const { activeTabKey, tabProducts } = prevState; // Access activeTabKey from prevState
+            // Update the quantity in the state for the specific product
+            const updatedProducts = tabProducts[activeTabKey].map((product) => {
+                if (product.ma === productId) {
+                    return { ...product, quantity: newQuantity };
+                }
+                return product;
+            });
+            // Update the state with the modified products
+            return {
+                tabProducts: {
+                    ...tabProducts,
+                    [activeTabKey]: updatedProducts,
+                },
+            };
         });
     };
     onEdit = (tabKey, action) => {
@@ -448,14 +468,23 @@ class BanHangOffline extends Component {
     };
 
     onChangeSearchInput = (selectedValues) => {
-        // Use selectedValues directly instead of e.target.value
-        console.log("Selected Values:", selectedValues);
-    
-        // Filter promotions based on the selected values (if needed)
-        const filteredKhuyenMai = this.state.khuyenMai.filter((option) => selectedValues.includes(option.id));
-    
-        // Update the state with the filtered promotions
-        this.setState({ filteredKhuyenMai });
+        // Ensure only one promotion is selected
+        if (selectedValues.length > 1) {
+            // Display a toast notification
+            toast.error("Chỉ một mã khuyến mãi bạn chọn đầu tiên được áp dụng.", {
+                position: "top-right",
+                autoClose: 3000, // Close the notification after 3 seconds
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+            });
+            return; // Do not update state with multiple selections
+        }
+
+        // Update the state with the selected promotions
+        this.setState({ selectedPromotions: selectedValues });
     };
     render() {
         const { isQRReaderOn, result } = this.state;
@@ -612,7 +641,7 @@ class BanHangOffline extends Component {
                                             mode="multiple"
                                             style={{ width: '100%', maxWidth: '500px' }}
                                             dropdownStyle={{ maxHeight: '300px', overflowY: 'auto', width: '350px' }}
-                                            optionLabelProp="label"
+                                            optionLabelProp="option.ma"
                                             onClick={() => this.reloadKM()}
                                             onChange={this.onChangeSearchInput}
                                             placeholder="thêm khuyến mãi"
@@ -645,6 +674,17 @@ class BanHangOffline extends Component {
                                 </div>
 
                             </div>
+                            <Col style={{ fontSize: '16px' }}>
+                                Mã khuyến mãi:
+                                {this.state.selectedPromotions.map((promoId) => {
+                                    const promotion = this.state.khuyenMai.find((promo) => promo.id === promoId);
+                                    return (
+                                        <span key={promoId} className="red">
+                                            {promotion ? ` ${promotion.ma}` : ''}
+                                        </span>
+                                    );
+                                })}
+                            </Col>
                             <Flex style={{ marginTop: '10px', marginBottom: '10px', borderStyle: 'solid', borderWidth: '1px', borderTop: 'none', borderLeft: 'none', borderRight: 'none', paddingBottom: '10px' }} justify="space-between" wrap="wrap" gap={"small"} align="center">
                                 {this.state.priceDemo && this.state.priceDemo.map((item, index) => {
                                     return (
