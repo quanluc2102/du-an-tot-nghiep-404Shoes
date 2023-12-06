@@ -18,7 +18,7 @@ function Sidebar() {
                     </a>
                     <ul id="components-nav" className="nav-content collapse " data-bs-parent="#sidebar-nav">
                         <li>
-                            <a href="/">
+                            <a href="/index">
                                 <i className="bi bi-circle"></i><span>Sản phẩm</span>
                             </a>
                         </li>
@@ -51,46 +51,30 @@ function Sidebar() {
                 </li>
 
                 <li className="nav-item">
-                    <a className="nav-link collapsed" data-bs-target="#forms-nav" data-bs-toggle="collapse">
-                        <i className="bi bi-receipt-cutoff"></i><span>Hóa đơn</span><i
-                        className="bi bi-chevron-down ms-auto"></i>
+                    <a className="nav-link collapsed" href="/hoadon">
+                        <i className="bi bi-receipt-cutoff"></i>
+                        <span>Quản lý hóa đơn</span>
                     </a>
-                    <ul id="forms-nav" className="nav-content collapse " data-bs-parent="#sidebar-nav">
-                        <li>
-                            <a href="/hoadon">
-                                <i className="bi bi-circle"></i><span>Quản lý hóa đơn</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="/banhangoffline">
-                                <i className="bi bi-circle"></i><span>Bán hàng tại quầy</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="forms-layouts.html">
-                                <i className="bi bi-circle"></i><span>Lịch sử hóa đơn</span>
-                            </a>
-                        </li>
-                    </ul>
                 </li>
 
                 <li className="nav-item">
-                    <a className="nav-link collapsed" data-bs-target="#tables-nav" data-bs-toggle="collapse">
-                        <i className="bi bi-layout-text-window-reverse"></i><span>Khuyến mãi</span><i
-                        className="bi bi-chevron-down ms-auto"></i>
+                    <a className="nav-link collapsed" href="/banhangoffline">
+                        <i className="bi bi-cart"></i>
+                        <span>Bán hàng tại quầy</span>
                     </a>
-                    <ul id="tables-nav" className="nav-content collapse " data-bs-parent="#sidebar-nav">
-                        <li>
-                            <a href="/khuyenmai">
-                                <i className="bi bi-circle"></i><span>Quản lý khuyến mãi</span>
-                            </a>
-                        </li>
-                    </ul>
+                </li>
+
+
+                <li className="nav-item">
+                    <a className="nav-link collapsed" href="/khuyenmai">
+                        <i className="bi bi-ticket-perforated"></i>
+                        <span>Khuyến mãi</span>
+                    </a>
                 </li>
 
                 <li className="nav-item">
                     <a className="nav-link collapsed" data-bs-target="#charts-nav" data-bs-toggle="collapse">
-                        <i className="bi bi-bar-chart"></i><span>Quản lý tài khoản</span><i
+                        <i className="bi bi-people"></i><span>Quản lý tài khoản</span><i
                         className="bi bi-chevron-down ms-auto"></i>
                     </a>
                     <ul id="charts-nav" className="nav-content collapse " data-bs-parent="#sidebar-nav">
@@ -106,20 +90,10 @@ function Sidebar() {
                 </li>
 
                 <li className="nav-item">
-                    <a className="nav-link collapsed" data-bs-target="#charts-nav1" data-bs-toggle="collapse">
-                        <i className="bi bi-bar-chart"></i><span>Thống kê</span><i
-                        className="bi bi-chevron-down ms-auto"></i>
+                    <a className="nav-link collapsed" href="/thongke">
+                        <i className="bi bi-bar-chart-line"></i>
+                        <span>Thống kê</span>
                     </a>
-                    <ul id="charts-nav1" className="nav-content collapse " data-bs-parent="#sidebar-nav">
-                        <li>
-                            <a href="/thongkedoanhthusanpham">
-                                <i className="bi bi-circle"></i><span>Thống kê theo sản phẩm đã bán</span>
-                            </a>
-                            <a href="/khachhang">
-                                <i className="bi bi-circle"></i><span>Thống kê doanh thu theo tháng</span>
-                            </a>
-                        </li>
-                    </ul>
                 </li>
 
                 <li className="nav-heading">Người dùng</li>

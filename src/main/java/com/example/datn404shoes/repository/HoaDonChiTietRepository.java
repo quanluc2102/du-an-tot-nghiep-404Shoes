@@ -21,7 +21,7 @@ public interface HoaDonChiTietRepository extends JpaRepository<HoaDonChiTiet, Lo
             "JOIN SanPhamChiTiet spct ON hdct.sanPhamChiTiet.id = spct.id " +
             "JOIN SanPham sp ON spct.sanPham.id = sp.id " +
             "JOIN HoaDon hd ON hdct.hd.id = hd.id " +
-            "WHERE hd.ngayTao BETWEEN :startDate AND :endDate " +
+            "WHERE hd.ngayTao BETWEEN :startDate AND :endDate AND  hd.trangThai IN (4, 6) " +
             "GROUP BY spct.sanPham.id, sp.ten " +
             "ORDER BY so_luong_ban DESC")
     List<Object[]> thongKeDoanhThuSanPham(@Param("startDate") Date startDate, @Param("endDate") Date endDate);
@@ -33,7 +33,7 @@ public interface HoaDonChiTietRepository extends JpaRepository<HoaDonChiTiet, Lo
             "JOIN SanPham sp ON spct.sanPham.id = sp.id " +
             "JOIN HoaDon hd ON hdct.hd.id = hd.id " +
             "WHERE FUNCTION('MONTH', hd.ngayTao) = FUNCTION('MONTH', :startDate) " +
-            "AND FUNCTION('YEAR', hd.ngayTao) = FUNCTION('YEAR', :startDate) " +
+            "AND FUNCTION('YEAR', hd.ngayTao) = FUNCTION('YEAR', :startDate)  AND  hd.trangThai IN (4, 6)" +
             "GROUP BY spct.sanPham.id, sp.ten " +
             "ORDER BY so_luong_ban DESC")
     List<Object[]> thongKeDoanhThuTheoThang(@Param("startDate") Date startDate);
@@ -43,7 +43,7 @@ public interface HoaDonChiTietRepository extends JpaRepository<HoaDonChiTiet, Lo
             "JOIN SanPhamChiTiet spct ON hdct.sanPhamChiTiet.id = spct.id " +
             "JOIN SanPham sp ON spct.sanPham.id = sp.id " +
             "JOIN HoaDon hd ON hdct.hd.id = hd.id " +
-            "WHERE FUNCTION('YEAR', hd.ngayTao) = FUNCTION('YEAR', :startDate) " +
+            "WHERE FUNCTION('YEAR', hd.ngayTao) = FUNCTION('YEAR', :startDate) AND  hd.trangThai IN (4, 6)" +
             "GROUP BY spct.sanPham.id, sp.ten " +
             "ORDER BY so_luong_ban DESC")
     List<Object[]> thongKeDoanhThuTheoNam(@Param("startDate") Date startDate);
@@ -58,7 +58,7 @@ public interface HoaDonChiTietRepository extends JpaRepository<HoaDonChiTiet, Lo
             "FROM HoaDonChiTiet hdct " +
             "JOIN SanPhamChiTiet spct ON hdct.sanPhamChiTiet.id = spct.id " +
             "JOIN HoaDon hd ON hdct.hd.id = hd.id " +
-            "WHERE FUNCTION('YEAR', hd.ngayTao) = FUNCTION('YEAR', :startDate) " +
+            "WHERE FUNCTION('YEAR', hd.ngayTao) = FUNCTION('YEAR', :startDate) AND  hd.trangThai IN (4, 6)" +
             "GROUP BY FUNCTION('MONTH', hd.ngayTao)")
     List<Object[]> thongKeDoanhThuTheoThangNew(@Param("startDate") Date startDate);
 

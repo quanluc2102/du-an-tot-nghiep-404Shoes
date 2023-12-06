@@ -17,6 +17,9 @@ class ThongKeDoanhThuSanPham extends Component {
         this.state = {
             thongKeSanPham: [],
             thongKeThangNew: [],
+            thongKeTocDoTangTruong: [],
+            thongKeTocDoTangTruongThang: [],
+            thongKeTocDoTangTruongSanPhamNam: [],
             startDate: '',
             endDate: '',
             pageCount: 0,
@@ -72,6 +75,9 @@ class ThongKeDoanhThuSanPham extends Component {
         this.fetchHoaDonHuyThang();
         this.fetchHoaDonHuyQuy();
         this.fetchHoaDonHuyNam();
+        this.fetchTocDoTangTruongNam();
+        this.fetchTocDoTangTruongSanPhamNam();
+        this.fetchTocDoTangTruongThang();
     }
 
     formatNumberOrZero(value) {
@@ -131,6 +137,38 @@ class ThongKeDoanhThuSanPham extends Component {
 
         }
 
+    };
+
+    fetchTocDoTangTruongNam = () => {
+        thongkeservice.toc_do_tang_truong()
+            .then(data => {
+                this.setState({thongKeTocDoTangTruong: data});
+            })
+            .catch(error => {
+                console.error('Error fetching doanhThuNgay:', error);
+            });
+    };
+
+    fetchTocDoTangTruongSanPhamNam = () => {
+        thongkeservice.toc_do_tang_truong_san_pham()
+            .then(data => {
+                this.setState({thongKeTocDoTangTruongSanPhamNam: data});
+            })
+            .catch(error => {
+                console.error('Error fetching doanhThuNgay:', error);
+            });
+    };
+
+
+
+    fetchTocDoTangTruongThang = () => {
+        thongkeservice.toc_do_tang_truong_thang()
+            .then(data => {
+                this.setState({thongKeTocDoTangTruongThang: data});
+            })
+            .catch(error => {
+                console.error('Error fetching doanhThuNgay:', error);
+            });
     };
 
 
@@ -845,12 +883,14 @@ class ThongKeDoanhThuSanPham extends Component {
         return (
             <>
                 <li>
-                    <a className="dropdown-item" href="#" onClick={() => this.handleFilterChangeSoHoaDonHuy('Theo ngày')}>
+                    <a className="dropdown-item" href="#"
+                       onClick={() => this.handleFilterChangeSoHoaDonHuy('Theo ngày')}>
                         Theo ngày
                     </a>
                 </li>
                 <li>
-                    <a className="dropdown-item" href="#" onClick={() => this.handleFilterChangeSoHoaDonHuy('Trong tuần')}>
+                    <a className="dropdown-item" href="#"
+                       onClick={() => this.handleFilterChangeSoHoaDonHuy('Trong tuần')}>
                         Trong tuần
                     </a>
                 </li>
@@ -861,12 +901,14 @@ class ThongKeDoanhThuSanPham extends Component {
                     </a>
                 </li>
                 <li>
-                    <a className="dropdown-item" href="#" onClick={() => this.handleFilterChangeSoHoaDonHuy('Trong quý')}>
+                    <a className="dropdown-item" href="#"
+                       onClick={() => this.handleFilterChangeSoHoaDonHuy('Trong quý')}>
                         Trong quý
                     </a>
                 </li>
                 <li>
-                    <a className="dropdown-item" href="#" onClick={() => this.handleFilterChangeSoHoaDonHuy('Trong năm')}>
+                    <a className="dropdown-item" href="#"
+                       onClick={() => this.handleFilterChangeSoHoaDonHuy('Trong năm')}>
                         Trong năm
                     </a>
                 </li>
@@ -1078,7 +1120,7 @@ class ThongKeDoanhThuSanPham extends Component {
                         <TabList>
                             <Tab>Thống kê theo sản phẩm đã bán</Tab>
                             <Tab>Thống kê doanh thu</Tab>
-                            <Tab>Thống kê doanh thu</Tab>
+                            <Tab>Thống kê tăng trưởng</Tab>
                         </TabList>
 
                         <TabPanel>
@@ -1134,7 +1176,7 @@ class ThongKeDoanhThuSanPham extends Component {
                                             onChange={this.handleInputChange}
                                         >
                                             {/* Tạo các option từ năm 1990 đến 10 năm sau tính từ thời điểm hiện tại */}
-                                            {Array.from({ length: new Date().getFullYear() - 1990 + 11 }, (_, index) => {
+                                            {Array.from({length: new Date().getFullYear() - 1990 + 11}, (_, index) => {
                                                 const year = 1990 + index;
                                                 return (
                                                     <option key={year} value={year}>
@@ -1253,7 +1295,7 @@ class ThongKeDoanhThuSanPham extends Component {
                                             onChange={this.handleInputChangeDoanhThu}
                                         >
                                             {/* Tạo các option từ năm 1990 đến 10 năm sau tính từ thời điểm hiện tại */}
-                                            {Array.from({ length: new Date().getFullYear() - 1990 + 11 }, (_, index) => {
+                                            {Array.from({length: new Date().getFullYear() - 1990 + 11}, (_, index) => {
                                                 const year = 1990 + index;
                                                 return (
                                                     <option key={year} value={year}>
@@ -1279,11 +1321,13 @@ class ThongKeDoanhThuSanPham extends Component {
                                 <div className="card">
                                     <div className="card-body">
                                         <div className="d-flex justify-content-between align-items-center mb-3">
-                                            <h5 className="card-title">Bảng thống kê doanh thu theo tháng <span>|</span></h5>
+                                            <h5 className="card-title">Bảng thống kê doanh thu theo tháng <span>|</span>
+                                            </h5>
                                             <div>
                                                 <button onClick={this.handleExportToExcelDoanhThuTheoThang}
                                                         disabled={this.state.handleExportToExcelDoanhThuTheoThang}>
-                                                    {this.state.handleExportToExcelDoanhThuTheoThang ? 'Exporting...' : <FaFileExcel/>}
+                                                    {this.state.handleExportToExcelDoanhThuTheoThang ? 'Exporting...' :
+                                                        <FaFileExcel/>}
                                                 </button>
                                             </div>
                                         </div>
@@ -1331,6 +1375,76 @@ class ThongKeDoanhThuSanPham extends Component {
                                                     height="200"></canvas>
                                         </div>
                                     </div>
+                                </div>
+                            </div>
+                        </TabPanel>
+                        <TabPanel>
+                            <div className="col-12">
+                                <div className="card top-selling overflow-auto">
+
+                                    <div className="filter">
+                                        <a className="icon" href="#" data-bs-toggle="dropdown"><i
+                                            className="bi bi-three-dots"></i></a>
+                                        <ul className="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                                            <li className="dropdown-header text-start">
+                                                <h6>Filter</h6>
+                                            </li>
+
+                                            <li><a className="dropdown-item" href="#">Today</a></li>
+                                            <li><a className="dropdown-item" href="#">This Month</a></li>
+                                            <li><a className="dropdown-item" href="#">This Year</a></li>
+                                        </ul>
+                                    </div>
+
+                                    <div className="card-body pb-0">
+                                        <h5 className="card-title">Tốc độ tăng trưởng <span>| Today</span></h5>
+
+                                        <table className="table table-dark">
+                                            {/*<thead>*/}
+                                            {/*<tr>*/}
+                                            {/*    <th scope="col">Ảnh</th>*/}
+                                            {/*    <th scope="col">Sản phẩm</th>*/}
+                                            {/*    <th scope="col">Price</th>*/}
+                                            {/*    <th scope="col">Sold</th>*/}
+                                            {/*    <th scope="col">Revenue</th>*/}
+                                            {/*</tr>*/}
+                                            {/*</thead>*/}
+                                            <tbody>
+                                            {this.state.thongKeTocDoTangTruongThang.map((th, index) => (
+                                                <tr key={index}>
+                                                    <th>Doanh thu tháng</th>
+                                                    <td>{this.formatCurrency(th[1])} VND</td>
+                                                    <td><span
+                                                        className={`${th[3] === 'Tang' ? 'badge bg-success' : 'badge bg-danger'}`}><i
+                                                        className={`${th[3] === 'Tang' ? 'bi bi-graph-up' : 'bi bi-graph-down'}`}></i> | {`${th[3] === 'Tang' ? '+' : '-'}`} {this.formatCurrency(th[4])}</span>
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                            {this.state.thongKeTocDoTangTruong.map((th, index) => (
+                                                <tr key={index}>
+                                                    <th>Doanh thu năm</th>
+                                                    <td>{this.formatCurrency(th[1])} VND</td>
+                                                    <td><span
+                                                        className={`${th[3] === 'Tang' ? 'badge bg-success' : 'badge bg-danger'}`}><i
+                                                        className={`${th[3] === 'Tang' ? 'bi bi-graph-up' : 'bi bi-graph-down'}`}></i> | {`${th[3] === 'Tang' ? '+' : '-'}`} {this.formatCurrency(th[4])}</span>
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                            {this.state.thongKeTocDoTangTruongSanPhamNam.map((th, index) => (
+                                                <tr key={index}>
+                                                    <th>Sản phẩm năm</th>
+                                                    <td>{this.formatCurrency(th[1])} Sản phẩm</td>
+                                                    <td><span
+                                                        className={`${th[3] === 'Tang' ? 'badge bg-success' : 'badge bg-danger'}`}><i
+                                                        className={`${th[3] === 'Tang' ? 'bi bi-graph-up' : 'bi bi-graph-down'}`}></i> | {`${th[3] === 'Tang' ? '+' : '-'}`} {this.formatCurrency(th[4])}</span>
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                            </tbody>
+                                        </table>
+
+                                    </div>
+
                                 </div>
                             </div>
                         </TabPanel>

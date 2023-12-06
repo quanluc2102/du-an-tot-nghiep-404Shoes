@@ -380,7 +380,7 @@ class SanPhamAddComponnent extends Component {
         const { selectedOptionMS } = this.state;
         const { selectedOptionKT } = this.state;
         return (
-            <div className="col-lg-9" style={{float:"right",marginTop:60,marginRight:30}}>
+            <div className="col-lg-12" style={{float:"right",marginTop:60,marginRight:30}}>
 
 
                 <div className="card">

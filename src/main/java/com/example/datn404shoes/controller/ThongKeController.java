@@ -167,4 +167,19 @@ public class ThongKeController {
     public List<Object[]> hoaDonChuaXuLy() {
         return thongKeRepository.hoaDonChuaXuLyhe();
     }
+
+    @GetMapping("/toc_do_tang_truong")
+    public List<Object[]> toc_do_tang_truong() {
+        return thongKeRepository.tocDoTangTruongNam();
+    }
+
+    @GetMapping("/toc_do_tang_truong_thang")
+    public List<Object[]> toc_do_tang_truong_thang() {
+        return thongKeRepository.tocDoTangTruongThang();
+    }
+
+    @GetMapping("/toc_do_tang_truong_san_pham_nam")
+    public List<Object[]> toc_do_tang_truong_san_pham_nam() {
+        return thongKeRepository.tocDoTangTruongSanPhamTheoNam();
+    }
 }
