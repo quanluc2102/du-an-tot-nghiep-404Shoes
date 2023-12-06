@@ -50,7 +50,7 @@ class HoaDonComponents extends Component {
                 (item.ten && item.ten !== null ? item.ten : "Khách lẻ") +
                 (item.maHoaDon) + (item.ngayTao) + (item.ghiChu) +
                 (item.sdt) + (item.taiKhoan && item.taiKhoan.maTaiKhoan) +
-                (item.trangThai === 4 ? "Hoàn thành" : item.trangThai === 0 ? "Chờ xác nhận" : item.trangThai === 1 ? "Đã xác nhận" : item.trangThai === 2 ? "Chuẩn bị giao" : item.trangThai === 3 ? "Đang giao" : item.trangThai === 4 ? "Hoàn thành" : item.trangThai === 5 ? "Đã Hủy": item.trangThai === 6 ? "Tại quầy" : "Chờ")
+                (item.trangThai === 4 ? "Hoàn thành" : item.trangThai === 0 ? "Chờ xác nhận" : item.trangThai === 1 ? "Đã xác nhận" : item.trangThai === 2 ? "Chuẩn bị giao" : item.trangThai === 3 ? "Đang giao" : item.trangThai === 4 ? "Hoàn thành" : item.trangThai === 5 ? "Đã Hủy" : item.trangThai === 6 ? "Tại quầy" : "Chờ")
             ).toLowerCase();
 
             switch (searchTerm) {
@@ -95,17 +95,17 @@ class HoaDonComponents extends Component {
     getStatusColor = (status) => {
         switch (status) {
             case 6:
-                return'#50C7C7';
+                return '#50C7C7';
             case 5:
                 return 'red'; // Đã hoàn thành (màu xanh)
             case 3:
                 return 'yellow'; // Chưa thanh toán (màu đỏ)
             case 4:
-                return 'green'; // Chờ (màu vàng)
+                return 'blue'; // Chờ (màu vàng)
             case 2:
                 return 'red'; // Chờ (màu vàng)
             case 1:
-                return 'blue'; // Chờ (màu vàng)
+                return ' green'; // Chờ (màu vàng)
             case 0:
                 return '#e0e0e0'; // Chờ (màu vàng)
 
@@ -147,7 +147,8 @@ class HoaDonComponents extends Component {
             "2": 0, // Chuẩn bị giao
             "3": 0, // Đang giao
             "4": 0, // Hoàn thành
-            "5": 0  // Hủy
+            "5": 0,
+            "6": 0  // Hủy
         };
 
         hoaDon.forEach(item => {
@@ -158,6 +159,7 @@ class HoaDonComponents extends Component {
                 case 3:
                 case 4:
                 case 5:
+                case 6:
                     statusCounts[item.trangThai.toString()]++;
                     break;
                 default:
@@ -306,7 +308,7 @@ class HoaDonComponents extends Component {
                                                             onChange={() => this.handleStatusFilter("6")}
                                                             className="form-check-input"
                                                         />
-                                                        <label htmlFor="filterPending" className="form-check-label">Tại quầy<span class="badge bg-danger translate-middle badge-number rounded-circle">{statusCounts["5"]}</span></label>
+                                                        <label htmlFor="filterPending" className="form-check-label">Tại quầy<span class="badge bg-danger translate-middle badge-number rounded-circle">{statusCounts["6"]}</span></label>
                                                     </div>
                                                 </div>
                                             </div>
@@ -323,6 +325,7 @@ class HoaDonComponents extends Component {
                                                         <th>SĐT Khách Hàng</th>
                                                         <th onClick={() => this.handleSort('ngayTao')}>Ngày Mua {this.renderSortIcon('ngayTao')}</th>
                                                         <th onClick={() => this.handleSort('ngayCapNhat')}>Ngày cập nhật {this.renderSortIcon('ngayCapNhat')}</th>
+                                                        <th>kiểu hóa đơn</th>
                                                         <th>Thạng thái</th>
                                                         <th>Ghi chú</th>
                                                         <th onClick={() => this.handleSort('tongTienSauGiam')}>Khách Phải Trả {this.renderSortIcon('tongTienSauGiam')}</th>
@@ -342,6 +345,7 @@ class HoaDonComponents extends Component {
                                                                     <td>{hoaDon && hoaDon.sdt !== null ? hoaDon.sdt : "Khách lẻ"}</td>
                                                                     <td>{hoaDon.ngayTao}</td>
                                                                     <td>{hoaDon.ngayCapNhat}</td>
+                                                                    <td>{hoaDon.kieuHoaDon=== 0 ?"Tại quầy":hoaDon.kieuHoaDon=== 1?"Online":""}</td>
                                                                     <td style={{ color: this.getStatusColor(hoaDon.trangThai) }}>
                                                                         {this.getStatusText(hoaDon.trangThai)}
                                                                     </td>
