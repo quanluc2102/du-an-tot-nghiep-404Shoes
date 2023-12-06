@@ -111,3 +111,7 @@ body {
     background-color: 'gray'; /* Set the desired hover background color */
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); /* Add box shadow for hover effect */
   }
+  .custom-modal-size {
+    max-width: 1300px;
+    max-height: 1000px;
+  }

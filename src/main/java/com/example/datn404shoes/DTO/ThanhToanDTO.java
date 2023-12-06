@@ -11,5 +11,7 @@ import java.util.List;
 public class ThanhToanDTO {
     private HoaDon hoaDon;
 
+    private Long khuyenMai;
+
     private List<SPCTBanHangRequest> sanPhamChiTietList;
 }

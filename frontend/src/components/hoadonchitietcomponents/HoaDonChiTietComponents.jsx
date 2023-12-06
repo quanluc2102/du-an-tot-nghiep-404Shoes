@@ -181,7 +181,7 @@ class HoaDonChiTietComponents extends Component {
     };
     update = (e) => {
         e.preventDefault();
-        const confirmed = window.confirm('Bạn có chắc chắn xác nhận' +`${this.state.hoaDon.trangThai === 0 ? '' : this.state.hoaDon.trangThai === 1 ? ' Chuẩn bị giao' : this.state.hoaDon?.trangThai === 2 ? 'Đang giao' : this.state.hoaDon?.trangThai === 3 ? 'Hoàn thành' : ""}` );
+        const confirmed = window.confirm('Bạn có chắc chắn xác nhận' + `${this.state.hoaDon.trangThai === 0 ? '' : this.state.hoaDon.trangThai === 1 ? ' Chuẩn bị giao' : this.state.hoaDon?.trangThai === 2 ? 'Đang giao' : this.state.hoaDon?.trangThai === 3 ? 'Hoàn thành' : ""}`);
         if (!confirmed) {
             return;
         }
@@ -199,6 +199,8 @@ class HoaDonChiTietComponents extends Component {
 
     render() {
         let total = 0;
+        let giam = 0;
+
         const isHoaDonDaHuy = this.state.hoaDon.trangThai === 5;
         const isHoaDonKoDcHuy = this.state.hoaDon.trangThai >= 3;
         return (
@@ -217,7 +219,7 @@ class HoaDonChiTietComponents extends Component {
 
                 <div>
                     {/* ... Các phần mã khác ở đây ... */}
-                    <div style={{ maxWidth: '960px', marginLeft: '330px' }}>
+                    <div style={{ maxWidth: '960px' }}>
                         {/* ... Các phần mã khác ở đây ... */}
 
                         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -231,8 +233,8 @@ class HoaDonChiTietComponents extends Component {
                                             style={{
                                                 width: '40px',
                                                 height: '40px',
-                                                backgroundColor: trangThai === 0 ? 'gray' :isActive ? 'green' : '#e0e0e0',
-                                                borderRadius: '50%',
+                                                backgroundColor: trangThai === 0 ? 'gray' : isActive ? 'green' : '#e0e0e0',
+                                                borderRadius: '100%',
                                                 display: 'flex',
                                                 alignItems: 'center',
                                                 justifyContent: 'center',
@@ -273,7 +275,7 @@ class HoaDonChiTietComponents extends Component {
                                 onClick={this.handleShowModal1}
                                 Visible
                                 disabled={isHoaDonDaHuy || this.state.hoaDon.trangThai === 4 || this.state.hoaDon.trangThai === 6}
-                                style={isHoaDonDaHuy ? { color: 'gray', borderColor: 'gray', cursor: 'not-allowed', visible: false } : this.state.hoaDon.trangThai === 4 ? { color: 'green', borderColor: 'green' } : this.state.hoaDon.trangThai === 6 ? { color: 'green', borderColor: 'green' }:{}}
+                                style={isHoaDonDaHuy ? { color: 'gray', borderColor: 'gray', cursor: 'not-allowed', visible: false } : this.state.hoaDon.trangThai === 4 ? { color: 'green', borderColor: 'green' } : this.state.hoaDon.trangThai === 6 ? { color: 'green', borderColor: 'green' } : {}}
                             >
                                 {this.state.hoaDon.trangThai === 0 ? 'Xác nhận' : this.state.hoaDon.trangThai === 1 ? ' Xác nhận chuẩn bị giao' : this.state.hoaDon?.trangThai === 2 ? ' Xác nhận Đang giao' : this.state.hoaDon?.trangThai === 3 ? 'Xác nhận Hoàn thành' : this.state.hoaDon?.trangThai === 4 ? 'Đã hoàn thành' : this.state.hoaDon?.trangThai === 6 ? 'Đã hoàn thành bán tại quầy' : ""}
                             </Button>
@@ -308,6 +310,7 @@ class HoaDonChiTietComponents extends Component {
                                 <div className="col-12">
                                     <div className="card recent-sales overflow-auto">
                                         <div className="card-body">
+
                                             <h5 className="card-title">Thông tin sản phẩm<span>| </span></h5>
                                             <div>
                                                 <table className="table table-borderless datatable">
@@ -323,7 +326,8 @@ class HoaDonChiTietComponents extends Component {
                                                     </thead>
                                                     <tbody>
                                                         {this.state.hoaDonChiTiet.map((hoaDonChiTiet, index) => {
-                                                            total += hoaDonChiTiet.sanPhamChiTiet.donGia * hoaDonChiTiet.soLuong; // Cộng dồn tổng
+                                                            total += hoaDonChiTiet.sanPhamChiTiet.donGia * hoaDonChiTiet.soLuong;
+                                                            giam = total - this.state.hoaDon?.tongTien;// Cộng dồn tổng
 
                                                             return (
                                                                 <tr key={hoaDonChiTiet.id}>
@@ -343,15 +347,45 @@ class HoaDonChiTietComponents extends Component {
                                                         })}
                                                     </tbody>
                                                 </table>
-                                                <div className="text-right mt-3">
-                                                    <label>Tổng: {total.toLocaleString()} VNĐ</label>
-                                                </div>
+                                                <div className='row'>
+                                                    <div className="text-right col-12">
+                                                        <table class="table">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th scope="col"></th>
+                                                                    <th scope="col"></th>
+
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <tr>
+                                                                    <th scope="row">Tổng tiền hàng</th>
+                                                                    <td><label color='red' className="text-right "><s> {total.toLocaleString()} VNĐ</s></label></td>
+
+                                                                </tr>
+                                                                <tr>
+
+                                                                    <th scope="row">Voucher từ Shop</th>
+                                                                    <td className="text-left col-4">- {giam.toLocaleString()
+                                                                    }đ (Giảm {this.state.hoaDon?.khuyenMai?.giamGia} {this.state.hoaDon?.khuyenMai?.kieuKhuyenMai === 1 ? "%" : this.state.hoaDon?.khuyenMai?.kieuKhuyenMai === 0 ? "VND" : ""})</td>
+
+                                                                </tr>
+                                                                <tr>
+                                                                    <th scope="row">Thành tiền</th>
+                                                                    <td ><p style={{ color: 'red', fontSize : '24px'}}>
+                                                                       {this.state.hoaDon?.tongTien?.toLocaleString()} VNĐ
+                                                                    </p></td>
+
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </div><div className='col-5'></div></div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </div >
                         <div className="col-lg-4">
                             <div className="card">
                                 <div className="card-body">
@@ -402,8 +436,7 @@ class HoaDonChiTietComponents extends Component {
                                                                 Avatar
                                                             </h10>
                                                             <img
-                                                                // src={hoaDonChiTiet.sanPhamChiTiet.sanPham.imageURL}
-                                                                // alt={hoaDonChiTiet.sanPhamChiTiet.sanPham.ten}
+                                                                src={`/niceadmin/img/${this.state.hoaDon?.taiKhoan?.thongTinNguoiDung?.anh}`}
                                                                 style={{ width: '55px', height: '70px' }}
                                                             />
                                                             <h10 className="nav-link">
@@ -460,13 +493,13 @@ class HoaDonChiTietComponents extends Component {
 
                             </div>
                         </div>
-                    </div>
+                    </div >
 
-                </section>
+                </section >
                 <div>
 
                 </div>
-            </div>
+            </div >
         );
     }
 }

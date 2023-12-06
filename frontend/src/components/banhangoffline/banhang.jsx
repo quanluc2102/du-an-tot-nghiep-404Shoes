@@ -1,6 +1,9 @@
 import React, { Component } from "react";
 import './banhangoff.css';
 import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import ReactPaginate from 'react-paginate';
+import _ from 'lodash';
 import {
     Col,
     Table,
@@ -24,6 +27,8 @@ class BanHangOffline extends Component {
         super(props);
 
         this.state = {
+            searchTerm: '',
+            selectedPromotions: [],
             taiKhoan: [],
             khuyenMai: [],
             selectedProducts: [],
@@ -41,6 +46,9 @@ class BanHangOffline extends Component {
             sanPhamChiTietList: [],
             isQRReaderOn: false,
             showModal: false,
+            showModal1: false,
+            currentPage: 0, // Trang hiện tại
+            perPage: 4,
             result: 'No QR code scanned yet',
 
             tabProducts: {
@@ -70,7 +78,7 @@ class BanHangOffline extends Component {
         }).catch((error) => {
             console.error("Error fetching data:", error);
         });
-        BanHangService.getKMTT(100000000000000).then((res) => {
+        BanHangService.getKMTT(100000000000).then((res) => {
             this.setState({ khuyenMai: res.data })
         }).catch((error) => {
             console.error("Error fetching data:", error);
@@ -81,10 +89,42 @@ class BanHangOffline extends Component {
             console.error("Error fetching data:", error);
         });
     }
+    handleSearch = (event) => {
+        const searchTerm = event.target.value;
+        this.setState({ searchTerm });
+
+        // Lưu trạng thái tìm kiếm vào localStorage
+        localStorage.setItem('searchTerm', searchTerm);
+    }
+    handleStatusFilter = (filterValue) => {
+        this.setState({ searchTerm: filterValue });
+    }
+
+    filteredData = () => {
+        const { sanPhamChiTiet, searchTerm } = this.state;
+
+        return _.filter(sanPhamChiTiet, (item) => {
+            // Combine the values of the columns you want to search in
+            const searchValues = (
+                (item.sanPham.ten) +(item.soLuong)   +(item.donGia) +
+                (item.kichThuoc.giaTri) + (item.mauSac.ten) +
+                (item.trangThai === 1 ? "Đang bán" : item.trangThai === 0 ? "không bán" : "Chờ")
+            ).toLowerCase();
+
+            switch (searchTerm) {
+                case "0":
+                    return item.trangThai == 0;
+                case "1":
+                    return item.trangThai == 1;
+                default:
+                    return searchValues.includes(searchTerm.toLowerCase());
+            }
+        });
+    }
     reloadKM = () => {
         const { tabProducts, activeTabKey } = this.state;
         const selectedProducts = tabProducts[activeTabKey] || [];
-        BanHangService.getKMTT( this.getTotalAmount(selectedProducts)).then((res) => {
+        BanHangService.getKMTT(this.getTotalAmount(selectedProducts)).then((res) => {
             this.setState({ khuyenMai: res.data })
         }).catch((error) => {
             console.error("Error fetching data:", error);
@@ -96,6 +136,12 @@ class BanHangOffline extends Component {
     handleShowModal = () => {
         this.setState({ showModal: true });
     };
+    handleCloseModal1 = () => {
+        this.setState({ showModal1: false });
+    };
+    handleShowModal1 = () => {
+        this.setState({ showModal1: true });
+    };
     handleError = (err) => {
         console.error(err);
     };
@@ -106,7 +152,10 @@ class BanHangOffline extends Component {
             result: 'No QR code scanned yet',
         }));
     };
-
+    handleSearchFocus = () => {
+        // Đặt trang hiện tại về 0 để nhảy về trang đầu tiên
+        this.setState({ currentPage: 0 });
+    }
     handleScan = (data) => {
         const { isQRCodeScanned, selectedProducts, sanPhamChiTiet } = this.state;
 
@@ -137,12 +186,21 @@ class BanHangOffline extends Component {
             }, 1000);
         }
     };
-
+    handlePageClick = (data) => {
+        this.setState({ currentPage: data.selected });
+    }
+    getCurrentPageData = () => {
+        const { sanPhamChiTiet, currentPage, perPage } = this.state;
+        const offset = currentPage * perPage;
+        return sanPhamChiTiet.slice(offset, offset + perPage);
+    }
     add = async (e) => {
         e.preventDefault();
 
-        const { tabProducts, activeTabKey } = this.state;
+        const { tabProducts, activeTabKey, selectedPromotions } = this.state;
         const selectedProducts = tabProducts[activeTabKey] || [];
+        const firstSelectedPromotion = selectedPromotions.length > 0 ? selectedPromotions[0] : null;
+
 
         const confirm = window.confirm('Bạn xác nhận muốn thanh toán hóa đơn này chứ?');
         if (!confirm) {
@@ -152,10 +210,14 @@ class BanHangOffline extends Component {
         const ngayTao = new Date().toISOString();
 
         const thanhToan = {
+
             sanPhamChiTietList: selectedProducts,
+
+            khuyenMai: firstSelectedPromotion ? firstSelectedPromotion : null,
+
             hoaDon: {
                 tongTien: this.getTotalAmount(selectedProducts),
-                ghiChu: document.getElementById("ghiChuDonHang").value
+                ghiChu: document.getElementById("ghiChuDonHang").value,
             },
         };
 
@@ -190,11 +252,26 @@ class BanHangOffline extends Component {
     };
 
     getTotalAmount = (products) => {
-        if (products) {
-            return products.reduce((total, product) => total + product.donGia * product.quantity, 0);
-        } else {
-            return 0;
-        }
+        let totalAmount = products.reduce((total, product) => total + product.donGia * product.quantity, 0);
+
+        // Apply discounts based on selected promotions
+        const { selectedPromotions } = this.state;
+
+        selectedPromotions.forEach((promotionId) => {
+            const promotion = this.state.khuyenMai.find((promo) => promo.id === promotionId);
+
+            if (promotion) {
+                if (promotion.kieuKhuyenMai === 1) {
+                    // Discount by percentage
+                    totalAmount *= (100 - promotion.giamGia) / 100;
+                } else if (promotion.kieuKhuyenMai === 0) {
+                    // Discount by fixed amount
+                    totalAmount -= promotion.giamGia;
+                }
+            }
+        });
+
+        return totalAmount;
     };
 
     handlePayment = () => {
@@ -259,6 +336,10 @@ class BanHangOffline extends Component {
                 },
             }));
         }
+        toast.success("Đã thêm vào giỏ", { position: toast.POSITION.MID_RIGHT });
+
+        // Sau khi xử lý, đóng cửa sổ modal
+        this.handleCloseModal1();
     };
 
     renderProductsForTab = (tabKey) => {
@@ -299,23 +380,23 @@ class BanHangOffline extends Component {
     };
     handleQuantityChange = (e, productId) => {
         const newQuantity = parseInt(e.target.value, 10);
-        // Update the state with the new quantity for the product with the given productId
+
         this.setState((prevState) => {
-           const { activeTabKey, tabProducts } = prevState; // Access activeTabKey from prevState
-           // Update the quantity in the state for the specific product
-           const updatedProducts = tabProducts[activeTabKey].map((product) => {
-              if (product.ma === productId) {
-                 return { ...product, quantity: newQuantity };
-              }
-              return product;
-           });
-           // Update the state with the modified products
-           return {
-              tabProducts: {
-                 ...tabProducts,
-                 [activeTabKey]: updatedProducts,
-              },
-           };
+            const { activeTabKey, tabProducts } = prevState; // Access activeTabKey from prevState
+            // Update the quantity in the state for the specific product
+            const updatedProducts = tabProducts[activeTabKey].map((product) => {
+                if (product.ma === productId) {
+                    return { ...product, quantity: newQuantity };
+                }
+                return product;
+            });
+            // Update the state with the modified products
+            return {
+                tabProducts: {
+                    ...tabProducts,
+                    [activeTabKey]: updatedProducts,
+                },
+            };
         });
     };
     onEdit = (tabKey, action) => {
@@ -358,11 +439,9 @@ class BanHangOffline extends Component {
         this.setState((prevState) => {
             const updatedProducts = prevState.tabProducts[tabKey].map((product) => {
                 if (product.ma === productId) {
-                    // Decrease the quantity by 1 if it's greater than 0
+
                     const newQuantity = Math.max(product.quantity - 1, 0);
 
-                    // If the quantity is greater than 0, update the quantity
-                    // Otherwise, remove the product from the list
                     return newQuantity > 0 ? { ...product, quantity: newQuantity } : null;
                 }
                 return product;
@@ -370,7 +449,7 @@ class BanHangOffline extends Component {
 
             const updatedTabList = prevState.tabList.map((tab) => {
                 if (tab.key === tabKey) {
-                    // Remove the product from the tabList if its quantity becomes 0
+
                     return {
                         ...tab,
                         products: updatedProducts.filter((product) => product && product.quantity > 0),
@@ -411,53 +490,89 @@ class BanHangOffline extends Component {
     handleAddToCart = () => {
         const { tabProducts, selectedRowKeys, activeTabKey } = this.state;
 
-        // Get the selected products from the state based on selectedRowKeys
+
         const selectedProductsToAdd = this.state.sanPhamChiTiet
             .filter(product => selectedRowKeys.includes(product.ma))
             .map(product => ({ ...product, quantity: 1 }));
 
-        // Get the existing products in the active tab
+
         const existingProducts = tabProducts[activeTabKey] || [];
 
-        // Check if each selected product is already in the active tab
         selectedProductsToAdd.forEach(selectedProduct => {
             const existingProductIndex = existingProducts.findIndex(
                 product => product.ma === selectedProduct.ma
             );
 
             if (existingProductIndex !== -1) {
-                // If the product is already in the tab, increase its quantity by 1
+
                 existingProducts[existingProductIndex].quantity += 1;
             } else {
-                // If the product is not in the tab, add it with quantity 1
+
                 existingProducts.push(selectedProduct);
             }
         });
 
-        // Update the state with the modified tabProducts and clear selectedRowKeys
         this.setState(prevState => ({
             tabProducts: {
                 ...prevState.tabProducts,
                 [activeTabKey]: existingProducts,
             },
-            selectedRowKeys: [], // Clear selectedRowKeys after adding to the cart
+            selectedRowKeys: [],
         }));
 
-        // Reset the input value
         this.setState({ inputValue: '' });
     };
 
     onChangeSearchInput = (selectedValues) => {
-        // Use selectedValues directly instead of e.target.value
-        console.log("Selected Values:", selectedValues);
-    
-        // Filter promotions based on the selected values (if needed)
-        const filteredKhuyenMai = this.state.khuyenMai.filter((option) => selectedValues.includes(option.id));
-    
-        // Update the state with the filtered promotions
-        this.setState({ filteredKhuyenMai });
+        // Ensure only one promotion is selected
+        if (selectedValues.length > 1) {
+            // Display a toast notification
+            toast.error("Chỉ một mã khuyến mãi bạn chọn đầu tiên được áp dụng.", {
+                position: "top-right",
+                autoClose: 3000, // Close the notification after 3 seconds
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+            });
+            return; // Do not update state with multiple selections
+        }
+
+        // Update the state with the selected promotions
+        this.setState({ selectedPromotions: selectedValues });
     };
+    getStatusCounts = () => {
+        const { sanPhamChiTiet } = this.state;
+        const statusCounts = {
+            "": sanPhamChiTiet.length, // All
+            "0": 0, // Chờ xác nhận
+            "1": 0, // Đã xác nhận
+            // Hủy
+        };
+
+        sanPhamChiTiet.forEach(item => {
+            switch (item.trangThai) {
+                case 0:
+                case 1:
+
+                    statusCounts[item.trangThai.toString()]++;
+                    break;
+                default:
+                    statusCounts[""]++;
+                    break;
+            }
+        });
+
+        return statusCounts;
+    }
     render() {
+        const searchTerm = localStorage.getItem('searchTerm') || this.state.searchTerm;
+        const statusCounts = this.getStatusCounts();
+        const sanPhamList = this.filteredData();
+        const { currentPage, perPage } = this.state;
+        const offset = currentPage * perPage;
+        const currentSanPhamChiTietList = sanPhamList.slice(offset, offset + perPage);
         const { isQRReaderOn, result } = this.state;
 
         if (result && result.text) {
@@ -551,6 +666,119 @@ class BanHangOffline extends Component {
                                         {this.popupContent}
                                     </Modal.Body>
                                 </Modal>
+                                <Button variant="btn btn-outline-primary" onClick={this.handleShowModal1}>
+                                    Chọn sản phẩm
+                                </Button>
+                                <Modal show={this.state.showModal1} onHide={this.handleCloseModal1} backdrop="static" dialogClassName="custom-modal-size">
+                                    <Modal.Header closeButton>
+                                        <Modal.Title>Chọn sản phẩm</Modal.Title>
+                                    </Modal.Header>
+                                    <Modal.Body>
+
+                                        <div><div className="row">
+                                            <div className="col-2 container">
+                                                <input
+                                                    type="text"
+                                                    name="query"
+                                                    placeholder="Tìm kiếm"
+                                                    title="Enter search keyword"
+                                                    value={searchTerm}
+                                                    onChange={this.handleSearch}
+                                                    onFocus={this.handleSearchFocus} // Thêm sự kiện onFocus
+                                                />
+                                            </div>
+                                            <div className="col-7">
+                                                <div className="form-check form-check-inline">
+                                                    <input
+                                                        type="radio"
+                                                        id="filterAll"
+                                                        name="statusFilter"
+                                                        value=""
+                                                        checked={this.state.searchTerm === ""}
+                                                        onChange={() => this.handleStatusFilter("")}
+                                                        className="form-check-input"
+                                                    />
+                                                    <label htmlFor="filterAll" className="form-check-label">Tất cả  <span class="badge bg-danger translate-middle badge-number rounded-circle">{statusCounts[""]}</span></label>
+                                                </div>
+                                                <div className="form-check form-check-inline">
+                                                    <input
+                                                        type="radio"
+                                                        id="filterPending"
+                                                        name="statusFilter"
+                                                        value="0"
+                                                        checked={this.state.searchTerm === "0"}
+                                                        onChange={() => this.handleStatusFilter("0")}
+                                                        className="form-check-input"
+                                                    />
+                                                    <label htmlFor="filterPending" className="form-check-label">Ngưng hoạt động  <span class="badge bg-danger translate-middle badge-number rounded-circle"></span></label>
+                                                </div>
+                                                <div className="form-check form-check-inline">
+                                                    <input
+                                                        type="radio"
+                                                        id="filterPaid"
+                                                        name="statusFilter"
+                                                        value="4"
+                                                        checked={this.state.searchTerm === "1"}
+                                                        onChange={() => this.handleStatusFilter("1")}
+                                                        className="form-check-input"
+                                                    />
+                                                    <label htmlFor="filterPaid" className="form-check-label">Đang hoạt động <span class="badge bg-danger translate-middle badge-number rounded-circle"></span></label>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                            <table className="table table-borderless datatable">
+                                                <thead>
+                                                    <tr>
+                                                        <th>STT</th>
+                                                        <th>Tên SẢn Phẩm</th>
+                                                        <th>Ảnh Sản Phẩm</th>
+                                                        <th>Size</th>
+                                                        <th>Màu Sắc</th>
+                                                        <th>Số lượng</th>
+                                                        <th>Đơn giá</th>
+                                                        <th>Trạng thái</th>
+                                                        <th>Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {
+                                                        currentSanPhamChiTietList.map(
+                                                            (sanPhamChiTiet, index) =>
+
+                                                                <tr key={sanPhamChiTiet.id}>
+
+                                                                    <td>{index + 1}</td>
+                                                                    <td>{sanPhamChiTiet.sanPham.ten}</td>
+
+                                                                    <td>{<img style={{ height: '60px', width: '60px', float: 'left' }} src={`/niceadmin/img/${sanPhamChiTiet.anh}`} />}</td>
+                                                                    <td>{sanPhamChiTiet.kichThuoc.giaTri}</td>
+                                                                    <td>{sanPhamChiTiet.mauSac.ten}</td>
+                                                                    <td>{sanPhamChiTiet.soLuong}</td>
+                                                                    <td>{sanPhamChiTiet.donGia}</td>
+                                                                    <td>{sanPhamChiTiet.trangThai == 0 ? "Đang bán" : sanPhamChiTiet.trangThai == 1 ? "nghỉ bán" : ''}</td>
+                                                                    <td ><button className="btn btn-outline-info" onClick={() => this.handleProductClick(sanPhamChiTiet, this.state.activeTabKey)} >chọn</button></td>
+
+                                                                </tr>
+                                                        )
+                                                    }
+                                                </tbody>
+                                            </table>
+                                            <ReactPaginate
+                                                pageCount={Math.ceil(this.state.sanPhamChiTiet.length / this.state.perPage)}
+                                                pageRangeDisplayed={5}
+                                                marginPagesDisplayed={2}
+                                                onPageChange={this.handlePageClick}
+                                                containerClassName={'pagination'}
+                                                activeClassName={'active'}
+                                                previousLabel={"Previous"}
+                                                nextLabel={"Next"}
+                                            />
+                                        </div>
+                                        {this.popupContent}
+                                    </Modal.Body>
+                                </Modal>
+
                             </div>
                             <Flex wrap="wrap">
                                 {this.state.sanPhamChiTiet && this.state.sanPhamChiTiet.map((sanPhamChiTiet, index) => {
@@ -612,7 +840,7 @@ class BanHangOffline extends Component {
                                             mode="multiple"
                                             style={{ width: '100%', maxWidth: '500px' }}
                                             dropdownStyle={{ maxHeight: '300px', overflowY: 'auto', width: '350px' }}
-                                            optionLabelProp="label"
+                                            optionLabelProp="option.ma"
                                             onClick={() => this.reloadKM()}
                                             onChange={this.onChangeSearchInput}
                                             placeholder="thêm khuyến mãi"
@@ -633,7 +861,6 @@ class BanHangOffline extends Component {
                                                 value: option.id,
                                             }))}
                                         /></Col>
-                                        {/* <Button style={{ maxWidth: '75px', textAlign: 'center' }}>Áp dụng</Button> */}
                                         <Col style={{ fontSize: '16px', textAlign: 'right', marginTop: '5px' }}>0</Col>
                                         <Col style={{ fontSize: '16px', textAlign: 'right' }}><Input
                                             type="text"
@@ -645,6 +872,17 @@ class BanHangOffline extends Component {
                                 </div>
 
                             </div>
+                            <Col style={{ fontSize: '16px' }}>
+                                Mã khuyến mãi:
+                                {this.state.selectedPromotions.map((promoId) => {
+                                    const promotion = this.state.khuyenMai.find((promo) => promo.id === promoId);
+                                    return (
+                                        <span key={promoId} className="red">
+                                            {promotion ? ` ${promotion.ma}` : ''}
+                                        </span>
+                                    );
+                                })}
+                            </Col>
                             <Flex style={{ marginTop: '10px', marginBottom: '10px', borderStyle: 'solid', borderWidth: '1px', borderTop: 'none', borderLeft: 'none', borderRight: 'none', paddingBottom: '10px' }} justify="space-between" wrap="wrap" gap={"small"} align="center">
                                 {this.state.priceDemo && this.state.priceDemo.map((item, index) => {
                                     return (
