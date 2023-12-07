@@ -1,6 +1,7 @@
 package com.example.datn404shoes.controller;
 
 import com.example.datn404shoes.entity.*;
+import com.example.datn404shoes.repository.GioHangChiTietRepository;
 import com.example.datn404shoes.repository.GioHangRepository;
 import com.example.datn404shoes.request.AddGioHangRequest;
 import com.example.datn404shoes.service.serviceimpl.*;
@@ -33,6 +34,8 @@ public class MuaHangController {
     TaiKhoanServiceimpl taiKhoanServiceimpl;
     @Autowired
     SanPhamChiTietServiceimpl sanPhamChiTietServiceimpl;
+    @Autowired
+    GioHangChiTietRepository gioHangChiTietRepository;
 
 
     @GetMapping("placeorder")
@@ -80,8 +83,7 @@ public class MuaHangController {
 
     @PostMapping("add_gio_hang")
     public ResponseEntity<?> addGioHang(Model model, @RequestBody AddGioHangRequest request) {
-        GioHangChiTiet gioHangChiTiet = new GioHangChiTiet();
-        gioHangChiTiet.setSanPhamChiTietId(request.getSpct());
+
 //        TaiKhoan tk = TaiKhoan.builder().id(request.getNguoiDung()).build();
         TaiKhoan tk = TaiKhoan.builder().id(1).build();
         List<GioHang> listGioHang = gioHangRepository.findAll();
@@ -91,10 +93,31 @@ public class MuaHangController {
                 gioHangId=list.getId();
             }
         }
-        gioHangChiTiet.setSoLuong(request.getSoLuong());
-        gioHangChiTiet.setGioHangId(GioHang.builder().id(gioHangId).build());
-        gioHangChiTietService.add(gioHangChiTiet);
-        System.out.println(gioHangChiTiet);
-        return ResponseEntity.ok(gioHangChiTiet);
+        List<GioHangChiTiet> listGHCT = gioHangChiTietService.getAll();
+        int total = 0 ;
+        GioHangChiTiet gioHangChiTietCo = null;
+        for(GioHangChiTiet ghct:listGHCT){
+            if(ghct.getGioHangId().getId()==gioHangId&&ghct.getSanPhamChiTietId().getId()==request.getSpct().getId()){
+                total += 1;
+                gioHangChiTietCo = ghct;
+            }
+        }
+        if(total==0){
+            GioHangChiTiet gioHangChiTiet = new GioHangChiTiet();
+            gioHangChiTiet.setSanPhamChiTietId(request.getSpct());
+            gioHangChiTiet.setSoLuong(request.getSoLuong());
+            gioHangChiTiet.setGioHangId(GioHang.builder().id(gioHangId).build());
+            gioHangChiTietService.add(gioHangChiTiet);
+        }else{
+            int tong = gioHangChiTietCo.getSoLuong()+request.getSoLuong();
+            if(tong > request.getSpct().getSoLuong()){
+                gioHangChiTietCo.setSoLuong(request.getSpct().getSoLuong());
+            }else{
+                gioHangChiTietCo.setSoLuong(gioHangChiTietCo.getSoLuong()+ request.getSoLuong());
+
+            }
+            gioHangChiTietRepository.save(gioHangChiTietCo);
+        }
+        return ResponseEntity.ok("Thêm thành công");
     }
 }
