@@ -133,7 +133,6 @@ function Cart({ match }) {
         } else {
             setListSPCTSelected([...listSPCTSelected, spct]);
         }
-        console.log(listSPCTSelected)
     }
     return (
         <Fragment>
@@ -315,8 +314,11 @@ function Cart({ match }) {
                             <div className="row">
 
 
-                                <div className="col-12 mt-2">
-                                    <a href="#" className="btn btn-warning btn-lg" style={{width: '100%'}}><strong>TIẾP
+                                <div className={`col-12 mt-2 ${listSPCTSelected.length === 0 ? 'disabled' : ''}`}>
+                                    <a href={listSPCTSelected.length === 0 ? '#' : '/check-out'}
+                                       className={`btn btn-warning btn-lg`}
+                                       style={{width: '100%'}}
+                                       disabled={listSPCTSelected.length === 0}><strong>TIẾP
                                         TỤC THANH
                                         TOÁN</strong></a>
                                 </div>

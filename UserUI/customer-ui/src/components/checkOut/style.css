@@ -1,0 +1,7 @@
+.colored-border {
+    width: 100%;
+    height: 140px;
+    border-top: 4px solid transparent;
+    border-image: repeating-linear-gradient(to right, red, red 40px, white 40px, white 80px, blue 80px, blue 120px, white 120px, white 160px);
+    border-image-slice: 1;
+}

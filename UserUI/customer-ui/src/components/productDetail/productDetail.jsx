@@ -134,7 +134,7 @@ function ProductDetail({ match }) {
                             <Link to='/login' style={{textDecoration: 'none'}}><a className="navbar-brand" href="#"
                                                                                   style={{fontSize: '13px'}}> <i
                                 className='bx bxs-user'></i> Đăng nhập</a></Link>
-                            <Link to='your-cart' style={{textDecoration: 'none'}}><a className="navbar-brand" href="#"
+                            <Link to='/your-cart/2' style={{textDecoration: 'none'}}><a className="navbar-brand" href="#"
                                                                                      style={{fontSize: '13px'}}> <i
                                 className='bx bxs-cart'></i>Giỏ hàng {'(0)'}</a></Link>
                         </div>
