@@ -38,49 +38,14 @@ class KhachHangComponent extends Component {
         };
     }
 
-    // componentDidMount(pageNumber) {
-    //     const storedAddresses = localStorage.getItem('addresses');
-    //     const storedAddressList = localStorage.getItem('newAddressList');
-    //     this.fetchCities();
-    //     taikhoanservice.getKhachHang(pageNumber)
-    //         .then(res => {
-    //             this.setState({
-    //                 nhanVienQuyen3: res.data,
-    //                 pageCount: res.data.totalPages,
-    //             });
-    //         });
-    //     const id = this.props.match.params.id;
-    //     if (id) {
-    //         taikhoanservice.getTaiKhoanById(this.state.id).then((res) => {
-    //             this.setState({taiKhoanUpdate: res.data});
-    //         })
-    //     }
-    //     axios.get("https://provinces.open-api.vn/api/?depth=1")
-    //         .then((response) => {
-    //             this.setState({ provinces: response.data });
-    //         })
-    //         .catch((error) => {
-    //             console.error('Error fetching provinces:', error);
-    //         });
-    //     if (storedAddressList) {
-    //         this.setState({
-    //             savedAddresses: JSON.parse(storedAddressList),
-    //         });
-    //     }
-    // }
 
     componentDidMount() {
-        // Lấy giá trị của pageNumber từ trạng thái hoặc sử dụng giá trị cố định
-        const pageNumber = this.state.pageNumber || 1;
+        const { pageNumber, isEditing } = this.state;
 
-        // Lấy dữ liệu địa chỉ từ localStorage
-        const storedAddresses = localStorage.getItem('addresses');
-        const storedAddressList = localStorage.getItem('newAddressList');
-
-        // Fetch dữ liệu từ API
+        // Fetch data from the API
         this.fetchCities();
 
-        // Fetch dữ liệu khách hàng
+        // Fetch customer data
         taikhoanservice.getKhachHang(pageNumber)
             .then(res => {
                 this.setState({
@@ -89,30 +54,54 @@ class KhachHangComponent extends Component {
                 });
             });
 
-        // Nếu có id, lấy thông tin tài khoản từ API
+        // If there is an ID, fetch account information from the API
         const id = this.props.match.params.id;
-        if (id) {
+        if (id && isEditing) {
             taikhoanservice.getTaiKhoanById(id).then((res) => {
                 this.setState({ taiKhoanUpdate: res.data });
+                // Cập nhật trạng thái mặc định từ editingData
+                this.setState({ isDefaultAddress: res.data.isDefaultAddress });
             });
         }
 
-        // Fetch dữ liệu tỉnh thành phố
+        // Fetch province data
         axios.get("https://provinces.open-api.vn/api/?depth=1")
             .then((response) => {
-                this.setState({ provinces: response.data });
+                this.setState({ provinces: response.data }, () => {
+                    // Fetch districts for the first city in the list
+                    const firstCity = this.state.provinces[0];
+                    if (firstCity) {
+                        this.fetchDistricts(firstCity);
+                    }
+                });
             })
             .catch((error) => {
                 console.error('Error fetching provinces:', error);
             });
 
-        // Nếu có dữ liệu địa chỉ trong localStorage, cập nhật state
+        // Load data from localStorage
+        const storedAddressList = localStorage.getItem('newAddressList');
+        const storedIsDefaultAddress = localStorage.getItem('isDefaultAddress');
+
         if (storedAddressList) {
+            const savedAddressesFromStorage = JSON.parse(storedAddressList);
             this.setState({
-                savedAddresses: JSON.parse(storedAddressList),
+                savedAddresses: savedAddressesFromStorage,
+                isDefaultAddress: storedIsDefaultAddress === 'true', // Parse the boolean value from the stored string
             });
+
+            if (isEditing) {
+                // Update the default status from editingData
+                const id = this.props.match.params.id;
+                const editingData = savedAddressesFromStorage.find((address) => address.id === id);
+                if (editingData) {
+                    this.setState({ isDefaultAddress: editingData.isDefaultAddress });
+                }
+            }
         }
+        // ... Rest of your code
     }
+
 
     handlePageClick = (selectedPage) => {
         const pageNumber = selectedPage.selected + 1; // ReactPaginate uses zero-based indexing
@@ -133,7 +122,6 @@ class KhachHangComponent extends Component {
                 console.error('Error:', error);
             });
     }
-
     handleNewAddressChange = (event) => {
         const { name, value, type, checked } = event.target;
 
@@ -149,7 +137,8 @@ class KhachHangComponent extends Component {
                 return {
                     newAddress: {
                         ...prevState.newAddress,
-                        isDefaultAddress: prevState.isEditing ? isDefault : false,
+                        isDefaultAddress: isDefault,
+                        [name]: value,
                     },
                     savedAddresses: updatedAddresses,
                     editingData: {
@@ -171,21 +160,36 @@ class KhachHangComponent extends Component {
         });
     };
 
-
-
     handleInputChange = (name, value) => {
-        this.setState((prevState) => ({
-            newAddress: {
-                ...prevState.newAddress,
-                [name]: value,
-            },
-            editingData: {
-                ...prevState.editingData,
-                [name]: value,
-            },
-        }));
-    };
+        this.setState((prevState) => {
+            const { isEditing, editingData, newAddress, savedAddresses } = prevState;
 
+            // Update isDefaultAddress for newAddress and editingData
+            const updatedNewAddress = {
+                ...newAddress,
+                [name]: value,
+                isDefaultAddress: name === "isDefaultAddress" ? value : newAddress.isDefaultAddress,
+            };
+
+            const updatedEditingData = {
+                ...editingData,
+                [name]: value,
+                isDefaultAddress: name === "isDefaultAddress" ? value : editingData.isDefaultAddress,
+            };
+
+            // Update isDefaultAddress for all savedAddresses if the new value is true
+            const updatedSavedAddresses = savedAddresses.map((address) => ({
+                ...address,
+                isDefaultAddress: name === "isDefaultAddress" && value ? false : address.isDefaultAddress,
+            }));
+
+            return {
+                newAddress: updatedNewAddress,
+                editingData: updatedEditingData,
+                savedAddresses: updatedSavedAddresses,
+            };
+        });
+    };
 
     handleCheckboxChange = (name, checked) => {
         this.setState((prevState) => ({
@@ -201,6 +205,7 @@ class KhachHangComponent extends Component {
     };
 
 
+
     handleSubmit = (event) => {
         event.preventDefault();
         if (this.state.isEditing) {
@@ -211,20 +216,39 @@ class KhachHangComponent extends Component {
     };
 
     handleAddSubmit = () => {
-        // Thêm địa chỉ mới vào danh sách đã lưu
+        const { savedAddresses, newAddress } = this.state;
+
+        // Kiểm tra xem newAddress có trùng với savedAddresses không
+        const isDuplicate = savedAddresses.some(address => (
+            address.ten === newAddress.ten &&
+            address.sdt === newAddress.sdt &&
+            address.diaChiCuThe === newAddress.diaChiCuThe
+            // Thêm các điều kiện kiểm tra khác nếu cần
+        ));
+
+        if (isDuplicate) {
+            console.error('Duplicate address found:', newAddress);
+            // Xử lý lỗi ở đây nếu cần
+            return;
+        }
+
+        // Tiếp tục với quá trình thêm địa chỉ mới
         const newAddressList = [
-            ...this.state.savedAddresses,
+            ...savedAddresses,
             {
-                ...this.state.newAddress,
-                stt: this.state.savedAddresses.length + 1, // Tăng số thứ tự khi thêm địa chỉ mới
+                ...newAddress,
+                stt: savedAddresses.length + 1,
             },
         ];
 
         // Cập nhật danh sách địa chỉ trong localStorage
         this.updateLocalStorageAddresses(newAddressList);
 
+        // Cập nhật trạng thái nguoiDungUpdate dựa trên thông tin địa chỉ mới
+        this.updateNguoiDungUpdate(newAddress);
+
         this.setState({
-            isAddingAddress: true, // Đóng biểu mẫu thêm địa chỉ mới
+            isAddingAddress: true,
             savedAddresses: newAddressList,
             newAddress: {
                 ten: '',
@@ -237,27 +261,6 @@ class KhachHangComponent extends Component {
             },
         });
     };
-
-// Hàm cập nhật localStorage
-    updateLocalStorageAddresses = (newAddressList) => {
-        localStorage.setItem('newAddressList', JSON.stringify(newAddressList));
-    };
-
-
-
-
-
-    handleEditAddress = (address) => {
-        console.log('Editing data:', address);
-        this.setState({
-            isEditing: true,
-            editingData: {
-                ...address, // Đảm bảo rằng bạn đang cập nhật tất cả các trường cần thiết
-            },
-        });
-    };
-
-
 
     handleEditSubmit = (event) => {
         event.preventDefault();
@@ -273,14 +276,23 @@ class KhachHangComponent extends Component {
                 return { ...address };
             }
         });
-        // Lưu trạng thái vào localStorage
-        localStorage.setItem('editedData', JSON.stringify(this.state));
 
-        // Update the isDefaultAddress for newAddress as well
+        // Update isDefaultAddress cho newAddress nếu không có địa chỉ khác được đặt làm mặc định
+        const isAnyDefaultAddress = updatedAddresses.some((address) => address.isDefaultAddress);
+
         const updatedNewAddress = {
-            ...this.state.newAddress,
-            isDefaultAddress: this.state.newAddress.isDefaultAddress || false,
+            ...editedAddress,
+            isDefaultAddress: !isAnyDefaultAddress ? editedAddress.isDefaultAddress : false, // Đặt lại thành false
         };
+
+        // Cập nhật trạng thái nguoiDungUpdate dựa trên thông tin địa chỉ được chỉnh sửa
+        this.updateNguoiDungUpdate(editedAddress);
+
+        // Lưu trạng thái vào localStorage
+        localStorage.setItem('savedAddresses', JSON.stringify(updatedAddresses));
+        localStorage.setItem('isEditing', false);
+        localStorage.setItem('editingData', JSON.stringify({}));
+        localStorage.setItem('newAddress', JSON.stringify(updatedNewAddress));
 
         this.setState({
             savedAddresses: updatedAddresses,
@@ -294,6 +306,57 @@ class KhachHangComponent extends Component {
             this.handleInputChange("diaChiCuThe", ""); // Đặt lại giá trị của trường "Địa chỉ cụ thể"
         });
     };
+
+
+    togglePopup = () => {
+        var popup = document.getElementById('popup');
+        popup.style.display = (popup.style.display === 'none' || popup.style.display === '') ? 'block' : 'none';
+    };
+
+// Hàm cập nhật localStorage
+    // Function to update localStorage with new address list
+    updateLocalStorageAddresses = (newAddressList) => {
+        localStorage.setItem('newAddressList', JSON.stringify(newAddressList));
+    };
+
+
+    updateNguoiDungUpdate = (newAddress) => {
+        this.setState((prevState) => ({
+            nguoiDungUpdate: {
+                ...prevState.nguoiDungUpdate,
+                tinhThanhPho: newAddress.tinhThanhPho || '', // Thêm xử lý null hoặc undefined
+                quanHuyen: newAddress.quanHuyen || '',
+                xaPhuongThiTran: newAddress.xaPhuongThiTran || '',
+                diaChiCuThe: newAddress.diaChiCuThe || '',
+                sdt: newAddress.sdt || '',
+                ten: newAddress.ten || '',
+            },
+        }));
+    };
+
+
+
+    // Function to open the edit form
+    handleEditAddress = (address) => {
+        const isDefaultAddress = address.isDefaultAddress || false;
+
+        // Extract quanHuyen and xaPhuongThiTran from the address being edited
+        const { quanHuyen, xaPhuongThiTran } = address;
+
+        this.setState({
+            isEditing: true,
+            editingData: address,
+            newAddress: {
+                ...this.state.newAddress,
+                quanHuyen: quanHuyen || '', // Set quanHuyen to the value from the address, or an empty string if it's undefined/null
+                xaPhuongThiTran: xaPhuongThiTran || '', // Set xaPhuongThiTran to the value from the address, or an empty string if it's undefined/null
+            },
+            isDefaultAddress: isDefaultAddress,
+        });
+    };
+
+
+
 
 
     handlePageChange = (pageNumber) => {
@@ -349,12 +412,27 @@ class KhachHangComponent extends Component {
         window.location.href = `/khachhangdetail/${id}`;
     }
     toggleThemDiaChiMoi = () => {
-        const { isEditing, editingData } = this.state;
-        this.setState({
+        const { isEditing, editingData, newAddress } = this.state;
+
+        // Nếu đang ở chế độ chỉnh sửa, cập nhật trạng thái nguoiDungUpdate dựa trên thông tin địa chỉ mới
+        if (isEditing) {
+            this.updateNguoiDungUpdate(newAddress);
+        }
+
+        this.setState((prevState) => ({
             isAddingAddress: !isEditing, // Đặt isAddingAddress thành ngược của isEditing
-            editingData: isEditing ? editingData : {}, // Nếu đang chỉnh sửa, sử dụng editingData, ngược lại là đặt về trạng thái rỗng
+            // Nếu đang thêm mới, sử dụng editingData, ngược lại là đặt về trạng thái rỗng
+            editingData: !isEditing ? {} : editingData,
+            // Nếu đang thêm mới, đặt newAddress về trạng thái mặc định, ngược lại giữ nguyên giá trị hiện tại
+            newAddress: !isEditing ? {} : newAddress,
+        }), () => {
+            // Hiển thị hoặc ẩn popup sau khi cập nhật state
+            this.togglePopup();
         });
     };
+
+
+
 
 
 
@@ -388,6 +466,27 @@ class KhachHangComponent extends Component {
             }));
         }
     };
+    handleDeleteAddress = (index) => {
+        const updatedAddresses = [...this.state.savedAddresses];
+        const deletedAddress = updatedAddresses.splice(index, 1)[0];
+
+        // Cập nhật trạng thái nguoiDungUpdate nếu địa chỉ bị xóa là địa chỉ mặc định
+        if (deletedAddress.isDefaultAddress) {
+            this.updateNguoiDungUpdate({
+                ten: '',
+                sdt: '',
+                diaChiCuThe: '',
+            });
+        }
+
+        // Cập nhật danh sách địa chỉ trong localStorage
+        this.updateLocalStorageAddresses(updatedAddresses);
+
+        this.setState({
+            savedAddresses: updatedAddresses,
+        });
+    };
+
 
     handleEditCheckboxChange = () => {
         const { isEditing, editingData, newAddress } = this.state;
@@ -411,7 +510,52 @@ class KhachHangComponent extends Component {
             };
         });
     };
+    handleDefaultAddressChange = () => {
+        const { isEditing, editingData, newAddress, savedAddresses } = this.state;
 
+        // Toggle the isDefaultAddress for the currently edited address
+        const updatedEditingData = isEditing
+            ? { ...editingData, isDefaultAddress: !editingData.isDefaultAddress }
+            : { ...newAddress, isDefaultAddress: !this.state.isDefaultAddress };
+
+        // Toggle the isDefaultAddress for all other addresses in savedAddresses
+        const updatedSavedAddresses = savedAddresses.map((address, index) => {
+            if (isEditing && address.stt === editingData.stt) {
+                return updatedEditingData;
+            } else {
+                return { ...address, isDefaultAddress: false };
+            }
+        });
+
+        // If the form is in adding mode, add the newAddress to savedAddresses and update the state
+        if (!isEditing) {
+            updatedEditingData.stt = savedAddresses.length + 1; // Update stt for the new address
+            updatedSavedAddresses.push(updatedEditingData);
+        }
+
+        // Update stt values for all addresses
+        const finalUpdatedSavedAddresses = updatedSavedAddresses.map((address, index) => ({
+            ...address,
+            stt: index + 1,
+        }));
+
+        // Update the state
+        this.setState(
+            {
+                isDefaultAddress: updatedEditingData.isDefaultAddress, // Set the isDefaultAddress directly from the updatedEditingData
+                editingData: updatedEditingData,
+                savedAddresses: finalUpdatedSavedAddresses,
+            },
+            () => {
+                // Save to localStorage after updating state
+                localStorage.setItem('savedAddresses', JSON.stringify(finalUpdatedSavedAddresses));
+                localStorage.setItem('isDefaultAddress', JSON.stringify(updatedEditingData.isDefaultAddress));
+            }
+        );
+
+        // Close the form
+        // this.handleCloseEditDialog();
+    };
 
     fetchCities() {
         axios.get('https://provinces.open-api.vn/api/?depth=1')
@@ -456,28 +600,29 @@ class KhachHangComponent extends Component {
                 console.error('Lỗi khi lấy danh sách phường/xã:', error);
             });
     }
-    handleCityChange(event) {
+    handleCityChange = (event) => {
         const selectedCityName = event.target.value;
         const selectedCity = this.state.cities.find(city => city.name === selectedCityName);
 
-        console.log('Tỉnh/thành phố được chọn:', selectedCity);
+        const updatedNewAddress = {
+            ...this.state.newAddress,
+            tinhThanhPho: selectedCityName,
+        };
 
-        this.setState((prevState) => ({
-            newAddress: {
-                ...prevState.newAddress,
-                tinhThanhPho: selectedCityName,
-            },
-            editingData: {
-                ...prevState.editingData,
-                tinhThanhPho: selectedCityName,
-            }
-        }));
+        const updatedEditingData = {
+            ...this.state.editingData,
+            tinhThanhPho: selectedCityName,
+        };
+
+        this.setState({
+            newAddress: updatedNewAddress,
+            editingData: updatedEditingData,
+        });
 
         if (selectedCity) {
             this.fetchDistricts(selectedCity);
         }
-    }
-
+    };
 
 
     handleDistrictChange(event) {
@@ -489,10 +634,6 @@ class KhachHangComponent extends Component {
         this.setState((prevState) => ({
             newAddress: {
                 ...prevState.newAddress,
-                quanHuyen: selectedDistrict ? selectedDistrict.name : '',
-            },
-            editingData: {
-                ...prevState.editingData,
                 quanHuyen: selectedDistrict ? selectedDistrict.name : '',
             }
         }));
@@ -623,151 +764,182 @@ class KhachHangComponent extends Component {
                                                 </tbody>
 
                                             </table>
-                                            {(isAddingAddress || isEditing) && (
-                                                <div className="form-dialog">
-                                                    <form onSubmit={this.handleSubmit}>
-                                                        <div className="form-group form-inline">
-                                                            <label htmlFor="ten">Tên:</label>
-                                                            <input
-                                                                type="text"
-                                                                id="ten"
-                                                                name="ten"
-                                                                value={this.state.isEditing ? this.state.editingData.ten : this.state.newAddress.ten}
-                                                                onChange={(e) => this.handleInputChange("ten", e.target.value)}
-                                                            />
-                                                        </div>
 
-                                                        <div className="form-group">
-                                                            <label htmlFor="sdt">Số điện thoại:</label>
-                                                            <input
-                                                                type="text"
-                                                                id="sdt"
-                                                                name="sdt"
-                                                                value={this.state.isEditing ? this.state.editingData.sdt : this.state.newAddress.sdt}
-                                                                onChange={(e) => this.handleInputChange("sdt", e.target.value)}
-                                                            />
-                                                        </div>
-
-                                                        <div className="form-group">
-                                                            <label htmlFor="diaChiCuThe">Địa chỉ cụ thể:</label>
-                                                            <input
-                                                                type="text"
-                                                                id="diaChiCuThe"
-                                                                name="diaChiCuThe"
-                                                                value={this.state.isEditing ? this.state.editingData.diaChiCuThe : this.state.newAddress.diaChiCuThe}
-                                                                onChange={(e) => this.handleInputChange("diaChiCuThe", e.target.value)}
-                                                            />
-                                                        </div>
-                                                        <div className="form-group form-inline">
-                                                            <label>Địa chỉ:</label>
-                                                            <div className="row">
-                                                                <div className="col-md-4">
-                                                                    <select
-                                                                        className="form-control"
-                                                                        name="tinhThanhPho"
-                                                                        onChange={(event) => this.handleCityChange(event)}
-                                                                        value={isEditing ? editingData.tinhThanhPho : (newAddress.tinhThanhPho || '')}
-                                                                    >
-                                                                        <option value="">Chọn tỉnh thành</option>
-                                                                        {this.state.cities.map(city => (
-                                                                            <option key={city.code} value={city.name}>
-                                                                                {city.name}
-                                                                            </option>
-                                                                        ))}
-                                                                    </select>
+                                            <div id="popup" className="popup">
+                                                <div className="popup-content">
+                                                    {(isAddingAddress || isEditing) && (
+                                                        <div className="form-dialog">
+                                                            <form onSubmit={this.handleSubmit}>
+                                                                <div className="form-group form-inline">
+                                                                    <label htmlFor="ten">Tên:</label>
+                                                                    <input
+                                                                        type="text"
+                                                                        id="ten"
+                                                                        name="ten"
+                                                                        value={this.state.isEditing ? this.state.editingData.ten : this.state.newAddress.ten}
+                                                                        onChange={(e) => this.handleInputChange("ten", e.target.value)}
+                                                                    />
                                                                 </div>
-                                                                <div className="col-md-4">
-                                                                    <select
-                                                                        className="form-control"
-                                                                        name="quanHuyen"
-                                                                        onChange={(event) => this.handleDistrictChange(event)}
-                                                                        value={isEditing ? editingData.quanHuyen : (newAddress.quanHuyen || '')}
-                                                                    >
-                                                                        <option value="">Chọn quận huyện</option>
-                                                                        {this.state.districts.map(district => (
-                                                                            <option key={district.code} value={district.name}>
-                                                                                {district.name}
-                                                                            </option>
-                                                                        ))}
-                                                                    </select>
+
+                                                                <div className="form-group">
+                                                                    <label htmlFor="sdt">Số điện thoại:</label>
+                                                                    <input
+                                                                        type="text"
+                                                                        id="sdt"
+                                                                        name="sdt"
+                                                                        value={this.state.isEditing ? this.state.editingData.sdt : this.state.newAddress.sdt}
+                                                                        onChange={(e) => this.handleInputChange("sdt", e.target.value)}
+                                                                    />
                                                                 </div>
-                                                                <div className="col-md-4">
-                                                                    <select
-                                                                        className="form-control"
-                                                                        name="xaPhuongThiTran"
-                                                                        onChange={(event) => this.handleWardChange(event)}
-                                                                        value={isEditing ? editingData.xaPhuongThiTran : (newAddress.xaPhuongThiTran || '')}
-                                                                    >
-                                                                        <option value="">Chọn phường xã</option>
-                                                                        {this.state.wards.map(ward => (
-                                                                            <option key={ward.code} value={ward.name}>
-                                                                                {ward.name}
-                                                                            </option>
-                                                                        ))}
-                                                                    </select>
+
+                                                                <div className="form-group">
+                                                                    <label htmlFor="diaChiCuThe">Địa chỉ cụ thể:</label>
+                                                                    <input
+                                                                        type="text"
+                                                                        id="diaChiCuThe"
+                                                                        name="diaChiCuThe"
+                                                                        value={this.state.isEditing ? this.state.editingData.diaChiCuThe : this.state.newAddress.diaChiCuThe}
+                                                                        onChange={(e) => this.handleInputChange("diaChiCuThe", e.target.value)}
+                                                                    />
                                                                 </div>
-                                                            </div>
-                                                        </div>
-                                                        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                                                            <label htmlFor="isDefaultAddress">
-                                                                <input
-                                                                    type="checkbox"
-                                                                    id="isDefaultAddress"
-                                                                    name="isDefaultAddress"
-                                                                    checked={this.state.isEditing ? this.state.editingData.isDefaultAddress : this.state.newAddress.isDefaultAddress}
-                                                                    onChange={(e) => this.handleInputChange("isDefaultAddress", e.target.checked)}
-                                                                />
-                                                                Mặc định
-                                                            </label>
+                                                                <div className="form-group form-inline">
+                                                                    <label>Địa chỉ:</label>
+                                                                    <div className="row">
+                                                                        <div className="col-md-4">
+                                                                            <select
+                                                                                className="form-control"
+                                                                                name="tinhThanhPho"
+                                                                                onChange={(event) => this.handleCityChange(event)}
+                                                                                value={isEditing ? editingData.tinhThanhPho : (newAddress.tinhThanhPho || '')}
+                                                                            >
+                                                                                <option value="">Chọn tỉnh thành</option>
+                                                                                {this.state.cities.map(city => (
+                                                                                    <option key={city.code} value={city.name}>
+                                                                                        {city.name}
+                                                                                    </option>
+                                                                                ))}
+                                                                            </select>
+                                                                        </div>
+                                                                        <div className="col-md-4">
+                                                                            <select
+                                                                                className="form-control"
+                                                                                name="quanHuyen"
+                                                                                onChange={(event) => this.handleDistrictChange(event)}
+                                                                                value={isEditing ? editingData.quanHuyen : newAddress.quanHuyen}
+                                                                            >
+                                                                                <option value="">Chọn quận huyện</option>
+                                                                                {this.state.districts.map(district => (
+                                                                                    <option key={district.code} value={district.name}>
+                                                                                        {district.name}
+                                                                                    </option>
+                                                                                ))}
+                                                                            </select>
+                                                                        </div>
+                                                                        <div className="col-md-4">
+                                                                            <select
+                                                                                className="form-control"
+                                                                                name="xaPhuongThiTran"
+                                                                                onChange={(event) => this.handleWardChange(event)}
+                                                                                value={isEditing ? editingData.xaPhuongThiTran : (newAddress.xaPhuongThiTran || '')}
+                                                                            >
+                                                                                <option value="">Chọn phường xã</option>
+                                                                                {this.state.wards.map(ward => (
+                                                                                    <option key={ward.code} value={ward.name}>
+                                                                                        {ward.name}
+                                                                                    </option>
+                                                                                ))}
+                                                                            </select>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
 
-                                                        </div>
+
+                                                                <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
+                                                                    <label
+                                                                        style={{
+                                                                            position: 'relative',
+                                                                            display: 'inline-block',
+                                                                            width: '60px',
+                                                                            height: '34px',
+                                                                        }}
+                                                                    >
+                                                                        <input
+                                                                            type="checkbox"
+                                                                            style={{
+                                                                                position: 'absolute',
+                                                                                opacity: 0,
+                                                                                height: 0,
+                                                                                width: 0,
+                                                                            }}
+                                                                            checked={this.state.isDefaultAddress}
+                                                                            onChange={this.handleDefaultAddressChange}
+                                                                        />
+
+                                                                        <span
+                                                                            style={{
+                                                                                position: 'absolute',
+                                                                                cursor: 'pointer',
+                                                                                top: 0,
+                                                                                left: 0,
+                                                                                right: 0,
+                                                                                bottom: 0,
+                                                                                backgroundColor: this.state.isDefaultAddress
+                                                                                    ? '#4CAF50' // Màu xanh khi được chọn
+                                                                                    : '#ccc', // Màu xám khi không được chọn
+                                                                                borderRadius: '34px',
+                                                                                transition: '0.4s',
+                                                                            }}
+                                                                        />
+                                                                        <span
+                                                                            style={{
+                                                                                position: 'absolute',
+                                                                                height: '26px',
+                                                                                width: '26px',
+                                                                                left: this.state.isDefaultAddress ? '34px' : '2px',
+                                                                                bottom: '4px',
+                                                                                backgroundColor: '#fff',
+                                                                                borderRadius: '50%',
+                                                                                transition: '0.4s',
+                                                                            }}
+                                                                        />
+                                                                    </label>
+                                                                    <span style={{ marginLeft: '5px' }}>Mặc định</span>
+                                                                </div>
+
+                                                                <button type="submit">
+                                                                    {isEditing ? 'Lưu Chỉnh Sửa' : 'Lưu Địa Chỉ'}
+                                                                </button>
+                                                                <button type="button" onClick={this.togglePopup}>
+                                                                    Đóng
+                                                                </button>
+                                                            </form>
 
 
-                                                        <button type="submit">
-                                                            {isEditing ? 'Lưu Chỉnh Sửa' : 'Lưu Địa Chỉ'}
-                                                        </button>
-                                                        <button type="button" onClick={this.handleCloseEditDialog}>
-                                                            Đóng
-                                                        </button>
-                                                    </form>
+                                                            {/* Danh sách địa chỉ đã lưu */}
+                                                            {this.state.savedAddresses.length > 0 && (
+                                                                <div>
+                                                                    <h4>Danh sách địa chỉ đã lưu:</h4>
+                                                                    <ul>
+                                                                        {this.state.savedAddresses.map((address, index) => (
+                                                                            <li key={index}>
+                                                                                {`DC: ${address.stt}, ${address.ten}, ${address.sdt}, ${address.diaChiCuThe}, ${address.xaPhuongThiTran}, ${address.quanHuyen}, ${address.tinhThanhPho}`}
+                                                                                {address.isDefaultAddress && (
+                                                                                    <span style={{ color: 'red' }}> - Mặc định</span>
+                                                                                )}
+                                                                                <button onClick={() => this.handleEditAddress(address)}>Chỉnh sửa</button>
+                                                                                <button onClick={() => this.handleDeleteAddress(index)}>Xóa</button>
+                                                                            </li>
+                                                                        ))}
+                                                                    </ul>
+                                                                </div>
+                                                            )}
 
-
-                                                    {/* Danh sách địa chỉ đã lưu */}
-                                                    {this.state.savedAddresses.length > 0 && (
-                                                        <div>
-                                                            <h4>Danh sách địa chỉ đã lưu:</h4>
-                                                            <ul>
-                                                                {this.state.savedAddresses.map((address, index) => (
-                                                                    <li key={index}>
-                                                                        {`DC: ${address.stt}, ${address.ten}, ${address.sdt}, ${address.diaChiCuThe}, ${address.xaPhuongThiTran}, ${address.quanHuyen}, ${address.tinhThanhPho}`}
-                                                                        {address.isDefaultAddress && (
-                                                                            <span style={{ color: 'red' }}> - Mặc định</span>
-                                                                        )}
-                                                                        <button onClick={() => this.handleEditAddress(address)}>Chỉnh sửa</button>
-                                                                    </li>
-                                                                ))}
-                                                            </ul>
+                                                            {/*</form>*/}
                                                         </div>
                                                     )}
 
-                                                    {/*</form>*/}
                                                 </div>
-                                            )}
-
-
-                                            <ul className="pagination justify-content-center">
-                                                {Array.from({length: Math.ceil(nhanVienQuyen3.length / itemsPerPage)}, (_, i) => (
-                                                    <li key={i}
-                                                        className={`page-item ${i + 1 === currentPage ? 'active' : ''}`}>
-                                                        <button
-                                                            className="page-link"
-                                                            onClick={() => this.handlePageChange(i + 1)}
-                                                        >
-                                                            {i + 1}
-                                                        </button>
-                                                    </li>
-                                                ))}
-                                            </ul>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -782,4 +954,3 @@ class KhachHangComponent extends Component {
 }
 
 export default KhachHangComponent;
-

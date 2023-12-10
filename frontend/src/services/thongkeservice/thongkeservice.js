@@ -297,6 +297,44 @@ class ThongKeService {
             });
     }
 
+    toc_do_tang_truong() {
+        const url = `${API_BASE_URL}/toc_do_tang_truong`;
+        return axios.get(url)
+            .then(response => response.data)
+            .catch(error => {
+                console.error("Error in getHoaDonNam:", error);
+                throw error;
+            });
+    }
+
+
+    toc_do_tang_truong_thang() {
+        const url = `${API_BASE_URL}/toc_do_tang_truong_thang`;
+        return axios.get(url)
+            .then(response => response.data)
+            .catch(error => {
+                console.error("Error in getHoaDonNam:", error);
+                throw error;
+            });
+    }
+
+    toc_do_tang_truong_san_pham() {
+        const url = `${API_BASE_URL}/toc_do_tang_truong_san_pham_nam`;
+
+        return axios.get(url)
+            .then(response => {
+                // Lọc dữ liệu từ bản ghi thứ hai trở đi
+                const dataFromSecondRecordOnward = response.data.slice(1);
+
+                return dataFromSecondRecordOnward;
+            })
+            .catch(error => {
+                console.error("Error in toc_do_tang_truong_san_pham:", error);
+                throw error;
+            });
+    }
+
+
 }
 
 export default new ThongKeService();

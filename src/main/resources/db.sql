@@ -275,14 +275,6 @@ CREATE TABLE lich_su_hoa_don(
                                 FOREIGN KEY (khuyen_mai) REFERENCES khuyen_mai(id)
 );
 
-CREATE TABLE hoa_don_khuyen_mai (
-                                    id BIGINT PRIMARY KEY IDENTITY(1,1),
-                                    hoa_don_id BIGINT,
-                                    khuyen_mai_id BIGINT,
-                                    FOREIGN KEY (hoa_don_id) REFERENCES hoa_don(id),
-                                    FOREIGN KEY (khuyen_mai_id) REFERENCES khuyen_mai(id)
-);
-
 
 use ShopShoe
 
@@ -572,40 +564,50 @@ VALUES
     (45, 'giay-adidas-grand-court-base-2-nam-trang-do-xanh-01-800x800.jpg')
 
 
+INSERT INTO [dbo].[khuyen_mai]
+(ma,[ten],[mo_ta],[bat_dau],[ket_thuc],[giam_gia],[kieu_khuyen_mai],dieu_kien,so_luong,trang_thai)
+VALUES
+    ('KHUYENMAICHAOMUNG',N'KHUYẾN MÃI CHÀO MỪNG NGƯỜI MỚI',N'GIẢM 10% VỚI HÓA ĐƠN 0Đ',GETDATE(),GETDATE(),10 ,1,0,20,1),
+    ('KHUYENMAIPK',N'KHUYẾN MÃI TƯNG BỪNG',N'GIẢM 10K KHI MUA SẢN PHẨM TRÊN 10K',GETDATE(),GETDATE(),10000 ,0,10000,20,1),
+    ('KHUYENMAITHANG10',N'KHUYẾN MÃI THÁNG 10',N'GIẢM 10K KHI MUA SẢN PHẨM TRÊN 15K',GETDATE(),GETDATE(),15000 ,0,100000,20,1),
+    ('KHUYENMAIDEMDONG',N'ĐÔNG KHUYẾN MÃI',N'GIẢM 80K KHI MUA SẢN PHẨM TRÊN 800K',GETDATE(),GETDATE(),80000 ,0,800000,20,1),
+    ('KHUYENMAIBLACKDAY',N'KHUYẾN MÃI NGÀY ĐEN',N'GIẢM 10K KHI MUA SẢN PHẨM TRÊN 10K',GETDATE(),GETDATE(),10000 ,1,10000,20,1);
+
+
 INSERT INTO hoa_don (ma_hoa_don, ngay_tao, ghi_chu, ngay_cap_nhat, trang_thai, cho_xac_nhan, ghi_chu_cho_xac_nhan, cho_giao, ghi_chu_cho_giao, dang_giao, ghi_chu_dang_giao, hoan_thanh, ghi_chu_hoan_thanh, huy, ghi_chu_huy, tai_khoan_nhan_vien_id,tai_khoan_khach_hang_id,khuyen_mai, thanh_toan_id, kieu_hoa_don, tong_tien, phi_ship, tien_giam, tong_tien_sau_giam, ten, sdt, email, dia_chi_cu_the, tinh_thanh_pho, quan_huyen, xa_phuong_thi_tran)
 VALUES
-    ('HD001', GETDATE(), N'Ghi chú cho hóa đơn 1', NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1,1,2, 1, 1, 1000000, 50000, 100000, 950000, N'Nguyễn Văn A', '0123456789', 'nguyenvana@example.com', 'Địa chỉ 1', 'Hồ Chí Minh', 'Quận 1', 'Phường 1'),
-    ('HD002', '2023-1-15', N'Ghi chú cho hóa đơn 2', NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 2,1,3, 2, 2, 1500000, 60000, 200000, 1300000, N'Trần Thị B', '0987654321', 'tranthib@example.com', 'Địa chỉ 2', 'Hà Nội', 'Quận Ba Đình', 'Phường Kim Mã'),
-    ('HD003', GETDATE(), N'Ghi chú cho hóa đơn 3', NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 3,1,1, 3, 1, 800000, 30000, 50000, 720000, N'Lê Văn C', '0123456789', 'levanc@example.com', 'Địa chỉ 3', 'Đà Nẵng', 'Quận Hải Châu', 'Phường Thạch Thang'),
-    ('HD004', '2023-3-15', N'Ghi chú cho hóa đơn 4', NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 4,1,2, 1, 2, 1200000, 40000, 80000, 1120000, N'Nguyễn Thị D', '0987654321', 'nguyenthid@example.com', 'Địa chỉ 4', 'Cần Thơ', 'Quận Ninh Kiều', 'Phường An Khánh'),
-    ('HD005', GETDATE(), N'Ghi chú cho hóa đơn 5', NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 4,2,2, 1, 2, 1200000, 40000, 80000, 1120000, N'Nguyễn Thị D', '0987654321', 'nguyenthid@example.com', 'Địa chỉ 4', 'Cần Thơ', 'Quận Ninh Kiều', 'Phường An Khánh'),
-    ('HD006', '2023-4-15', N'Ghi chú cho hóa đơn 1', NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 3,4,1, 1, 1, 1000000, 50000, 100000, 950000, N'Nguyễn Văn A', '0123456789', 'nguyenvana@example.com', 'Địa chỉ 1', 'Hồ Chí Minh', 'Quận 1', 'Phường 1'),
-    ('HD007', '2023-4-15', N'Ghi chú cho hóa đơn 2', NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 2,2,2, 2, 2, 1500000, 60000, 200000, 1300000, N'Trần Thị B', '0987654321', 'tranthib@example.com', 'Địa chỉ 2', 'Hà Nội', 'Quận Ba Đình', 'Phường Kim Mã'),
-    ('HD008', '2023-5-15', N'Ghi chú cho hóa đơn 3', NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1,1,3, 3, 1, 800000, 30000, 50000, 720000, N'Lê Văn C', '0123456789', 'levanc@example.com', 'Địa chỉ 3', 'Đà Nẵng', 'Quận Hải Châu', 'Phường Thạch Thang'),
-    ('HD009', '2023-6-15', N'Ghi chú cho hóa đơn 4', NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 3,1,4, 1, 2, 1200000, 40000, 80000, 1120000, N'Nguyễn Thị D', '0987654321', 'nguyenthid@example.com', 'Địa chỉ 4', 'Cần Thơ', 'Quận Ninh Kiều', 'Phường An Khánh'),
-    ('HD0010', '2023-6-15', N'Ghi chú cho hóa đơn 5', NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 3,3,4, 1, 2, 1200000, 40000, 80000, 1120000, N'Nguyễn Thị D', '0987654321', 'nguyenthid@example.com', 'Địa chỉ 4', 'Cần Thơ', 'Quận Ninh Kiều', 'Phường An Khánh'),
-    ('HD0011', '2023-6-15', N'Ghi chú cho hóa đơn 1', NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1,3,1, 1, 1, 1000000, 50000, 100000, 950000, N'Nguyễn Văn A', '0123456789', 'nguyenvana@example.com', 'Địa chỉ 1', 'Hồ Chí Minh', 'Quận 1', 'Phường 1'),
-    ('HD0012', '2023-7-15', N'Ghi chú cho hóa đơn 2', NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 2,1,2, 2, 2, 1500000, 60000, 200000, 1300000, N'Trần Thị B', '0987654321', 'tranthib@example.com', 'Địa chỉ 2', 'Hà Nội', 'Quận Ba Đình', 'Phường Kim Mã'),
-    ('HD0013', '2023-7-15', N'Ghi chú cho hóa đơn 3', NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1,2,3, 3, 1, 800000, 30000, 50000, 720000, N'Lê Văn C', '0123456789', 'levanc@example.com', 'Địa chỉ 3', 'Đà Nẵng', 'Quận Hải Châu', 'Phường Thạch Thang'),
-    ('HD0014', '2023-8-15', N'Ghi chú cho hóa đơn 4', NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 2,3,4, 1, 2, 1200000, 40000, 80000, 1120000, N'Nguyễn Thị D', '0987654321', 'nguyenthid@example.com', 'Địa chỉ 4', 'Cần Thơ', 'Quận Ninh Kiều', 'Phường An Khánh'),
-    ('HD0015', '2023-8-15', N'Ghi chú cho hóa đơn 5', NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 3,2,4, 1, 2, 1200000, 40000, 80000, 1120000, N'Nguyễn Thị D', '0987654321', 'nguyenthid@example.com', 'Địa chỉ 4', 'Cần Thơ', 'Quận Ninh Kiều', 'Phường An Khánh'),
-    ('HD0016', '2023-9-15', N'Ghi chú cho hóa đơn 1', NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 3,2,1, 1, 1, 1000000, 50000, 100000, 950000, N'Nguyễn Văn A', '0123456789', 'nguyenvana@example.com', 'Địa chỉ 1', 'Hồ Chí Minh', 'Quận 1', 'Phường 1'),
-    ('HD0017', '2023-10-15', N'Ghi chú cho hóa đơn 2', NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1,1,2, 2, 2, 1500000, 60000, 200000, 1300000, N'Trần Thị B', '0987654321', 'tranthib@example.com', 'Địa chỉ 2', 'Hà Nội', 'Quận Ba Đình', 'Phường Kim Mã'),
-    ('HD0018', '2023-11-15', N'Ghi chú cho hóa đơn 3', NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 4,1,3, 3, 1, 800000, 30000, 50000, 720000, N'Lê Văn C', '0123456789', 'levanc@example.com', 'Địa chỉ 3', 'Đà Nẵng', 'Quận Hải Châu', 'Phường Thạch Thang'),
-    ('HD0019', '2023-12-15', N'Ghi chú cho hóa đơn 4', NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1,4,4, 1, 2, 1200000, 40000, 80000, 1120000, N'Nguyễn Thị D', '0987654321', 'nguyenthid@example.com', 'Địa chỉ 4', 'Cần Thơ', 'Quận Ninh Kiều', 'Phường An Khánh'),
-    ('HD0020', '2022-1-15', N'Ghi chú cho hóa đơn 5', NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 4,4,4, 1, 2, 1200000, 40000, 80000, 1120000, N'Nguyễn Thị D', '0987654321', 'nguyenthid@example.com', 'Địa chỉ 4', 'Cần Thơ', 'Quận Ninh Kiều', 'Phường An Khánh'),
-    ('HD0021', '2022-2-15', N'Ghi chú cho hóa đơn 1', NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1,4,1, 1, 1, 1000000, 50000, 100000, 950000, N'Nguyễn Văn A', '0123456789', 'nguyenvana@example.com', 'Địa chỉ 1', 'Hồ Chí Minh', 'Quận 1', 'Phường 1'),
-    ('HD0022', '2022-3-15', N'Ghi chú cho hóa đơn 2', NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 2,1,3, 2, 2, 1500000, 60000, 200000, 1300000, N'Trần Thị B', '0987654321', 'tranthib@example.com', 'Địa chỉ 2', 'Hà Nội', 'Quận Ba Đình', 'Phường Kim Mã'),
-    ('HD0023', '2021-6-15', N'Ghi chú cho hóa đơn 3', NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 4,3,3, 3, 1, 800000, 30000, 50000, 720000, N'Lê Văn C', '0123456789', 'levanc@example.com', 'Địa chỉ 3', 'Đà Nẵng', 'Quận Hải Châu', 'Phường Thạch Thang'),
-    ('HD0024', '2022-5-15', N'Ghi chú cho hóa đơn 4', NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,4,3, 4, 1, 2, 1200000, 40000, 80000, 1120000, N'Nguyễn Thị D', '0987654321', 'nguyenthid@example.com', 'Địa chỉ 4', 'Cần Thơ', 'Quận Ninh Kiều', 'Phường An Khánh'),
-    ('HD0025', '2022-9-15', N'Ghi chú cho hóa đơn 5', NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,1,1, 4, 1, 2, 1200000, 40000, 80000, 1120000, N'Nguyễn Thị D', '0987654321', 'nguyenthid@example.com', 'Địa chỉ 4', 'Cần Thơ', 'Quận Ninh Kiều', 'Phường An Khánh'),
-    ('HD0026', '2021-4-15', N'Ghi chú cho hóa đơn 1', NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,2,2, 1, 1, 1, 1000000, 50000, 100000, 950000, N'Nguyễn Văn A', '0123456789', 'nguyenvana@example.com', 'Địa chỉ 1', 'Hồ Chí Minh', 'Quận 1', 'Phường 1'),
-    ('HD0027', '2020-11-15', N'Ghi chú cho hóa đơn 2', NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,3,3, 2, 2, 2, 1500000, 60000, 200000, 1300000, N'Trần Thị B', '0987654321', 'tranthib@example.com', 'Địa chỉ 2', 'Hà Nội', 'Quận Ba Đình', 'Phường Kim Mã'),
-    ('HD0028', '2021-3-15', N'Ghi chú cho hóa đơn 3', NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 4,1,3, 3, 1, 800000, 30000, 50000, 720000, N'Lê Văn C', '0123456789', 'levanc@example.com', 'Địa chỉ 3', 'Đà Nẵng', 'Quận Hải Châu', 'Phường Thạch Thang'),
-    ('HD0029', '2020-11-15', N'Ghi chú cho hóa đơn 4', NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 3,3,4, 1, 2, 1200000, 40000, 80000, 1120000, N'Nguyễn Thị D', '0987654321', 'nguyenthid@example.com', 'Địa chỉ 4', 'Cần Thơ', 'Quận Ninh Kiều', 'Phường An Khánh'),
-    ('HD0030', '2019-11-15', N'Ghi chú cho hóa đơn 5', NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 2,2,4, 1, 2, 1200000, 40000, 80000, 1120000, N'Nguyễn Thị D', '0987654321', 'nguyenthid@example.com', 'Địa chỉ 4', 'Cần Thơ', 'Quận Ninh Kiều', 'Phường An Khánh')
+('HD001', GETDATE(), N'Ghi chú cho hóa đơn 1', NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1,1,2, 1, 1, 1000000, 50000, 100000, 950000, N'Nguyễn Văn A', '0123456789', 'nguyenvana@example.com', 'Địa chỉ 1', 'Hồ Chí Minh', 'Quận 1', 'Phường 1'),
+('HD002', '2023-1-15', N'Ghi chú cho hóa đơn 2', NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 2,1,3, 2, 2, 1500000, 60000, 200000, 1300000, N'Trần Thị B', '0987654321', 'tranthib@example.com', 'Địa chỉ 2', 'Hà Nội', 'Quận Ba Đình', 'Phường Kim Mã'),
+('HD003', GETDATE(), N'Ghi chú cho hóa đơn 3', NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 3,1,1, 3, 1, 800000, 30000, 50000, 720000, N'Lê Văn C', '0123456789', 'levanc@example.com', 'Địa chỉ 3', 'Đà Nẵng', 'Quận Hải Châu', 'Phường Thạch Thang'),
+('HD004', '2023-3-15', N'Ghi chú cho hóa đơn 4', NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 4,1,2, 1, 2, 1200000, 40000, 80000, 1120000, N'Nguyễn Thị D', '0987654321', 'nguyenthid@example.com', 'Địa chỉ 4', 'Cần Thơ', 'Quận Ninh Kiều', 'Phường An Khánh'),
+('HD005', GETDATE(), N'Ghi chú cho hóa đơn 5', NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 4,2,2, 1, 2, 1200000, 40000, 80000, 1120000, N'Nguyễn Thị D', '0987654321', 'nguyenthid@example.com', 'Địa chỉ 4', 'Cần Thơ', 'Quận Ninh Kiều', 'Phường An Khánh'),
+('HD006', '2023-4-15', N'Ghi chú cho hóa đơn 1', NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 3,4,1, 1, 1, 1000000, 50000, 100000, 950000, N'Nguyễn Văn A', '0123456789', 'nguyenvana@example.com', 'Địa chỉ 1', 'Hồ Chí Minh', 'Quận 1', 'Phường 1'),
+('HD007', '2023-4-15', N'Ghi chú cho hóa đơn 2', NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 2,2,2, 2, 2, 1500000, 60000, 200000, 1300000, N'Trần Thị B', '0987654321', 'tranthib@example.com', 'Địa chỉ 2', 'Hà Nội', 'Quận Ba Đình', 'Phường Kim Mã'),
+('HD008', '2023-5-15', N'Ghi chú cho hóa đơn 3', NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1,1,3, 3, 1, 800000, 30000, 50000, 720000, N'Lê Văn C', '0123456789', 'levanc@example.com', 'Địa chỉ 3', 'Đà Nẵng', 'Quận Hải Châu', 'Phường Thạch Thang'),
+('HD009', '2023-6-15', N'Ghi chú cho hóa đơn 4', NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 3,1,4, 1, 2, 1200000, 40000, 80000, 1120000, N'Nguyễn Thị D', '0987654321', 'nguyenthid@example.com', 'Địa chỉ 4', 'Cần Thơ', 'Quận Ninh Kiều', 'Phường An Khánh'),
+('HD0010', '2023-6-15', N'Ghi chú cho hóa đơn 5', NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 3,3,4, 1, 2, 1200000, 40000, 80000, 1120000, N'Nguyễn Thị D', '0987654321', 'nguyenthid@example.com', 'Địa chỉ 4', 'Cần Thơ', 'Quận Ninh Kiều', 'Phường An Khánh'),
+('HD0011', '2023-6-15', N'Ghi chú cho hóa đơn 1', NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1,3,1, 1, 1, 1000000, 50000, 100000, 950000, N'Nguyễn Văn A', '0123456789', 'nguyenvana@example.com', 'Địa chỉ 1', 'Hồ Chí Minh', 'Quận 1', 'Phường 1'),
+('HD0012', '2023-7-15', N'Ghi chú cho hóa đơn 2', NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 2,1,2, 2, 2, 1500000, 60000, 200000, 1300000, N'Trần Thị B', '0987654321', 'tranthib@example.com', 'Địa chỉ 2', 'Hà Nội', 'Quận Ba Đình', 'Phường Kim Mã'),
+('HD0013', '2023-7-15', N'Ghi chú cho hóa đơn 3', NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1,2,3, 3, 1, 800000, 30000, 50000, 720000, N'Lê Văn C', '0123456789', 'levanc@example.com', 'Địa chỉ 3', 'Đà Nẵng', 'Quận Hải Châu', 'Phường Thạch Thang'),
+('HD0014', '2023-8-15', N'Ghi chú cho hóa đơn 4', NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 2,3,4, 1, 2, 1200000, 40000, 80000, 1120000, N'Nguyễn Thị D', '0987654321', 'nguyenthid@example.com', 'Địa chỉ 4', 'Cần Thơ', 'Quận Ninh Kiều', 'Phường An Khánh'),
+('HD0015', '2023-8-15', N'Ghi chú cho hóa đơn 5', NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 3,2,4, 1, 2, 1200000, 40000, 80000, 1120000, N'Nguyễn Thị D', '0987654321', 'nguyenthid@example.com', 'Địa chỉ 4', 'Cần Thơ', 'Quận Ninh Kiều', 'Phường An Khánh'),
+('HD0016', '2023-9-15', N'Ghi chú cho hóa đơn 1', NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 3,2,1, 1, 1, 1000000, 50000, 100000, 950000, N'Nguyễn Văn A', '0123456789', 'nguyenvana@example.com', 'Địa chỉ 1', 'Hồ Chí Minh', 'Quận 1', 'Phường 1'),
+('HD0017', '2023-10-15', N'Ghi chú cho hóa đơn 2', NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1,1,2, 2, 2, 1500000, 60000, 200000, 1300000, N'Trần Thị B', '0987654321', 'tranthib@example.com', 'Địa chỉ 2', 'Hà Nội', 'Quận Ba Đình', 'Phường Kim Mã'),
+('HD0018', '2023-11-15', N'Ghi chú cho hóa đơn 3', NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 4,1,3, 3, 1, 800000, 30000, 50000, 720000, N'Lê Văn C', '0123456789', 'levanc@example.com', 'Địa chỉ 3', 'Đà Nẵng', 'Quận Hải Châu', 'Phường Thạch Thang'),
+('HD0019', '2023-12-15', N'Ghi chú cho hóa đơn 4', NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1,4,4, 1, 2, 1200000, 40000, 80000, 1120000, N'Nguyễn Thị D', '0987654321', 'nguyenthid@example.com', 'Địa chỉ 4', 'Cần Thơ', 'Quận Ninh Kiều', 'Phường An Khánh'),
+('HD0020', '2022-1-15', N'Ghi chú cho hóa đơn 5', NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 4,4,4, 1, 2, 1200000, 40000, 80000, 1120000, N'Nguyễn Thị D', '0987654321', 'nguyenthid@example.com', 'Địa chỉ 4', 'Cần Thơ', 'Quận Ninh Kiều', 'Phường An Khánh'),
+('HD0021', '2022-2-15', N'Ghi chú cho hóa đơn 1', NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1,4,1, 1, 1, 1000000, 50000, 100000, 950000, N'Nguyễn Văn A', '0123456789', 'nguyenvana@example.com', 'Địa chỉ 1', 'Hồ Chí Minh', 'Quận 1', 'Phường 1'),
+('HD0022', '2022-3-15', N'Ghi chú cho hóa đơn 2', NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 2,1,3, 2, 2, 1500000, 60000, 200000, 1300000, N'Trần Thị B', '0987654321', 'tranthib@example.com', 'Địa chỉ 2', 'Hà Nội', 'Quận Ba Đình', 'Phường Kim Mã'),
+('HD0023', '2021-6-15', N'Ghi chú cho hóa đơn 3', NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 4,3,3, 3, 1, 800000, 30000, 50000, 720000, N'Lê Văn C', '0123456789', 'levanc@example.com', 'Địa chỉ 3', 'Đà Nẵng', 'Quận Hải Châu', 'Phường Thạch Thang'),
+('HD0024', '2022-5-15', N'Ghi chú cho hóa đơn 4', NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,4,3, 4, 1, 2, 1200000, 40000, 80000, 1120000, N'Nguyễn Thị D', '0987654321', 'nguyenthid@example.com', 'Địa chỉ 4', 'Cần Thơ', 'Quận Ninh Kiều', 'Phường An Khánh'),
+('HD0025', '2022-9-15', N'Ghi chú cho hóa đơn 5', NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,1,1, 4, 1, 2, 1200000, 40000, 80000, 1120000, N'Nguyễn Thị D', '0987654321', 'nguyenthid@example.com', 'Địa chỉ 4', 'Cần Thơ', 'Quận Ninh Kiều', 'Phường An Khánh'),
+('HD0026', '2021-4-15', N'Ghi chú cho hóa đơn 1', NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,2,2, 1, 1, 1, 1000000, 50000, 100000, 950000, N'Nguyễn Văn A', '0123456789', 'nguyenvana@example.com', 'Địa chỉ 1', 'Hồ Chí Minh', 'Quận 1', 'Phường 1'),
+('HD0027', '2020-11-15', N'Ghi chú cho hóa đơn 2', NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,3,3, 2, 2, 2, 1500000, 60000, 200000, 1300000, N'Trần Thị B', '0987654321', 'tranthib@example.com', 'Địa chỉ 2', 'Hà Nội', 'Quận Ba Đình', 'Phường Kim Mã'),
+('HD0028', '2021-3-15', N'Ghi chú cho hóa đơn 3', NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 4,1,3, 3, 1, 800000, 30000, 50000, 720000, N'Lê Văn C', '0123456789', 'levanc@example.com', 'Địa chỉ 3', 'Đà Nẵng', 'Quận Hải Châu', 'Phường Thạch Thang'),
+('HD0029', '2020-11-15', N'Ghi chú cho hóa đơn 4', NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 3,3,4, 1, 2, 1200000, 40000, 80000, 1120000, N'Nguyễn Thị D', '0987654321', 'nguyenthid@example.com', 'Địa chỉ 4', 'Cần Thơ', 'Quận Ninh Kiều', 'Phường An Khánh'),
+('HD0030', '2019-11-15', N'Ghi chú cho hóa đơn 5', NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 2,2,4, 1, 2, 1200000, 40000, 80000, 1120000, N'Nguyễn Thị D', '0987654321', 'nguyenthid@example.com', 'Địa chỉ 4', 'Cần Thơ', 'Quận Ninh Kiều', 'Phường An Khánh')
 
-INSERT INTO gio_hang (ngay_tao, ghi_chu, ngay_cap_nhat, trang_thai, tai_khoan_id,tong_tien)
+    INSERT INTO gio_hang (ngay_tao, ghi_chu, ngay_cap_nhat, trang_thai, tai_khoan_id,tong_tien)
 VALUES
     (GETDATE(), N'Giỏ hàng của khách', GETDATE(), 1, 2,0),
     (GETDATE(), N'Giỏ hàng của khách', GETDATE(), 1, 3,0),
@@ -688,15 +690,6 @@ VALUES
     (1, 2, 3),
     (3, 3, 4)
 
-
-INSERT INTO [dbo].[khuyen_mai]
-(ma,[ten],[mo_ta],[bat_dau],[ket_thuc],[giam_gia],[kieu_khuyen_mai],dieu_kien,so_luong,trang_thai)
-VALUES
-    ('KHUYENMAICHAOMUNG',N'KHUYẾN MÃI CHÀO MỪNG NGƯỜI MỚI',N'GIẢM 10% VỚI HÓA ĐƠN 0Đ',GETDATE(),GETDATE(),10 ,1,0,20,1),
-    ('KHUYENMAIPK',N'KHUYẾN MÃI TƯNG BỪNG',N'GIẢM 10K KHI MUA SẢN PHẨM TRÊN 10K',GETDATE(),GETDATE(),10000 ,0,10000,20,1),
-    ('KHUYENMAITHANG10',N'KHUYẾN MÃI THÁNG 10',N'GIẢM 10K KHI MUA SẢN PHẨM TRÊN 15K',GETDATE(),GETDATE(),15000 ,0,100000,20,1),
-    ('KHUYENMAIDEMDONG',N'ĐÔNG KHUYẾN MÃI',N'GIẢM 80K KHI MUA SẢN PHẨM TRÊN 800K',GETDATE(),GETDATE(),80000 ,0,800000,20,1),
-    ('KHUYENMAIBLACKDAY',N'KHUYẾN MÃI NGÀY ĐEN',N'GIẢM 10K KHI MUA SẢN PHẨM TRÊN 10K',GETDATE(),GETDATE(),10000 ,1,10000,20,1);
 
 /*
 INSERT INTO [dbo].[lich_su_hoa_don]

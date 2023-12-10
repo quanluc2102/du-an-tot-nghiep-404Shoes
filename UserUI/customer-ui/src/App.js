@@ -6,6 +6,7 @@ import Cart from './components/cart/cart';
 import UserInformation from './components/userInformation/userInformation';
 import Login from './components/login/login';
 import Register from './components/register/register';
+import CheckOut from './components/checkOut/checkout';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 import ErrorPage from './components/error/errorpage';
 import { Redirect } from 'react-router-dom/cjs/react-router-dom';
@@ -18,12 +19,13 @@ function App() {
         <Redirect exact from='/' to='/home' />
         <Route path='/home' component={Home} />
         <Route path='/product-list' component={ProductList} />
-        <Route path='/your-cart' component={Cart} />
+        <Route path='/your-cart/:id' component={Cart} />
         <Route path='/login' component={Login} />
         <Route path='/register' component={Register} />
         <Route path='/product-detail/:id' component={ProductDetail} />
         <Route path='/user-info' component={UserInformation} />
         <Route path='/payment' component={Payment}/>
+        <Route path='/check-out' component={CheckOut} />
         <Route path='*' component={ErrorPage} />
       </Switch>
     </Router>

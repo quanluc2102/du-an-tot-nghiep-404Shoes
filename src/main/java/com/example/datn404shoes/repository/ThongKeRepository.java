@@ -16,7 +16,7 @@ public interface ThongKeRepository extends JpaRepository<HoaDon, Long> {
 
     @Query("SELECT NEW com.example.datn404shoes.custom.ThongKeCustom(CAST(h.ngayTao AS DATE), SUM(h.tongTienSauGiam)) " +
             "FROM HoaDon h " +
-            "WHERE h.ngayTao BETWEEN :startDate AND :endDate " +
+            "WHERE h.ngayTao BETWEEN :startDate AND :endDate AND  h.trangThai IN (4, 6)" +
             "GROUP BY CAST(h.ngayTao AS DATE)")
     List<ThongKeCustom> thongKeDoanhThuTheoNgay(@Param("startDate") Date startDate, @Param("endDate") Date endDate);
 
@@ -28,24 +28,24 @@ public interface ThongKeRepository extends JpaRepository<HoaDon, Long> {
 
     @Query("SELECT NEW com.example.datn404shoes.custom.ThongKeCustom(FUNCTION('YEAR', h.ngayTao), SUM(h.tongTienSauGiam)) " +
             "FROM HoaDon h " +
-            "WHERE h.ngayTao BETWEEN :startDate AND :endDate " +
+            "WHERE h.ngayTao BETWEEN :startDate AND :endDate and h.trangThai =4 or h.trangThai = 6" +
             "GROUP BY FUNCTION('YEAR', h.ngayTao)")
     List<ThongKeCustom> thongKeDoanhThuTheoNam(@Param("startDate") Date startDate, @Param("endDate") Date endDate);
 
 
-    @Query("SELECT SUM(hd.tongTien) FROM HoaDon hd WHERE CAST(hd.ngayTao AS date) = CURRENT_DATE")
+    @Query("SELECT SUM(hd.tongTien) FROM HoaDon hd WHERE CAST(hd.ngayTao AS date)  = CURRENT_DATE and hd.trangThai IN (4, 6)")
     Float findDoanhThuNgay();
 
-    @Query("SELECT SUM(hd.tongTien) FROM HoaDon hd WHERE CAST(hd.ngayTao AS date) >= :startOfWeek AND CAST(hd.ngayTao AS date) < :endOfWeek")
+    @Query("SELECT SUM(hd.tongTien) FROM HoaDon hd WHERE CAST(hd.ngayTao AS date) >= :startOfWeek AND CAST(hd.ngayTao AS date) < :endOfWeek and hd.trangThai IN (4, 6)")
     Float findDoanhThuTuan(@Param("startOfWeek") LocalDate startOfWeek, @Param("endOfWeek") LocalDate endOfWeek);
 
-    @Query("SELECT SUM(hd.tongTien) FROM HoaDon hd WHERE MONTH(hd.ngayTao) = MONTH(CURRENT_DATE) AND YEAR(hd.ngayTao) = YEAR(CURRENT_DATE)")
+    @Query("SELECT SUM(hd.tongTien) FROM HoaDon hd WHERE MONTH(hd.ngayTao) = MONTH(CURRENT_DATE) AND YEAR(hd.ngayTao) = YEAR(CURRENT_DATE) and hd.trangThai IN (4, 6)")
     Float findDoanhThuThang();
 
-    @Query("SELECT SUM(hd.tongTien) FROM HoaDon hd WHERE QUARTER(hd.ngayTao) = QUARTER(CURRENT_DATE) AND YEAR(hd.ngayTao) = YEAR(CURRENT_DATE)")
+    @Query("SELECT SUM(hd.tongTien) FROM HoaDon hd WHERE QUARTER(hd.ngayTao) = QUARTER(CURRENT_DATE) AND YEAR(hd.ngayTao) = YEAR(CURRENT_DATE) and hd.trangThai IN (4, 6)")
     Float findDoanhThuQuy();
 
-    @Query("SELECT SUM(hd.tongTien) FROM HoaDon hd WHERE YEAR(hd.ngayTao) = YEAR(CURRENT_DATE)")
+    @Query("SELECT SUM(hd.tongTien) FROM HoaDon hd WHERE YEAR(hd.ngayTao) = YEAR(CURRENT_DATE) and hd.trangThai IN (4, 6)")
     Float findDoanhThuNam();
 
     @Query("SELECT COUNT(hd) FROM HoaDon hd WHERE CAST(hd.ngayTao AS DATE) = CURRENT_DATE")
@@ -66,19 +66,19 @@ public interface ThongKeRepository extends JpaRepository<HoaDon, Long> {
 
 
 
-    @Query("SELECT COUNT(hd) FROM HoaDon hd WHERE CAST(hd.ngayTao AS DATE) = CURRENT_DATE AND hd.trangThai=6")
+    @Query("SELECT COUNT(hd) FROM HoaDon hd WHERE CAST(hd.ngayTao AS DATE) = CURRENT_DATE AND hd.trangThai=5")
     Long countHoaDonHuyNgay();
 
-    @Query("SELECT COUNT(hd) FROM HoaDon hd WHERE hd.ngayTao >= :startOfWeek AND hd.ngayTao < :endOfWeek AND hd.trangThai=6")
+    @Query("SELECT COUNT(hd) FROM HoaDon hd WHERE hd.ngayTao >= :startOfWeek AND hd.ngayTao < :endOfWeek AND hd.trangThai=5")
     Long countHoaDonHuyTuan(@Param("startOfWeek") Date startOfWeek, @Param("endOfWeek") Date endOfWeek);
 
-    @Query("SELECT COUNT(hd) FROM HoaDon hd WHERE MONTH(hd.ngayTao) = MONTH(CURRENT_DATE) AND YEAR(hd.ngayTao) = YEAR(CURRENT_DATE) AND hd.trangThai=6")
+    @Query("SELECT COUNT(hd) FROM HoaDon hd WHERE MONTH(hd.ngayTao) = MONTH(CURRENT_DATE) AND YEAR(hd.ngayTao) = YEAR(CURRENT_DATE) AND hd.trangThai=5")
     Long countHoaDonHuyThang();
 
-    @Query("SELECT COUNT(hd) FROM HoaDon hd WHERE QUARTER(hd.ngayTao) = QUARTER(CURRENT_DATE) AND YEAR(hd.ngayTao) = YEAR(CURRENT_DATE) AND hd.trangThai=6")
+    @Query("SELECT COUNT(hd) FROM HoaDon hd WHERE QUARTER(hd.ngayTao) = QUARTER(CURRENT_DATE) AND YEAR(hd.ngayTao) = YEAR(CURRENT_DATE) AND hd.trangThai=5")
     Long countHoaDonHuyQuy();
 
-    @Query("SELECT COUNT(hd) FROM HoaDon hd WHERE YEAR(hd.ngayTao) = YEAR(CURRENT_DATE) AND hd.trangThai=6")
+    @Query("SELECT COUNT(hd) FROM HoaDon hd WHERE YEAR(hd.ngayTao) = YEAR(CURRENT_DATE) AND hd.trangThai=5")
     Long countHoaDonHuyNam();
 
 
@@ -92,7 +92,7 @@ public interface ThongKeRepository extends JpaRepository<HoaDon, Long> {
     Long countDistinctTaiKhoanIdTQ();
 
 
-    @Query("SELECT COUNT(tk) FROM HoaDon tk WHERE tk.trangThai <> 4")
+    @Query("SELECT COUNT(tk) FROM HoaDon tk WHERE tk.trangThai <> 4 AND tk.trangThai <> 5 AND tk.trangThai <> 6 ")
     Long countHoaDonChuaHoanThanhTQ();
 
 
@@ -114,9 +114,122 @@ public interface ThongKeRepository extends JpaRepository<HoaDon, Long> {
     @Query("SELECT hd.id, hd.maHoaDon , tk.thongTinNguoiDung.ten , hd.ngayTao " +
             "FROM HoaDon hd " +
             "JOIN TaiKhoan tk ON hd.taiKhoan.id = tk.id " +
-            "WHERE hd.trangThai = 0")
+            "WHERE  hd.trangThai NOT IN (4,5, 6)")
     List<Object[]> hoaDonChuaXuLyhe();
 
 
+    @Query(value = "\n" +
+            "\n" +
+            "WITH TongDoanhThu AS (\n" +
+            "    SELECT\n" +
+            "        YEAR(hd.ngay_tao) AS nam,\n" +
+            "        SUM(hdct.so_luong * spct.don_gia) AS doanh_thu\n" +
+            "    FROM hoa_don hd\n" +
+            "    JOIN hoa_don_chi_tiet hdct ON hd.id = hdct.hoa_don_id\n" +
+            "    JOIN san_pham_chi_tiet spct ON hdct.san_pham_chi_tiet_id = spct.id\n" +
+            "    GROUP BY YEAR(hd.ngay_tao)\n" +
+            ")\n" +
+            "SELECT\n" +
+            "    nam,\n" +
+            "    doanh_thu,\n" +
+            "    doanh_thu_nam_truoc,\n" +
+            "    trang_thai_tang_truong,\n" +
+            "    phan_tram_tang_truong\n" +
+            "FROM (\n" +
+            "    SELECT\n" +
+            "        nam,\n" +
+            "        doanh_thu,\n" +
+            "        LAG(doanh_thu) OVER (ORDER BY nam) AS doanh_thu_nam_truoc,\n" +
+            "        CASE\n" +
+            "            WHEN LAG(doanh_thu) OVER (ORDER BY nam) IS NULL THEN 'N/A'\n" +
+            "            WHEN doanh_thu > LAG(doanh_thu) OVER (ORDER BY nam) THEN 'Tăng'\n" +
+            "            ELSE 'Giảm'\n" +
+            "        END AS trang_thai_tang_truong,\n" +
+            "        CASE\n" +
+            "            WHEN LAG(doanh_thu) OVER (ORDER BY nam) IS NULL THEN 'N/A'\n" +
+            "            ELSE CONCAT(\n" +
+            "                ROUND(((doanh_thu - LAG(doanh_thu) OVER (ORDER BY nam)) / LAG(doanh_thu) OVER (ORDER BY nam)) * 100, 2),\n" +
+            "                '%'\n" +
+            "            )\n" +
+            "        END AS phan_tram_tang_truong\n" +
+            "    FROM TongDoanhThu\n" +
+            "    WHERE nam IN (YEAR(GETDATE()), YEAR(GETDATE()) - 1)\n" +
+            ") AS Subquery\n" +
+            "WHERE doanh_thu > doanh_thu_nam_truoc\n" +
+            "ORDER BY nam;\n", nativeQuery = true)
+    List<Object[]> tocDoTangTruongNam();
+
+
+    @Query(value = "WITH TongDoanhThu AS (\n" +
+            "    SELECT\n" +
+            "        Month(hd.ngay_tao) AS nam,\n" +
+            "        SUM(hdct.so_luong * spct.don_gia) AS doanh_thu\n" +
+            "    FROM hoa_don hd\n" +
+            "    JOIN hoa_don_chi_tiet hdct ON hd.id = hdct.hoa_don_id\n" +
+            "    JOIN san_pham_chi_tiet spct ON hdct.san_pham_chi_tiet_id = spct.id\n" +
+            "    GROUP BY Month(hd.ngay_tao)\n" +
+            ")\n" +
+            "SELECT\n" +
+            "    nam,\n" +
+            "    doanh_thu,\n" +
+            "    doanh_thu_nam_truoc,\n" +
+            "    trang_thai_tang_truong,\n" +
+            "    phan_tram_tang_truong\n" +
+            "FROM (\n" +
+            "    SELECT\n" +
+            "        nam,\n" +
+            "        doanh_thu,\n" +
+            "        LAG(doanh_thu) OVER (ORDER BY nam) AS doanh_thu_nam_truoc,\n" +
+            "        CASE\n" +
+            "            WHEN LAG(doanh_thu) OVER (ORDER BY nam) IS NULL THEN 'N/A'\n" +
+            "            WHEN doanh_thu > LAG(doanh_thu) OVER (ORDER BY nam) THEN 'Tăng'\n" +
+            "            ELSE 'Giảm'\n" +
+            "        END AS trang_thai_tang_truong,\n" +
+            "        CASE\n" +
+            "            WHEN LAG(doanh_thu) OVER (ORDER BY nam) IS NULL THEN 'N/A'\n" +
+            "            ELSE CONCAT(\n" +
+            "                ROUND(((doanh_thu - LAG(doanh_thu) OVER (ORDER BY nam)) / LAG(doanh_thu) OVER (ORDER BY nam)) * 100, 2),\n" +
+            "                '%'\n" +
+            "            )\n" +
+            "        END AS phan_tram_tang_truong\n" +
+            "    FROM TongDoanhThu\n" +
+            "    WHERE nam IN (Month(GETDATE()), Month(GETDATE()) - 1)\n" +
+            ") AS Subquery\n" +
+            "WHERE doanh_thu > doanh_thu_nam_truoc\n" +
+            "ORDER BY nam;\n", nativeQuery = true)
+    List<Object[]> tocDoTangTruongThang();
+
+
+    @Query(value = "\n" +
+            "WITH TongSoLuongDaBan AS (\n" +
+            "    SELECT\n" +
+            "        YEAR(hd.ngay_tao) AS nam,\n" +
+            "        SUM(hdct.so_luong) AS so_luong_da_ban\n" +
+            "    FROM hoa_don hd\n" +
+            "    JOIN hoa_don_chi_tiet hdct ON hd.id = hdct.hoa_don_id\n" +
+            "    JOIN san_pham_chi_tiet spct ON hdct.san_pham_chi_tiet_id = spct.id\n" +
+            "    GROUP BY YEAR(hd.ngay_tao)\n" +
+            ")\n" +
+            "SELECT\n" +
+            "    nam,\n" +
+            "    SUM(so_luong_da_ban) AS tong_so_luong_da_ban,\n" +
+            "    COALESCE(LAG(SUM(so_luong_da_ban)) OVER (ORDER BY nam), 0) AS tong_so_luong_da_ban_nam_truoc,\n" +
+            "    CASE\n" +
+            "        WHEN LAG(SUM(so_luong_da_ban)) OVER (ORDER BY nam) IS NULL THEN 'N/A'\n" +
+            "        WHEN SUM(so_luong_da_ban) > LAG(SUM(so_luong_da_ban)) OVER (ORDER BY nam) THEN 'Tăng'\n" +
+            "        ELSE 'Giảm'\n" +
+            "    END AS trang_thai_tang_truong,\n" +
+            "    CASE\n" +
+            "        WHEN LAG(SUM(so_luong_da_ban)) OVER (ORDER BY nam) IS NULL THEN 'N/A'\n" +
+            "        ELSE CONCAT(\n" +
+            "            ROUND(((SUM(so_luong_da_ban) - LAG(SUM(so_luong_da_ban)) OVER (ORDER BY nam)) / COALESCE(LAG(SUM(so_luong_da_ban)) OVER (ORDER BY nam), 1)) * 100, 2),\n" +
+            "            '%'\n" +
+            "        )\n" +
+            "    END AS phan_tram_tang_truong\n" +
+            "FROM TongSoLuongDaBan\n" +
+            "WHERE nam IN (YEAR(GETDATE()), YEAR(GETDATE()) - 1)\n" +
+            "GROUP BY nam\n" +
+            "ORDER BY nam;\n", nativeQuery = true)
+    List<Object[]> tocDoTangTruongSanPhamTheoNam();
 
 }

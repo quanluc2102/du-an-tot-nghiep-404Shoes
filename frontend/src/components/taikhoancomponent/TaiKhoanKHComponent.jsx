@@ -390,18 +390,26 @@ class TaiKhoanKHComponent extends Component {
         this.setState({errorAdd: errorAdd});
     }
 
+
     thayDoiAnhAdd = (event) => {
-        this.setState(
-            prevState => ({
+        const file = event.target.files[0];
+
+        if (file) {
+            // Use URL.createObjectURL to set image URL
+            const imageUrl = URL.createObjectURL(file);
+
+            this.setState((prevState) => ({
                 taiKhoanAdd: {
                     ...prevState.taiKhoanAdd,
-                    anh: event.target.value                }
-            })
-        );
+                    anh: imageUrl,
+                },
+                files: [file],
+            }));
+        }
         this.setState({ files: [ ...event.target.files] })
-        let errorAdd = {...this.state.errorAdd, anh: ""};
-        this.setState({errorAdd: errorAdd});
-    }
+        let errorAdd = { ...this.state.errorAdd, anh: "" };
+        this.setState({ errorAdd: errorAdd });
+    };
 
     thayDoiTinhAdd = (event) => {
         this.setState(
@@ -512,14 +520,33 @@ class TaiKhoanKHComponent extends Component {
                             <div className="card">
                                 <div className="card-body">
                                     <form>
-                                        <div>
-                                            Ảnh :
-                                            <input
-                                                className={`form-control ${this.state.errorAdd.anh ? 'is-invalid' : ''}`}                                                type={"file"} value={this.state.taiKhoanAdd.anh}
-                                                type="file" value={this.state.taiKhoanAdd.anh}
-                                                onChange={this.thayDoiAnhAdd}/>
-                                            {this.state.errorAdd.anh &&
-                                            <div className="text-danger">{this.state.errorAdd.anh}</div>}
+
+                                        <div className="form-group">
+                                            <label className="avatar-label" htmlFor="anh">
+                                                <input
+                                                    type="file"
+                                                    id="anh"
+                                                    accept="image/*"
+                                                    onChange={this.thayDoiAnhAdd}
+                                                    className="file-input"
+                                                />
+                                                <div className="avatar-preview">
+                                                    {this.state.taiKhoanAdd.anh ? (
+                                                        <img
+                                                            src={this.state.taiKhoanAdd.anh}
+                                                            alt="Selected Avatar"
+                                                            className="avatar-img"
+                                                        />
+                                                    ) : (
+                                                        <div className="avatar-placeholder">
+                                                            <span>Chọn ảnh <span style={{ color: 'red' }}>*</span></span>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </label>
+                                            {this.state.errorAdd.files && (
+                                                <div className="invalid-feedback">{this.state.errorAdd.files}</div>
+                                            )}
                                         </div>
                                         <div>
                                             <label>Họ và tên: <span style={{color: 'red'}}>*</span></label>

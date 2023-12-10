@@ -4,13 +4,13 @@ import com.example.datn404shoes.entity.GioHangChiTiet;
 import com.example.datn404shoes.entity.PhanQuyen;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
 //import com.poly.duanbangiay.entity.GioHangChiTiet;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-@Repository
 public interface GioHangChiTietService{
     void add(GioHangChiTiet ghct);
 
@@ -22,6 +22,6 @@ public interface GioHangChiTietService{
 
     GioHangChiTiet getOne(Long id);
 
-    ArrayList<GioHangChiTiet> getGioHangChiTietByKhachHang(Long idKhachHang);
+    List<GioHangChiTiet> getGioHangChiTietByKhachHang(Long idKhachHang);
 
 }

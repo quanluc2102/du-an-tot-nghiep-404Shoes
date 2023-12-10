@@ -118,7 +118,7 @@ function ProductDetail({ match }) {
     };
     const changeSoLuong = (e) => {
         const maxSoLuong = filteredSPCT.length > 0 ? filteredSPCT[0].soLuong : 1;
-        setSoLuong(Math.min(maxSoLuong, Math.max(1, parseInt(e.target.value, 10))));
+        setSoLuong(Math.min(maxSoLuong, Math.max(1,e.target.value)));
     };
     const formatCurrency = (amount) => {
         return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'VND' }).format(amount);
@@ -134,7 +134,7 @@ function ProductDetail({ match }) {
                             <Link to='/login' style={{textDecoration: 'none'}}><a className="navbar-brand" href="#"
                                                                                   style={{fontSize: '13px'}}> <i
                                 className='bx bxs-user'></i> Đăng nhập</a></Link>
-                            <Link to='your-cart' style={{textDecoration: 'none'}}><a className="navbar-brand" href="#"
+                            <Link to='/your-cart/2' style={{textDecoration: 'none'}}><a className="navbar-brand" href="#"
                                                                                      style={{fontSize: '13px'}}> <i
                                 className='bx bxs-cart'></i>Giỏ hàng {'(0)'}</a></Link>
                         </div>

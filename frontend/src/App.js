@@ -89,7 +89,7 @@ function App() {
             <Route path='/thongtin' component={ThongTinComponent} />
             <Route path='/phanquyendetail/:id' component={PhanQuyenComment} />
             <Route path='/HoaDonChiTiet/:id' component={HoaDonChiTietComponents} />
-            <Route path='/thongkedoanhthusanpham' component={ThongKeDoanhThuSanPham} />
+            <Route path='/thongke' component={ThongKeDoanhThuSanPham} />
             <Route path='/banhangoffline' component={BanHangOffline} />
             <Route path='/tongquan' component={TrangTongQuan} />
           </Switch>

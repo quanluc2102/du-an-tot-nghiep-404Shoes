@@ -22,6 +22,32 @@
 /*    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);*/
 /*}*/
 
+
+.thongke-controls select {
+    /* Tùy chỉnh kích thước và kiểu chữ */
+    font-size: 16px;
+    padding: 8px;
+    width: 150px;
+
+    /* Tùy chỉnh màu sắc và hiệu ứng */
+    background-color: #FFFFFF;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    color: #333;
+
+    /* Tùy chỉnh con trỏ khi hover */
+    cursor: pointer;
+
+    /* Tùy chỉnh hiệu ứng khi hover */
+    transition: background-color 0.3s ease;
+}
+
+/* Tùy chỉnh màu sắc khi hover */
+.thongke-controls select:hover {
+    background-color: #e8e8e8;
+}
+
+
 /* CSS cho phần tựa đề */
 .pagetitle {
     display: flex;
