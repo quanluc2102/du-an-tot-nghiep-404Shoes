@@ -173,6 +173,11 @@ public class ThongKeController {
         return thongKeRepository.tocDoTangTruongNam();
     }
 
+    @GetMapping("/toc_do_tang_truong_ngay")
+    public List<Object[]> toc_do_tang_truong_ngay() {
+        return thongKeRepository.tocDoTangTruongNgay();
+    }
+
     @GetMapping("/toc_do_tang_truong_thang")
     public List<Object[]> toc_do_tang_truong_thang() {
         return thongKeRepository.tocDoTangTruongThang();
@@ -181,5 +186,15 @@ public class ThongKeController {
     @GetMapping("/toc_do_tang_truong_san_pham_nam")
     public List<Object[]> toc_do_tang_truong_san_pham_nam() {
         return thongKeRepository.tocDoTangTruongSanPhamTheoNam();
+    }
+
+    @GetMapping("/toc_do_tang_truong_san_pham_thang")
+    public List<Object[]> toc_do_tang_truong_san_pham_thang() {
+        return thongKeRepository.tocDoTangTruongSanPhamTheoThang();
+    }
+
+    @GetMapping("/toc_do_tang_truong_san_pham_ngay")
+    public List<Object[]> toc_do_tang_truong_san_pham_ngay() {
+        return thongKeRepository.tocDoTangTruongSanPhamTheoNgay();
     }
 }

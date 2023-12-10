@@ -169,6 +169,16 @@ function Home() {
                                         <a className="nav-link text-uppercase">LIÊN HỆ</a>
                                     </Link>
                                 </li>
+                                <li className="nav-item px-1 py-1">
+                                    <Link to='/product-list' style={{ textDecoration: 'none', fontWeight: 'bold', fontSize: '1.1em' }}>
+                                        <a className="nav-link text-uppercase">TRA CỨU ĐƠN HÀNG</a>
+                                    </Link>
+                                </li>
+                                <li className="nav-item px-1 py-1">
+                                    <Link to='/product-list' style={{ textDecoration: 'none', fontWeight: 'bold', fontSize: '1.1em' }}>
+                                        <a className="nav-link text-uppercase">VỀ CHÚNG TÔI</a>
+                                    </Link>
+                                </li>
                                 <li className="nav-item px-1 py-1" style={{ marginLeft: '65px' }}>
                                     <form className="d-flex">
                                         <input className="form-control me-2" type="search" placeholder="Tìm kiếm..." aria-label="Search" style={{ width: '200px' }} />

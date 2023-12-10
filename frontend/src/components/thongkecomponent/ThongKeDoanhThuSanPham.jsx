@@ -18,8 +18,11 @@ class ThongKeDoanhThuSanPham extends Component {
             thongKeSanPham: [],
             thongKeThangNew: [],
             thongKeTocDoTangTruong: [],
+            thongKeTocDoTangTruongNgay: [],
             thongKeTocDoTangTruongThang: [],
             thongKeTocDoTangTruongSanPhamNam: [],
+            thongKeTocDoTangTruongSanPhamThang: [],
+            thongKeTocDoTangTruongSanPhamNgay: [],
             startDate: '',
             endDate: '',
             pageCount: 0,
@@ -77,7 +80,10 @@ class ThongKeDoanhThuSanPham extends Component {
         this.fetchHoaDonHuyNam();
         this.fetchTocDoTangTruongNam();
         this.fetchTocDoTangTruongSanPhamNam();
+        this.fetchTocDoTangTruongSanPhamThang();
+        this.fetchTocDoTangTruongSanPhamNgay();
         this.fetchTocDoTangTruongThang();
+        this.fetchTocDoTangTruongNgay();
     }
 
     formatNumberOrZero(value) {
@@ -158,13 +164,41 @@ class ThongKeDoanhThuSanPham extends Component {
                 console.error('Error fetching doanhThuNgay:', error);
             });
     };
+    fetchTocDoTangTruongSanPhamThang = () => {
+        thongkeservice.toc_do_tang_truong_san_pham_thang()
+            .then(data => {
+                this.setState({thongKeTocDoTangTruongSanPhamThang: data});
+            })
+            .catch(error => {
+                console.error('Error fetching doanhThuNgay:', error);
+            });
+    };
 
+    fetchTocDoTangTruongSanPhamNgay = () => {
+        thongkeservice.toc_do_tang_truong_san_pham_ngay()
+            .then(data => {
+                this.setState({thongKeTocDoTangTruongSanPhamNgay: data});
+            })
+            .catch(error => {
+                console.error('Error fetching doanhThuNgay:', error);
+            });
+    };
 
 
     fetchTocDoTangTruongThang = () => {
         thongkeservice.toc_do_tang_truong_thang()
             .then(data => {
                 this.setState({thongKeTocDoTangTruongThang: data});
+            })
+            .catch(error => {
+                console.error('Error fetching doanhThuNgay:', error);
+            });
+    };
+
+    fetchTocDoTangTruongNgay = () => {
+        thongkeservice.toc_do_tang_truong_ngay()
+            .then(data => {
+                this.setState({thongKeTocDoTangTruongNgay: data});
             })
             .catch(error => {
                 console.error('Error fetching doanhThuNgay:', error);
@@ -1410,10 +1444,21 @@ class ThongKeDoanhThuSanPham extends Component {
                                             {/*</tr>*/}
                                             {/*</thead>*/}
                                             <tbody>
-                                            {this.state.thongKeTocDoTangTruongThang.map((th, index) => (
+                                            {this.state.thongKeTocDoTangTruongNgay.map((th, index) => (
+                                                <tr key={index}>
+                                                    <th>Doanh thu ngày</th>
+                                                    <td>Ngày hôm trước: {this.formatCurrency(th[2])} VND</td>
+                                                    <td>Ngày hôm nay: {this.formatCurrency(th[1])} VND</td>
+                                                    <td><span
+                                                        className={`${th[3] === 'Tang' ? 'badge bg-success' : 'badge bg-danger'}`}><i
+                                                        className={`${th[3] === 'Tang' ? 'bi bi-graph-up' : 'bi bi-graph-down'}`}></i> | {`${th[3] === 'Tang' ? '+' : ''}`} {this.formatCurrency(th[4])}</span>
+                                                    </td>
+                                                </tr>
+                                            ))}{this.state.thongKeTocDoTangTruongThang.map((th, index) => (
                                                 <tr key={index}>
                                                     <th>Doanh thu tháng</th>
-                                                    <td>{this.formatCurrency(th[1])} VND</td>
+                                                    <td>Tháng trước: {this.formatCurrency(th[2])} VND</td>
+                                                    <td>Tháng này: {this.formatCurrency(th[1])} VND</td>
                                                     <td><span
                                                         className={`${th[3] === 'Tang' ? 'badge bg-success' : 'badge bg-danger'}`}><i
                                                         className={`${th[3] === 'Tang' ? 'bi bi-graph-up' : 'bi bi-graph-down'}`}></i> | {`${th[3] === 'Tang' ? '+' : '-'}`} {this.formatCurrency(th[4])}</span>
@@ -1423,7 +1468,30 @@ class ThongKeDoanhThuSanPham extends Component {
                                             {this.state.thongKeTocDoTangTruong.map((th, index) => (
                                                 <tr key={index}>
                                                     <th>Doanh thu năm</th>
-                                                    <td>{this.formatCurrency(th[1])} VND</td>
+                                                    <td>Năm ngoái: {this.formatCurrency(th[2])} VND</td>
+                                                    <td>Năm nay: {this.formatCurrency(th[1])} VND</td>
+                                                    <td><span
+                                                        className={`${th[3] === 'Tang' ? 'badge bg-success' : 'badge bg-danger'}`}><i
+                                                        className={`${th[3] === 'Tang' ? 'bi bi-graph-up' : 'bi bi-graph-down'}`}></i> | {`${th[3] === 'Tang' ? '+' : '-'}`} {this.formatCurrency(th[4])}</span>
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                            {this.state.thongKeTocDoTangTruongSanPhamNgay.map((th, index) => (
+                                                <tr key={index}>
+                                                    <th>Sản phẩm ngày</th>
+                                                    <td>Ngày hôm trước: {this.formatCurrency(th[2])} Sản phẩm</td>
+                                                    <td>Ngày hôm nay: {this.formatCurrency(th[1])} Sản phẩm</td>
+                                                    <td><span
+                                                        className={`${th[3] === 'Tang' ? 'badge bg-success' : 'badge bg-danger'}`}><i
+                                                        className={`${th[3] === 'Tang' ? 'bi bi-graph-up' : 'bi bi-graph-down'}`}></i> | {`${th[3] === 'Tang' ? '+' : '-'}`} {this.formatCurrency(th[4])}</span>
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                            {this.state.thongKeTocDoTangTruongSanPhamThang.map((th, index) => (
+                                                <tr key={index}>
+                                                    <th>Sản phẩm tháng</th>
+                                                    <td>Tháng trước: {this.formatCurrency(th[2])} Sản phẩm</td>
+                                                    <td>Tháng này: {this.formatCurrency(th[1])} Sản phẩm</td>
                                                     <td><span
                                                         className={`${th[3] === 'Tang' ? 'badge bg-success' : 'badge bg-danger'}`}><i
                                                         className={`${th[3] === 'Tang' ? 'bi bi-graph-up' : 'bi bi-graph-down'}`}></i> | {`${th[3] === 'Tang' ? '+' : '-'}`} {this.formatCurrency(th[4])}</span>
@@ -1433,7 +1501,8 @@ class ThongKeDoanhThuSanPham extends Component {
                                             {this.state.thongKeTocDoTangTruongSanPhamNam.map((th, index) => (
                                                 <tr key={index}>
                                                     <th>Sản phẩm năm</th>
-                                                    <td>{this.formatCurrency(th[1])} Sản phẩm</td>
+                                                    <td>Năm ngoái: {this.formatCurrency(th[2])} Sản phẩm</td>
+                                                    <td>Năm nay: {this.formatCurrency(th[1])} Sản phẩm</td>
                                                     <td><span
                                                         className={`${th[3] === 'Tang' ? 'badge bg-success' : 'badge bg-danger'}`}><i
                                                         className={`${th[3] === 'Tang' ? 'bi bi-graph-up' : 'bi bi-graph-down'}`}></i> | {`${th[3] === 'Tang' ? '+' : '-'}`} {this.formatCurrency(th[4])}</span>
