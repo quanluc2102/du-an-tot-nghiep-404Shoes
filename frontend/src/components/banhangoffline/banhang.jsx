@@ -59,8 +59,14 @@ class BanHangOffline extends Component {
             currentPageKH: 0, // Trang hiện tại
             perPageKH: 4,
             result: 'No QR code scanned yet',
-
             tabProducts: {
+                tabKey1: [],
+                tabKey2: [],
+                tabKey3: [],
+                tabKey4: [],
+                tabKey5: [],
+            },
+            tabCustomers: {
                 tabKey1: [],
                 tabKey2: [],
                 tabKey3: [],
@@ -86,12 +92,12 @@ class BanHangOffline extends Component {
         this.handleQuantityChange = this.handleQuantityChange.bind(this);
         this.onChangeSwitch = this.onChangeSwitch.bind(this);
         // this.thayDoiDiaChiUpdate = this.thayDoiDiaChiUpdate.bind(this);
-        // this.thayDoiTinhUpdate = this.thayDoiTinhUpdate.bind(this);
-        // this.thayDoiHuyenUpdate = this.thayDoiHuyenUpdate.bind(this);
-        // this.thayDoiXaUpdate = this.thayDoiXaUpdate.bind(this);
-        // this.handleCityChange = this.handleCityChange.bind(this);
-        // this.handleDistrictChange = this.handleDistrictChange.bind(this);
-        // this.handleWardChange = this.handleWardChange.bind(this);
+        this.thayDoiTinhUpdate = this.thayDoiTinhUpdate.bind(this);
+        this.thayDoiHuyenUpdate = this.thayDoiHuyenUpdate.bind(this);
+        this.thayDoiXaUpdate = this.thayDoiXaUpdate.bind(this);
+        this.handleCityChange = this.handleCityChange.bind(this);
+        this.handleDistrictChange = this.handleDistrictChange.bind(this);
+        this.handleWardChange = this.handleWardChange.bind(this);
     }
 
     componentDidMount() {
@@ -110,10 +116,10 @@ class BanHangOffline extends Component {
         });
         BanHangService.getKhachHang().then((res) => {
             this.setState({ taiKhoan: res.data })
-            console.log('user', this.state.taiKhoan)
         }).catch((error) => {
             console.error("Error fetching data:", error);
         });
+        this.fetchCities()
     }
     addKH(id) {
         window.location.href = '/addKhachHang';
@@ -136,8 +142,8 @@ class BanHangOffline extends Component {
     handleStatusFilter = (filterValue) => {
         this.setState({ searchTerm: filterValue });
     }
-    formAdd(){
-        window.location.href=(`/sanpham/formadd`);
+    formAdd() {
+        window.location.href = (`/sanpham/formadd`);
     }
     filteredData = () => {
         const { sanPhamChiTiet, searchTerm } = this.state;
@@ -204,6 +210,7 @@ class BanHangOffline extends Component {
         axios.get(`https://provinces.open-api.vn/api/p/${selectedCity.code}?depth=2`)
             .then((response) => {
                 this.setState({ districts: response.data.districts });
+                console.log(this.state.districts)
             })
             .catch((error) => {
                 console.error('Error fetching districts:', error);
@@ -250,6 +257,42 @@ class BanHangOffline extends Component {
         const selectedWardName = event.target.value;
         this.setState({ xaPhuongThiTran: selectedWardName });
     }
+
+    thayDoiTinhUpdate = (event) => {
+        this.setState(
+            prevState => ({
+                nguoiDungUpdate: {
+                    ...prevState.nguoiDungUpdate,
+                    tinhThanhPho: event.target.value                }
+            })
+        );
+        let errorUpdate = {...this.state.errorUpdate, tinhThanhPho: ""};
+        this.setState({errorUpdate: errorUpdate});
+    }
+
+    thayDoiHuyenUpdate = (event) => {
+        this.setState(
+            prevState => ({
+                nguoiDungUpdate: {
+                    ...prevState.nguoiDungUpdate,
+                    quanHuyen: event.target.value                }
+            })
+        );
+        let errorUpdate = {...this.state.errorUpdate, quanHuyen: ""};
+        this.setState({errorUpdate: errorUpdate});
+    }
+    thayDoiXaUpdate = (event) => {
+        this.setState(
+            prevState => ({
+                nguoiDungUpdate: {
+                    ...prevState.nguoiDungUpdate,
+                    xaPhuongThiTran: event.target.value                }
+            })
+        );
+        let errorUpdate = {...this.state.errorUpdate, xaPhuongThiTran: ""};
+        this.setState({errorUpdate: errorUpdate});
+    }
+
 
     handleCloseModal = () => {
         this.setState({ showModal: false });
@@ -443,44 +486,6 @@ class BanHangOffline extends Component {
         this.setState({ activeTabKey: activeKey })
     }
 
-
-    // handleProductClick = (productId, tabKey) => {
-
-    //     const { tabProducts } = this.state;
-    //     const products = tabProducts[tabKey] || [];
-    //     const selectedProduct = products.find(item => item.id === productId.id);
-
-    //     if (selectedProduct) {
-    //         const updatedProducts = products.map(item =>
-    //             item.id === productId.id ? { ...item, quantity: item.quantity + 1 } : item
-    //         );
-    //         this.setState(prevState => ({
-    //             tabProducts: {
-    //                 ...prevState.tabProducts,
-    //                 [tabKey]: updatedProducts,
-    //             },
-    //         }));
-    //         const updatedSanPhamChiTiet = { ...selectedProduct };
-    //         updatedSanPhamChiTiet.soLuong -= 1; // Giảm đi 1
-    //         const updatedSanPhamChiTietList = currentSanPhamChiTietList.map(item =>
-    //             item.id === productId.id ? updatedSanPhamChiTiet : item
-    //         );
-    //     } else {
-    //         const newSelectedProduct = { ...productId, quantity: 1 };
-    //         const updatedProducts = [...products, newSelectedProduct];
-    //         this.setState(prevState => ({
-    //             tabProducts: {
-    //                 ...prevState.tabProducts,
-    //                 [tabKey]: updatedProducts,
-    //             },
-    //         }));
-    //     }
-    //     toast.success("Đã thêm vào giỏ", { position: toast.POSITION.MID_RIGHT });
-
-    //     // Sau khi xử lý, đóng cửa sổ modal
-    //     this.handleCloseModal1();
-    // };
-
     handleProductClick = (productId, tabKey) => {
         const { tabProducts } = this.state;
         const products = tabProducts[tabKey] || [];
@@ -526,48 +531,158 @@ class BanHangOffline extends Component {
         }
     };
 
+    handleAddUser = (userId, tabKey) => {
+        const { tabCustomers } = this.state;
+        const customers = tabCustomers[tabKey] || [];
+        const isCustomerExist = customers.length > 0;
+    
+        if (isCustomerExist) {
+            this.setState({
+                tabCustomers: {
+                    ...tabCustomers,
+                    [tabKey]: [{ ...userId }],
+                },
+            });
+    
+            toast.success("Đã cập nhật thông tin khách hàng", { position: toast.POSITION.MID_RIGHT });
+            this.handleCloseModal1();
+        } else {
+            const newCustomer = { ...userId };
+            const updatedCustomers = [...customers, newCustomer];
+    
+            this.setState(prevState => ({
+                tabCustomers: {
+                    ...prevState.tabCustomers,
+                    [tabKey]: updatedCustomers,
+                },
+            }));
+    
+            toast.success("Đã thêm khách hàng mới", { position: toast.POSITION.MID_RIGHT });
+            this.handleCloseModal1();
+        }
+    };
+    
     renderProductsForTab = (tabKey) => {
         const { tabProducts } = this.state;
         const products = tabProducts[tabKey] || [];
+        let path = require('./img/cart-empty.png')
 
-        return products.map((product, index) => (
-            <Col key={index} style={{ backgroundColor: '#fff', height: '75px', padding: '10px', display: 'flex', alignItems: 'center' }}>
-                <Col span={1} style={{ fontWeight: 'bold', fontSize: '15px' }}>{index + 1}</Col>
-                <Col span={2} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center' }}>
-                    <img style={{ height: '60px', width: '60px' }} src={`/niceadmin/img/${product.anh}`} />
-                </Col>
-                <Col span={2} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center' }}>{product.mauSac.ten}</Col>
-                <Col span={2} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center', }}>{product.kichThuoc.giaTri}</Col>
-                <Col span={6} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center', }}>{product.sanPham.ten}</Col>
-                <Col span={2} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center' }}>
-                    <input
-                        type="number"
-                        className="soLuong"
-                        min="1"
-                        style={{ width: '50px' }}
-                        value={product.quantity}
-                        onChange={(e) => this.handleQuantityChange(e, product.ma)}
-                    />
-                </Col>
-                <Col span={3} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center' }}>{product.donGia} VND</Col>
-                <Col span={4} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center' }}>{product.donGia * product.quantity} VND</Col>
-                <Col span={1} style={{ transition: 'color 0.3s' }}>
-                    <DeleteOutlined
-                        onClick={() => this.onDelete(tabKey, product.ma)}
-                        style={{ cursor: 'pointer' }}
-                        onMouseEnter={(e) => e.target.style.color = 'red'}
-                        onMouseLeave={(e) => e.target.style.color = 'black'}
-                    />
-                </Col>
-            </Col>
-        ));
+        if (products.length == 0) {
+            return(
+                <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '10px'}}>
+                    <img style={{ width: '400px', height: '300px'}} src={path}/>
+                    <p>Giỏ hàng trống</p>
+                </div>
+            )
+        } else{
+            return (
+                products.map((product, index) => (
+                    <Col key={index} style={{ backgroundColor: '#fff', height: '75px', padding: '10px', display: 'flex', alignItems: 'center' }}>
+                        <Col span={1} style={{ fontWeight: 'bold', fontSize: '15px' }}>{index + 1}</Col>
+                        <Col span={2} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center' }}>
+                            <img style={{ height: '60px', width: '60px' }} src={`/niceadmin/img/${product.anh}`} />
+                        </Col>
+                        <Col span={2} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center' }}>{product.mauSac.ten}</Col>
+                        <Col span={2} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center', }}>{product.kichThuoc.giaTri}</Col>
+                        <Col span={6} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center', }}>{product.sanPham.ten}</Col>
+                        <Col span={3} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center' }}>
+                            <input
+                                type="number"
+                                className="soLuong"
+                                min="1"
+                                style={{ width: '50px' }}
+                                value={product.quantity}
+                                onChange={(e) => this.handleQuantityChange(e, product.ma)}
+                            />
+                        </Col>
+                        <Col span={3} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center' }}>{product.donGia} VND</Col>
+                        <Col span={4} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center' }}>{product.donGia * product.quantity} VND</Col>
+                        <Col span={1} style={{ transition: 'color 0.3s' }}>
+                            <DeleteOutlined
+                                onClick={() => this.onDelete(tabKey, product.ma)}
+                                style={{ cursor: 'pointer' }}
+                                onMouseEnter={(e) => e.target.style.color = 'red'}
+                                onMouseLeave={(e) => e.target.style.color = 'black'}
+                            />
+                        </Col>
+                    </Col>
+                ))
+            )
+        }
+    };
+
+    renderUserForTab = (tabKey) => {
+        const { tabCustomers } = this.state;
+        const customers = tabCustomers[tabKey] || [];
+
+        if (customers.length === 0) {
+            return (
+                <tr key="no-customer">
+                    <td colSpan="5">Không có khách hàng</td>
+                </tr>
+            );
+        }
+        return customers.map((customer, index) => {
+            console.log('customer', customer)
+            return (
+                <div>
+                    <div>
+                        <label htmlFor="ten">Tên khách hàng:{customer.ten} </label> <br />
+                        <label htmlFor="sdt">Số điện thoại:{customer.sdt}</label><br />
+                        <label htmlFor="tinhThanhPho">Tỉnh/Thành phố:</label>
+                        <select
+                            className="form-control"
+                            name="tinhThanhPho"
+                            onChange={(event) => this.handleCityChange(event)}
+                        >
+                            <option value={this.state.tinhThanhPho}>Chọn tỉnh thành</option>
+                            {this.state.cities.map(city => (
+                                <option key={city.code} value={city.name} selected={city.name === this.state.tinhThanhPho}>
+                                    {city.name}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+
+                    <div className="form-group">
+                        <label htmlFor="quanHuyen">Quận/Huyện:</label>
+                        <select
+                            className="form-control"
+                            name="quanHuyen"
+                            onChange={(event) => this.handleDistrictChange(event)}
+                        >
+                            <option value={this.state.quanHuyen}>Chọn quận huyện</option>
+                            {this.state.districts.map(district => (
+                                <option key={district.code} value={district.name} selected={district.name === this.state.quanHuyen}>
+                                    {district.name}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+
+                    <div className="form-group">
+                        <label htmlFor="xaPhuongThiTran">Xã/Phường/Thị trấn:</label>
+                        <select
+                            className="form-control"
+                            name="xaPhuongThiTran"
+                            onChange={(event) => this.handleWardChange(event)}
+                        >
+                            <option value={this.state.xaPhuongThiTran}>Chọn phường xã</option>
+                            {this.state.wards.map(ward => (
+                                <option key={ward.code} value={ward.name} selected={ward.name === this.state.xaPhuongThiTran}>
+                                    {ward.name}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+                </div>
+            )
+        });
     };
     handleQuantityChange = (e, productId) => {
         const newQuantity = parseInt(e.target.value, 10);
-
         this.setState((prevState) => {
-            const { activeTabKey, tabProducts } = prevState; // Access activeTabKey from prevState
-            // Update the quantity in the state for the specific product
+            const { activeTabKey, tabProducts } = prevState; 
             const updatedProducts = tabProducts[activeTabKey].map((product) => {
                 if (product.ma === productId) {
                     return { ...product, quantity: newQuantity };
@@ -618,39 +733,6 @@ class BanHangOffline extends Component {
             this.nextTabIndex += 1;
         }
     };
-
-    // onDelete = (tabKey, productId) => {
-    //     this.setState((prevState) => {
-    //         const updatedProducts = prevState.tabProducts[tabKey].map((product) => {
-    //             if (product.ma === productId) {
-
-    //                 const newQuantity = Math.max(product.quantity - 1, 0);
-
-    //                 return newQuantity > 0 ? { ...product, quantity: newQuantity } : null;
-    //             }
-    //             return product;
-    //         });
-
-    //         const updatedTabList = prevState.tabList.map((tab) => {
-    //             if (tab.key === tabKey) {
-
-    //                 return {
-    //                     ...tab,
-    //                     products: updatedProducts.filter((product) => product && product.quantity > 0),
-    //                 };
-    //             }
-    //             return tab;
-    //         });
-
-    //         return {
-    //             tabProducts: {
-    //                 ...prevState.tabProducts,
-    //                 [tabKey]: updatedProducts.filter((product) => product && product.quantity > 0),
-    //             },
-    //             tabList: updatedTabList,
-    //         };
-    //     });
-    // };
 
     onDelete = (tabKey, productId) => {
         this.setState(prevState => {
@@ -824,13 +906,13 @@ class BanHangOffline extends Component {
         const activeTabKey = this.state.activeTabKey;
         const activeTabProducts = this.state.tabProducts[activeTabKey] || [];
         return (
-            
+
             <div className="wrapper-sell">
                 <br />
-                
+
                 <div className="content_sell">
                     <div className="content_sell_left">
-                     
+
                         <Tabs onChange={this.handleTabChange} defaultActiveKey="1" type="editable-card" onEdit={this.onEdit}>
                             {this.state.tabList && this.state.tabList.map((tabinfo, index) => {
                                 return (
@@ -845,7 +927,7 @@ class BanHangOffline extends Component {
                                                 <Col span={2} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center' }} >Màu sắc</Col>
                                                 <Col span={2} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center' }} >Size</Col>
                                                 <Col span={6} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center' }} >Tên SP</Col>
-                                                <Col span={2} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center' }} >Số lượng</Col>
+                                                <Col span={3} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center' }} >Số lượng</Col>
                                                 <Col span={3} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center' }} >Đơn giá</Col>
                                                 <Col span={4} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center' }} >Thành tiền</Col>
                                             </Col>
@@ -855,7 +937,7 @@ class BanHangOffline extends Component {
                                 )
                             })}
                         </Tabs>
-                        
+
                         <div><section className="section dashboard">
                             <hr />
                             <div>
@@ -921,7 +1003,7 @@ class BanHangOffline extends Component {
 
                                         <div><div className="row">
                                             <div className="col-2 container">
-                                            <button className="btn btn-primary " style={{margin:10, }} onClick={this.formAdd}> <i class="bi bi-plus-circle"></i> Thêm sản phẩm </button>
+                                                <button className="btn btn-primary " style={{ margin: 10, }} onClick={this.formAdd}> <i class="bi bi-plus-circle"></i> Thêm sản phẩm </button>
 
                                                 <input
                                                     type="text"
@@ -1001,7 +1083,7 @@ class BanHangOffline extends Component {
                                                                         <td>{sanPhamChiTiet.soLuong}</td>
                                                                         <td>{sanPhamChiTiet.donGia}</td>
                                                                         <td>{sanPhamChiTiet.trangThai == 0 ? "Nghỉ bán" : "Đang bán"}</td>
-                                                                        <td ><button className="btn btn-outline-info" onClick={() => this.handleProductClick(sanPhamChiTiet, this.state.activeTabKey)}>chọn</button></td>
+                                                                        <td><button className="btn btn-outline-info" onClick={() => this.handleProductClick(sanPhamChiTiet, this.state.activeTabKey)}>chọn</button></td>
                                                                     </tr>
                                                                 )
                                                             }
@@ -1024,139 +1106,87 @@ class BanHangOffline extends Component {
                                         {this.popupContent}
                                     </Modal.Body>
                                 </Modal>
-                                <br/>
-                                
+                                <br />
+
                             </div>  </section>
                             {this.state.checked === true ?
-                                
                                 <div>
-                                    <section className="section dashboard"> 
-                                    <p style={{ fontWeight: 'bolder', fontSize: '20px' }}>Thông tin khách hàng</p>
-                                    <Button variant="btn btn-outline-primary" onClick={this.handleShowModal2}>
-                                    Chọn khách hàng
-                                </Button>
-                                <Modal show={this.state.showModal2} onHide={this.handleCloseModal2} backdrop="static" dialogClassName="custom-modal-size">
-                                    <Modal.Header closeButton>
-                                        <Modal.Title>Chọn sản phẩm</Modal.Title>
-                                    </Modal.Header>
-                                    <Modal.Body>
+                                    <section className="section dashboard">
+                                        <p style={{ fontWeight: 'bolder', fontSize: '20px' }}>Thông tin khách hàng</p>
+                                        <Button variant="btn btn-outline-primary" onClick={this.handleShowModal2}>
+                                            Chọn khách hàng
+                                        </Button>
+                                        <Modal show={this.state.showModal2} onHide={this.handleCloseModal2} backdrop="static" dialogClassName="custom-modal-size">
+                                            <Modal.Header closeButton>
+                                                <Modal.Title>Chọn sản phẩm</Modal.Title>
+                                            </Modal.Header>
+                                            <Modal.Body>
 
-                                        <div><div className="row">
-                                            <div className="col-2 container">
-                                            <button className="btn btn-primary " style={{margin:10}} onClick={this.addKH}> Thêm khách hàng  </button>
+                                                <div><div className="row">
+                                                    <div className="col-2 container">
+                                                        <button className="btn btn-primary " style={{ margin: 10 }} onClick={this.addKH}> Thêm khách hàng  </button>
 
-                                                <input
-                                                    type="text"
-                                                    name="query"
-                                                    placeholder="Tìm kiếm"
-                                                    title="Enter search keyword"
-                                                    value={searchTermKH}
-                                                    onChange={this.handleSearchKH}
-                                                    onFocus={this.handleSearchFocusKH} // Thêm sự kiện onFocus
-                                                />
-                                            </div>
-                                            
-                                        </div>
-                                            <table className="table table-borderless datatable">
-                                                <thead>
-                                                    <tr>
-                                                        <th>STT</th>
-                                                        <th>Ảnh </th>
-                                                        <th>Tên Khách Hàng</th>                           
-                                                        <th>Số Điện Thoại</th>
-                                                        <th>Action</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    {
-                                                        currentKHList.map(
-                                                            (taiKhoan, index) => {
-                                                                return (
-                                                                    <tr key={taiKhoan.id}>
-                                                                        <td>{index + 1}</td>
-                                                                        <td>{taiKhoan.thongTinNguoiDung.ten}</td>
-                                                                        <td>{<img style={{ height: '60px', width: '60px', float: 'left' }} src={`/niceadmin/img/${taiKhoan.anh}`} />}</td>
-                                                                        <td>{taiKhoan.thongTinNguoiDung.sdt}</td>
-                                                                        <td ><button className="btn btn-outline-info">chọn</button></td>
-                                                                    </tr>
+                                                        <input
+                                                            type="text"
+                                                            name="query"
+                                                            placeholder="Tìm kiếm"
+                                                            title="Enter search keyword"
+                                                            value={searchTermKH}
+                                                            onChange={this.handleSearchKH}
+                                                            onFocus={this.handleSearchFocusKH} // Thêm sự kiện onFocus
+                                                        />
+                                                    </div>
+
+                                                </div>
+                                                    <table className="table table-borderless datatable">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>STT</th>
+                                                                <th>Ảnh </th>
+                                                                <th>Tên Khách Hàng</th>
+                                                                <th>Số Điện Thoại</th>
+                                                                <th>Action</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            {
+                                                                currentKHList.map(
+                                                                    (taiKhoan, index) => {
+                                                                        return (
+                                                                            <tr key={taiKhoan.id}>
+                                                                                <td>{index + 1}</td>
+                                                                                <td>{taiKhoan.thongTinNguoiDung.ten}</td>
+                                                                                <td>{<img style={{ height: '60px', width: '60px', float: 'left' }} src={`/niceadmin/img/${taiKhoan.anh}`} />}</td>
+                                                                                <td>{taiKhoan.thongTinNguoiDung.sdt}</td>
+                                                                                <td><button onClick={() => this.handleAddUser(taiKhoan.thongTinNguoiDung, this.state.activeTabKey)} className="btn btn-outline-info">chọn</button></td>
+                                                                            </tr>
+                                                                        )
+                                                                    }
                                                                 )
                                                             }
-                                                        )
-                                                    }
-                                                </tbody>
-                                            </table>
+                                                        </tbody>
+                                                    </table>
 
-                                            <ReactPaginate
-                                                pageCount={Math.ceil(this.state.taiKhoan.length / this.state.perPageKH)}
-                                                pageRangeDisplayed={5}
-                                                marginPagesDisplayed={2}
-                                                onPageChange={this.handlePageClickKH}
-                                                containerClassName={'pagination'}
-                                                activeClassName={'active'}
-                                                previousLabel={"Previous"}
-                                                nextLabel={"Next"}
-                                            />
-                                        </div>
-                                        {this.popupContent}
-                                    </Modal.Body>
-                                </Modal>
-                                <div>
-                                
-                                    <label htmlFor="ten">Tên khách hàng :</label> <br/>
-                                    
-                                    <label htmlFor="sdt">Số điện thoại :</label><br/>
-                                <label htmlFor="tinhThanhPho">Tỉnh/Thành phố:</label>
-                                                    <select
-                                                        className="form-control"
-                                                        name="tinhThanhPho"
-                                                        onChange={(event) => this.handleCityChange(event)}
-                                                    >
-                                                        <option value={this.state.tinhThanhPho}>Chọn tỉnh thành</option>
-                                                        {this.state.cities.map(city => (
-                                                            <option key={city.code} value={city.name} selected={city.name === this.state.tinhThanhPho}>
-                                                                {city.name}
-                                                            </option>
-                                                        ))}
-                                                    </select>
+                                                    <ReactPaginate
+                                                        pageCount={Math.ceil(this.state.taiKhoan.length / this.state.perPageKH)}
+                                                        pageRangeDisplayed={5}
+                                                        marginPagesDisplayed={2}
+                                                        onPageChange={this.handlePageClickKH}
+                                                        containerClassName={'pagination'}
+                                                        activeClassName={'active'}
+                                                        previousLabel={"Previous"}
+                                                        nextLabel={"Next"}
+                                                    />
                                                 </div>
-
-                                                <div className="form-group">
-                                                    <label htmlFor="quanHuyen">Quận/Huyện:</label>
-                                                    <select
-                                                        className="form-control"
-                                                        name="quanHuyen"
-                                                        onChange={(event) => this.handleDistrictChange(event)}
-                                                    >
-                                                        <option value={this.state.quanHuyen}>Chọn quận huyện</option>
-                                                        {this.state.districts.map(district => (
-                                                            <option key={district.code} value={district.name} selected={district.name === this.state.quanHuyen}>
-                                                                {district.name}
-                                                            </option>
-                                                        ))}
-                                                    </select>
-                                                </div>
-
-                                                <div className="form-group">
-                                                    <label htmlFor="xaPhuongThiTran">Xã/Phường/Thị trấn:</label>
-                                                    <select
-                                                        className="form-control"
-                                                        name="xaPhuongThiTran"
-                                                        onChange={(event) => this.handleWardChange(event)}
-                                                    >
-                                                        <option value={this.state.xaPhuongThiTran}>Chọn phường xã</option>
-                                                        {this.state.wards.map(ward => (
-                                                            <option key={ward.code} value={ward.name} selected={ward.name === this.state.xaPhuongThiTran}>
-                                                                {ward.name}
-                                                            </option>
-                                                        ))}
-                                                    </select>
-                                                </div>
-                           </section> </div> : null}                        
+                                                {this.popupContent}
+                                            </Modal.Body>
+                                        </Modal>
+                                        {this.renderUserForTab(this.state.activeTabKey)}
+                                    </section> </div> : null}
                         </div>
                     </div>
                     <div className="content_sell_right">
                         <div>
-                           
                             <div className="checkbox_sell">
                                 <span><Switch checked={this.state.checked} onChange={this.onChangeSwitch} />Giao hàng</span>
                             </div>
