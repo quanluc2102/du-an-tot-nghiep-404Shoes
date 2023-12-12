@@ -46,6 +46,7 @@ class BanHangOffline extends Component {
                     key: 'tabKey1',
                 },
             ],
+            diaChi:[],
             enteredAmount: 0,
             selectedRowKeys: [],
             loading: false,
@@ -54,6 +55,7 @@ class BanHangOffline extends Component {
             showModal: false,
             showModal1: false,
             showModal2: false,
+            showModal3: false,
             currentPage: 0, // Trang hiện tại
             perPage: 4,
             currentPageKH: 0, // Trang hiện tại
@@ -86,6 +88,7 @@ class BanHangOffline extends Component {
             districts: [],
             wards: [],
             diaChi: [],
+            currentSanPhamChiTietList: [],
         };
         this.onChangeSearchInput = this.onChangeSearchInput.bind(this);
         this.nextTabIndex = 0
@@ -101,8 +104,9 @@ class BanHangOffline extends Component {
     }
 
     componentDidMount() {
-        const { tabProducts, activeTabKey } = this.state;
+        const { tabProducts, activeTabKey,tabCustomers } = this.state;
         const selectedProducts = tabProducts[activeTabKey] || [];
+        const customers = tabCustomers[tabKey] || [];
         console.log(this.getTotalAmount(selectedProducts))
         BanHangService.getSPCT().then((res) => {
             this.setState({ sanPhamChiTiet: res.data })
@@ -116,6 +120,11 @@ class BanHangOffline extends Component {
         });
         BanHangService.getKhachHang().then((res) => {
             this.setState({ taiKhoan: res.data })
+        }).catch((error) => {
+            console.error("Error fetching data:", error);
+        });
+        BanHangService.getDC(customers.id).then((res) => {
+            this.setState({ diaChi: res.data })
         }).catch((error) => {
             console.error("Error fetching data:", error);
         });
@@ -263,11 +272,12 @@ class BanHangOffline extends Component {
             prevState => ({
                 nguoiDungUpdate: {
                     ...prevState.nguoiDungUpdate,
-                    tinhThanhPho: event.target.value                }
+                    tinhThanhPho: event.target.value
+                }
             })
         );
-        let errorUpdate = {...this.state.errorUpdate, tinhThanhPho: ""};
-        this.setState({errorUpdate: errorUpdate});
+        let errorUpdate = { ...this.state.errorUpdate, tinhThanhPho: "" };
+        this.setState({ errorUpdate: errorUpdate });
     }
 
     thayDoiHuyenUpdate = (event) => {
@@ -275,22 +285,24 @@ class BanHangOffline extends Component {
             prevState => ({
                 nguoiDungUpdate: {
                     ...prevState.nguoiDungUpdate,
-                    quanHuyen: event.target.value                }
+                    quanHuyen: event.target.value
+                }
             })
         );
-        let errorUpdate = {...this.state.errorUpdate, quanHuyen: ""};
-        this.setState({errorUpdate: errorUpdate});
+        let errorUpdate = { ...this.state.errorUpdate, quanHuyen: "" };
+        this.setState({ errorUpdate: errorUpdate });
     }
     thayDoiXaUpdate = (event) => {
         this.setState(
             prevState => ({
                 nguoiDungUpdate: {
                     ...prevState.nguoiDungUpdate,
-                    xaPhuongThiTran: event.target.value                }
+                    xaPhuongThiTran: event.target.value
+                }
             })
         );
-        let errorUpdate = {...this.state.errorUpdate, xaPhuongThiTran: ""};
-        this.setState({errorUpdate: errorUpdate});
+        let errorUpdate = { ...this.state.errorUpdate, xaPhuongThiTran: "" };
+        this.setState({ errorUpdate: errorUpdate });
     }
 
 
@@ -312,6 +324,12 @@ class BanHangOffline extends Component {
     handleShowModal2 = () => {
         this.setState({ showModal2: true });
     };
+    handleCloseModal3 = () => {
+        this.setState({ showModal3: false });
+    };
+    handleShowModal3 = () => {
+        this.setState({ showModal3: true });
+    };
     handleError = (err) => {
         console.error(err);
     };
@@ -331,40 +349,44 @@ class BanHangOffline extends Component {
         this.setState({ currentPageKH: 0 });
     }
     handleScan = (data) => {
-        const { isQRCodeScanned, selectedProducts, sanPhamChiTiet } = this.state;
-
+        const { isQRCodeScanned, selectedProducts, tabProducts } = this.state;
+      
         if (data && data.text && typeof data.text === 'string' && !isQRCodeScanned) {
-
-            this.setState({ isQRCodeScanned: true });
-
-
-            const slicedMaQR = data.text.slice(5);
-
-
-            const existingProduct = selectedProducts.find(product => product.ma === slicedMaQR);
-
-            if (!existingProduct) {
-
-                const productToAdd = sanPhamChiTiet.find(product => product.ma === slicedMaQR);
-
-                if (productToAdd) {
-                    const updatedSelectedProducts = [...selectedProducts, { ...productToAdd, quantity: 1 }];
-                    this.setState({ selectedProducts: updatedSelectedProducts, showModal: false });
-                } else {
-                    console.error("Product not found with ma:", slicedMaQR);
-                }
+          this.setState({ isQRCodeScanned: true });
+      
+          const slicedMaQR = data.text.slice(5);
+          const existingProduct = selectedProducts.find((product) => product.ma === slicedMaQR);
+      
+          if (!existingProduct) {
+            const productToAdd = selectedProducts.find((product) => product.ma === slicedMaQR);
+      
+            if (productToAdd) {
+              const updatedSelectedProducts = [...selectedProducts, { ...productToAdd, quantity: 1 }];
+              this.setState({ selectedProducts: updatedSelectedProducts });
+      
+              // Get the current tab key (you need to define tabKey in your state)
+              const currentTabKey = this.state.tabKey; // Replace with the actual property holding the current tab key
+      
+              // Update the tabProducts state for the current tab
+              const updatedTabProducts = { ...tabProducts };
+              updatedTabProducts[currentTabKey] = [...updatedTabProducts[currentTabKey], { ...productToAdd, quantity: 1 }];
+      
+              this.setState({ tabProducts: updatedTabProducts });
+            } else {
+              console.error("Product not found with ma:", slicedMaQR);
             }
-
-            setTimeout(() => {
-                this.setState({ isQRCodeScanned: false });
-            }, 1000);
+          }
+      
+          setTimeout(() => {
+            this.setState({ isQRCodeScanned: false });
+          }, 1000);
         }
-    };
+      };
     handlePageClickKH = (data) => {
-        this.setState({ currentPage: data.selected });
+        this.setState({ currentPageKH: data.selected });
     }
     handlePageClick = (data) => {
-        this.setState({ currentPageKH: data.selected });
+        this.setState({ currentPage: data.selected });
     }
     getCurrentPageData = () => {
         const { sanPhamChiTiet, currentPage, perPage } = this.state;
@@ -487,33 +509,30 @@ class BanHangOffline extends Component {
     }
 
     handleProductClick = (productId, tabKey) => {
-        const { tabProducts } = this.state;
+        const { tabProducts, currentSanPhamChiTietList } = this.state;
         const products = tabProducts[tabKey] || [];
         const selectedProduct = products.find(item => item.id === productId.id);
-
+    
         if (selectedProduct) {
             const updatedProducts = products.map(item =>
                 item.id === productId.id ? { ...item, quantity: item.quantity + 1 } : item
             );
-
+    
             // Giảm số lượng sản phẩm trong sản phẩm chi tiết khi thêm vào giỏ hàng
-            const updatedSanPhamChiTiet = { ...productId };
-            updatedSanPhamChiTiet.soLuong -= 1; // Giảm số lượng đi 1
-
-            const updatedSanPhamChiTietList = products.map(item =>
-                item.ma === productId.ma
-                    ? { ...item, quantity: item.quantity + 1, soLuong: item.soLuong - 1 }
-                    : item
+            const updatedSanPhamChiTietList = currentSanPhamChiTietList.map(item =>
+                item.id === productId.id ? { ...item, soLuong: item.soLuong - 1 } : item,
+               
             );
-
+            
+    
             this.setState(prevState => ({
                 tabProducts: {
                     ...prevState.tabProducts,
                     [tabKey]: updatedProducts,
                 },
-                products: updatedSanPhamChiTietList,
+                currentSanPhamChiTietList: updatedSanPhamChiTietList,
             }));
-
+            console.log("Updated quantity:", updatedSanPhamChiTietList.find(item => item.id === productId.id)?.soLuong);
             toast.success("Đã thêm vào giỏ", { position: toast.POSITION.MID_RIGHT });
             this.handleCloseModal1();
         } else {
@@ -525,17 +544,16 @@ class BanHangOffline extends Component {
                     [tabKey]: updatedProducts,
                 },
             }));
-
+    
             toast.success("Đã thêm vào giỏ", { position: toast.POSITION.MID_RIGHT });
             this.handleCloseModal1();
         }
     };
-
     handleAddUser = (userId, tabKey) => {
         const { tabCustomers } = this.state;
         const customers = tabCustomers[tabKey] || [];
         const isCustomerExist = customers.length > 0;
-    
+
         if (isCustomerExist) {
             this.setState({
                 tabCustomers: {
@@ -543,38 +561,38 @@ class BanHangOffline extends Component {
                     [tabKey]: [{ ...userId }],
                 },
             });
-    
+
             toast.success("Đã cập nhật thông tin khách hàng", { position: toast.POSITION.MID_RIGHT });
             this.handleCloseModal1();
         } else {
             const newCustomer = { ...userId };
             const updatedCustomers = [...customers, newCustomer];
-    
+
             this.setState(prevState => ({
                 tabCustomers: {
                     ...prevState.tabCustomers,
                     [tabKey]: updatedCustomers,
                 },
             }));
-    
+
             toast.success("Đã thêm khách hàng mới", { position: toast.POSITION.MID_RIGHT });
             this.handleCloseModal1();
         }
     };
-    
+
     renderProductsForTab = (tabKey) => {
         const { tabProducts } = this.state;
         const products = tabProducts[tabKey] || [];
         let path = require('./img/cart-empty.png')
 
         if (products.length == 0) {
-            return(
-                <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '10px'}}>
-                    <img style={{ width: '400px', height: '300px'}} src={path}/>
+            return (
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '10px' }}>
+                    <img style={{ width: '400px', height: '300px' }} src={path} />
                     <p>Giỏ hàng trống</p>
                 </div>
             )
-        } else{
+        } else {
             return (
                 products.map((product, index) => (
                     <Col key={index} style={{ backgroundColor: '#fff', height: '75px', padding: '10px', display: 'flex', alignItems: 'center' }}>
@@ -682,7 +700,7 @@ class BanHangOffline extends Component {
     handleQuantityChange = (e, productId) => {
         const newQuantity = parseInt(e.target.value, 10);
         this.setState((prevState) => {
-            const { activeTabKey, tabProducts } = prevState; 
+            const { activeTabKey, tabProducts } = prevState;
             const updatedProducts = tabProducts[activeTabKey].map((product) => {
                 if (product.ma === productId) {
                     return { ...product, quantity: newQuantity };
@@ -1073,6 +1091,7 @@ class BanHangOffline extends Component {
                                                     {
                                                         currentSanPhamChiTietList.map(
                                                             (sanPhamChiTiet, index) => {
+                                                                const isSoLuongPositive = sanPhamChiTiet.soLuong > 0;
                                                                 return (
                                                                     <tr key={sanPhamChiTiet.id}>
                                                                         <td>{index + 1}</td>
@@ -1083,7 +1102,13 @@ class BanHangOffline extends Component {
                                                                         <td>{sanPhamChiTiet.soLuong}</td>
                                                                         <td>{sanPhamChiTiet.donGia}</td>
                                                                         <td>{sanPhamChiTiet.trangThai == 0 ? "Nghỉ bán" : "Đang bán"}</td>
-                                                                        <td><button className="btn btn-outline-info" onClick={() => this.handleProductClick(sanPhamChiTiet, this.state.activeTabKey)}>chọn</button></td>
+                                                                        <td><button
+                                                                            className={`btn ${isSoLuongPositive ? 'btn-outline-info' : 'btn-danger'}`}
+                                                                            onClick={() => isSoLuongPositive && this.handleProductClick(sanPhamChiTiet, this.state.activeTabKey)}
+                                                                            disabled={!isSoLuongPositive}
+                                                                        >
+                                                                            {isSoLuongPositive ? 'chọn' : 'Hết hàng'}
+                                                                        </button></td>
                                                                     </tr>
                                                                 )
                                                             }
@@ -1151,6 +1176,74 @@ class BanHangOffline extends Component {
                                                         <tbody>
                                                             {
                                                                 currentKHList.map(
+                                                                    (taiKhoan, index) => {
+                                                                        return (
+                                                                            <tr key={taiKhoan.id}>
+                                                                                <td>{index + 1}</td>
+                                                                                <td>{taiKhoan.thongTinNguoiDung.ten}</td>
+                                                                                <td>{<img style={{ height: '60px', width: '60px', float: 'left' }} src={`/niceadmin/img/${taiKhoan.anh}`} />}</td>
+                                                                                <td>{taiKhoan.thongTinNguoiDung.sdt}</td>
+                                                                                <td><button onClick={() => this.handleAddUser(taiKhoan.thongTinNguoiDung, this.state.activeTabKey)} className="btn btn-outline-info">chọn</button></td>
+                                                                            </tr>
+                                                                        )
+                                                                    }
+                                                                )
+                                                            }
+                                                        </tbody>
+                                                    </table>
+
+                                                    <ReactPaginate
+                                                        pageCount={Math.ceil(this.state.taiKhoan.length / this.state.perPageKH)}
+                                                        pageRangeDisplayed={5}
+                                                        marginPagesDisplayed={2}
+                                                        onPageChange={this.handlePageClickKH}
+                                                        containerClassName={'pagination'}
+                                                        activeClassName={'active'}
+                                                        previousLabel={"Previous"}
+                                                        nextLabel={"Next"}
+                                                    />
+                                                </div>
+                                                {this.popupContent}
+                                            </Modal.Body>
+                                        </Modal>
+                                        <Button variant="btn btn-outline-primary" onClick={this.handleShowModal3}>
+                                            Dịa chỉ 
+                                        </Button>
+                                        <Modal show={this.state.showModal3} onHide={this.handleCloseModal3} backdrop="static" dialogClassName="custom-modal-size">
+                                            <Modal.Header closeButton>
+                                                <Modal.Title>thông tin địa chỉ khách hàng</Modal.Title>
+                                            </Modal.Header>
+                                            <Modal.Body>
+
+                                                <div><div className="row">
+                                                    <div className="col-2 container">
+                                                        <button className="btn btn-primary " style={{ margin: 10 }} onClick={this.addKH}> Thêm khách hàng  </button>
+
+                                                        <input
+                                                            type="text"
+                                                            name="query"
+                                                            placeholder="Tìm kiếm"
+                                                            title="Enter search keyword"
+                                                            value={searchTermKH}
+                                                            onChange={this.handleSearchKH}
+                                                            onFocus={this.handleSearchFocusKH} // Thêm sự kiện onFocus
+                                                        />
+                                                    </div>
+
+                                                </div>
+                                                    <table className="table table-borderless datatable">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>STT</th>
+                                                                <th>Ảnh </th>
+                                                                <th>Tên Khách Hàng</th>
+                                                                <th>Số Điện Thoại</th>
+                                                                <th>Action</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            {
+                                                                this.state.diaChi.map(
                                                                     (taiKhoan, index) => {
                                                                         return (
                                                                             <tr key={taiKhoan.id}>
