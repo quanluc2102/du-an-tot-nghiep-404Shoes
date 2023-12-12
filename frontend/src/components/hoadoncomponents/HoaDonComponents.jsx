@@ -47,6 +47,7 @@ class HoaDonComponents extends Component {
         return _.filter(hoaDon, (item) => {
             // Combine the values of the columns you want to search in
             const searchValues = (
+                
                 (item.ten && item.ten !== null ? item.ten : "Khách lẻ") +
                 (item.maHoaDon) + (item.ngayTao) + (item.ghiChu) +
                 (item.sdt) + (item.taiKhoan && item.taiKhoan.maTaiKhoan) +
@@ -297,19 +298,7 @@ class HoaDonComponents extends Component {
                                                             className="form-check-input"
                                                         />
                                                         <label htmlFor="filterPending" className="form-check-label">Hủy  <span class="badge bg-danger translate-middle badge-number rounded-circle">{statusCounts["5"]}</span></label>
-                                                    </div>
-                                                    <div className="form-check form-check-inline">
-                                                        <input
-                                                            type="radio"
-                                                            id="filterPending"
-                                                            name="statusFilter"
-                                                            value="3"
-                                                            checked={this.state.searchTerm === "6"}
-                                                            onChange={() => this.handleStatusFilter("6")}
-                                                            className="form-check-input"
-                                                        />
-                                                        <label htmlFor="filterPending" className="form-check-label">Tại quầy<span class="badge bg-danger translate-middle badge-number rounded-circle">{statusCounts["6"]}</span></label>
-                                                    </div>
+                                                    </div>                
                                                 </div>
                                             </div>
                                         </div>
