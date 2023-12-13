@@ -15,13 +15,14 @@ function ProductList() {
             // const data = await SanPhamService.getSPActive();
 
             // const data = await SanPhamService.getSPPhanTrang(page);
-            const response = await fetch(`http://localhost:8080/san_pham/phan_trang?page=${page}`);
-            const data = await response.json();
-            console.log(data);
-            if (data.length === 0) {
+            // const response = await fetch(`http://localhost:8080/san_pham/phan_trang?page=${page}`);
+            // const data = await response.json();
+            const response1 = await fetch(`http://localhost:8080/san_pham/phan_trang_user?page=${page}`);
+            const data1 = await response1.json();
+            if (data1.length === 0) {
                 setHasMore(false);
             } else {
-                setListSP([...listSP, ...data.content]); // Assume your API returns an array of products
+                setListSP([...listSP, ...data1.content]); // Assume your API returns an array of products
                 setPage(page + 1);
             }
             // setListSP(data);
@@ -34,6 +35,10 @@ function ProductList() {
     const changeDetail = (id) =>{
         window.location.href=(`/product-detail/${id}`);
     }
+
+    const formatCurrency = (amount) => {
+        return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'VND' }).format(amount);
+    };
 
     useEffect(() => {
         const obse = new IntersectionObserver((enti) => {
@@ -173,7 +178,7 @@ function ProductList() {
                                         <h1 class="accordion-header " id="headingOne">
                                             <button class="accordion-button " type="button" data-bs-toggle="collapse"
                                                 data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                                                <strong class="font-monospace">TRẠNG THÁI</strong>
+                                                <strong class="font-monospace">DANH MỤC</strong>
                                             </button>
                                         </h1>
                                         <div id="collapseOne" class="accordion-collapse collapse show " aria-labelledby="headingOne"
@@ -183,7 +188,6 @@ function ProductList() {
                                                     <li class="list-group-item">Đang Bán</li>
                                                     <li class="list-group-item">Đang Giảm Giá</li>
                                                     <li class="list-group-item">Hết Hàng</li>
-                                                    <li class="list-group-item">Sắp Về</li>
                                                     <li class="list-group-item">Sắp Hết Hàng</li>
                                                 </ul>
                                             </div>
@@ -236,56 +240,6 @@ function ProductList() {
                                                     <li class="list-group-item">Nhật</li>
                                                     <li class="list-group-item">Pháp</li>
                                                     <li class="list-group-item">Trung Quốc</li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <hr />
-                                <div class="accordion" id="accordionExample4">
-                                    <div class="accordion-item border-0">
-                                        <h1 class="accordion-header" id="headingThree1">
-                                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree1"
-                                                aria-expanded="true" aria-controls="collapseThree1">
-                                                <strong class="font-monospace">MẠNG DI ĐỘNG</strong>
-                                            </button>
-                                        </h1>
-                                        <div id="collapseThree1" class="accordion-collapse collapse show" aria-labelledby="headingThree1"
-                                            data-bs-parent="#accordionExample4">
-                                            <div class="accordion-body">
-                                                <ul class="list-group list-group-flush">
-                                                    <li class="list-group-item">Viettel</li>
-                                                    <li class="list-group-item">Vinaphone</li>
-                                                    <li class="list-group-item">Mobifone</li>
-                                                    <li class="list-group-item">Vietnamobile</li>
-                                                    <li class="list-group-item">Gmobile</li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <hr />
-
-                                <div className="accordion" id="accordionExample6">
-                                    <div class="accordion-item border-0">
-                                        <h1 class="accordion-header" id="headingFour1">
-                                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour1"
-                                                aria-expanded="true" aria-controls="collapseFour1">
-                                                <strong class="font-monospace">CHẤT LIỆU</strong>
-                                            </button>
-                                        </h1>
-                                        <div id="collapseFour1" class="accordion-collapse collapse show"
-                                            aria-labelledby="headingFour1"
-                                            data-bs-parent="#accordionExample6">
-                                            <div class="accordion-body">
-                                                <ul class="list-group list-group-flush">
-                                                    <li class="list-group-item">Chất liệu 1</li>
-                                                    <li class="list-group-item">Chất liệu 2</li>
-                                                    <li class="list-group-item">Chất liệu 3</li>
-                                                    <li class="list-group-item">Chất liệu 4</li>
-                                                    <li class="list-group-item">Chất liệu 5</li>
                                                 </ul>
                                             </div>
                                         </div>
@@ -402,11 +356,11 @@ function ProductList() {
                                         {/* Display your products here */}
                                         {listSP.map((sp)=> (
                                             <div className="col-lg-4 mt-4 float-start" key={sp.id} onClick={()=>changeDetail(sp.id)}>
-                                                <div className="cardProductList text-start " >
+                                                <div className="cardProductList text-start" >
                                                     <div className="position-relative">
 
                                                         <img className="card-img-top"
-                                                             src={'/img/'+sp.anh}
+                                                             src={'/img/'+sp.anhBia}
                                                             // src={'/frontend/public/niceadmin/img/'+sp.anh}
                                                              alt="Title"
                                                              height={270}
@@ -421,10 +375,9 @@ function ProductList() {
                                                     <br/>
                                                     <div className="card-body text-center">
 
-                                                        <h4 className="card-title" style={{fontSize:22}}><strong>{sp.ten}</strong></h4>
-                                                        <h7 className="card-text">{sp.thuongHieu.ten}</h7>
-                                                        {/*<h5 className="card-text" style={{color:"red"}}>1.000.000 VND</h5>*/}
-
+                                                        <h4 className="card-title " style={{fontSize:22}}><strong>{sp.ten}</strong></h4>
+                                                        <h7 className="card-text">{sp.tenThuongHieu} | {sp.tenXuatXu} | {sp.tenDanhMuc}</h7>
+                                                        <h5 className="card-text" style={{color:"red"}}>{formatCurrency(sp.min===sp.max? (sp.max) : (<p>{sp.min} ~ {sp.max}</p> ))}</h5>
                                                     </div>
                                                 </div>
                                             </div>

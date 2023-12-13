@@ -108,11 +108,13 @@
     position: relative;
     transition: background-color 0.3s;
     border: 1px solid black;
+    border-radius: 10px;
 
 }
 
 .color-item:hover {
-    background-color: red;
+    background-color: gray;
+    color : white;
 }
 
 .color-item.selected::before {
@@ -124,6 +126,7 @@
     bottom: -3px;
     border: 3px solid orangered;
     box-sizing: border-box;
+    border-radius: 12px;
 }
 .color-item:not(.selected) {
     opacity: 0.5;

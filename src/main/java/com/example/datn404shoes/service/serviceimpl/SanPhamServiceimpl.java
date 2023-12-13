@@ -3,6 +3,7 @@ package com.example.datn404shoes.service.serviceimpl;
 import com.example.datn404shoes.entity.SanPham;
 import com.example.datn404shoes.helper.SanPhamExcelSave;
 import com.example.datn404shoes.repository.SanPhamRespository;
+import com.example.datn404shoes.request.SanPhamUserCustom;
 import com.example.datn404shoes.service.SanPhamService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -59,6 +60,11 @@ public class SanPhamServiceimpl implements SanPhamService {
     @Override
     public Page<SanPham> phanTrangNew(int page) {
         return sanPhamRespository.findAll(PageRequest.of(page,6));
+    }
+
+    @Override
+    public Page<SanPhamUserCustom> phanTrangUser(int page) {
+        return sanPhamRespository.findAllKhoangGia(PageRequest.of(page,6));
     }
 
     @Override

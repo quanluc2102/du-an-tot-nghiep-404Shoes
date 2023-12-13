@@ -353,7 +353,7 @@ function ProductDetail({ match }) {
                                                 className={`color-item ${ms.id === selectedMauSac.id ? 'selected' : ''}`}
                                                 // style={{ backgroundColor: color }}
                                                 onClick={() => handleMauSacClick(ms)}
-                                            ><label>{ms.ten}</label></div>
+                                            ><label style={{alignContent:"center"}}>{ms.ten}</label></div>
                                         )
 
                                     ))}
@@ -427,11 +427,6 @@ function ProductDetail({ match }) {
                                         <a className="btn btn-success btn-lg" style={{width: '100%'}} onClick={()=>addGioHang()}><strong>THÊM
                                             VÀO GIỎ
                                             HÀNG</strong></a>
-                                    </div>
-
-                                    <div className="col-12 mt-2">
-                                        <a href="#" className="btn btn-warning btn-lg" style={{width: '100%'}}><strong>THANH
-                                            TOÁN</strong></a>
                                     </div>
                                 </div>
                             </div>
