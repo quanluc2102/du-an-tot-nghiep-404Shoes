@@ -138,18 +138,28 @@ function ProductList() {
 
                                     </li>
                                     <li className="nav-item px-1 py-1">
-                                        <Link to='product-list' style={{ textDecoration: 'none', fontWeight: 'bold', fontSize: '1.1em' }}>
+                                        <Link to='/product-list' style={{ textDecoration: 'none', fontWeight: 'bold', fontSize: '1.1em' }}>
                                             <a className="nav-link text-uppercase">SẢN PHẨM</a>
                                         </Link>
                                     </li>
                                     <li className="nav-item px-1 py-1">
-                                        <Link to='product-list' style={{ textDecoration: 'none', fontWeight: 'bold', fontSize: '1.1em' }}>
+                                        <Link to='/product-list' style={{ textDecoration: 'none', fontWeight: 'bold', fontSize: '1.1em' }}>
                                             <a className="nav-link text-uppercase">BÀI VIẾT</a>
                                         </Link>
                                     </li>
                                     <li className="nav-item px-1 py-1">
-                                        <Link to='product-list' style={{ textDecoration: 'none', fontWeight: 'bold', fontSize: '1.1em' }}>
+                                        <Link to='/product-list' style={{ textDecoration: 'none', fontWeight: 'bold', fontSize: '1.1em' }}>
                                             <a className="nav-link text-uppercase">LIÊN HỆ</a>
+                                        </Link>
+                                    </li>
+                                    <li className="nav-item px-1 py-1">
+                                        <Link to='/product-list' style={{ textDecoration: 'none', fontWeight: 'bold', fontSize: '1.1em' }}>
+                                            <a className="nav-link text-uppercase">TRA CỨU ĐƠN HÀNG</a>
+                                        </Link>
+                                    </li>
+                                    <li className="nav-item px-1 py-1">
+                                        <Link to='/product-list' style={{ textDecoration: 'none', fontWeight: 'bold', fontSize: '1.1em' }}>
+                                            <a className="nav-link text-uppercase">VỀ CHÚNG TÔI</a>
                                         </Link>
                                     </li>
                                     <li className="nav-item px-1 py-1" style={{ marginLeft: '65px' }}>

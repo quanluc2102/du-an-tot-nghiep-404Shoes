@@ -170,34 +170,39 @@ function Cart({ match }) {
                             <ul className="navbar-nav mx-auto text-center">
                                 <li className="nav-item px-1 py-1">
 
-                                    <Link to='/'
-                                          style={{textDecoration: 'none', fontWeight: 'bold', fontSize: '1.1em'}}>
+                                    <Link to='/' style={{ textDecoration: 'none', fontWeight: 'bold', fontSize: '1.1em' }}>
                                         <a className="nav-link text-uppercase">TRANG CHỦ</a>
                                     </Link>
 
                                 </li>
                                 <li className="nav-item px-1 py-1">
-                                    <Link to='product-list'
-                                          style={{textDecoration: 'none', fontWeight: 'bold', fontSize: '1.1em'}}>
+                                    <Link to='/product-list' style={{ textDecoration: 'none', fontWeight: 'bold', fontSize: '1.1em' }}>
                                         <a className="nav-link text-uppercase">SẢN PHẨM</a>
                                     </Link>
                                 </li>
                                 <li className="nav-item px-1 py-1">
-                                    <Link to='product-list'
-                                          style={{textDecoration: 'none', fontWeight: 'bold', fontSize: '1.1em'}}>
+                                    <Link to='/product-list' style={{ textDecoration: 'none', fontWeight: 'bold', fontSize: '1.1em' }}>
                                         <a className="nav-link text-uppercase">BÀI VIẾT</a>
                                     </Link>
                                 </li>
                                 <li className="nav-item px-1 py-1">
-                                    <Link to='product-list'
-                                          style={{textDecoration: 'none', fontWeight: 'bold', fontSize: '1.1em'}}>
+                                    <Link to='/product-list' style={{ textDecoration: 'none', fontWeight: 'bold', fontSize: '1.1em' }}>
                                         <a className="nav-link text-uppercase">LIÊN HỆ</a>
                                     </Link>
                                 </li>
-                                <li className="nav-item px-1 py-1" style={{marginLeft: '65px'}}>
+                                <li className="nav-item px-1 py-1">
+                                    <Link to='/product-list' style={{ textDecoration: 'none', fontWeight: 'bold', fontSize: '1.1em' }}>
+                                        <a className="nav-link text-uppercase">TRA CỨU ĐƠN HÀNG</a>
+                                    </Link>
+                                </li>
+                                <li className="nav-item px-1 py-1">
+                                    <Link to='/product-list' style={{ textDecoration: 'none', fontWeight: 'bold', fontSize: '1.1em' }}>
+                                        <a className="nav-link text-uppercase">VỀ CHÚNG TÔI</a>
+                                    </Link>
+                                </li>
+                                <li className="nav-item px-1 py-1" style={{ marginLeft: '65px' }}>
                                     <form className="d-flex">
-                                        <input className="form-control me-2" type="search" placeholder="Tìm kiếm..."
-                                               aria-label="Search" style={{width: '200px'}}/>
+                                        <input className="form-control me-2" type="search" placeholder="Tìm kiếm..." aria-label="Search" style={{ width: '200px' }} />
                                         <button className="btn btn-outline-success" type="submit">Search</button>
                                     </form>
                                 </li>
