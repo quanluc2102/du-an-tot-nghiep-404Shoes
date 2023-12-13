@@ -318,6 +318,24 @@ class ThongKeService {
             });
     }
 
+
+    toc_do_tang_truong_ngay() {
+        const url = `${API_BASE_URL}/toc_do_tang_truong_ngay`;
+
+        return axios.get(url)
+            .then(response => {
+                // Lọc dữ liệu từ bản ghi thứ hai trở đi
+                const dataFromSecondRecordOnward = response.data.slice(1);
+
+                return dataFromSecondRecordOnward;
+            })
+            .catch(error => {
+                console.error("Error in toc_do_tang_truong_san_pham:", error);
+                throw error;
+            });
+    }
+
+
     toc_do_tang_truong_san_pham() {
         const url = `${API_BASE_URL}/toc_do_tang_truong_san_pham_nam`;
 
@@ -334,6 +352,39 @@ class ThongKeService {
             });
     }
 
+
+    toc_do_tang_truong_san_pham_thang() {
+        const url = `${API_BASE_URL}/toc_do_tang_truong_san_pham_thang`;
+
+        return axios.get(url)
+            .then(response => {
+                // Lọc dữ liệu từ bản ghi thứ hai trở đi
+                const dataFromSecondRecordOnward = response.data.slice(1);
+
+                return dataFromSecondRecordOnward;
+            })
+            .catch(error => {
+                console.error("Error in toc_do_tang_truong_san_pham:", error);
+                throw error;
+            });
+    }
+
+
+    toc_do_tang_truong_san_pham_ngay() {
+        const url = `${API_BASE_URL}/toc_do_tang_truong_san_pham_ngay`;
+
+        return axios.get(url)
+            .then(response => {
+                // Lọc dữ liệu từ bản ghi thứ hai trở đi
+                const dataFromSecondRecordOnward = response.data.slice(1);
+
+                return dataFromSecondRecordOnward;
+            })
+            .catch(error => {
+                console.error("Error in toc_do_tang_truong_san_pham:", error);
+                throw error;
+            });
+    }
 
 }
 

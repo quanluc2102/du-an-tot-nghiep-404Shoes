@@ -1,5 +1,5 @@
 import React, {Fragment, useEffect, useState} from 'react'
-import { useParams } from 'react-router-dom';
+import { useParams ,useHistory} from 'react-router-dom';
 import {toast} from "react-toastify";
 import './style.css'
 import { Link } from 'react-router-dom/cjs/react-router-dom'
@@ -117,7 +117,7 @@ function Cart({ match }) {
     }
 
     const tinhTongTien = () =>{
-        const tongTien = listSPCTSelected.reduce((total, spct) => {
+        const tongTien = SPCT.reduce((total, spct) => {
             return total + spct.sanPhamChiTietId.donGia * spct.soLuong;
         }, 0);
         return tongTien;
@@ -170,34 +170,39 @@ function Cart({ match }) {
                             <ul className="navbar-nav mx-auto text-center">
                                 <li className="nav-item px-1 py-1">
 
-                                    <Link to='/'
-                                          style={{textDecoration: 'none', fontWeight: 'bold', fontSize: '1.1em'}}>
+                                    <Link to='/' style={{ textDecoration: 'none', fontWeight: 'bold', fontSize: '1.1em' }}>
                                         <a className="nav-link text-uppercase">TRANG CHỦ</a>
                                     </Link>
 
                                 </li>
                                 <li className="nav-item px-1 py-1">
-                                    <Link to='product-list'
-                                          style={{textDecoration: 'none', fontWeight: 'bold', fontSize: '1.1em'}}>
+                                    <Link to='/product-list' style={{ textDecoration: 'none', fontWeight: 'bold', fontSize: '1.1em' }}>
                                         <a className="nav-link text-uppercase">SẢN PHẨM</a>
                                     </Link>
                                 </li>
                                 <li className="nav-item px-1 py-1">
-                                    <Link to='product-list'
-                                          style={{textDecoration: 'none', fontWeight: 'bold', fontSize: '1.1em'}}>
+                                    <Link to='/product-list' style={{ textDecoration: 'none', fontWeight: 'bold', fontSize: '1.1em' }}>
                                         <a className="nav-link text-uppercase">BÀI VIẾT</a>
                                     </Link>
                                 </li>
                                 <li className="nav-item px-1 py-1">
-                                    <Link to='product-list'
-                                          style={{textDecoration: 'none', fontWeight: 'bold', fontSize: '1.1em'}}>
+                                    <Link to='/product-list' style={{ textDecoration: 'none', fontWeight: 'bold', fontSize: '1.1em' }}>
                                         <a className="nav-link text-uppercase">LIÊN HỆ</a>
                                     </Link>
                                 </li>
-                                <li className="nav-item px-1 py-1" style={{marginLeft: '65px'}}>
+                                <li className="nav-item px-1 py-1">
+                                    <Link to='/product-list' style={{ textDecoration: 'none', fontWeight: 'bold', fontSize: '1.1em' }}>
+                                        <a className="nav-link text-uppercase">TRA CỨU ĐƠN HÀNG</a>
+                                    </Link>
+                                </li>
+                                <li className="nav-item px-1 py-1">
+                                    <Link to='/product-list' style={{ textDecoration: 'none', fontWeight: 'bold', fontSize: '1.1em' }}>
+                                        <a className="nav-link text-uppercase">VỀ CHÚNG TÔI</a>
+                                    </Link>
+                                </li>
+                                <li className="nav-item px-1 py-1" style={{ marginLeft: '65px' }}>
                                     <form className="d-flex">
-                                        <input className="form-control me-2" type="search" placeholder="Tìm kiếm..."
-                                               aria-label="Search" style={{width: '200px'}}/>
+                                        <input className="form-control me-2" type="search" placeholder="Tìm kiếm..." aria-label="Search" style={{ width: '200px' }} />
                                         <button className="btn btn-outline-success" type="submit">Search</button>
                                     </form>
                                 </li>
@@ -211,62 +216,72 @@ function Cart({ match }) {
                   data-bs-target="#nav-example" data-bs-smooth-scroll="true" tabIndex="0">
                 <div className="content" id="div1">
                     <div className="row container">
-                        <div className="col-8 content-left bg-light pt-3">
+                        <div className="col-8 content-left bg-white pt-3">
                             <h1 style={{display: 'flex'}}><strong>GIỎ HÀNG</strong></h1>
                             <hr/>
-                            {SPCT.map((spct, index) => (
-                                <div className="the-san-pham my-3 position-relative" key={spct.id}>
-                                    <div className="row">
+                            {SPCT.length===0?(
+                                    <div>
+                                        <img src={"/img/GioHangTrong.png"} width="500px"
+                                             height="auto"
+                                        style={{marginLeft:150}}/>
+                                        <hr className="dashed-hr"/>
+                                    </div>
 
-                                        <div className="col-1" style={{}}>
-                                            <input type="checkbox" className="btn-check" id={spct.id}
-                                                   autoComplete="off" onChange={(e)=>chonSPCT(spct)}/>
-                                            <label className="btn btn-outline-primary" htmlFor={spct.id}>✔</label>
-                                            <button className="btn btn-outline-danger" style={{width:40,marginTop:10}} onClick={()=>xoaDon(spct.id)}>X</button>
-                                        </div>
 
-                                        <div className="col-4">
-                                            <img
-                                                src={'/img/'+spct.sanPhamChiTietId.anh}
-                                                width="200px"
-                                                height="200px" alt="ảnh sản phẩm"/>
-                                        </div>
-                                        <div className="col-7">
-                                            <div className="row mb-6">
-                                                <h4 style={{display: 'flex'}}>
-                                                    <strong>{spct.sanPhamChiTietId.sanPham.ten}</strong>
-                                                </h4>
-                                                <div style={{display: 'flex'}} className="col-6">
-                                                    <span style={{color:"red"}}><strong style={{color:"black"}}>Giá : </strong> {formatCurrency(spct.sanPhamChiTietId.donGia)} </span></div>
-                                                <div style={{display: 'flex'}} className="col-6">
-                                                    <span><strong>Size</strong> : {spct.sanPhamChiTietId.kichThuoc.giaTri}</span></div>
-                                                <div style={{display: 'flex'}} className="col-6">
-                                                    <span style={{color:"red"}}><strong style={{color:"black"}}>Đơn giá : </strong> {formatCurrency(spct.sanPhamChiTietId.donGia * spct.soLuong)} </span></div>
-                                                <div style={{display: 'flex'}} className="col-6">
-                                                    <span><strong>Màu</strong> : {spct.sanPhamChiTietId.mauSac.ten}</span></div>
+                            ):(
+                                <div>{SPCT.map((spct, index) => (
+                                    <div className="the-san-pham my-3 position-relative" key={spct.id}>
+                                        <div className="row">
+
+                                            <div className="col-1" style={{}}>
+                                                <input type="checkbox" className="btn-check" id={spct.id}
+                                                       autoComplete="off" onChange={(e)=>chonSPCT(spct)}/>
+                                                <label className="btn btn-outline-primary" htmlFor={spct.id}>✔</label>
+                                                <button className="btn btn-outline-danger" style={{width:40,marginTop:10}} onClick={()=>xoaDon(spct.id)}>X</button>
                                             </div>
 
-                                            <br/>
-                                            <div className="row ">
-                                                <div className="col-4">
-                                                    <div className="form-floating mb-3 border-1">
-                                                        <input type="number" className="form-control" min="1"
-                                                               name="formId1" id="formId1"
-                                                               value={spct.soLuong}
-                                                               onChange={(e) => thayDoiSoLuong(spct.id,parseInt(e.target.value, 10))}
-                                                               placeholder="Số Lượng"/>
-                                                        <label htmlFor="formId1" className="font-monospace"><strong>Số
-                                                            Lượng :</strong></label>
-                                                    </div>
+                                            <div className="col-4">
+                                                <img
+                                                    src={'/img/'+spct.sanPhamChiTietId.anh}
+                                                    width="200px"
+                                                    height="200px" alt="ảnh sản phẩm"/>
+                                            </div>
+                                            <div className="col-7">
+                                                <div className="row mb-6">
+                                                    <h4 style={{display: 'flex'}}>
+                                                        <strong>{spct.sanPhamChiTietId.sanPham.ten}</strong>
+                                                    </h4>
+                                                    <div style={{display: 'flex'}} className="col-6">
+                                                        <span style={{color:"red"}}><strong style={{color:"black"}}>Giá : </strong> {formatCurrency(spct.sanPhamChiTietId.donGia)} </span></div>
+                                                    <div style={{display: 'flex'}} className="col-6">
+                                                        <span><strong>Size</strong> : {spct.sanPhamChiTietId.kichThuoc.giaTri}</span></div>
+                                                    <div style={{display: 'flex'}} className="col-6">
+                                                        <span style={{color:"red"}}><strong style={{color:"black"}}>Đơn giá : </strong> {formatCurrency(spct.sanPhamChiTietId.donGia * spct.soLuong)} </span></div>
+                                                    <div style={{display: 'flex'}} className="col-6">
+                                                        <span><strong>Màu</strong> : {spct.sanPhamChiTietId.mauSac.ten}</span></div>
                                                 </div>
 
+                                                <br/>
+                                                <div className="row ">
+                                                    <div className="col-4">
+                                                        <div className="form-floating mb-3 border-1">
+                                                            <input type="number" className="form-control" min="1"
+                                                                   name="formId1" id="formId1"
+                                                                   value={spct.soLuong}
+                                                                   onChange={(e) => thayDoiSoLuong(spct.id,parseInt(e.target.value, 10))}
+                                                                   placeholder="Số Lượng"/>
+                                                            <label htmlFor="formId1" className="font-monospace"><strong>Số
+                                                                Lượng :</strong></label>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                            ))}
-                            <hr className="dashed-hr"/>
-
+                                ))}
+                                    <hr className="dashed-hr"/></div>
+                                )}
                             <button className="btn btn-danger" style={{marginLeft: '0em', width: '25%'}} onClick={()=>xoaNhieu()}>Xóa ({listSPCTSelected.length})</button>
                             <button className="btn btn-primary" style={{marginLeft: '5px', width: '25%'}}>Tiếp tục mua
                                 hàng
@@ -278,7 +293,7 @@ function Cart({ match }) {
                         <div className="col-4 content-right bg-light pt-3">
                             <h1><strong>SẢN PHẨM</strong></h1>
                             <hr/>
-                            {listSPCTSelected.map((spct, index) => (
+                            {SPCT.map((spct, index) => (
                                 <div className="row mb-4 border py-2">
                                     <div className="col-8">
                                         <h5><strong>{spct.sanPhamChiTietId.sanPham.ten} + {spct.sanPhamChiTietId.mauSac.ten}</strong></h5>
@@ -315,12 +330,15 @@ function Cart({ match }) {
 
 
                                 <div className={`col-12 mt-2 ${listSPCTSelected.length === 0 ? 'disabled' : ''}`}>
-                                    <a href={listSPCTSelected.length === 0 ? '#' : '/check-out'}
+                                    <Link to={{
+                                        pathname: SPCT.length===0 ? `/your-cart/${match.params.id}` : `/check-out/${match.params.id}`,
+                                        state: { listSPCTSelected, SPCT },
+                                    }}
                                        className={`btn btn-warning btn-lg`}
                                        style={{width: '100%'}}
-                                       disabled={listSPCTSelected.length === 0}><strong>TIẾP
+                                       disabled={SPCT.length === 0 ? true : false}><strong>TIẾP
                                         TỤC THANH
-                                        TOÁN</strong></a>
+                                        TOÁN</strong></Link>
                                 </div>
                             </div>
                         </div>

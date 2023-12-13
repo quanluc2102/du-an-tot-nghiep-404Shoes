@@ -25,7 +25,7 @@ function App() {
         <Route path='/product-detail/:id' component={ProductDetail} />
         <Route path='/user-info' component={UserInformation} />
         <Route path='/payment' component={Payment}/>
-        <Route path='/check-out' component={CheckOut} />
+        <Route path='/check-out/:id' component={CheckOut} />
         <Route path='*' component={ErrorPage} />
       </Switch>
     </Router>

@@ -64,8 +64,6 @@ public interface ThongKeRepository extends JpaRepository<HoaDon, Long> {
     Long countHoaDonNam();
 
 
-
-
     @Query("SELECT COUNT(hd) FROM HoaDon hd WHERE CAST(hd.ngayTao AS DATE) = CURRENT_DATE AND hd.trangThai=5")
     Long countHoaDonHuyNgay();
 
@@ -200,6 +198,45 @@ public interface ThongKeRepository extends JpaRepository<HoaDon, Long> {
     List<Object[]> tocDoTangTruongThang();
 
 
+
+    @Query(value = "\n" +
+            "WITH TongDoanhThu AS (\n" +
+            "    SELECT\n" +
+            "        CONVERT(DATE, hd.ngay_tao) AS ngay,\n" +
+            "        SUM(hdct.so_luong * spct.don_gia) AS doanh_thu\n" +
+            "    FROM hoa_don hd\n" +
+            "    JOIN hoa_don_chi_tiet hdct ON hd.id = hdct.hoa_don_id\n" +
+            "    JOIN san_pham_chi_tiet spct ON hdct.san_pham_chi_tiet_id = spct.id\n" +
+            "    WHERE CONVERT(DATE, hd.ngay_tao) IN (CONVERT(DATE, GETDATE()), DATEADD(DAY, -1, CONVERT(DATE, GETDATE())))\n" +
+            "    GROUP BY CONVERT(DATE, hd.ngay_tao)\n" +
+            ")\n" +
+            "SELECT\n" +
+            "    ngay,\n" +
+            "    SUM(doanh_thu) AS doanh_thu,\n" +
+            "    LAG(SUM(doanh_thu)) OVER (ORDER BY ngay) AS doanh_thu_ngay_truoc,\n" +
+            "    CASE\n" +
+            "        WHEN LAG(SUM(doanh_thu)) OVER (ORDER BY ngay) IS NULL THEN 'N/A'\n" +
+            "        WHEN SUM(doanh_thu) > LAG(SUM(doanh_thu)) OVER (ORDER BY ngay) THEN 'Tang'\n" +
+            "        WHEN SUM(doanh_thu) < LAG(SUM(doanh_thu)) OVER (ORDER BY ngay) THEN 'Giam'\n" +
+            "        ELSE 'Không đổi'\n" +
+            "    END AS trang_thai_tang_truong,\n" +
+            "    CASE\n" +
+            "        WHEN LAG(SUM(doanh_thu)) OVER (ORDER BY ngay) IS NULL THEN 'N/A'\n" +
+            "        ELSE CONCAT(\n" +
+            "            ROUND(((SUM(doanh_thu) - LAG(SUM(doanh_thu)) OVER (ORDER BY ngay)) / ABS(LAG(SUM(doanh_thu)) OVER (ORDER BY ngay))) * 100, 2),\n" +
+            "            '%'\n" +
+            "        )\n" +
+            "    END AS phan_tram_tang_truong\n" +
+            "FROM TongDoanhThu\n" +
+            "WHERE ngay IN (CONVERT(DATE, GETDATE()), DATEADD(DAY, -1, CONVERT(DATE, GETDATE())))\n" +
+            "GROUP BY ngay\n" +
+            "ORDER BY ngay;\n", nativeQuery = true)
+    List<Object[]> tocDoTangTruongNgay();
+
+
+
+
+
     @Query(value = "\n" +
             "WITH TongSoLuongDaBan AS (\n" +
             "    SELECT\n" +
@@ -231,5 +268,74 @@ public interface ThongKeRepository extends JpaRepository<HoaDon, Long> {
             "GROUP BY nam\n" +
             "ORDER BY nam;\n", nativeQuery = true)
     List<Object[]> tocDoTangTruongSanPhamTheoNam();
+
+    @Query(value = "\n" +
+            "\n" +
+            "WITH TongSoLuongDaBan AS (\n" +
+            "    SELECT\n" +
+            "        YEAR(hd.ngay_tao) AS nam,\n" +
+            "        MONTH(hd.ngay_tao) AS thang,\n" +
+            "        SUM(hdct.so_luong) AS so_luong_da_ban\n" +
+            "    FROM hoa_don hd\n" +
+            "    JOIN hoa_don_chi_tiet hdct ON hd.id = hdct.hoa_don_id\n" +
+            "    JOIN san_pham_chi_tiet spct ON hdct.san_pham_chi_tiet_id = spct.id\n" +
+            "    WHERE YEAR(hd.ngay_tao) = YEAR(GETDATE()) AND MONTH(hd.ngay_tao) IN (MONTH(GETDATE()), MONTH(GETDATE()) - 1)\n" +
+            "    GROUP BY YEAR(hd.ngay_tao), MONTH(hd.ngay_tao)\n" +
+            ")\n" +
+            "SELECT\n" +
+            "    thang,\n" +
+            "    SUM(so_luong_da_ban) AS tong_so_luong_da_ban,\n" +
+            "    LAG(SUM(so_luong_da_ban)) OVER (ORDER BY thang) AS tong_so_luong_da_ban_thang_truoc,\n" +
+            "    CASE\n" +
+            "        WHEN LAG(SUM(so_luong_da_ban)) OVER (ORDER BY thang) IS NULL THEN 'N/A'\n" +
+            "        WHEN SUM(so_luong_da_ban) > LAG(SUM(so_luong_da_ban)) OVER (ORDER BY thang) THEN 'Tăng'\n" +
+            "        ELSE 'Giảm'\n" +
+            "    END AS trang_thai_tang_truong,\n" +
+            "    CASE\n" +
+            "        WHEN LAG(SUM(so_luong_da_ban)) OVER (ORDER BY  thang) IS NULL THEN 'N/A'\n" +
+            "        ELSE CONCAT(\n" +
+            "            ROUND(((SUM(so_luong_da_ban) - LAG(SUM(so_luong_da_ban)) OVER (ORDER BY thang)) / COALESCE(LAG(SUM(so_luong_da_ban)) OVER (ORDER BY thang), 1)) * 100, 2),\n" +
+            "            '%'\n" +
+            "        )\n" +
+            "    END AS phan_tram_tang_truong\n" +
+            "FROM TongSoLuongDaBan\n" +
+            "WHERE thang IN (MONTH(GETDATE()), MONTH(GETDATE()) - 1)\n" +
+            "GROUP BY  thang\n" +
+            "ORDER BY  thang;\n", nativeQuery = true)
+    List<Object[]> tocDoTangTruongSanPhamTheoThang();
+
+    @Query(value = "\n" +
+            "WITH TongSoLuongDaBan AS (\n" +
+            "    SELECT\n" +
+            "        CONVERT(DATE, hd.ngay_tao) AS ngay,\n" +
+            "        SUM(hdct.so_luong) AS so_luong_da_ban\n" +
+            "    FROM hoa_don hd\n" +
+            "    JOIN hoa_don_chi_tiet hdct ON hd.id = hdct.hoa_don_id\n" +
+            "    JOIN san_pham_chi_tiet spct ON hdct.san_pham_chi_tiet_id = spct.id\n" +
+            "    WHERE CONVERT(DATE, hd.ngay_tao) IN (CONVERT(DATE, GETDATE()), DATEADD(DAY, -1, CONVERT(DATE, GETDATE())))\n" +
+            "    GROUP BY CONVERT(DATE, hd.ngay_tao)\n" +
+            ")\n" +
+            "SELECT\n" +
+            "    ngay,\n" +
+            "    SUM(so_luong_da_ban) AS tong_so_luong_da_ban,\n" +
+            "    LAG(SUM(so_luong_da_ban)) OVER (ORDER BY ngay) AS tong_so_luong_da_ban_ngay_truoc,\n" +
+            "    CASE\n" +
+            "        WHEN LAG(SUM(so_luong_da_ban)) OVER (ORDER BY ngay) IS NULL THEN 'N/A'\n" +
+            "        WHEN SUM(so_luong_da_ban) > LAG(SUM(so_luong_da_ban)) OVER (ORDER BY ngay) THEN 'Tang'\n" +
+            "        WHEN SUM(so_luong_da_ban) < LAG(SUM(so_luong_da_ban)) OVER (ORDER BY ngay) THEN 'Giam'\n" +
+            "        ELSE 'Không đổi'\n" +
+            "    END AS trang_thai_tang_truong,\n" +
+            "    CASE\n" +
+            "        WHEN LAG(SUM(so_luong_da_ban)) OVER (ORDER BY ngay) IS NULL THEN 'N/A'\n" +
+            "        ELSE CONCAT(\n" +
+            "            ROUND(((LAG(SUM(so_luong_da_ban)) OVER (ORDER BY ngay) - SUM(so_luong_da_ban)) / LAG(SUM(so_luong_da_ban)) OVER (ORDER BY ngay)) * 100, 2),\n" +
+            "            '%'\n" +
+            "        )\n" +
+            "    END AS phan_tram_tang_truong\n" +
+            "FROM TongSoLuongDaBan\n" +
+            "WHERE ngay IN (CONVERT(DATE, GETDATE()), DATEADD(DAY, -1, CONVERT(DATE, GETDATE())))\n" +
+            "GROUP BY ngay\n" +
+            "ORDER BY ngay;\n", nativeQuery = true)
+    List<Object[]> tocDoTangTruongSanPhamTheoNgay();
 
 }

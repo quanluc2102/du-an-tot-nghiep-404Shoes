@@ -1,9 +1,9 @@
 package com.example.datn404shoes.controller;
 
 import com.example.datn404shoes.entity.*;
-import com.example.datn404shoes.repository.GioHangChiTietRepository;
-import com.example.datn404shoes.repository.GioHangRepository;
+import com.example.datn404shoes.repository.*;
 import com.example.datn404shoes.request.AddGioHangRequest;
+import com.example.datn404shoes.request.HoaDonUserRequest;
 import com.example.datn404shoes.service.serviceimpl.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +14,7 @@ import java.sql.Date;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @CrossOrigin(origins = {"http://localhost:3000","http://localhost:3006"})
 @RestController
@@ -25,15 +26,25 @@ public class MuaHangController {
     @Autowired
     HoaDonImpl hoaDonImpl;
     @Autowired
+    HoaDonRepository hoaDonRepository;
+    @Autowired
     GioHangServiceImpl gioHangService;
     @Autowired
     GioHangRepository gioHangRepository;
     @Autowired
     GioHangChiTietServiceImpl gioHangChiTietService;
     @Autowired
+    DiaChiResponsitory diaChiResponsitory;
+    @Autowired
     TaiKhoanServiceimpl taiKhoanServiceimpl;
     @Autowired
     SanPhamChiTietServiceimpl sanPhamChiTietServiceimpl;
+    @Autowired
+    SanPhamChiTietRepository sanPhamChiTietRepository;
+    @Autowired
+    KhuyenMaiServiceImpl khuyenMaiService;
+    @Autowired
+    KhuyenMaiRepository khuyenMaiRepository;
     @Autowired
     GioHangChiTietRepository gioHangChiTietRepository;
 
@@ -117,6 +128,61 @@ public class MuaHangController {
 
             }
             gioHangChiTietRepository.save(gioHangChiTietCo);
+        }
+        return ResponseEntity.ok("Thêm thành công");
+    }
+
+    @PostMapping("sold")
+    public ResponseEntity<?> sold( @RequestBody HoaDonUserRequest hoaDonUserRequest){
+        long countHD = hoaDonImpl.countHoaDons();
+        HoaDon hoaDon = new HoaDon();
+        hoaDon.setMaHoaDon("HD00"+countHD);
+        hoaDon.setNgayTao(Date.valueOf(LocalDate.now()));
+        hoaDon.setTrangThai(0);
+        hoaDon.setGhiChu(hoaDonUserRequest.getGhiChu());
+        hoaDon.setTaiKhoanKhachHang(taiKhoanServiceimpl.getOne(hoaDonUserRequest.getTaiKhoanId()));
+        if(hoaDonUserRequest.getKm()==0){
+
+        }else{
+            KhuyenMai km = khuyenMaiService.findOne(hoaDonUserRequest.getKm());
+            hoaDon.setKhuyenMai(km);
+            km.setSoLuong(km.getSoLuong()-1);
+            if(km.getSoLuong()<0){
+                km.setSoLuong(0);
+                km.setTrangThai(2);
+            }else if(km.getSoLuong()==0){
+                km.setTrangThai(2);
+            }
+            khuyenMaiRepository.save(km);
+        }
+        hoaDon.setThanhToan(ThanhToan.builder().id(hoaDonUserRequest.getThanhToanId()).build());
+        hoaDon.setKieuHoaDon(1);
+        hoaDon.setTongTien(Float.valueOf(hoaDonUserRequest.getTongTien()));
+        hoaDon.setPhiShip(Float.valueOf(hoaDonUserRequest.getTienShip()));
+        hoaDon.setTongTienSauGiam(Float.valueOf(hoaDonUserRequest.getTongTienSauKhiGiam()));
+        hoaDon.setTienGiam(Float.valueOf(hoaDonUserRequest.getTienGiam()));
+        Optional<DiaChi> diaChi = diaChiResponsitory.findById(hoaDonUserRequest.getDiaChiId());
+        hoaDon.setTen(diaChi.get().getTen());
+        hoaDon.setSdt(diaChi.get().getSdt());
+        TaiKhoan taiKhoan = taiKhoanServiceimpl.getOne(hoaDonUserRequest.getTaiKhoanId());
+        hoaDon.setEmail(taiKhoan.getEmail());
+        hoaDon.setDiaChiCuThe(diaChi.get().getDiaChiCuThe());
+        hoaDon.setTinhThanhPho(diaChi.get().getTinhThanhPho());
+        hoaDon.setQuanHuyen(diaChi.get().getQuanHuyen());
+        hoaDon.setXaPhuongThiTran(diaChi.get().getXaPhuongThiTran());
+        hoaDonRepository.save(hoaDon);
+        for(GioHangChiTiet ghct: hoaDonUserRequest.getGioHang()){
+            HoaDonChiTiet hdct = new HoaDonChiTiet();
+            hdct.setHd(hoaDon);
+            hdct.setSanPhamChiTiet(ghct.getSanPhamChiTietId());
+            hdct.setSoLuong(ghct.getSoLuong());
+            hoaDonChiTietimpl.addNewHDCT(hdct);
+            ghct.getSanPhamChiTietId().setSoLuong(ghct.getSanPhamChiTietId().getSoLuong()-ghct.getSoLuong());
+            if(ghct.getSanPhamChiTietId().getSoLuong()<0){
+                ghct.getSanPhamChiTietId().setSoLuong(0);
+            }
+            sanPhamChiTietRepository.save(ghct.getSanPhamChiTietId());
+            gioHangChiTietService.delete(ghct.getId());
         }
         return ResponseEntity.ok("Thêm thành công");
     }
