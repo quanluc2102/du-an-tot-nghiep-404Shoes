@@ -32,6 +32,7 @@ class BanHangOffline extends Component {
         super(props);
 
         this.state = {
+            idKhachHang:'',
             searchTerm: '',
             searchTermKH: '',
             selectedPromotions: [],
@@ -106,7 +107,8 @@ class BanHangOffline extends Component {
     componentDidMount() {
         const { tabProducts, activeTabKey,tabCustomers } = this.state;
         const selectedProducts = tabProducts[activeTabKey] || [];
-        const customers = tabCustomers[tabKey] || [];
+        
+        // const customers = tabCustomers[tabKey] || [];
         console.log(this.getTotalAmount(selectedProducts))
         BanHangService.getSPCT().then((res) => {
             this.setState({ sanPhamChiTiet: res.data })
@@ -123,13 +125,18 @@ class BanHangOffline extends Component {
         }).catch((error) => {
             console.error("Error fetching data:", error);
         });
-        BanHangService.getDC(customers.id).then((res) => {
+        BanHangService.getDC(this.idKhachHang).then((res) => {
+            console.log(this.idKhachHang)
             this.setState({ diaChi: res.data })
         }).catch((error) => {
             console.error("Error fetching data:", error);
         });
         this.fetchCities()
     }
+    idKhachHang(id) {
+        this.setState({khachHangId: id});
+                }
+            
     addKH(id) {
         window.location.href = '/addKhachHang';
 
@@ -553,7 +560,7 @@ class BanHangOffline extends Component {
         const { tabCustomers } = this.state;
         const customers = tabCustomers[tabKey] || [];
         const isCustomerExist = customers.length > 0;
-
+        this.idKhachHang(userId) 
         if (isCustomerExist) {
             this.setState({
                 tabCustomers: {
@@ -561,6 +568,9 @@ class BanHangOffline extends Component {
                     [tabKey]: [{ ...userId }],
                 },
             });
+
+           
+            // this.fetchCities()
 
             toast.success("Đã cập nhật thông tin khách hàng", { position: toast.POSITION.MID_RIGHT });
             this.handleCloseModal1();
@@ -574,7 +584,7 @@ class BanHangOffline extends Component {
                     [tabKey]: updatedCustomers,
                 },
             }));
-
+            
             toast.success("Đã thêm khách hàng mới", { position: toast.POSITION.MID_RIGHT });
             this.handleCloseModal1();
         }
@@ -632,7 +642,7 @@ class BanHangOffline extends Component {
     renderUserForTab = (tabKey) => {
         const { tabCustomers } = this.state;
         const customers = tabCustomers[tabKey] || [];
-
+       
         if (customers.length === 0) {
             return (
                 <tr key="no-customer">
@@ -642,11 +652,19 @@ class BanHangOffline extends Component {
         }
         return customers.map((customer, index) => {
             console.log('customer', customer)
+            BanHangService.getDC(customer.id).then((res) => {
+                console.log(customer.id)
+                this.setState({ diaChi: res.data })
+            }).catch((error) => {
+                console.error("Error fetching data:", error);
+            });
             return (
                 <div>
                     <div>
+                        
                         <label htmlFor="ten">Tên khách hàng:{customer.ten} </label> <br />
                         <label htmlFor="sdt">Số điện thoại:{customer.sdt}</label><br />
+                        <label htmlFor="diaChiCuthe">Địa chỉ cụ thể : </label> <input type="text" className="form control"/><br />
                         <label htmlFor="tinhThanhPho">Tỉnh/Thành phố:</label>
                         <select
                             className="form-control"
@@ -1235,23 +1253,22 @@ class BanHangOffline extends Component {
                                                         <thead>
                                                             <tr>
                                                                 <th>STT</th>
-                                                                <th>Ảnh </th>
-                                                                <th>Tên Khách Hàng</th>
-                                                                <th>Số Điện Thoại</th>
+                                                                <th>Tên </th>
+                                                                <th>Số điện thoại</th>
+                                                                <th>Địa chỉ</th>
                                                                 <th>Action</th>
                                                             </tr>
                                                         </thead>
                                                         <tbody>
                                                             {
                                                                 this.state.diaChi.map(
-                                                                    (taiKhoan, index) => {
+                                                                    (diaChi, index) => {
                                                                         return (
-                                                                            <tr key={taiKhoan.id}>
+                                                                            <tr key={diaChi.id}>
                                                                                 <td>{index + 1}</td>
-                                                                                <td>{taiKhoan.thongTinNguoiDung.ten}</td>
-                                                                                <td>{<img style={{ height: '60px', width: '60px', float: 'left' }} src={`/niceadmin/img/${taiKhoan.anh}`} />}</td>
-                                                                                <td>{taiKhoan.thongTinNguoiDung.sdt}</td>
-                                                                                <td><button onClick={() => this.handleAddUser(taiKhoan.thongTinNguoiDung, this.state.activeTabKey)} className="btn btn-outline-info">chọn</button></td>
+                                                                                <td>{diaChi.thongTinNguoiDung.ten}</td>
+                                                                                <td>{diaChi.diaChiCuThe}, {diaChi.xaPhuongThiTran}, {diaChi.quanHuyen},{diaChi.tinhThanhPho}</td>                                                                                              
+                                                                                <td><button onClick={() => this.handleAddUser(diaChi.thongTinNguoiDung, this.state.activeTabKey)} className="btn btn-outline-info">chọn</button></td>
                                                                             </tr>
                                                                         )
                                                                     }
