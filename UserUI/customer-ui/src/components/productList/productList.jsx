@@ -9,6 +9,9 @@ function ProductList() {
     const [hasMore, setHasMore] = useState(true);
     const [page, setPage] = useState(0);
     const [loading, setLoading] = useState(true);
+    const [listDM, setListDM] = useState([]);
+    const [listTH, setListTH] = useState([]);
+    const [listMS, setListMS] = useState([]);
     const fetchData = async () => {
         try {
             // Lấy danh sách sản phẩm và danh mục từ service.js
@@ -193,12 +196,12 @@ function ProductList() {
                                         </h1>
                                         <div id="collapseOne" class="accordion-collapse collapse show " aria-labelledby="headingOne"
                                             data-bs-parent="#accordionExample">
-                                            <div class="accordion-body">
-                                                <ul class="list-group list-group-flush">
-                                                    <li class="list-group-item">Đang Bán</li>
-                                                    <li class="list-group-item">Đang Giảm Giá</li>
-                                                    <li class="list-group-item">Hết Hàng</li>
-                                                    <li class="list-group-item">Sắp Hết Hàng</li>
+                                            <div className="accordion-body">
+                                                <ul className="list-group list-group-flush">
+                                                    <li className="list-group-item">Đang Bán</li>
+                                                    <li className="list-group-item">Đang Giảm Giá</li>
+                                                    <li className="list-group-item">Hết Hàng</li>
+                                                    <li className="list-group-item">Sắp Hết Hàng</li>
                                                 </ul>
                                             </div>
 
