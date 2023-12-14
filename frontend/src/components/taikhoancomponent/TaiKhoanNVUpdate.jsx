@@ -24,7 +24,6 @@ class TaiKhoanNVUpdate extends Component {
             files: null,
             showPassword: false,
             taiKhoanUpdate: {
-                maTaiKhoan: '',
                 email: '',
                 password: '',
                 anh: ''
@@ -47,7 +46,6 @@ class TaiKhoanNVUpdate extends Component {
                 cccd: '',
                 gioiTinh: '',
                 ngaySinh: '',
-                maTaiKhoan: '',
                 email: '',
                 password: null,
                 diaChiCuThe: '',
@@ -100,24 +98,189 @@ class TaiKhoanNVUpdate extends Component {
         this.fetchCities();
     }
 
+    kiemtra(){
+        console.log(this.state.quanHuyen);
+        console.log(this.state.diaChiCuThe);
+        console.log(this.state.tinhThanhPho);
+        console.log(this.state.diaChiCuThe);
 
+    }
     update = (e) => {
         e.preventDefault();
+
         let listFile = [];
+
+        if (!this.state.files || this.state.files.length === 0) {
+            this.setState({ errorUpdate: { ...this.state.errorUpdate, files: "Chọn ít nhất 1 ảnh!" } });
+            return;
+        } else {
+            // Reset error message if files are selected
+            this.setState({ errorUpdate: { ...this.state.errorUpdate, files: "" } });
+        }
         for (let i = 0; i < this.state.files.length; i++) {
             listFile.push(this.state.files[i].name);
-            const {taiKhoanUpdate, nguoiDungUpdate} = this.state;
-            const requestData = {
-                taiKhoan: taiKhoanUpdate,
-                thongTinNguoiDung: nguoiDungUpdate,
-                files: listFile,
-                diaChiCuThe: nguoiDungUpdate.diaChiCuThe,
-                tinhThanhPho: this.state.tinhThanhPho,
-                quanHuyen: this.state.quanHuyen,
-                xaPhuongThiTran: this.state.xaPhuongThiTran,
-            };
+        }
 
-            // Log the request data for debugging purposes
+        const {taiKhoanUpdate, nguoiDungUpdate} = this.state;
+        const requestData = {
+            taiKhoan: {
+                email : taiKhoanUpdate.email,
+            },
+            thongTinNguoiDung: {
+                ten: nguoiDungUpdate.ten,
+                cccd: nguoiDungUpdate.cccd,
+                sdt: nguoiDungUpdate.sdt,
+                gioiTinh: nguoiDungUpdate.gioiTinh,
+                ngaySinh: nguoiDungUpdate.ngaySinh,
+            },
+            files: listFile,
+            diaChiCuThe: nguoiDungUpdate.diaChiCuThe,
+            tinhThanhPho: this.state.tinhThanhPho,
+            quanHuyen: this.state.quanHuyen,
+            xaPhuongThiTran: this.state.xaPhuongThiTran,
+
+        };
+        console.log('nsx' + JSON.stringify(requestData));
+
+        if (listFile.length === 0) {
+            this.setState({error: {...this.state.errorUpdate, files: "Chọn ít nhất 1 ảnh !"}});
+            console.log('nsx' + JSON.stringify(requestData));
+            return;
+        } else {
+            this.setState({ error: { ...this.state.errorUpdate, files: "" } });
+        }
+
+        // Kiểm tra không được để trống
+        if (!nguoiDungUpdate.cccd.trim()) {
+            this.setState({ errorUpdate: { ...this.state.errorUpdate, cccd: "CCCD không được bỏ trống!" } });
+            return;
+        } else if (!/^\d+$/.test(nguoiDungUpdate.cccd)) {
+            // Kiểm tra là số nguyên
+            this.setState({ errorUpdate: { ...this.state.errorUpdate, cccd: "CCCD phải là số nguyên và không được chứa khoảng trắng !" } });
+            return;
+        } else if (nguoiDungUpdate.cccd.length !== 12) {
+            // Kiểm tra có đủ 12 số
+            this.setState({ errorUpdate: { ...this.state.errorUpdate, cccd: "CCCD phải có đủ 12 số!" } });
+            return;
+        } else if (this.state.nhanVienQuyen1.some(user => user.thongTinNguoiDung.cccd === nguoiDungUpdate.cccd)) {
+            // Kiểm tra trùng căn cước
+            this.setState({ errorUpdate: { ...this.state.errorUpdate, cccd: "CCCD đã tồn tại trong hệ thống!" } });
+            return;
+        } else {
+            this.setState({ errorUpdate: { ...this.state.errorUpdate, cccd: "" } });
+        }
+
+
+        //check ten
+        if (!nguoiDungUpdate.ten.trim()) {
+            this.setState({ errorUpdate: { ...this.state.errorUpdate, ten: "Tên không được bỏ trống!" } });
+            return;
+        } else if (!/^[\p{L}\s]+$/u.test(nguoiDungUpdate.ten)) {
+            this.setState({ errorUpdate: { ...this.state.errorUpdate, ten: "Tên chỉ được chứa chữ cái và không có kí tự đặc biệt!" } });
+            return;
+            // } else if (/\s/.test(nguoiDungAdd.ten)) {
+            //     this.setState({ errorAdd: { ...this.state.errorAdd, ten: "Tên không được chứa khoảng trắng!" } });
+            //     return;
+        } else {
+            this.setState({ errorUpdate: { ...this.state.errorUpdate, ten: "" } });
+        }
+
+        //check ngaySinh
+        const inputDate = new Date(nguoiDungUpdate.ngaySinh.trim());
+        const currentDate = new Date();
+
+        if (!nguoiDungUpdate.ngaySinh.trim()) {
+            this.setState({ errorUpdate: { ...this.state.errorUpdate, ngaySinh: "Ngày sinh không được bỏ trống!" } });
+            return;
+        } else if (inputDate > currentDate) {
+            this.setState({ errorUpdate: { ...this.state.errorUpdate, ngaySinh: "Không được lấy ngày sinh trong tương lai!" } });
+            return;
+        } else if (inputDate.toDateString() === currentDate.toDateString()) {
+            this.setState({ errorUpdate: { ...this.state.errorUpdate, ngaySinh: "Ngày sinh không được lấy ngày hiện tại!" } });
+            return;
+        } else {
+            this.setState({ errorUpdate: { ...this.state.errorUpdate, ngaySinh: "" } });
+        }
+        // check gioiTinh
+        if (nguoiDungUpdate.gioiTinh === null || nguoiDungUpdate.gioiTinh === undefined || nguoiDungUpdate.gioiTinh === "") {
+            this.setState({ errorUpdate: { ...this.state.errorUpdate, gioiTinh: "Giới tính không được bỏ trống !" } });
+            return;
+        } else {
+            this.setState({ errorUpdate: { ...this.state.errorUpdate, gioiTinh: "" } });
+        }
+        // check thanhPho
+        if (!this.state.tinhThanhPho.trim()) {
+            this.setState({ errorUpdate: { ...this.state.errorUpdate, tinhThanhPho: "Tỉnh/Thành phố không được bỏ trống!" } });
+            return;
+        } else {
+            this.setState({ errorUpdate: { ...this.state.errorUpdate, tinhThanhPho: "" } });
+        }
+        // check quanHuyen
+        if (!this.state.quanHuyen.trim()) {
+            this.setState({ errorUpdate: { ...this.state.errorUpdate, quanHuyen: "Quận/Huyện không được bỏ trống!" } });
+            return;
+        } else {
+            this.setState({ errorUpdate: { ...this.state.errorUpdate, quanHuyen: "" } });
+        }
+        // check xaPhuongThiTran
+        if (!this.state.xaPhuongThiTran.trim()) {
+            this.setState({ errorUpdate: { ...this.state.errorUpdate, xaPhuongThiTran: "Xã/Phường/Thị trấn không được bỏ trống!" } });
+            return;
+        } else {
+            this.setState({errorUpdate: {...this.state.errorUpdate, xaPhuongThiTran: ""}});
+        }
+        // check diaChiCuThe
+        if (!nguoiDungUpdate.diaChiCuThe.trim()) {
+            this.setState({ errorUpdate: { ...this.state.errorUpdate, diaChiCuThe: "Địa chỉ cụ thể không được bỏ trống !" } });
+            return;
+        } else {
+            this.setState({ errorUpdate: { ...this.state.errorUpdate, diaChiCuThe: "" } });
+        }
+        // check sdt
+        const sdtRegex = /^[0-9]{10}$/; // Regex for 10 digits
+
+        if (!nguoiDungUpdate.sdt.trim()) {
+            this.setState({ errorUpdate: { ...this.state.errorUpdate, sdt: "SDT không được bỏ trống!" } });
+            return;
+        } else if (!sdtRegex.test(nguoiDungUpdate.sdt.trim())) {
+            this.setState({
+                errorUpdate: {
+                    ...this.state.errorUpdate,
+                    sdt: "SDT phải là số nguyên, không có kí tự đặc biệt và phải có 10 chữ số!"
+                }
+            });
+            return;
+        } else if (/\s/.test(nguoiDungUpdate.sdt.trim())) {
+            this.setState({ errorUpdate: { ...this.state.errorUpdate, sdt: "SDT không được chứa khoảng trắng!" } });
+            return;
+        } else if (this.state.nhanVienQuyen1.some(user => user.thongTinNguoiDung.sdt === nguoiDungUpdate.sdt)) {
+            this.setState({ errorUpdate: { ...this.state.errorUpdate, sdt: "SDT đã tồn tại trong hệ thống!" } });
+            return;
+        } else {
+            this.setState({ errorUpdate: { ...this.state.errorUpdate, sdt: "" } });
+        }
+
+        // check email
+        if (!taiKhoanUpdate || !taiKhoanUpdate.email || !taiKhoanUpdate.email.trim()) {
+            this.setState({ errorUpdate: { ...this.state.errorUpdate, email: "Email không được bỏ trống!" } });
+            return;
+        } else if (!/^\S+@\S+\.\S+$/.test(taiKhoanUpdate.email)) {
+            // Check if email is in correct format
+            this.setState({ errorUpdate: { ...this.state.errorUpdate, email: "Địa chỉ email không đúng định dạng!" } });
+            return;
+        } else if (/\s/.test(taiKhoanUpdate.email)) {
+            // Check if email contains whitespace
+            this.setState({ errorUpdate: { ...this.state.errorUpdate, email: "Email không được chứa khoảng trắng!" } });
+            return;
+        } else if (this.state.nhanVienQuyen1.some(user => user.taiKhoan && user.taiKhoan.email === taiKhoanUpdate.email)) {
+            this.setState({ errorUpdate: { ...this.state.errorUpdate, email: "Email đã tồn tại trong hệ thống!" } });
+            return;
+        } else {
+            this.setState({ errorUpdate: { ...this.state.errorUpdate, email: "" } });
+        }
+
+
+        // Log the request data for debugging purposes
             console.log('Request Data: ' + JSON.stringify(requestData));
             taikhoanservice.updateNhanVien(requestData, this.state.taiKhoanUpdate.id)
                 .then((response) => {
@@ -137,7 +300,7 @@ class TaiKhoanNVUpdate extends Component {
                 });
         }
         ;
-    }
+
 
     thayDoiTenUpdate = (event) => {
         this.setState(
@@ -150,10 +313,6 @@ class TaiKhoanNVUpdate extends Component {
         );
         let errorUpdate = {...this.state.errorUpdate, ten: ""};
         this.setState({errorUpdate: errorUpdate});
-
-        console.log(this.state.tinhThanhPho)
-        console.log(this.state.quanHuyen)
-        console.log(this.state.xaPhuongThiTran)
     }
 
     thayDoiSdtUpdate = (event) => {
@@ -393,22 +552,23 @@ class TaiKhoanNVUpdate extends Component {
                                             )}
                                         </div>
 
+                                        {/* CCCD */}
                                         <div className="form-group">
-                                            <label htmlFor="ten">CCCD:</label>
+                                            <label htmlFor="cccd">CCCD:<span style={{ color: 'red' }}>*</span></label>
                                             <input
                                                 type="text"
                                                 className={`form-control ${this.state.errorUpdate.cccd ? 'is-invalid' : ''}`}
                                                 id="cccd"
                                                 value={this.state.nguoiDungUpdate.cccd}
-                                                // onChange={this.thayDoiTenUpdate}d
-                                                disabled
+                                                readOnly
+                                                style={{ backgroundColor: '#f0f0f0' }}
                                             />
                                             {this.state.errorUpdate.cccd && <div className="invalid-feedback">{this.state.errorUpdate.cccd}</div>}
                                         </div>
 
                                         {/* Họ và tên */}
                                         <div className="form-group">
-                                            <label htmlFor="ten">Họ và tên:</label>
+                                            <label htmlFor="ten">Họ và tên: <span style={{ color: 'red' }}>*</span></label>
                                             <input
                                                 type="text"
                                                 className={`form-control ${this.state.errorUpdate.ten ? 'is-invalid' : ''}`}
@@ -418,84 +578,21 @@ class TaiKhoanNVUpdate extends Component {
                                             />
                                             {this.state.errorUpdate.ten && <div className="invalid-feedback">{this.state.errorUpdate.ten}</div>}
                                         </div>
-
+                                        {/* Ngày Sinh */}
                                         <div className="form-group">
-                                            <label htmlFor="tinhThanhPho">Tỉnh/Thành phố:</label>
-                                            <select
-                                                className="form-control"
-                                                name="tinhThanhPho"
-                                                onChange={(event) => this.handleCityChange(event)}
-                                            >
-                                                <option value={this.state.tinhThanhPho}>Chọn tỉnh thành</option>
-                                                {this.state.cities.map(city => (
-                                                    <option key={city.code} value={city.name} selected={city.name === this.state.tinhThanhPho}>
-                                                        {city.name}
-                                                    </option>
-                                                ))}
-                                            </select>
-                                        </div>
-
-                                        <div className="form-group">
-                                            <label htmlFor="quanHuyen">Quận/Huyện:</label>
-                                            <select
-                                                className="form-control"
-                                                name="quanHuyen"
-                                                onChange={(event) => this.handleDistrictChange(event)}
-                                            >
-                                                <option value={this.state.quanHuyen}>Chọn quận huyện</option>
-                                                {this.state.districts.map(district => (
-                                                    <option key={district.code} value={district.name} selected={district.name === this.state.quanHuyen}>
-                                                        {district.name}
-                                                    </option>
-                                                ))}
-                                            </select>
-                                        </div>
-
-                                        <div className="form-group">
-                                            <label htmlFor="xaPhuongThiTran">Xã/Phường/Thị trấn:</label>
-                                            <select
-                                                className="form-control"
-                                                name="xaPhuongThiTran"
-                                                onChange={(event) => this.handleWardChange(event)}
-                                            >
-                                                <option  value={this.state.xaPhuongThiTran}>Chọn phường xã</option>
-                                                {this.state.wards.map(ward => (
-                                                    <option key={ward.code} value={ward.name} selected={ward.name === this.state.xaPhuongThiTran}>
-                                                        {ward.name}
-                                                    </option>
-                                                ))}
-                                            </select>
-                                        </div>
-
-                                        <div className="form-group">
-                                            <label htmlFor="diaChiCuThe">Số nhà/Thôn:</label>
+                                            <label htmlFor="ngaySinh">Ngày Sinh: <span style={{ color: 'red' }}>*</span></label>
                                             <input
-                                                type="text"
-                                                className={`form-control ${this.state.errorUpdate.diaChiCuThe ? 'is-invalid' : ''}`}
-                                                id="diaChiCuThe"
-                                                onChange={this.thayDoiDiaChiUpdate}
-                                                value={this.state.nguoiDungUpdate.diaChiCuThe}
+                                                type="date"
+                                                className={`form-control ${this.state.errorUpdate.ngaySinh ? 'is-invalid' : ''}`}
+                                                id="ngaySinh"
+                                                value={this.state.nguoiDungUpdate.ngaySinh}
+                                                onChange={this.thayDoiNGaySinhUpdate}
                                             />
-                                            {this.state.errorUpdate.diaChiCuThe && <div className="invalid-feedback">{this.state.errorUpdate.diaChiCuThe}</div>}
+                                            {this.state.errorUpdate.ngaySinh && <div className="invalid-feedback">{this.state.errorUpdate.ngaySinh}</div>}
                                         </div>
-
-
-                                        {/* SDT */}
-                                        <div className="form-group">
-                                            <label htmlFor="sdt">SDT:</label>
-                                            <input
-                                                type="text"
-                                                className={`form-control ${this.state.errorUpdate.sdt ? 'is-invalid' : ''}`}
-                                                id="sdt"
-                                                onChange={this.thayDoiSdtUpdate}
-                                                value={this.state.nguoiDungUpdate.sdt}
-                                            />
-                                            {this.state.errorUpdate.sdt && <div className="invalid-feedback">{this.state.errorUpdate.sdt}</div>}
-                                        </div>
-
                                         {/* Giới tính */}
                                         <div className="form-group">
-                                            <label>Giới tính:</label>
+                                            <label htmlFor="ngaySinh">Giới tính: <span style={{ color: 'red' }}>*</span></label>
                                             {this.state.nguoiDungUpdate && (
                                                 <div>
                                                     <label className="radio-label">
@@ -526,23 +623,95 @@ class TaiKhoanNVUpdate extends Component {
                                                 <div className="text-danger">{this.state.errorUpdate.gioiTinh}</div>
                                             )}
                                         </div>
-
-                                        {/* Ngày Sinh */}
+                                        {/* Địa chỉ */}
                                         <div className="form-group">
-                                            <label htmlFor="ngaySinh">Ngày Sinh:</label>
+                                            <label>Địa chỉ: <span style={{ color: 'red' }}>*</span></label>
+                                            <div className="row">
+                                                <div className="col-md-4">
+                                                    <select
+                                                        className="form-control"
+                                                        name="tinhThanhPho"
+                                                        onChange={(event) => this.handleCityChange(event)}
+                                                    >
+                                                        <option value="">Chọn tỉnh thành</option>
+                                                        {this.state.cities.map(city => (
+                                                            <option key={city.code} value={city.name}>
+                                                                {city.name}
+                                                            </option>
+                                                        ))}
+                                                    </select>
+                                                    {this.state.errorUpdate.tinhThanhPho && (
+                                                        <div className="text-danger">{this.state.errorUpdate.tinhThanhPho}</div>
+                                                    )}
+                                                </div>
+                                                <div className="col-md-4">
+                                                    <select
+                                                        className="form-control"
+                                                        name="quanHuyen"
+                                                        onChange={(event) => this.handleDistrictChange(event)}
+                                                    >
+                                                        <option value="">Chọn quận huyện</option>
+                                                        {this.state.districts.map(district => (
+                                                            <option key={district.code} value={district.name}>
+                                                                {district.name}
+                                                            </option>
+                                                        ))}
+                                                    </select>
+                                                    {this.state.errorUpdate.quanHuyen && (
+                                                        <div className="text-danger">{this.state.errorUpdate.quanHuyen}</div>
+                                                    )}
+                                                </div>
+                                                <div className="col-md-4">
+                                                    <select
+                                                        className="form-control"
+                                                        name="xaPhuongThiTran"
+                                                        onChange={(event) => this.handleWardChange(event)}
+                                                    >
+                                                        <option value="">Chọn phường xã</option>
+                                                        {this.state.wards.map(ward => (
+                                                            <option key={ward.code} value={ward.name}>
+                                                                {ward.name}
+                                                            </option>
+                                                        ))}
+                                                    </select>
+                                                    {this.state.errorUpdate.xaPhuongThiTran && (
+                                                        <div className="text-danger">{this.state.errorUpdate.xaPhuongThiTran}</div>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {/* Số nhà/Thôn */}
+                                        <div className="form-group">
+                                            <label htmlFor="diaChiCuThe">Địa chỉ cụ thể : <span style={{ color: 'red' }}>*</span></label>
                                             <input
-                                                type="date"
-                                                className={`form-control ${this.state.errorUpdate.ngaySinh ? 'is-invalid' : ''}`}
-                                                id="ngaySinh"
-                                                value={this.state.nguoiDungUpdate.ngaySinh}
-                                                onChange={this.thayDoiNGaySinhUpdate}
+                                                type="text"
+                                                className={`form-control ${this.state.errorUpdate.diaChiCuThe ? 'is-invalid' : ''}`}
+                                                id="diaChiCuThe"
+                                                onChange={this.thayDoiDiaChiUpdate}
+                                                value={this.state.nguoiDungUpdate.diaChiCuThe}
                                             />
-                                            {this.state.errorUpdate.ngaySinh && <div className="invalid-feedback">{this.state.errorUpdate.ngaySinh}</div>}
+                                            {this.state.errorUpdate.diaChiCuThe && <div className="invalid-feedback">{this.state.errorUpdate.diaChiCuThe}</div>}
+                                        </div>
+
+
+
+                                        {/* SDT */}
+                                        <div className="form-group">
+                                            <label htmlFor="sdt">SDT: <span style={{ color: 'red' }}>*</span></label>
+                                            <input
+                                                type="text"
+                                                className={`form-control ${this.state.errorUpdate.sdt ? 'is-invalid' : ''}`}
+                                                id="sdt"
+                                                onChange={this.thayDoiSdtUpdate}
+                                                value={this.state.nguoiDungUpdate.sdt}
+                                            />
+                                            {this.state.errorUpdate.sdt && <div className="invalid-feedback">{this.state.errorUpdate.sdt}</div>}
                                         </div>
 
                                         {/* Email */}
                                         <div className="form-group">
-                                            <label htmlFor="email">Email:</label>
+                                            <label htmlFor="email">Email: <span style={{ color: 'red' }}>*</span></label>
                                             <input
                                                 type="email"
                                                 className={`form-control ${this.state.errorUpdate.email ? 'is-invalid' : ''}`}
@@ -554,7 +723,7 @@ class TaiKhoanNVUpdate extends Component {
                                         </div>
 
                                         <input type="submit" className="btn btn-primary" value="Update" style={{ marginTop: '10px' }} />
-
+                                        <button onClick={this.kiemtra} className='btn btn-primary'>Detail</button>
                                     </form>
                                 </div>
                             </div>
