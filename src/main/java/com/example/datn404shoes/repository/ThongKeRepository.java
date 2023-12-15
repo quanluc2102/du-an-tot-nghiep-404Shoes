@@ -109,11 +109,13 @@ public interface ThongKeRepository extends JpaRepository<HoaDon, Long> {
     List<Object[]> findTop10SanPhamBanChay();
 
 
-    @Query("SELECT hd.id, hd.maHoaDon , tk.thongTinNguoiDung.ten , hd.ngayTao,hd.trangThai " +
+    @Query("SELECT hd.id, hd.maHoaDon, tk.thongTinNguoiDung.ten, hd.ngayTao, hd.trangThai " +
             "FROM HoaDon hd " +
             "JOIN TaiKhoan tk ON hd.taiKhoan.id = tk.id " +
-            "WHERE  hd.trangThai NOT IN (4,5, 6)")
+            "WHERE hd.trangThai NOT IN (4, 5, 6) " +
+            "ORDER BY hd.ngayTao ASC")
     List<Object[]> hoaDonChuaXuLyhe();
+
 
 
     @Query(value = "\n" +
