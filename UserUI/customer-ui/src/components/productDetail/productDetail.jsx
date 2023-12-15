@@ -12,7 +12,7 @@ function ProductDetail({ match }) {
     const [listKichThuoc, setListKichThuoc] = useState([]);
     const [selectedMauSac, setSelectedMauSac] = useState(null);
     const [selectedKichThuoc, setSelectedKichThuoc] = useState(null);
-    const [soLuong, setSoLuong] = useState(1);
+    const [soLuong, setSoLuong] = useState(0);
     const { id } = match.params;
     const fetchData = async () =>{
 
@@ -89,8 +89,12 @@ function ProductDetail({ match }) {
         }
         console.log('nsx' + JSON.stringify(sanPham));
         try {
-            const response = await SanPhamService.addGioHang(sanPham);
-            console.log('Sản phẩm đã được thêm vào giỏ hàng:', response);
+            if(sanPham.soLuong===0){
+                alert("Không thể thêm vào giỏ hàng vì số lượng = 0 !")
+            }else{
+                const response = await SanPhamService.addGioHang(sanPham);
+                alert('Sản phẩm đã được thêm vào giỏ hàng !');
+            }
         } catch (error) {
             console.error('Error adding to cart:', error);
         }
@@ -117,8 +121,8 @@ function ProductDetail({ match }) {
         });
     };
     const changeSoLuong = (e) => {
-        const maxSoLuong = filteredSPCT.length > 0 ? filteredSPCT[0].soLuong : 1;
-        setSoLuong(Math.min(maxSoLuong, Math.max(1,e.target.value)));
+        const maxSoLuong = filteredSPCT.length > 0 ? filteredSPCT[0].soLuong : 0;
+        setSoLuong(Math.min(maxSoLuong, Math.max(0 ,e.target.value)));
     };
     const formatCurrency = (amount) => {
         return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'VND' }).format(amount);
@@ -358,7 +362,7 @@ function ProductDetail({ match }) {
                                                 className={`color-item ${ms.id === selectedMauSac.id ? 'selected' : ''}`}
                                                 // style={{ backgroundColor: color }}
                                                 onClick={() => handleMauSacClick(ms)}
-                                            ><label>{ms.ten}</label></div>
+                                            ><label style={{alignContent:"center"}}>{ms.ten}</label></div>
                                         )
 
                                     ))}
@@ -432,11 +436,6 @@ function ProductDetail({ match }) {
                                         <a className="btn btn-success btn-lg" style={{width: '100%'}} onClick={()=>addGioHang()}><strong>THÊM
                                             VÀO GIỎ
                                             HÀNG</strong></a>
-                                    </div>
-
-                                    <div className="col-12 mt-2">
-                                        <a href="#" className="btn btn-warning btn-lg" style={{width: '100%'}}><strong>THANH
-                                            TOÁN</strong></a>
                                     </div>
                                 </div>
                             </div>

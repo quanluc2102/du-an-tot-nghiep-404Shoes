@@ -28,6 +28,11 @@ public class DiaChiServiceimpl implements DiaChiService {
     }
 
     @Override
+    public List<DiaChi> getAllByIdTTND(Long id) {
+        return responsitory.findDiaChiByThongTinNguoiDungId(id);
+    }
+
+    @Override
     public void update(DiaChi diaChi) {
         Optional<DiaChi> existingDiaChiOptional =responsitory.findById(diaChi.getId());
 

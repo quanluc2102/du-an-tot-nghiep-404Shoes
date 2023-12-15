@@ -4,6 +4,10 @@ const GET_GIO_HANG_ONE = 'http://localhost:8080/gio-hang-chi-tiet/one';
 const UPDATE_GIO_HANG_CHI_TIET = 'http://localhost:8080/gio-hang-chi-tiet/update';
 const DELETE_GIO_HANG_CHI_TIET_ONE = 'http://localhost:8080/gio-hang-chi-tiet/delete-one';
 const DELETE_GIO_HANG_CHI_TIET_MULTIPLE = 'http://localhost:8080/gio-hang-chi-tiet/delete-multiple';
+const GET_KMTT = "http://localhost:8080/khuyen_mai/hien-thiKMTT";
+const CREATE_HOA_DON = "http://localhost:8080/payment/sold";
+
+
 
 export const GioHangService = {
     getGHOne: async (id) => {
@@ -25,4 +29,14 @@ export const GioHangService = {
         const response = await axios.delete(`${DELETE_GIO_HANG_CHI_TIET_MULTIPLE}`,list);
         return response.data;
     },
+
+    reloadKM:async (tongTien)=>{
+        const response = await axios.get(`${GET_KMTT}/${tongTien}`);
+        return response.data;
+    },
+
+    sold:async (hd) =>{
+        const response = await axios.post(`${CREATE_HOA_DON}`,hd);
+        return response.data;
+    }
 };

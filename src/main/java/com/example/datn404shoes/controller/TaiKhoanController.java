@@ -69,49 +69,8 @@ public class TaiKhoanController {
     public List<TaiKhoan> index1(){
         return serviceimpl.getAll();
     }
-    @PostMapping("add")
-    public ResponseEntity<?> add(Model model,
-                                 @RequestBody TaiKhoan taiKhoan) {
 
-        return ResponseEntity.ok(serviceimpl.add(taiKhoan));
-    }
 
-//    @GetMapping("indexAll")
-//    public ResponseEntity<?> indexAll(Model model) {
-//        return ResponseEntity.ok(serviceimpl.getAllNoPage());
-//    }
-//    @PostMapping("addNhanVien")
-//    public ResponseEntity<?> addNhanVien(Model model,
-//                                         @RequestBody TaiKhoan taiKhoan) {
-//        serviceimpl.add(taiKhoan);
-//        PhanQuyen phanQuyen = new PhanQuyen();
-//        phanQuyen.setTaiKhoan(TaiKhoan.builder().id(taiKhoan.getId()).build());
-//        phanQuyen.setQuyen(Quyen.builder().id(1).build());
-//        phanQuyenServiceimpl.add(phanQuyen);
-//        return ResponseEntity.ok(serviceimpl.add(taiKhoan));
-//    }
-//
-//    @PostMapping("addKhachHang")
-//    public ResponseEntity<?> addKhachHang(Model model,
-//                                          @RequestBody TaiKhoan taiKhoan) {
-//        serviceimpl.add(taiKhoan);
-//        PhanQuyen phanQuyen = new PhanQuyen();
-//        phanQuyen.setTaiKhoan(TaiKhoan.builder().id(taiKhoan.getId()).build());
-//        phanQuyen.setQuyen(Quyen.builder().id(3).build());
-//        phanQuyenServiceimpl.add(phanQuyen);
-//        return ResponseEntity.ok(serviceimpl.add(taiKhoan));
-//    }
-
-    //    @PostMapping("addQuanLy")
-//    public ResponseEntity<?> addQuanLy(Model model,
-//                                          @RequestBody TaiKhoan taiKhoan) {
-//        serviceimpl.add(taiKhoan);
-//        PhanQuyen phanQuyen = new PhanQuyen();
-//        phanQuyen.setTaiKhoan(TaiKhoan.builder().id(taiKhoan.getId()).build());
-//        phanQuyen.setQuyen(Quyen.builder().id(2).build());
-//        phanQuyenServiceimpl.add(phanQuyen);
-//        return ResponseEntity.ok(serviceimpl.add(taiKhoan));
-//    }
 
     @PostMapping("addQuanLy")
     public ResponseEntity<?> addQuanLy(Model model,
@@ -249,7 +208,7 @@ public class TaiKhoanController {
             PhanQuyen phanQuyen = new PhanQuyen();
             phanQuyen.setTaiKhoan(TaiKhoan.builder().id(taiKhoan.getId()).build());
             phanQuyen.setQuyen(Quyen.builder().id(1).build());
-            phanQuyenServiceimpl.add(phanQuyen);
+            phanQuyenServiceimpl.update(id, phanQuyen);
 
             return ResponseEntity.ok(serviceimpl.update(id, taiKhoan));
         } else {
@@ -400,6 +359,7 @@ public ResponseEntity<?> updateKhachHang(@PathVariable Long id, @RequestBody Tai
 //
 //        excelExporter.export(response);
 //    }
+
     @PutMapping("updatett/{id}")
     public ResponseEntity<?> updatett(Model model,
                                       @PathVariable("id") Long id,
@@ -424,7 +384,7 @@ public ResponseEntity<?> updateKhachHang(@PathVariable Long id, @RequestBody Tai
     @GetMapping("nhanviendetail/{id}")
     public List<Object[]> getDesiredInformation(@PathVariable("id") Long id) {
 
-        return taiKhoanRepository.findByIdAll(id);
+        return taiKhoanRepository.findUserDetailsById(id);
     }
     @GetMapping("/nhan-vien-quyen-3")
     public List<TaiKhoan> getNhanVienByQuyenId3() {

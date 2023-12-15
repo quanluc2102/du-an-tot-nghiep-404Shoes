@@ -1,26 +1,20 @@
 import React, {Fragment, useEffect, useState} from 'react'
-import { useParams } from 'react-router-dom';
+import { useParams ,useHistory} from 'react-router-dom';
 import {toast} from "react-toastify";
 import "./style.css"
 import { Link } from 'react-router-dom/cjs/react-router-dom'
+import {Select} from "antd";
+import {GioHangService} from "../../service/GioHangService";
 
-function CheckOut({ match }) {
+function CheckOut({ match, location }) {
     const [SPCT, setSPCT] = useState([]);
     const [listSPCTSelected,setListSPCTSelected] = useState([]);
-    const [tongTien,setTongTien] = useState(0);
-    const { id } = match.params;
-    // const fetchData = async () =>{
-    //
-    //     try {
-    //         const dataGioHang = await GioHangService.getGHOne(id)
-    //
-    //         setSPCT(dataGioHang);
-    //         console.log(dataGioHang)
-    //         console.log(SPCT)
-    //     } catch (error) {
-    //         console.error('Error fetching data:', error);
-    //     }
-    // }
+    const [KM,setKM]=useState([]);
+    const [selectedKM,setSelectedKM]=useState([]);
+    const [tongTien,setTongTien]=useState(0);
+    const [ghiChu,setGhiChu]=useState("");
+    const { id } = useParams();
+    const history = useHistory();
     useEffect(() => {
         // const fetchData = async () => {
         //     try {
@@ -51,11 +45,107 @@ function CheckOut({ match }) {
             parallax3.style.top = - scrolled * 0.9 + 'px';
 
         });
+        if (location.state) {
+            const { listSPCTSelected, SPCT } = location.state;
+            setSPCT(SPCT);
+            setListSPCTSelected(listSPCTSelected)
+        }
+
         // fetchData();
-    }, )
+    }, [])
     const formatCurrency = (amount) => {
         return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'VND' }).format(amount);
     };
+
+    const suaGhiChu = (e) =>{
+        setGhiChu(e.target.value)
+    }
+    const check = ()=>{
+        console.log(listSPCTSelected)
+        console.log(SPCT)
+    }
+    const tinhTongTienHang = () =>{
+        let tongTien = SPCT.reduce((total, spct) => {
+            return total + spct.sanPhamChiTietId.donGia * spct.soLuong;
+        }, 0);
+        const km1= KM.find((km)=>km.id===selectedKM)
+        if(km1){
+            if(km1.kieuKhuyenMai===1){
+                tongTien*=(100-km1.giamGia)/100;
+            }else{
+                tongTien=tongTien-km1.giamGia;
+            }
+        }
+        return tongTien;
+    }
+
+    const reloadKM = async () =>{
+        const getKM = await GioHangService.reloadKM(tinhTongTienHang());
+        setKM(getKM);
+    }
+
+    const changeKM = (value)=>{
+        if (value.length > 0) {
+            const newlySelectedPromotion = value[value.length - 1];
+
+            if (selectedKM && selectedKM !== newlySelectedPromotion) {
+                // Hiển thị thông báo và không cho phép chọn nếu đã có mã khác được chọn trước đó
+                toast.error("Chỉ một mã khuyến mãi bạn chọn đầu tiên được áp dụng.", {
+                    position: "top-right",
+                    autoClose: 3000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                });
+                return;
+            }
+
+            // Cập nhật state với mã khuyến mãi được chọn
+            setSelectedKM(newlySelectedPromotion)
+        } else {
+            // Nếu không có mã nào được chọn, reset selectedPromotion về null
+            setSelectedKM(null)
+        }
+
+        // Cập nhật state với các mã khuyến mãi được chọn
+        setSelectedKM(value)
+    }
+
+    const save = async ()=>{
+        const tong = SPCT.reduce((total, spct) => {
+            return total + spct.sanPhamChiTietId.donGia * spct.soLuong;
+        }, 0);
+        const tongTienSauKhiGiam = tinhTongTienHang();
+        const hd = {
+            gioHang : SPCT,
+            km :selectedKM.length!=0?parseInt(selectedKM):0,
+            tongTien:tong,
+            tongTienSauKhiGiam:tongTienSauKhiGiam+30000,
+            tienGiam:tong-tongTienSauKhiGiam,
+            tienShip:30000,
+            taiKhoanId:parseInt(id),
+            diaChiId:3,
+            thanhToanId:2,
+            ghiChu: ghiChu,
+            //bắt đầu
+            // kieuHoaDon:1,
+            // trangThai:0,
+            // ten:"",
+            // sdt:"",
+            // email:"",
+            // diaChiCuThe:"",
+            // tinhThanhPho:"",
+            // quanHuyen:"",
+            // xaPhuongThiTran:""
+
+        }
+        console.log(hd)
+        const thongBao = await GioHangService.sold(hd);
+        alert(thongBao)
+        history.push(`/your-cart/${id}`)
+    }
     return (
         <Fragment>
             <body>
@@ -163,22 +253,16 @@ function CheckOut({ match }) {
                                     </thead>
 
                                     <tbody>
-                                        <tr>
-                                            <td><img src={`/img/anh1.jpg`} style={{ width: '60px', height: '60px' ,margin:10,objectFit: 'cover',objectPosition: 'center'}}/> Sản Phẩm 1</td>
-                                            <td><br/>Màu : Đen</td>
-                                            <td><br/>Kich Thước : 38</td>
-                                            <td><br/>150000 VND</td>
-                                            <td><br/>1</td>
-                                            <td style={{textAlign:"right"}}><br/>150000 VND</td>
-                                        </tr>
-                                        <tr>
-                                            <td><img src={`/img/anh2.jpg`} style={{ width: '60px', height: '60px' ,margin:10,objectFit: 'cover',objectPosition: 'center'}}/> Sản Phẩm 1</td>
-                                            <td><br/>Màu : Đen</td>
-                                            <td><br/>Kich Thước : 38</td>
-                                            <td><br/>150000 VND</td>
-                                            <td><br/>1</td>
-                                            <td style={{textAlign:"right"}}><br/>150000 VND</td>
-                                        </tr>
+                                        {SPCT.map((spct,index)=>
+                                            <tr>
+                                                <td><img src={`/img/`+spct.sanPhamChiTietId.anh} style={{ width: '60px', height: '60px' ,margin:10,objectFit: 'cover',objectPosition: 'center'}}/> Sản Phẩm 1</td>
+                                                <td><br/>Màu : {spct.sanPhamChiTietId.mauSac.ten}</td>
+                                                <td><br/>Kich Thước : {spct.sanPhamChiTietId.kichThuoc.giaTri}</td>
+                                                <td><br/>{formatCurrency(spct.sanPhamChiTietId.donGia)}</td>
+                                                <td><br/>{spct.soLuong}</td>
+                                                <td style={{textAlign:"right"}}><br/>{formatCurrency(spct.sanPhamChiTietId.donGia*spct.soLuong)}</td>
+                                            </tr>
+                                        )}
                                     </tbody>
 
 
@@ -188,18 +272,14 @@ function CheckOut({ match }) {
                                 <div className="row" style={{ height: '50px' }}>
                                     <div className="col-5 d-inline-flex" style={{borderRight:"2px dashed black", height: '100%'}}>
                                         <h7 style={{marginTop:8,marginLeft:35}}>Lời nhắn:   </h7>
-                                        <input className="form-control input-group" placeholder={"Lời nhắn cho người bán"} style={{marginLeft:20,width:390,height:40}}/>
+                                        <input className="form-control input-group" placeholder={"Lời nhắn cho người bán"} style={{marginLeft:20,width:390,height:40}} onChange={(e)=>suaGhiChu(e)}/>
                                     </div>
                                     <div className="col-7 d-inline">
-                                        <h7 style={{marginTop:8,float:"right"}}>Phí ship : 15000 VND
+                                        <h7 style={{marginTop:8,float:"right"}}>Phí ship : 30000 VND
                                         </h7>
                                     </div>
 
                                 </div>
-                                <hr className="dashed-hr"/>
-                                <span style={{textAlign:"right"}}>
-                                    <p>Tổng số tiền (số sản phẩm) : 300000 VND</p>
-                                </span>
                                 <hr className="dashed-hr"/>
                             </div>
 
@@ -212,7 +292,31 @@ function CheckOut({ match }) {
                                         <path
                                             d="M1.5 3A1.5 1.5 0 0 0 0 4.5V6a.5.5 0 0 0 .5.5 1.5 1.5 0 1 1 0 3 .5.5 0 0 0-.5.5v1.5A1.5 1.5 0 0 0 1.5 13h13a1.5 1.5 0 0 0 1.5-1.5V10a.5.5 0 0 0-.5-.5 1.5 1.5 0 0 1 0-3A.5.5 0 0 0 16 6V4.5A1.5 1.5 0 0 0 14.5 3zM1 4.5a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 .5.5v1.05a2.5 2.5 0 0 0 0 4.9v1.05a.5.5 0 0 1-.5.5h-13a.5.5 0 0 1-.5-.5v-1.05a2.5 2.5 0 0 0 0-4.9z"/>
                                     </svg>
-                                    <h5 style={{marginLeft:40}}>Voucher <a style={{textDecoration:"none",cursor:"pointer",color:"mediumblue",marginLeft:1000}} onClick>Chọn voucher</a></h5>
+                                    <h5 style={{marginLeft:40}}>Voucher <a style={{textDecoration:"none",cursor:"pointer",color:"mediumblue",marginLeft:835}} onClick={reloadKM}><Select
+                                        style={{ width: 300, maxWidth: '500px' }}
+                                        dropdownStyle={{ maxHeight: '300px', overflowY: 'auto', width: '300px' }}
+                                        optionLabelProp="option.ma"
+                                        onClick={reloadKM}
+                                        filterOption
+                                        onChange={changeKM}
+                                        placeholder="Thêm khuyến mãi"
+                                        options={KM.map((option, index) => ({
+                                            label: (
+                                                <div style={{ overflowX: 'auto', overflowY: 'auto' }}>
+                                                    <div style={{ color: 'red' }}>Cho hóa đơn tối thiểu :<b> {option.dieuKien} VND</b> </div>
+                                                    <div >Mã giảm giá: {option.ma} <br /> {'Số lượng còn: '}{option.soLuong}</div>
+                                                    <div > Giá trị: <b>{option.giamGia} {option.kieuKhuyenMai === 1 ? "%" : option.kieuKhuyenMai === 0 ? "VND" : ""}</b></div>
+                                                    <div className={option.trangThai === 0 ? 'badge bg-warning text-dark' : option.trangThai === 1 ? 'badge bg-success' : 'badge bg-danger'}>{option.trangThai === 0
+                                                        ? 'Chưa diễn ra'
+                                                        : option.trangThai === 1
+                                                            ? 'Đang diễn ra'
+                                                            : 'Đã kết thúc'}</div>
+                                                </div>
+
+                                            ),
+                                            value: option.id,
+                                        }))}
+                                    /></a></h5>
                                     <h7></h7>
                                     <br/>
                                 </div>
@@ -231,22 +335,23 @@ function CheckOut({ match }) {
 
                             <div className="col-12 bg-light pt-3" style={{marginTop:30}}>
                                 <div className="col-12 bg-light pt-3" >
-                                    <h5 style={{marginLeft:35}}>Phương thức thanh toán <a style={{textDecoration:"none",cursor:"pointer",color:"mediumblue",marginLeft:980}} onClick>Đổi</a></h5>
+                                    <h5 style={{marginLeft:35}}>Phương thức thanh toán <a style={{textDecoration:"none",cursor:"pointer",color:"mediumblue",marginLeft:980}}>Đổi</a></h5>
                                     <hr className="dashed-hr" style={{marginTop:30}}/>
-                                    <h7 style={{marginTop:8,marginLeft:980,textAlign: 'right'}}>Tổng tiền hàng : <span style={{float:"right"}}> 300000 VND</span></h7>
+                                    <h7 style={{marginTop:8,marginLeft:980,textAlign: 'right'}}>Tổng tiền hàng : <span style={{float:"right"}}> {formatCurrency(tinhTongTienHang())}</span></h7>
                                     <br/>
                                     <br/>
-                                    <h7 style={{marginTop:8,marginLeft:980,textAlign: 'right'}}>Phí ship : <span style={{float:"right"}}> 15000 VND</span></h7>
+                                    <h7 style={{marginTop:8,marginLeft:980,textAlign: 'right'}}>Phí ship : <span style={{float:"right"}}>  {formatCurrency(30000)}</span></h7>
                                     <br/>
                                     <br/>
-                                    <h7 style={{marginTop:8,marginLeft:980,textAlign: 'right'}}>Tông thanh toán : <span style={{float:"right",color:"red",fontSize:22}}> 315000 VND</span></h7>
+                                    {/*{formatCurrency(selectedKM.length===0?tinhTongTienHang():tongTien)}*/}
+                                    <h7 style={{marginTop:8,marginLeft:980,textAlign: 'right'}}>Tông thanh toán : <span style={{float:"right",color:"red",fontSize:22}}>{formatCurrency(tinhTongTienHang()+30000)}</span></h7>
                                     <br/>
                                     <hr className="dashed-hr"/>
                                     <div className="row">
 
 
                                         <div className="col-12 mt-2">
-                                            <a className="btn btn-danger btn-lg col-4" style={{width: '23%',float:"right",color:"white"}}>THANH TOÁN</a>
+                                            <a className="btn btn-danger btn-lg col-4" style={{width: '23%',float:"right",color:"white"}} onClick={save}>THANH TOÁN</a>
                                         </div>
                                     </div>
                                 </div>

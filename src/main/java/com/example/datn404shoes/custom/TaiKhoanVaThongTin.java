@@ -5,10 +5,14 @@ import com.example.datn404shoes.entity.TaiKhoan;
 import com.example.datn404shoes.entity.ThongTinNguoiDung;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 
 @Data
+@Setter
+@Getter
 public class TaiKhoanVaThongTin {
     private ThongTinNguoiDung thongTinNguoiDung;
     private TaiKhoan taiKhoan;

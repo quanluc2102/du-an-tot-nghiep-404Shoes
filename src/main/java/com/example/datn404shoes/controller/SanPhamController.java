@@ -9,6 +9,7 @@ import com.example.datn404shoes.repository.SanPhamChiTietRepository;
 import com.example.datn404shoes.repository.SanPhamRespository;
 import com.example.datn404shoes.request.SPCTRequest;
 import com.example.datn404shoes.request.SanPhamRequest;
+import com.example.datn404shoes.request.SanPhamUserCustom;
 import com.example.datn404shoes.service.serviceimpl.SanPhamAnhServiceimpl;
 import com.example.datn404shoes.service.serviceimpl.SanPhamServiceimpl;
 import com.google.zxing.BarcodeFormat;
@@ -61,6 +62,12 @@ public class SanPhamController {
     public Page<SanPham> phanTrang(@RequestParam(defaultValue = "0") int page){
         return sanPhamServiceimpl.phanTrangNew(page);
     }
+
+    @GetMapping("phan_trang_user")
+    public Page<SanPhamUserCustom> phanTrangUser(@RequestParam(defaultValue = "0") int page){
+        return sanPhamServiceimpl.phanTrangUser(page);
+    }
+
     @GetMapping("index1")
     public List<SanPham> index1(){
         return sanPhamServiceimpl.getAll();
