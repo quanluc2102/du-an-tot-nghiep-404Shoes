@@ -1,15 +1,18 @@
 package com.example.datn404shoes.service.serviceimpl;
 
+import com.example.datn404shoes.DTO.LocDTO;
 import com.example.datn404shoes.entity.SanPham;
 import com.example.datn404shoes.helper.SanPhamExcelSave;
 import com.example.datn404shoes.repository.SanPhamRespository;
 import com.example.datn404shoes.request.SanPhamUserCustom;
 import com.example.datn404shoes.service.SanPhamService;
+import jakarta.persistence.criteria.Predicate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -65,6 +68,53 @@ public class SanPhamServiceimpl implements SanPhamService {
     @Override
     public Page<SanPhamUserCustom> phanTrangUser(int page) {
         return sanPhamRespository.findAllKhoangGia(PageRequest.of(page,6));
+    }
+
+    @Override
+    public Page<SanPhamUserCustom> phanTrangUserFiltered(int page, LocDTO filters) {
+        // Kiểm tra xem có bộ lọc nào được áp dụng hay không
+        boolean isFilterApplied = filters != null && filters.isAnyFilterApplied();
+
+        // Xử lý logic lọc dựa trên filters
+        Specification<SanPhamUserCustom> spec = (root, query, criteriaBuilder) -> {
+            Predicate predicate = criteriaBuilder.conjunction(); // AND predicate
+
+            if (isFilterApplied) {
+                // Thêm các điều kiện lọc vào predicate
+                predicate = criteriaBuilder.and(
+                        predicate,
+                        root.get("danhMuc").get("id").in(filters.getDanhMuc())
+                );
+
+                predicate = criteriaBuilder.and(
+                        predicate,
+                        root.get("thuongHieu").get("id").in(filters.getThuongHieu())
+                );
+
+                predicate = criteriaBuilder.and(
+                        predicate,
+                        root.get("xuatXu").get("id").in(filters.getXuatXu())
+                );
+
+                predicate = criteriaBuilder.and(
+                        predicate,
+                        root.get("kichThuoc").get("id").in(filters.getKichThuoc())
+                );
+
+                predicate = criteriaBuilder.and(
+                        predicate,
+                        root.get("mauSac").get("id").in(filters.getMauSac())
+                );
+            }
+
+            return predicate;
+        };
+
+        // Gọi repository hoặc service cần thiết để lấy dữ liệu phân trang dựa trên filters
+        Page<SanPhamUserCustom> resultPage = sanPhamRespository.findAll1(spec, PageRequest.of(page, 6));
+
+        // Trả về trang sản phẩm lọc
+        return resultPage;
     }
 
     @Override

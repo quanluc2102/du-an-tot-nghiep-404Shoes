@@ -56,6 +56,11 @@ public class DanhMucServiceimpl implements DanhMucService {
     }
 
     @Override
+    public List<DanhMuc> getAllNoPage() {
+        return repository.findAll();
+    }
+
+    @Override
     public DanhMuc getOne(Long id) {
         return repository.findById(id).get();
     }

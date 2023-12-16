@@ -24,6 +24,7 @@ public interface MauSacService {
     MauSac findOne(Long id);
 
     Page<MauSac> findAll(Pageable pageable);
+    List<MauSac> findAllNoPage();
 
     void imPortExcel(MultipartFile file);
     boolean isMauSacNameUnique(String name);

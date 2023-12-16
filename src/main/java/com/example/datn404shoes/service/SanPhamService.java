@@ -1,5 +1,6 @@
 package com.example.datn404shoes.service;
 
+import com.example.datn404shoes.DTO.LocDTO;
 import com.example.datn404shoes.entity.SanPham;
 import com.example.datn404shoes.request.SanPhamUserCustom;
 import org.springframework.data.domain.Page;
@@ -20,6 +21,7 @@ public interface SanPhamService {
     Page<SanPham> phanTrangNew(int page);
 
     Page<SanPhamUserCustom> phanTrangUser(int page);
+    Page<SanPhamUserCustom> phanTrangUserFiltered(int page, LocDTO filters);
 
     List<SanPham> getAll();
 

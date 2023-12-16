@@ -50,6 +50,11 @@ public class ThuongHieuServiceimpl implements ThuongHieuService {
     }
 
     @Override
+    public List<ThuongHieu> getAllNoPage() {
+        return repository.findAll();
+    }
+
+    @Override
     public ThuongHieu getOne(Long id) {
         return repository.findById(id).get();
     }

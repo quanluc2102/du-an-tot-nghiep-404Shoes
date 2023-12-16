@@ -50,6 +50,11 @@ public class XuatXuServiceimpl implements XuatXuService {
     }
 
     @Override
+    public List<XuatXu> getAllNoPage() {
+        return repository.findAll();
+    }
+
+    @Override
     public XuatXu getOne(Long id) {
         return repository.findById(id).get();
     }

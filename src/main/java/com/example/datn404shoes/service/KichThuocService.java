@@ -26,6 +26,7 @@ public interface KichThuocService {
     KichThuoc findOne(Long id);
 
     Page<KichThuoc> findAll(Pageable pageable);
+    List<KichThuoc> findAllNoPage();
 
     void imPortExcel(MultipartFile file);
 

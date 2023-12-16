@@ -66,6 +66,11 @@ public class KichThuocServiceImpl implements KichThuocService {
     }
 
     @Override
+    public List<KichThuoc> findAllNoPage() {
+        return kichThuocRepository.findAll();
+    }
+
+    @Override
     public void imPortExcel(MultipartFile file) {
         try {
             List<KichThuoc> importEX = KichThuocExcelSave.excelImport(file.getInputStream());

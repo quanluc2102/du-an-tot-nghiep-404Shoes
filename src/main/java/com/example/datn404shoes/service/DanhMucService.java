@@ -16,6 +16,7 @@ public interface DanhMucService {
     DanhMuc thayDoiTrangThai(Long id, DanhMuc danhMuc);
 
     Page<DanhMuc> getAll(Pageable pageable);
+    List<DanhMuc> getAllNoPage();
 
     DanhMuc getOne(Long id);
 

@@ -64,6 +64,11 @@ public class MauSacServiceImpl implements MauSacService {
     }
 
     @Override
+    public List<MauSac> findAllNoPage() {
+        return mauSacRepository.findAll();
+    }
+
+    @Override
     public void imPortExcel(MultipartFile file) {
 //        try {
 //            List<MauSac> importEX = MauSacExcelSave.excelImport(file.getInputStream());

@@ -1,5 +1,6 @@
 package com.example.datn404shoes.controller;
 
+import com.example.datn404shoes.DTO.LocDTO;
 import com.example.datn404shoes.entity.*;
 import com.example.datn404shoes.helper.MatrixToImageWriter;
 import com.example.datn404shoes.helper.SanPhamExcelSave;
@@ -66,6 +67,13 @@ public class SanPhamController {
     @GetMapping("phan_trang_user")
     public Page<SanPhamUserCustom> phanTrangUser(@RequestParam(defaultValue = "0") int page){
         return sanPhamServiceimpl.phanTrangUser(page);
+    }
+
+    @GetMapping("phan_trang_user_filtered")
+    public Page<SanPhamUserCustom> phanTrangUserFiltered(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestBody LocDTO filters) {
+        return sanPhamServiceimpl.phanTrangUserFiltered(page, filters);
     }
 
     @GetMapping("index1")

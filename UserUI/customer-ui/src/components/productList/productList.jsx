@@ -3,6 +3,7 @@ import { Link } from "react-router-dom/cjs/react-router-dom.min"
 import InfiniteScroll from 'react-infinite-scroll-component';
 import './style.css'
 import {SanPhamService} from "../../service/SanPhamService";
+import {LocSanPhamService} from "../../service/LocSanPhamService";
 
 function ProductList() {
     const [listSP, setListSP] = useState([]);
@@ -12,28 +13,83 @@ function ProductList() {
     const [listDM, setListDM] = useState([]);
     const [listTH, setListTH] = useState([]);
     const [listMS, setListMS] = useState([]);
+    const [listXX, setListXX] = useState([]);
+    const [listKT, setListKT] = useState([]);
+    const [filters, setFilters] = useState({
+        danhMuc: [],
+        thuongHieu: [],
+        xuatXu: [],
+        kichThuoc: [],
+        mauSac: [],
+    });
+
+    const handleCheckboxChange = (filterType, value) => {
+        setFilters((prevFilters) => {
+            const newFilters = { ...prevFilters };
+            const index = newFilters[filterType].indexOf(value);
+
+            if (index === -1) {
+                newFilters[filterType] = [...newFilters[filterType], value];
+            } else {
+                newFilters[filterType] = [
+                    ...newFilters[filterType].slice(0, index),
+                    ...newFilters[filterType].slice(index + 1),
+                ];
+            }
+
+            return newFilters;
+        });
+    };
+
+    const isFilterSelected = (filterType, value) => {
+        return filters[filterType].includes(value);
+    };
     const fetchData = async () => {
         try {
-            // Lấy danh sách sản phẩm và danh mục từ service.js
-            // const data = await SanPhamService.getSPActive();
+            const response = await fetch(`http://localhost:8080/san_pham/phan_trang_user_filtered?page=${page}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ filters }),
+            });
+            const data = await response.json();
 
-            // const data = await SanPhamService.getSPPhanTrang(page);
-            // const response = await fetch(`http://localhost:8080/san_pham/phan_trang?page=${page}`);
-            // const data = await response.json();
-            const response1 = await fetch(`http://localhost:8080/san_pham/phan_trang_user?page=${page}`);
-            const data1 = await response1.json();
-            if (data1.length === 0) {
+            if (data.length === 0) {
                 setHasMore(false);
             } else {
-                setListSP([...listSP, ...data1.content]); // Assume your API returns an array of products
+                setListSP([...listSP, ...data.content]);
                 setPage(page + 1);
             }
-            // setListSP(data);
+
             setLoading(false);
         } catch (error) {
             console.error('Error fetching data:', error);
         }
     };
+
+
+    const fetchDataLoc = async () => {
+        try {
+            // Gọi các service để lấy dữ liệu
+            const thuongHieuData = await LocSanPhamService.getThuongHieu();
+            const xuatXuData = await LocSanPhamService.getXuatXu();
+            const danhMucData = await LocSanPhamService.getDanhMuc();
+            const mauSacData = await LocSanPhamService.getMauSac();
+            const kichThuocData = await LocSanPhamService.getKichThuoc();
+            console.log(kichThuocData);
+
+            setListTH([...listTH, ...thuongHieuData]); // Assume your API returns an array of products
+            setListXX([...listXX, ...xuatXuData]); // Assume your API returns an array of products
+            setListDM([...listDM, ...danhMucData]); // Assume your API returns an array of products
+            setListMS([...listMS, ...mauSacData]); // Assume your API returns an array of products
+            setListKT([...listKT, ...kichThuocData]); // Assume your API returns an array of products
+
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    };
+
 
     const changeDetail = (id) =>{
         window.location.href=(`/product-detail/${id}`);
@@ -42,6 +98,7 @@ function ProductList() {
     const formatCurrency = (amount) => {
         return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'VND' }).format(amount);
     };
+
 
     useEffect(() => {
         const obse = new IntersectionObserver((enti) => {
@@ -105,6 +162,7 @@ function ProductList() {
             });
         });
         fetchData();
+        fetchDataLoc();
     }, [])
 
 
@@ -198,10 +256,17 @@ function ProductList() {
                                             data-bs-parent="#accordionExample">
                                             <div className="accordion-body">
                                                 <ul className="list-group list-group-flush">
-                                                    <li className="list-group-item">Đang Bán</li>
-                                                    <li className="list-group-item">Đang Giảm Giá</li>
-                                                    <li className="list-group-item">Hết Hàng</li>
-                                                    <li className="list-group-item">Sắp Hết Hàng</li>
+                                                    {listDM.map((danhMuc) => (
+                                                        <label key={danhMuc.id} className="list-group-item">
+                                                            <input
+                                                                type="checkbox"
+                                                                checked={isFilterSelected('danhMuc', danhMuc.id)}
+                                                                onChange={() => handleCheckboxChange('danhMuc', danhMuc.id)}
+                                                            />
+                                                            {danhMuc.ten}
+                                                        </label>
+                                                    ))}
+
                                                 </ul>
                                             </div>
 
@@ -224,11 +289,17 @@ function ProductList() {
                                             data-bs-parent="#accordionExample1">
                                             <div class="accordion-body">
                                                 <ul class="list-group list-group-flush">
-                                                    <li class="list-group-item">Nai Kì</li>
-                                                    <li class="list-group-item">A Di Đát</li>
-                                                    <li class="list-group-item">Ba Lan Xi A Ga</li>
-                                                    <li class="list-group-item">APPLE</li>
-                                                    <li class="list-group-item">SAMSUNG</li>
+                                                    {listTH.map((thuongHieu) => (
+                                                        <label key={thuongHieu.id} className="list-group-item">
+                                                            <input
+                                                                type="checkbox"
+                                                                checked={isFilterSelected('thuongHieu', thuongHieu.id)}
+                                                                onChange={() => handleCheckboxChange('thuongHieu', thuongHieu.id)}
+                                                            />
+                                                            {thuongHieu.ten}
+                                                        </label>
+                                                    ))}
+
                                                 </ul>
                                             </div>
                                         </div>
@@ -248,11 +319,16 @@ function ProductList() {
                                             data-bs-parent="#accordionExample5">
                                             <div class="accordion-body">
                                                 <ul class="list-group list-group-flush">
-                                                    <li class="list-group-item">Việt Nam</li>
-                                                    <li class="list-group-item">Mỹ</li>
-                                                    <li class="list-group-item">Nhật</li>
-                                                    <li class="list-group-item">Pháp</li>
-                                                    <li class="list-group-item">Trung Quốc</li>
+                                                    {listXX.map((xuatXu) => (
+                                                        <label key={xuatXu.id} className="list-group-item">
+                                                            <input
+                                                                type="checkbox"
+                                                                checked={isFilterSelected('xuatXu', xuatXu.id)}
+                                                                onChange={() => handleCheckboxChange('xuatXu', xuatXu.id)}
+                                                            />
+                                                            {xuatXu.ten}
+                                                        </label>
+                                                    ))}
                                                 </ul>
                                             </div>
                                         </div>
@@ -266,18 +342,23 @@ function ProductList() {
                                         <h1 class="accordion-header " id="headingOne2">
                                             <button class="accordion-button " type="button" data-bs-toggle="collapse"
                                                 data-bs-target="#collapseOne2" aria-expanded="true" aria-controls="collapseOne2">
-                                                <strong class="font-monospace">GIÁ</strong>
+                                                <strong class="font-monospace">KÍCH THƯỚC</strong>
                                             </button>
                                         </h1>
                                         <div id="collapseOne2" class="accordion-collapse collapse show "
                                             aria-labelledby="headingOne2" data-bs-parent="#accordionExample2">
                                             <div class="accordion-body">
                                                 <ul class="list-group list-group-flush">
-                                                    <li class="list-group-item">0 - 500 </li>
-                                                    <li class="list-group-item">500 - 1000</li>
-                                                    <li class="list-group-item">1000 - 2000</li>
-                                                    <li class="list-group-item">2000 - 9999</li>
-                                                    <li class="list-group-item">free</li>
+                                                    {listKT.map((kichThuoc) => (
+                                                        <label key={kichThuoc.id} className="list-group-item">
+                                                            <input
+                                                                type="checkbox"
+                                                                checked={isFilterSelected('kichThuoc', kichThuoc.id)}
+                                                                onChange={() => handleCheckboxChange('kichThuoc', kichThuoc.id)}
+                                                            />
+                                                            {kichThuoc.giaTri}
+                                                        </label>
+                                                    ))}
                                                 </ul>
                                             </div>
                                         </div>
@@ -293,36 +374,15 @@ function ProductList() {
                                                 <strong class="font-monospace">MÀU SẮC</strong>
                                             </button>
                                         </h1>
-                                        <div id="collapseOne3" class="accordion-collapse collapse show "
-                                            aria-labelledby="headingOne3" data-bs-parent="#accordionExample3">
-                                            <div class="accordion-body row">
-                                                <div class="col-3 mb-3">
-                                                    <button class="btn color-pick" style={{ backgroundColor: 'aqua' }}></button>
-                                                </div>
-                                                <div class="col-3 mb-3">
-                                                    <button class="btn color-pick" style={{ backgroundColor: 'rgb(45, 179, 19)' }}></button>
-                                                </div>
-                                                <div class="col-3 mb-3">
-                                                    <button class="btn color-pick" style={{ backgroundColor: 'rgb(13, 68, 68)' }}></button>
-                                                </div>
-                                                <div class="col-3 mb-3">
-                                                    <button class="btn color-pick" style={{ backgroundColor: 'rgb(42, 79, 79)' }}></button>
-                                                </div>
-                                                <div class="col-3 mb-3">
-                                                    <button class="btn color-pick" style={{ backgroundColor: 'rgb(51, 60, 176)' }}></button>
-                                                </div>
-                                                <div class="col-3 mb-3">
-                                                    <button class="btn color-pick" style={{ backgroundColor: 'rgba(213, 172, 48, 0.734)' }} ></button>
-                                                </div>
-                                                <div class="col-3 mb-3">
-                                                    <button class="btn color-pick" style={{ backgroundColor: 'rgb(104, 188, 25)' }}></button>
-                                                </div>
-                                                <div class="col-3 mb-3">
-                                                    <button class="btn color-pick" style={{ backgroundColor: 'rgb(254, 99, 99)' }}></button>
-                                                </div>
-                                                <div class="col-3 mb-3">
-                                                    <button class="btn color-pick" style={{ backgroundColor: 'rgb(59, 59, 59)' }}></button>
-                                                </div>
+                                        <div id="collapseOne3" className="accordion-collapse collapse show"
+                                             aria-labelledby="headingOne3" data-bs-parent="#accordionExample3">
+                                            <div className="accordion-body row">
+                                                {listMS.map((item, index) => (
+                                                    <div className="col-3 mb-3" key={index}>
+                                                        <button className="btn color-pick"
+                                                                style={{backgroundColor: item.color}}>{item.ten}</button>
+                                                    </div>
+                                                ))}
                                             </div>
                                         </div>
                                     </div>

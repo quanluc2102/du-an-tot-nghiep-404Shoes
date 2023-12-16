@@ -18,6 +18,7 @@ public interface XuatXuService {
     XuatXu update(Long id, XuatXu xuatXu);
 
     Page<XuatXu> getAll(Pageable pageable);
+    List<XuatXu> getAllNoPage();
 
     XuatXu getOne(Long id);
     boolean isXuatXuNameUnique(String name);

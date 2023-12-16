@@ -17,6 +17,7 @@ public interface ThuongHieuService {
     ThuongHieu update(Long id, ThuongHieu th);
 
     Page<ThuongHieu> getAll(Pageable pageable);
+    List<ThuongHieu> getAllNoPage();
 
     ThuongHieu getOne(Long id);
     boolean isThuongHieuNameUnique(String name);
