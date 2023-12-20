@@ -21,7 +21,7 @@ public interface SanPhamService {
     Page<SanPham> phanTrangNew(int page);
 
     Page<SanPhamUserCustom> phanTrangUser(int page);
-    Page<SanPhamUserCustom> phanTrangUserFiltered(int page, LocDTO filters);
+    List<SanPhamUserCustom> phanTrangUserFiltered(LocDTO filters);
 
     List<SanPham> getAll();
 

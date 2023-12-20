@@ -69,12 +69,23 @@ public class SanPhamController {
         return sanPhamServiceimpl.phanTrangUser(page);
     }
 
-    @GetMapping("phan_trang_user_filtered")
-    public Page<SanPhamUserCustom> phanTrangUserFiltered(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestBody LocDTO filters) {
-        return sanPhamServiceimpl.phanTrangUserFiltered(page, filters);
+    @PostMapping("/phan_trang_user_filtered")
+    public List<SanPhamUserCustom> phanTrangUserFiltered(@RequestBody LocDTO filters) {
+        System.out.println("Filters from frontend: " + filters);
+        List<SanPhamUserCustom> sanPhamUserCustom = sanPhamServiceimpl.phanTrangUserFiltered(filters);
+        for (SanPhamUserCustom sanPhamUserCustom1:sanPhamUserCustom
+             ) {
+            System.out.println(sanPhamUserCustom1.getMaSanPham());
+            System.out.println(sanPhamUserCustom1.getTen());
+            System.out.println(sanPhamUserCustom1.getTen());
+            System.out.println("DM"+sanPhamUserCustom1.getDanhMuc());
+            System.out.println("TH"+sanPhamUserCustom1.getThuongHieu());
+            System.out.println("XX"+sanPhamUserCustom1.getXuatXu());
+        }
+        return sanPhamServiceimpl.phanTrangUserFiltered(filters);
     }
+
+
 
     @GetMapping("index1")
     public List<SanPham> index1(){

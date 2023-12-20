@@ -71,50 +71,25 @@ public class SanPhamServiceimpl implements SanPhamService {
     }
 
     @Override
-    public Page<SanPhamUserCustom> phanTrangUserFiltered(int page, LocDTO filters) {
-        // Kiểm tra xem có bộ lọc nào được áp dụng hay không
-        boolean isFilterApplied = filters != null && filters.isAnyFilterApplied();
-
-        // Xử lý logic lọc dựa trên filters
-        Specification<SanPhamUserCustom> spec = (root, query, criteriaBuilder) -> {
-            Predicate predicate = criteriaBuilder.conjunction(); // AND predicate
-
-            if (isFilterApplied) {
-                // Thêm các điều kiện lọc vào predicate
-                predicate = criteriaBuilder.and(
-                        predicate,
-                        root.get("danhMuc").get("id").in(filters.getDanhMuc())
-                );
-
-                predicate = criteriaBuilder.and(
-                        predicate,
-                        root.get("thuongHieu").get("id").in(filters.getThuongHieu())
-                );
-
-                predicate = criteriaBuilder.and(
-                        predicate,
-                        root.get("xuatXu").get("id").in(filters.getXuatXu())
-                );
-
-                predicate = criteriaBuilder.and(
-                        predicate,
-                        root.get("kichThuoc").get("id").in(filters.getKichThuoc())
-                );
-
-                predicate = criteriaBuilder.and(
-                        predicate,
-                        root.get("mauSac").get("id").in(filters.getMauSac())
-                );
-            }
-
-            return predicate;
-        };
-
-        // Gọi repository hoặc service cần thiết để lấy dữ liệu phân trang dựa trên filters
-        Page<SanPhamUserCustom> resultPage = sanPhamRespository.findAll1(spec, PageRequest.of(page, 6));
-
-        // Trả về trang sản phẩm lọc
-        return resultPage;
+    public List<SanPhamUserCustom> phanTrangUserFiltered(LocDTO filters) {
+//        Pageable pageable = PageRequest.of(page, 10); // 10 là số lượng phần tử trên mỗi trang, bạn có thể thay đổi
+        System.out.println("Cái này là danh mục"+filters.getDanhMuc());
+        System.out.println("Cái này là danh mục"+filters.getThuongHieu());
+        System.out.println("Cái này là danh mục"+filters.getXuatXu());
+        System.out.println("Cái này là danh mục"+filters.getKichThuoc());
+        System.out.println("Cái này là danh mục"+filters.getMauSac());
+        return sanPhamRespository.findAllFilter(
+                filters.getDanhMuc(),
+                filters.getDanhMuc(),
+                filters.getThuongHieu(),
+                filters.getThuongHieu(),
+                filters.getXuatXu(),
+                filters.getXuatXu(),
+                filters.getKichThuoc(),
+                filters.getKichThuoc(),
+                filters.getMauSac(),
+                filters.getMauSac()
+        );
     }
 
     @Override

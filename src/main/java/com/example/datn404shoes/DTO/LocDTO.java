@@ -6,11 +6,11 @@ import lombok.Data;
 import java.util.List;
 @Data
 public class LocDTO {
-    private List<Object> danhMuc;
-    private List<Object> thuongHieu;
-    private List<Object> xuatXu;
-    private List<Object> kichThuoc;
-    private List<Object> mauSac;
+    private List<Long> danhMuc;
+    private List<Long> thuongHieu;
+    private List<Long> xuatXu;
+    private List<Long> kichThuoc;
+    private List<Long> mauSac;
 
     public boolean isAnyFilterApplied() {
         // Thực hiện kiểm tra xem có bất kỳ bộ lọc nào được áp dụng không

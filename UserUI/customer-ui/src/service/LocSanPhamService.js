@@ -30,4 +30,9 @@ export const LocSanPhamService = {
         return response.data;
     },
 
+    getFilteredData: async (page,filtered) => {
+        const response = await axios.get(`http://localhost:8080/san_pham/phan_trang_user_filtered?page=${page}`,filtered);
+        return response.data;
+    },
+
 };
