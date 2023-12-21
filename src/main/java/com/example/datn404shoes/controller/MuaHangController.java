@@ -107,8 +107,31 @@ public class MuaHangController {
         List<GioHangChiTiet> listGHCT = gioHangChiTietService.getAll();
         int total = 0 ;
         GioHangChiTiet gioHangChiTietCo = null;
-        for(GioHangChiTiet ghct:listGHCT){
-            if(ghct.getGioHangId().getId()==gioHangId&&ghct.getSanPhamChiTietId().getId()==request.getSpct().getId()){
+//        for(GioHangChiTiet ghct:listGHCT){
+//            if(ghct.getGioHangId().getId()==gioHangId&&ghct.getSanPhamChiTietId().getId()==request.getSpct().getId()){
+//                total += 1;
+//                gioHangChiTietCo = ghct;
+//            }
+//        }
+//        if(total==0){
+//            GioHangChiTiet gioHangChiTiet = new GioHangChiTiet();
+//            gioHangChiTiet.setSanPhamChiTietId(request.getSpct());
+//            gioHangChiTiet.setSoLuong(request.getSoLuong());
+//            gioHangChiTiet.setGioHangId(GioHang.builder().id(gioHangId).build());
+//            gioHangChiTietService.add(gioHangChiTiet);
+//        }else{
+//            int tong = gioHangChiTietCo.getSoLuong()+request.getSoLuong();
+//            if(tong > request.getSpct().getSoLuong()){
+//                gioHangChiTietCo.setSoLuong(request.getSpct().getSoLuong());
+//            }else{
+//                gioHangChiTietCo.setSoLuong(gioHangChiTietCo.getSoLuong()+ request.getSoLuong());
+//
+//            }
+//            gioHangChiTietRepository.save(gioHangChiTietCo);
+//        }
+        List<GioHangChiTiet> list = gioHangChiTietService.getGioHangChiTietByKhachHang(2L);
+        for(GioHangChiTiet ghct:list){
+            if(ghct.getSanPhamChiTietId().getId()==request.getSpct().getId()){
                 total += 1;
                 gioHangChiTietCo = ghct;
             }
