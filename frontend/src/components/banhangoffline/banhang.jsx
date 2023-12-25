@@ -32,7 +32,7 @@ class BanHangOffline extends Component {
         super(props);
 
         this.state = {
-            idKhachHang:'',
+            idKhachHang: '',
             searchTerm: '',
             searchTermKH: '',
             selectedPromotions: [],
@@ -47,7 +47,7 @@ class BanHangOffline extends Component {
                     key: 'tabKey1',
                 },
             ],
-            diaChi:[],
+            diaChi: [],
             enteredAmount: 0,
             selectedRowKeys: [],
             loading: false,
@@ -105,9 +105,9 @@ class BanHangOffline extends Component {
     }
 
     componentDidMount() {
-        const { tabProducts, activeTabKey,tabCustomers } = this.state;
+        const { tabProducts, activeTabKey, tabCustomers } = this.state;
         const selectedProducts = tabProducts[activeTabKey] || [];
-        
+
         // const customers = tabCustomers[tabKey] || [];
         console.log(this.getTotalAmount(selectedProducts))
         BanHangService.getSPCT().then((res) => {
@@ -134,9 +134,9 @@ class BanHangOffline extends Component {
         this.fetchCities()
     }
     idKhachHang(id) {
-        this.setState({khachHangId: id});
-                }
-            
+        this.setState({ khachHangId: id });
+    }
+
     addKH(id) {
         window.location.href = '/addKhachHang';
 
@@ -357,38 +357,38 @@ class BanHangOffline extends Component {
     }
     handleScan = (data) => {
         const { isQRCodeScanned, selectedProducts, tabProducts } = this.state;
-      
+
         if (data && data.text && typeof data.text === 'string' && !isQRCodeScanned) {
-          this.setState({ isQRCodeScanned: true });
-      
-          const slicedMaQR = data.text.slice(5);
-          const existingProduct = selectedProducts.find((product) => product.ma === slicedMaQR);
-      
-          if (!existingProduct) {
-            const productToAdd = selectedProducts.find((product) => product.ma === slicedMaQR);
-      
-            if (productToAdd) {
-              const updatedSelectedProducts = [...selectedProducts, { ...productToAdd, quantity: 1 }];
-              this.setState({ selectedProducts: updatedSelectedProducts });
-      
-              // Get the current tab key (you need to define tabKey in your state)
-              const currentTabKey = this.state.tabKey; // Replace with the actual property holding the current tab key
-      
-              // Update the tabProducts state for the current tab
-              const updatedTabProducts = { ...tabProducts };
-              updatedTabProducts[currentTabKey] = [...updatedTabProducts[currentTabKey], { ...productToAdd, quantity: 1 }];
-      
-              this.setState({ tabProducts: updatedTabProducts });
-            } else {
-              console.error("Product not found with ma:", slicedMaQR);
+            this.setState({ isQRCodeScanned: true });
+
+            const slicedMaQR = data.text.slice(5);
+            const existingProduct = selectedProducts.find((product) => product.ma === slicedMaQR);
+
+            if (!existingProduct) {
+                const productToAdd = selectedProducts.find((product) => product.ma === slicedMaQR);
+
+                if (productToAdd) {
+                    const updatedSelectedProducts = [...selectedProducts, { ...productToAdd, quantity: 1 }];
+                    this.setState({ selectedProducts: updatedSelectedProducts });
+
+                    // Get the current tab key (you need to define tabKey in your state)
+                    const currentTabKey = this.state.tabKey; // Replace with the actual property holding the current tab key
+
+                    // Update the tabProducts state for the current tab
+                    const updatedTabProducts = { ...tabProducts };
+                    updatedTabProducts[currentTabKey] = [...updatedTabProducts[currentTabKey], { ...productToAdd, quantity: 1 }];
+
+                    this.setState({ tabProducts: updatedTabProducts });
+                } else {
+                    console.error("Product not found with ma:", slicedMaQR);
+                }
             }
-          }
-      
-          setTimeout(() => {
-            this.setState({ isQRCodeScanned: false });
-          }, 1000);
+
+            setTimeout(() => {
+                this.setState({ isQRCodeScanned: false });
+            }, 1000);
         }
-      };
+    };
     handlePageClickKH = (data) => {
         this.setState({ currentPageKH: data.selected });
     }
@@ -425,6 +425,15 @@ class BanHangOffline extends Component {
                 tongTien: this.getTotalAmount(selectedProducts),
                 ghiChu: document.getElementById("ghiChuDonHang").value,
             },
+
+            xaPhuongThiTran: this.state.xaPhuongThiTran,
+
+            quanHuyen: this.state.quanHuyen,
+
+            tinhThanhPho: this.state.tinhThanhPho,
+
+            diaChiCuThe: this.state.diaChiCuThe,
+
         };
 
         try {
@@ -519,19 +528,19 @@ class BanHangOffline extends Component {
         const { tabProducts, currentSanPhamChiTietList } = this.state;
         const products = tabProducts[tabKey] || [];
         const selectedProduct = products.find(item => item.id === productId.id);
-    
+
         if (selectedProduct) {
             const updatedProducts = products.map(item =>
                 item.id === productId.id ? { ...item, quantity: item.quantity + 1 } : item
             );
-    
+
             // Giảm số lượng sản phẩm trong sản phẩm chi tiết khi thêm vào giỏ hàng
             const updatedSanPhamChiTietList = currentSanPhamChiTietList.map(item =>
                 item.id === productId.id ? { ...item, soLuong: item.soLuong - 1 } : item,
-               
+
             );
-            
-    
+
+
             this.setState(prevState => ({
                 tabProducts: {
                     ...prevState.tabProducts,
@@ -551,7 +560,7 @@ class BanHangOffline extends Component {
                     [tabKey]: updatedProducts,
                 },
             }));
-    
+
             toast.success("Đã thêm vào giỏ", { position: toast.POSITION.MID_RIGHT });
             this.handleCloseModal1();
         }
@@ -560,7 +569,7 @@ class BanHangOffline extends Component {
         const { tabCustomers } = this.state;
         const customers = tabCustomers[tabKey] || [];
         const isCustomerExist = customers.length > 0;
-        this.idKhachHang(userId) 
+        this.idKhachHang(userId)
         if (isCustomerExist) {
             this.setState({
                 tabCustomers: {
@@ -569,7 +578,7 @@ class BanHangOffline extends Component {
                 },
             });
 
-           
+
             // this.fetchCities()
 
             toast.success("Đã cập nhật thông tin khách hàng", { position: toast.POSITION.MID_RIGHT });
@@ -584,7 +593,7 @@ class BanHangOffline extends Component {
                     [tabKey]: updatedCustomers,
                 },
             }));
-            
+
             toast.success("Đã thêm khách hàng mới", { position: toast.POSITION.MID_RIGHT });
             this.handleCloseModal1();
         }
@@ -642,7 +651,7 @@ class BanHangOffline extends Component {
     renderUserForTab = (tabKey) => {
         const { tabCustomers } = this.state;
         const customers = tabCustomers[tabKey] || [];
-       
+
         if (customers.length === 0) {
             return (
                 <tr key="no-customer">
@@ -661,10 +670,16 @@ class BanHangOffline extends Component {
             return (
                 <div>
                     <div>
-                        
+
                         <label htmlFor="ten">Tên khách hàng:{customer.ten} </label> <br />
                         <label htmlFor="sdt">Số điện thoại:{customer.sdt}</label><br />
-                        <label htmlFor="diaChiCuthe">Địa chỉ cụ thể : </label> <input type="text" className="form control"/><br />
+                        <label htmlFor="diaChiCuthe">Địa chỉ cụ thể : </label> <input
+                            type="text"
+                            className="form-control"
+                            value={this.state.diaChiCuThe}
+                            onChange={(event) => this.setState({ diaChiCuThe: event.target.value })}
+                        />
+                        <br />
                         <label htmlFor="tinhThanhPho">Tỉnh/Thành phố:</label>
                         <select
                             className="form-control"
@@ -1225,7 +1240,7 @@ class BanHangOffline extends Component {
                                             </Modal.Body>
                                         </Modal>
                                         <Button variant="btn btn-outline-primary" onClick={this.handleShowModal3}>
-                                            Dịa chỉ 
+                                            Dịa chỉ
                                         </Button>
                                         <Modal show={this.state.showModal3} onHide={this.handleCloseModal3} backdrop="static" dialogClassName="custom-modal-size">
                                             <Modal.Header closeButton>
@@ -1267,7 +1282,7 @@ class BanHangOffline extends Component {
                                                                             <tr key={diaChi.id}>
                                                                                 <td>{index + 1}</td>
                                                                                 <td>{diaChi.thongTinNguoiDung.ten}</td>
-                                                                                <td>{diaChi.diaChiCuThe}, {diaChi.xaPhuongThiTran}, {diaChi.quanHuyen},{diaChi.tinhThanhPho}</td>                                                                                              
+                                                                                <td>{diaChi.diaChiCuThe}, {diaChi.xaPhuongThiTran}, {diaChi.quanHuyen},{diaChi.tinhThanhPho}</td>
                                                                                 <td><button onClick={() => this.handleAddUser(diaChi.thongTinNguoiDung, this.state.activeTabKey)} className="btn btn-outline-info">chọn</button></td>
                                                                             </tr>
                                                                         )
