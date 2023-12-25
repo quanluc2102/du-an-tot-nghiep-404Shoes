@@ -180,19 +180,19 @@ public class MuaHangController {
         }
         hoaDon.setThanhToan(ThanhToan.builder().id(hoaDonUserRequest.getThanhToanId()).build());
         hoaDon.setKieuHoaDon(1);
-        hoaDon.setTongTien(Float.valueOf(hoaDonUserRequest.getTongTien()));
+        hoaDon.setTongTien(Float.valueOf(hoaDonUserRequest.getTongTienSauKhiGiam()));
         hoaDon.setPhiShip(Float.valueOf(hoaDonUserRequest.getTienShip()));
         hoaDon.setTongTienSauGiam(Float.valueOf(hoaDonUserRequest.getTongTienSauKhiGiam()));
         hoaDon.setTienGiam(Float.valueOf(hoaDonUserRequest.getTienGiam()));
-        Optional<DiaChi> diaChi = diaChiResponsitory.findById(hoaDonUserRequest.getDiaChiId());
-        hoaDon.setTen(diaChi.get().getTen());
-        hoaDon.setSdt(diaChi.get().getSdt());
+//        Optional<DiaChi> diaChi = diaChiResponsitory.findById(hoaDonUserRequest.getDiaChiId());
+        hoaDon.setTen(hoaDonUserRequest.getTen());
+        hoaDon.setSdt(hoaDonUserRequest.getSdt());
         TaiKhoan taiKhoan = taiKhoanServiceimpl.getOne(hoaDonUserRequest.getTaiKhoanId());
         hoaDon.setEmail(taiKhoan.getEmail());
-        hoaDon.setDiaChiCuThe(diaChi.get().getDiaChiCuThe());
-        hoaDon.setTinhThanhPho(diaChi.get().getTinhThanhPho());
-        hoaDon.setQuanHuyen(diaChi.get().getQuanHuyen());
-        hoaDon.setXaPhuongThiTran(diaChi.get().getXaPhuongThiTran());
+        hoaDon.setDiaChiCuThe(hoaDonUserRequest.getDiaChiCuThe());
+        hoaDon.setTinhThanhPho(hoaDonUserRequest.getTinhThanhPho());
+        hoaDon.setQuanHuyen(hoaDonUserRequest.getQuanHuyen());
+        hoaDon.setXaPhuongThiTran(hoaDonUserRequest.getXaPhuongThiTran());
         hoaDonRepository.save(hoaDon);
         for(GioHangChiTiet ghct: hoaDonUserRequest.getGioHang()){
             HoaDonChiTiet hdct = new HoaDonChiTiet();

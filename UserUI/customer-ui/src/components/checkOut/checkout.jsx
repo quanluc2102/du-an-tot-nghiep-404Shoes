@@ -1,28 +1,46 @@
-import React, {Fragment, useEffect, useState} from 'react'
+import React, {Fragment, useEffect, useState} from 'react';
+import { Modal} from 'react-bootstrap';
 import { useParams ,useHistory} from 'react-router-dom';
 import {toast} from "react-toastify";
-import "./style.css"
-import { Link } from 'react-router-dom/cjs/react-router-dom'
+import "./style.css";
+import { Link } from 'react-router-dom/cjs/react-router-dom';
 import {Select} from "antd";
 import {GioHangService} from "../../service/GioHangService";
+import axios from "axios";
 
 function CheckOut({ match, location }) {
     const [SPCT, setSPCT] = useState([]);
     const [listSPCTSelected,setListSPCTSelected] = useState([]);
+    const [listDC,setListDC] = useState([]);
+    const [listXa,setListXa] = useState([]);
+    const [listQuanHuyen,setListQuanHuyen] = useState([]);
+    const [listThanhPho,setListThanhPho] = useState([]);
+    const [codeTP,setCodeTP] = useState(0);
+    const [codeQuan,setCodeQuan] = useState(0);
+    const [codeXa,setCodeXa] = useState(0);
     const [KM,setKM]=useState([]);
     const [selectedKM,setSelectedKM]=useState([]);
-    const [tongTien,setTongTien]=useState(0);
+    const [modalDC,setModalDC]=useState(false);
+    const [phiShip,setPhiShip]=useState(0);
     const [ghiChu,setGhiChu]=useState("");
+    const [dcSelected,setDcSelected]=useState(0);
+    const [sdt,setSDT]=useState("");
+    const [ten,setTen]=useState("");
+    const [diaChiCuThe,setDiaChiCuThe]=useState("");
+    const [xaPhuongThiTran,setXaPhuongThiTran]=useState("");
+    const [quanHuyen,setQuanHuyen]=useState("");
+    const [tinhThanhPho,setTinhThanhPho]=useState("");
+
     const { id } = useParams();
     const history = useHistory();
-    useEffect(() => {
-        // const fetchData = async () => {
-        //     try {
-        //         const dataGioHang = await GioHangService.getGHOne(id);
-        //         setSPCT(dataGioHang);
-        //     } catch (error) {
-        //     }
-        // };
+    useEffect  ( () => {
+        const fetchData = async () => {
+            try {
+                const dataDC = await GioHangService.getDCByTaiKhoan(id);
+                setListDC(dataDC)
+            } catch (error) {
+            }
+        };
         const obse = new IntersectionObserver((enti) => {
             enti.forEach((enty) => {
                 if (enty.isIntersecting) {
@@ -49,9 +67,10 @@ function CheckOut({ match, location }) {
             const { listSPCTSelected, SPCT } = location.state;
             setSPCT(SPCT);
             setListSPCTSelected(listSPCTSelected)
+
         }
 
-        // fetchData();
+        fetchData();
     }, [])
     const formatCurrency = (amount) => {
         return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'VND' }).format(amount);
@@ -59,6 +78,10 @@ function CheckOut({ match, location }) {
 
     const suaGhiChu = (e) =>{
         setGhiChu(e.target.value)
+        // console.log(listThanhPho)
+        // console.log(listQuanHuyen)
+        // console.log(listXa)
+        console.log(phiShip)
     }
     const check = ()=>{
         console.log(listSPCTSelected)
@@ -124,7 +147,7 @@ function CheckOut({ match, location }) {
             tongTien:tong,
             tongTienSauKhiGiam:tongTienSauKhiGiam+30000,
             tienGiam:tong-tongTienSauKhiGiam,
-            tienShip:30000,
+            tienShip:phiShip,
             taiKhoanId:parseInt(id),
             diaChiId:3,
             thanhToanId:2,
@@ -132,20 +155,185 @@ function CheckOut({ match, location }) {
             //bắt đầu
             // kieuHoaDon:1,
             // trangThai:0,
-            // ten:"",
-            // sdt:"",
+            ten:ten,
+            sdt:sdt,
             // email:"",
-            // diaChiCuThe:"",
-            // tinhThanhPho:"",
-            // quanHuyen:"",
-            // xaPhuongThiTran:""
-
+            diaChiCuThe:diaChiCuThe,
+            xaPhuongThiTran:xaPhuongThiTran,
+            quanHuyen:quanHuyen,
+            tinhThanhPho:tinhThanhPho
         }
         console.log(hd)
-        const thongBao = await GioHangService.sold(hd);
-        alert(thongBao)
-        history.push(`/your-cart/${id}`)
+        if(diaChiCuThe===""){
+            alert("Chưa chọn địa chỉ giao , không thanh toán được");
+        }else{
+            const thongBao = await GioHangService.sold(hd);
+            alert(thongBao)
+            history.push(`/your-cart/${id}`)
+        }
     }
+
+    const moModal = () => {
+        setModalDC(true);
+    };
+
+    const dongModal = () => {
+        setModalDC(false);
+    };
+
+    const chonDC = (value) => {
+        setDcSelected(value.id);
+        setTen(value.ten);
+        setSDT(value.sdt);
+        setDiaChiCuThe(value.diaChiCuThe);
+        setXaPhuongThiTran(value.xaPhuongThiTran);
+        setQuanHuyen(value.quanHuyen);
+        setTinhThanhPho(value.tinhThanhPho);
+        layIdXP(value.tinhThanhPho,value.quanHuyen,value.xaPhuongThiTran)
+        dongModal();
+    }
+
+
+    // const apiUrl = 'https://services.giaohangtietkiem.vn/services/shipment/fee';
+    const tinhTienShip = async () => {
+
+        let tongTien = SPCT.reduce((total, spct) => {
+            return total + spct.sanPhamChiTietId.donGia * spct.soLuong;
+        }, 0);
+        let tongKL = SPCT.length * 100;
+        try {
+            const requestBody = {
+                "service_type_id": 2,
+                "insurance_value": 10000000,
+                "coupon": null,
+                "from_district_id": 1582,
+                "from_ward_code": "1A1319",
+                "to_district_id": codeQuan,
+                "to_ward_code": `${codeXa}`,
+                "height": 15,
+                "length": 15,
+                "weight": 1000,
+                "width": 15
+            };
+
+            const response = await axios.post('https://online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/fee', requestBody, {
+                headers: {
+                    'token': '93254e5e-a301-11ee-b394-8ac29577e80e', // Thay YOUR_API_KEY bằng API key thực tế của bạn
+                },
+            });
+            setPhiShip(response.data.data.service_fee)
+            return response.data.data.service_fee;
+        } catch (error) {
+            // Xử lý lỗi tại đây
+            if (error.response) {
+                // Nếu có phản hồi từ server
+                console.error('Server Error:', error.response.data);
+            } else if (error.request) {
+                // Nếu yêu cầu được gửi đi nhưng không nhận được phản hồi
+                console.error('No response received');
+            } else {
+                // Lỗi trong quá trình thiết lập yêu cầu
+                console.error('Error setting up the request:', error.message);
+            }
+            throw error;
+        }
+    };
+
+    const layIdXP = async (TP,QH,XP) =>{
+        try {
+            const responseTp = await axios.get('https://online-gateway.ghn.vn/shiip/public-api/master-data/province', {
+                headers: {
+                    'token': '93254e5e-a301-11ee-b394-8ac29577e80e', // Thay YOUR_API_KEY bằng API key thực tế của bạn
+                },
+            });
+            const provincesData = responseTp.data.data;
+            let provinceId ;
+            let districtId ;
+            let wardCode ;
+            for(let i=0;i<provincesData.length;i++){
+                for(let j=0;j<provincesData[i].NameExtension.length;j++){
+                    if(provincesData[i].NameExtension[j].toLowerCase()===TP.toLowerCase()){
+                        setCodeTP(provincesData[i].ProvinceID);
+                        provinceId=provincesData[i].ProvinceID;
+                    }
+                }
+
+            }
+            const responseQH = await axios.get(`https://online-gateway.ghn.vn/shiip/public-api/master-data/district?province_id=${provinceId}`, {
+                headers: {
+                    'token': '93254e5e-a301-11ee-b394-8ac29577e80e', // Thay YOUR_API_KEY bằng API key thực tế của bạn
+                },
+            });
+            const districtData = responseQH.data.data;
+            for(let i=0;i<districtData.length;i++){
+                for(let j=0;j<districtData[i].NameExtension.length;j++){
+                    if(districtData[i].NameExtension[j].toLowerCase()===QH.toLowerCase()){
+                        setCodeQuan(districtData[i].DistrictID);
+                        districtId=districtData[i].DistrictID;
+                    }
+                }
+
+            }
+
+            const responseXP = await axios.get(`https://online-gateway.ghn.vn/shiip/public-api/master-data/ward?district_id=${districtId}`, {
+                headers: {
+                    'token': '93254e5e-a301-11ee-b394-8ac29577e80e', // Thay YOUR_API_KEY bằng API key thực tế của bạn
+                },
+            });
+            const wardData = responseXP.data.data;
+            for(let i=0;i<wardData.length;i++){
+                for(let j=0;j<wardData[i].NameExtension.length;j++){
+                    if(wardData[i].NameExtension[j].toLowerCase()===XP.toLowerCase()){
+                        setCodeXa(wardData[i].WardCode);
+                        return wardCode=wardData[i].WardCode;
+                    }
+                }
+
+            }
+            return wardCode;
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }
+
+    const popupContent = (
+        <div className="popup">
+            <div className="card-body">
+                <div className="tab-pane fade show active" id="home" role="tabpanel"
+                     aria-labelledby="home-tab">
+                    <table style={{width: '100%',
+                        borderCollapse: 'collapse'}}>
+                        <thead>
+                        <tr className={"tr1"}>
+                            <th>Tên</th>
+                            <th>SĐT</th>
+                            <th>Địa chỉ</th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {listDC.map((dc, index) => (
+
+                            <tr className={"tr1"}>
+                                <th >
+                                    {dc.ten}
+                                </th>
+                                <th >{dc.sdt}</th>
+                                <th >{dc.diaChiCuThe} , {dc.xaPhuongThiTran} , {dc.quanHuyen} , {dc.tinhThanhPho}</th>
+                                <th ><button className={`btn ${dcSelected===dc.id? 'btn-primary' : 'btn-outline-primary'} `} onClick={(e)=>chonDC(dc)}>Chọn</button></th>
+                            </tr>
+                        ))}
+                        </tbody>
+                    </table>
+
+                </div>
+
+
+            </div>
+            <br/>
+        </div>
+    );
+
     return (
         <Fragment>
             <body>
@@ -233,9 +421,21 @@ function CheckOut({ match, location }) {
                                     <path
                                         d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10m0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6"/>
                                 </svg>
-                                <h5 style={{color:"red",marginLeft:35}}>Địa chỉ giao hàng</h5>
+                                <h5 style={{color:"red",marginLeft:35}}>Địa chỉ giao hàng {dcSelected===0?(<a style={{marginLeft:50,textDecoration:"none",cursor:"pointer",color:"mediumblue"}} onClick={moModal}>Thay đổi</a>):(<strong></strong>)}</h5>
                                 <br/>
-                                <p style={{marginLeft:30}}><strong>Tên người dùng (Số điện thoại) </strong> Địa chỉ người dùng <a style={{marginLeft:50,textDecoration:"none",cursor:"pointer",color:"mediumblue"}} onClick>Thay đổi</a></p>
+                                <p style={{marginLeft:30}}>
+                                    {dcSelected===0?(<strong></strong>):(<strong>{ten} ({sdt}) : {diaChiCuThe} , {xaPhuongThiTran} , {quanHuyen} , {tinhThanhPho} </strong>)}
+
+                                    {dcSelected===0?(<strong></strong>):(<a style={{marginLeft:50,textDecoration:"none",cursor:"pointer",color:"mediumblue"}} onClick={moModal}>Thay đổi</a>)}
+                                </p>
+                                <Modal show={modalDC} onHide={dongModal} backdrop="static" style={{maxWidth: '100%', width: '100%'}} size={"lg"}>
+                                    <Modal.Header closeButton>
+                                        <Modal.Title>Chọn địa chỉ giao</Modal.Title>
+                                    </Modal.Header>
+                                    <Modal.Body>
+                                        {popupContent}
+                                    </Modal.Body>
+                                </Modal>
                             </div>
                             <br/>
                             <br/>
@@ -255,7 +455,7 @@ function CheckOut({ match, location }) {
                                     <tbody>
                                         {SPCT.map((spct,index)=>
                                             <tr>
-                                                <td><img src={`/img/`+spct.sanPhamChiTietId.anh} style={{ width: '60px', height: '60px' ,margin:10,objectFit: 'cover',objectPosition: 'center'}}/> Sản Phẩm 1</td>
+                                                <td><img src={`/img/`+spct.sanPhamChiTietId.anh} style={{ width: '60px', height: '60px' ,margin:10,objectFit: 'cover',objectPosition: 'center'}}/> {spct.sanPhamChiTietId.sanPham.ten}</td>
                                                 <td><br/>Màu : {spct.sanPhamChiTietId.mauSac.ten}</td>
                                                 <td><br/>Kich Thước : {spct.sanPhamChiTietId.kichThuoc.giaTri}</td>
                                                 <td><br/>{formatCurrency(spct.sanPhamChiTietId.donGia)}</td>
@@ -275,8 +475,8 @@ function CheckOut({ match, location }) {
                                         <input className="form-control input-group" placeholder={"Lời nhắn cho người bán"} style={{marginLeft:20,width:390,height:40}} onChange={(e)=>suaGhiChu(e)}/>
                                     </div>
                                     <div className="col-7 d-inline">
-                                        <h7 style={{marginTop:8,float:"right"}}>Phí ship : 30000 VND
-                                        </h7>
+                                        <h7 style={{marginTop:8,float:"right"}}>Phí ship : {formatCurrency(phiShip)}</h7>
+                                        {codeXa===0?(<h7 style={{display: 'none',marginTop:8,float:"right"}}>Phí ship : {formatCurrency(phiShip)}</h7>) : (<h7 style={{display: 'none', marginTop:8,float:"right"}}>Phí ship : {formatCurrency(tinhTienShip())}</h7>)}
                                     </div>
 
                                 </div>
@@ -340,11 +540,11 @@ function CheckOut({ match, location }) {
                                     <h7 style={{marginTop:8,marginLeft:980,textAlign: 'right'}}>Tổng tiền hàng : <span style={{float:"right"}}> {formatCurrency(tinhTongTienHang())}</span></h7>
                                     <br/>
                                     <br/>
-                                    <h7 style={{marginTop:8,marginLeft:980,textAlign: 'right'}}>Phí ship : <span style={{float:"right"}}>  {formatCurrency(30000)}</span></h7>
+                                    <h7 style={{marginTop:8,marginLeft:980,textAlign: 'right'}}>Phí ship : <span style={{float:"right"}}>  {formatCurrency(phiShip)}</span></h7>
                                     <br/>
                                     <br/>
                                     {/*{formatCurrency(selectedKM.length===0?tinhTongTienHang():tongTien)}*/}
-                                    <h7 style={{marginTop:8,marginLeft:980,textAlign: 'right'}}>Tông thanh toán : <span style={{float:"right",color:"red",fontSize:22}}>{formatCurrency(tinhTongTienHang()+30000)}</span></h7>
+                                    <h7 style={{marginTop:8,marginLeft:980,textAlign: 'right'}}>Tông thanh toán : <span style={{float:"right",color:"red",fontSize:22}}>{formatCurrency(tinhTongTienHang()+phiShip)}</span></h7>
                                     <br/>
                                     <hr className="dashed-hr"/>
                                     <div className="row">

@@ -5,3 +5,9 @@
     border-image: repeating-linear-gradient(to right, red, red 40px, white 40px, white 80px, blue 80px, blue 120px, white 120px, white 160px);
     border-image-slice: 1;
 }
+
+.tr1 {
+    height: 75px;/* Đặt chiều cao mong muốn cho mỗi hàng */
+    vertical-lign: top; /* Chỉ định vị trí dọc của phần tử */
+    line-height: 1.5
+}

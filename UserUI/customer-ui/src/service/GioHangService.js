@@ -1,6 +1,7 @@
 import axios from 'axios';
 
 const GET_GIO_HANG_ONE = 'http://localhost:8080/gio-hang-chi-tiet/one';
+const GET_DC_BY_TAI_KHOAN = 'http://localhost:8080/dia_chi/getDCByTaiKhoan';
 const UPDATE_GIO_HANG_CHI_TIET = 'http://localhost:8080/gio-hang-chi-tiet/update';
 const DELETE_GIO_HANG_CHI_TIET_ONE = 'http://localhost:8080/gio-hang-chi-tiet/delete-one';
 const DELETE_GIO_HANG_CHI_TIET_MULTIPLE = 'http://localhost:8080/gio-hang-chi-tiet/delete-multiple';
@@ -12,6 +13,11 @@ const CREATE_HOA_DON = "http://localhost:8080/payment/sold";
 export const GioHangService = {
     getGHOne: async (id) => {
         const response = await axios.get(`${GET_GIO_HANG_ONE}/${id}`);
+        return response.data;
+    },
+
+    getDCByTaiKhoan: async (id) => {
+        const response = await axios.get(`${GET_DC_BY_TAI_KHOAN}/${id}`);
         return response.data;
     },
 

@@ -69,10 +69,6 @@ function Cart({ match }) {
         GioHangService.updateGHCT(id,soLuongMoi);
     }
     const xoaDon = async (id)=>{
-        const confirm = window.confirm("Bạn có chắc chắn muốn xóa sản phẩm này khỏi giỏ hàng ?");
-        if(!confirm){
-            return;
-        }
         const res = await GioHangService.deleteOne(id);
         if (res.status === 200) {
             toast.success("Xóa thành công");
@@ -234,9 +230,9 @@ function Cart({ match }) {
                                         <div className="row">
 
                                             <div className="col-1" style={{}}>
-                                                <input type="checkbox" className="btn-check" id={spct.id}
-                                                       autoComplete="off" onChange={(e)=>chonSPCT(spct)}/>
-                                                <label className="btn btn-outline-primary" htmlFor={spct.id}>✔</label>
+                                                {/*<input type="checkbox" className="btn-check" id={spct.id}*/}
+                                                {/*       autoComplete="off" onChange={(e)=>chonSPCT(spct)}/>*/}
+                                                {/*<label className="btn btn-outline-primary" htmlFor={spct.id}>✔</label>*/}
                                                 <button className="btn btn-outline-danger" style={{width:40,marginTop:10}} onClick={()=>xoaDon(spct.id)}>X</button>
                                             </div>
 
@@ -282,7 +278,7 @@ function Cart({ match }) {
                                 ))}
                                     <hr className="dashed-hr"/></div>
                                 )}
-                            <button className="btn btn-danger" style={{marginLeft: '0em', width: '25%'}} onClick={()=>xoaNhieu()}>Xóa ({listSPCTSelected.length})</button>
+                            {/*<button className="btn btn-danger" style={{marginLeft: '0em', width: '25%'}} onClick={()=>xoaNhieu()}>Xóa ({listSPCTSelected.length})</button>*/}
                             <button className="btn btn-primary" style={{marginLeft: '5px', width: '25%'}}>Tiếp tục mua
                                 hàng
                             </button>
@@ -345,7 +341,8 @@ function Cart({ match }) {
                     </div>
                 </div>
             </main>
-
+            <br/>
+            <br/>
             <footer>
                 <footer className="bg-gray py-5" style={{backgroundColor: 'rgba(0,0,0,0.03)'}}>
                     <div className="container">
