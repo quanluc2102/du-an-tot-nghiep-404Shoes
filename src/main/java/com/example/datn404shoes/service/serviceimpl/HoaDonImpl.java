@@ -56,6 +56,7 @@ long count = hoaDonRepository.count()+1;
             hoaDon1.setChoXacNhan(Date.valueOf(LocalDate.now()));
             hoaDon1.setTrangThai(hoaDon1.getTrangThai()+1);
             hoaDon1.setGhiChuChoXacNhan(hoaDon.getGhiChuChoXacNhan());
+            hoaDon1.setPhiShip(hoaDon.getPhiShip());
         }else
         if(hoaDon1.getTrangThai()==1) {
             hoaDon1.setChoGiao(Date.valueOf(LocalDate.now()));
