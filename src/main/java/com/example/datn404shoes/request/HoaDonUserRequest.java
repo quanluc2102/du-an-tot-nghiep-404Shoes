@@ -22,4 +22,10 @@ public class HoaDonUserRequest {
     private Long diaChiId;
     private Long thanhToanId;
     private String ghiChu;
+    private String ten;
+    private String sdt;
+    private String diaChiCuThe;
+    private String xaPhuongThiTran;
+    private String quanHuyen;
+    private String tinhThanhPho;
 }
