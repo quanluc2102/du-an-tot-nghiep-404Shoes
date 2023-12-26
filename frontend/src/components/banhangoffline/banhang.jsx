@@ -1,6 +1,3 @@
-// xử lý thêm khách hàng vào hoá đơn
-// css lại trang
-// xử lý số lượng trong chọn sản phẩm
 import React, { Component } from "react";
 import axios from "axios";
 import './banhangoff.css';
@@ -15,16 +12,16 @@ import {
     Input,
     Select,
     Space,
-    // Checkbox,
     Row,
     InputNumber,
     Flex,
-    Switch
+    Switch,
+    Button
 } from "antd";
 import { ProfileOutlined, DeleteOutlined } from "@ant-design/icons/lib/icons";
 import BanHangService from "../../services/banhangservice/BanHangService";
 import QrScanner from 'react-qr-scanner';
-import { Modal, Button } from 'react-bootstrap';
+import { Modal } from 'react-bootstrap';
 
 const { Search } = Input;
 class BanHangOffline extends Component {
@@ -32,6 +29,7 @@ class BanHangOffline extends Component {
         super(props);
 
         this.state = {
+            chooseUser: false,
             idKhachHang: '',
             searchTerm: '',
             searchTermKH: '',
@@ -57,9 +55,9 @@ class BanHangOffline extends Component {
             showModal1: false,
             showModal2: false,
             showModal3: false,
-            currentPage: 0, // Trang hiện tại
+            currentPage: 0, 
             perPage: 4,
-            currentPageKH: 0, // Trang hiện tại
+            currentPageKH: 0,
             perPageKH: 4,
             result: 'No QR code scanned yet',
             tabProducts: {
@@ -90,15 +88,15 @@ class BanHangOffline extends Component {
             wards: [],
             diaChi: [],
             currentSanPhamChiTietList: [],
+            addressUser: [],
+            commune: [],
+            ward: [],
+            town: [],
         };
         this.onChangeSearchInput = this.onChangeSearchInput.bind(this);
         this.nextTabIndex = 0
         this.handleQuantityChange = this.handleQuantityChange.bind(this);
         this.onChangeSwitch = this.onChangeSwitch.bind(this);
-        // this.thayDoiDiaChiUpdate = this.thayDoiDiaChiUpdate.bind(this);
-        this.thayDoiTinhUpdate = this.thayDoiTinhUpdate.bind(this);
-        this.thayDoiHuyenUpdate = this.thayDoiHuyenUpdate.bind(this);
-        this.thayDoiXaUpdate = this.thayDoiXaUpdate.bind(this);
         this.handleCityChange = this.handleCityChange.bind(this);
         this.handleDistrictChange = this.handleDistrictChange.bind(this);
         this.handleWardChange = this.handleWardChange.bind(this);
@@ -108,7 +106,6 @@ class BanHangOffline extends Component {
         const { tabProducts, activeTabKey, tabCustomers } = this.state;
         const selectedProducts = tabProducts[activeTabKey] || [];
 
-        // const customers = tabCustomers[tabKey] || [];
         console.log(this.getTotalAmount(selectedProducts))
         BanHangService.getSPCT().then((res) => {
             this.setState({ sanPhamChiTiet: res.data })
@@ -125,16 +122,31 @@ class BanHangOffline extends Component {
         }).catch((error) => {
             console.error("Error fetching data:", error);
         });
-        BanHangService.getDC(this.idKhachHang).then((res) => {
-            console.log(this.idKhachHang)
-            this.setState({ diaChi: res.data })
-        }).catch((error) => {
-            console.error("Error fetching data:", error);
-        });
         this.fetchCities()
     }
-    idKhachHang(id) {
-        this.setState({ khachHangId: id });
+
+    componentDidUpdate(prevProps, prevState) {
+        if (this.state.tinhThanhPho !== prevState.tinhThanhPho) {
+            const { cities, tinhThanhPho } = this.state;
+            const selectedCity = cities.find(city => city.name === tinhThanhPho);
+
+            if (selectedCity) {
+                this.fetchDistricts(selectedCity);
+            }
+        }
+
+        if (this.state.quanHuyen !== prevState.quanHuyen) {
+            const { districts, quanHuyen } = this.state;
+            const selectedDistrict = districts.find(district => district.name === quanHuyen);
+    
+            if (selectedDistrict) {
+                this.fetchWards(selectedDistrict);
+            }
+        }
+    }
+
+    getIdKhachHang(id) {
+        this.setState({ idKhachHang: id });
     }
 
     addKH(id) {
@@ -145,14 +157,12 @@ class BanHangOffline extends Component {
         const searchTerm = event.target.value;
         this.setState({ searchTerm });
 
-        // Lưu trạng thái tìm kiếm vào localStorage
         localStorage.setItem('searchTerm', searchTerm);
     }
     handleSearchKH = (event) => {
         const searchTermKH = event.target.value;
         this.setState({ searchTermKH });
 
-        // Lưu trạng thái tìm kiếm vào localStorage
         localStorage.setItem('searchTermKH', searchTermKH);
     }
     handleStatusFilter = (filterValue) => {
@@ -165,7 +175,6 @@ class BanHangOffline extends Component {
         const { sanPhamChiTiet, searchTerm } = this.state;
 
         return _.filter(sanPhamChiTiet, (item) => {
-            // Combine the values of the columns you want to search in
             const searchValues = (
                 (item.sanPham.ten) + (item.soLuong) + (item.donGia) +
                 (item.kichThuoc.giaTri) + (item.mauSac.ten) +
@@ -186,7 +195,6 @@ class BanHangOffline extends Component {
         const { taiKhoan, searchTermKH } = this.state;
 
         return _.filter(taiKhoan, (item) => {
-            // Combine the values of the columns you want to search in
             const searchValues = (
                 (item.thongTinNguoiDung.ten) + (item.thongTinNguoiDung.sdt)
             ).toLowerCase();
@@ -215,7 +223,6 @@ class BanHangOffline extends Component {
         axios.get('https://provinces.open-api.vn/api/?depth=1')
             .then((response) => {
                 this.setState({ cities: response.data });
-                console.log('cities', this.state.cities);
             })
             .catch((error) => {
                 console.error('Error fetching cities:', error);
@@ -223,10 +230,11 @@ class BanHangOffline extends Component {
     }
 
     fetchDistricts(selectedCity) {
+        console.log('first city selected:', selectedCity)
         axios.get(`https://provinces.open-api.vn/api/p/${selectedCity.code}?depth=2`)
             .then((response) => {
-                this.setState({ districts: response.data.districts });
-                console.log(this.state.districts)
+                const districtsData = response.data.districts;
+                this.setState({ districts: districtsData });
             })
             .catch((error) => {
                 console.error('Error fetching districts:', error);
@@ -236,7 +244,11 @@ class BanHangOffline extends Component {
     fetchWards(selectedDistrict) {
         axios.get(`https://provinces.open-api.vn/api/d/${selectedDistrict.code}?depth=2`)
             .then((response) => {
-                this.setState({ wards: response.data.wards });
+                const wardsData = response.data.wards;
+                this.setState({ wards: wardsData }, () => {
+                    console.log('Wards:', response.data.wards)
+                });
+
             })
             .catch((error) => {
                 console.error('Error fetching wards:', error);
@@ -252,20 +264,21 @@ class BanHangOffline extends Component {
         });
 
         if (selectedCity) {
-            this.fetchDistricts(selectedCity); // Chỉ thực hiện fetchDistricts nếu có dữ liệu cho selectedCity
+            this.fetchDistricts(selectedCity);
         }
     }
 
     handleDistrictChange(event) {
         const selectedDistrictName = event.target.value;
         const selectedDistrict = this.state.districts.find(district => district.name === selectedDistrictName);
+        console.log('llllllllllllllllllllllllllllllllllllllllllllll', selectedDistrictName)
 
         this.setState({
             quanHuyen: selectedDistrictName,
         });
 
         if (selectedDistrict) {
-            this.fetchWards(selectedDistrict); // Chỉ thực hiện fetchWards nếu có dữ liệu cho selectedDistrict
+            this.fetchWards(selectedDistrict);
         }
     }
 
@@ -274,45 +287,14 @@ class BanHangOffline extends Component {
         this.setState({ xaPhuongThiTran: selectedWardName });
     }
 
-    thayDoiTinhUpdate = (event) => {
-        this.setState(
-            prevState => ({
-                nguoiDungUpdate: {
-                    ...prevState.nguoiDungUpdate,
-                    tinhThanhPho: event.target.value
-                }
-            })
-        );
-        let errorUpdate = { ...this.state.errorUpdate, tinhThanhPho: "" };
-        this.setState({ errorUpdate: errorUpdate });
-    }
-
-    thayDoiHuyenUpdate = (event) => {
-        this.setState(
-            prevState => ({
-                nguoiDungUpdate: {
-                    ...prevState.nguoiDungUpdate,
-                    quanHuyen: event.target.value
-                }
-            })
-        );
-        let errorUpdate = { ...this.state.errorUpdate, quanHuyen: "" };
-        this.setState({ errorUpdate: errorUpdate });
-    }
-    thayDoiXaUpdate = (event) => {
-        this.setState(
-            prevState => ({
-                nguoiDungUpdate: {
-                    ...prevState.nguoiDungUpdate,
-                    xaPhuongThiTran: event.target.value
-                }
-            })
-        );
-        let errorUpdate = { ...this.state.errorUpdate, xaPhuongThiTran: "" };
-        this.setState({ errorUpdate: errorUpdate });
-    }
-
-
+    handleAddress = (diaChiCuThe, xaPhuongThiTran, quanHuyen, tinhThanhPho) => {
+        this.setState({
+            diaChiCuThe,
+            xaPhuongThiTran,
+            quanHuyen,
+            tinhThanhPho
+        });
+    };
     handleCloseModal = () => {
         this.setState({ showModal: false });
     };
@@ -348,11 +330,9 @@ class BanHangOffline extends Component {
         }));
     };
     handleSearchFocus = () => {
-        // Đặt trang hiện tại về 0 để nhảy về trang đầu tiên
         this.setState({ currentPage: 0 });
     }
     handleSearchFocusKH = () => {
-        // Đặt trang hiện tại về 0 để nhảy về trang đầu tiên
         this.setState({ currentPageKH: 0 });
     }
     handleScan = (data) => {
@@ -363,18 +343,13 @@ class BanHangOffline extends Component {
 
             const slicedMaQR = data.text.slice(5);
             const existingProduct = selectedProducts.find((product) => product.ma === slicedMaQR);
-
             if (!existingProduct) {
                 const productToAdd = selectedProducts.find((product) => product.ma === slicedMaQR);
 
                 if (productToAdd) {
                     const updatedSelectedProducts = [...selectedProducts, { ...productToAdd, quantity: 1 }];
                     this.setState({ selectedProducts: updatedSelectedProducts });
-
-                    // Get the current tab key (you need to define tabKey in your state)
-                    const currentTabKey = this.state.tabKey; // Replace with the actual property holding the current tab key
-
-                    // Update the tabProducts state for the current tab
+                    const currentTabKey = this.state.tabKey; 
                     const updatedTabProducts = { ...tabProducts };
                     updatedTabProducts[currentTabKey] = [...updatedTabProducts[currentTabKey], { ...productToAdd, quantity: 1 }];
 
@@ -433,7 +408,6 @@ class BanHangOffline extends Component {
             tinhThanhPho: this.state.tinhThanhPho,
 
             diaChiCuThe: this.state.diaChiCuThe,
-
         };
 
         try {
@@ -469,7 +443,6 @@ class BanHangOffline extends Component {
     getTotalAmount = (products) => {
         let totalAmount = products.reduce((total, product) => total + product.donGia * product.quantity, 0);
 
-        // Apply discounts based on selected promotions
         const { selectedPromotions } = this.state;
 
         selectedPromotions.forEach((promotionId) => {
@@ -477,10 +450,8 @@ class BanHangOffline extends Component {
 
             if (promotion) {
                 if (promotion.kieuKhuyenMai === 1) {
-                    // Discount by percentage
                     totalAmount *= (100 - promotion.giamGia) / 100;
                 } else if (promotion.kieuKhuyenMai === 0) {
-                    // Discount by fixed amount
                     totalAmount -= promotion.giamGia;
                 }
             }
@@ -534,7 +505,6 @@ class BanHangOffline extends Component {
                 item.id === productId.id ? { ...item, quantity: item.quantity + 1 } : item
             );
 
-            // Giảm số lượng sản phẩm trong sản phẩm chi tiết khi thêm vào giỏ hàng
             const updatedSanPhamChiTietList = currentSanPhamChiTietList.map(item =>
                 item.id === productId.id ? { ...item, soLuong: item.soLuong - 1 } : item,
 
@@ -569,7 +539,7 @@ class BanHangOffline extends Component {
         const { tabCustomers } = this.state;
         const customers = tabCustomers[tabKey] || [];
         const isCustomerExist = customers.length > 0;
-        this.idKhachHang(userId)
+        this.getIdKhachHang(userId)
         if (isCustomerExist) {
             this.setState({
                 tabCustomers: {
@@ -577,11 +547,7 @@ class BanHangOffline extends Component {
                     [tabKey]: [{ ...userId }],
                 },
             });
-
-
-            // this.fetchCities()
-
-            toast.success("Đã cập nhật thông tin khách hàng", { position: toast.POSITION.MID_RIGHT });
+            toast.success("Đã cập nhật thông tin khách hàng", { position: toast.POSITION.MID_RIGHT, autoClose: true });
             this.handleCloseModal1();
         } else {
             const newCustomer = { ...userId };
@@ -632,8 +598,8 @@ class BanHangOffline extends Component {
                                 onChange={(e) => this.handleQuantityChange(e, product.ma)}
                             />
                         </Col>
-                        <Col span={3} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center' }}>{product.donGia} VND</Col>
-                        <Col span={4} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center' }}>{product.donGia * product.quantity} VND</Col>
+                        <Col span={3} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center' }}>{product.donGia}</Col>
+                        <Col span={4} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center' }}>{product.donGia * product.quantity}</Col>
                         <Col span={1} style={{ transition: 'color 0.3s' }}>
                             <DeleteOutlined
                                 onClick={() => this.onDelete(tabKey, product.ma)}
@@ -651,7 +617,6 @@ class BanHangOffline extends Component {
     renderUserForTab = (tabKey) => {
         const { tabCustomers } = this.state;
         const customers = tabCustomers[tabKey] || [];
-
         if (customers.length === 0) {
             return (
                 <tr key="no-customer">
@@ -659,27 +624,26 @@ class BanHangOffline extends Component {
                 </tr>
             );
         }
-        return customers.map((customer, index) => {
-            console.log('customer', customer)
+        return customers.map((customer) => {
             BanHangService.getDC(customer.id).then((res) => {
-                console.log(customer.id)
-                this.setState({ diaChi: res.data })
+                this.setState({ diaChi: res.data }, () => {
+                    console.log('dia chi vua call', res.data)
+                })
             }).catch((error) => {
                 console.error("Error fetching data:", error);
             });
             return (
                 <div>
                     <div>
-
                         <label htmlFor="ten">Tên khách hàng:{customer.ten} </label> <br />
                         <label htmlFor="sdt">Số điện thoại:{customer.sdt}</label><br />
-                        <label htmlFor="diaChiCuthe">Địa chỉ cụ thể : </label> <input
+                        <label htmlFor="diaChiCuthe">Địa chỉ cụ thể : </label>
+                        <input
                             type="text"
                             className="form-control"
                             value={this.state.diaChiCuThe}
                             onChange={(event) => this.setState({ diaChiCuThe: event.target.value })}
-                        />
-                        <br />
+                        /><br />
                         <label htmlFor="tinhThanhPho">Tỉnh/Thành phố:</label>
                         <select
                             className="form-control"
@@ -713,34 +677,33 @@ class BanHangOffline extends Component {
 
                     <div className="form-group">
                         <label htmlFor="xaPhuongThiTran">Xã/Phường/Thị trấn:</label>
-                        <select
-                            className="form-control"
-                            name="xaPhuongThiTran"
-                            onChange={(event) => this.handleWardChange(event)}
-                        >
-                            <option value={this.state.xaPhuongThiTran}>Chọn phường xã</option>
-                            {this.state.wards.map(ward => (
-                                <option key={ward.code} value={ward.name} selected={ward.name === this.state.xaPhuongThiTran}>
-                                    {ward.name}
-                                </option>
-                            ))}
-                        </select>
+                        <input type="text" value={this.state.xaPhuongThiTran} className="form-control" />
                     </div>
+
                 </div>
             )
         });
-    };
+    }
+
     handleQuantityChange = (e, productId) => {
         const newQuantity = parseInt(e.target.value, 10);
+        const { sanPhamChiTiet } = this.state;
+        console.log('newQuantity:', newQuantity);
+       
+        const selectedProduct = sanPhamChiTiet.find(product => product.ma === productId);
+        console.log('selectedProduct:', selectedProduct);
+       
+        const limitedQuantity = Math.min(newQuantity, selectedProduct ? selectedProduct.soLuong : 1);
+    
         this.setState((prevState) => {
             const { activeTabKey, tabProducts } = prevState;
             const updatedProducts = tabProducts[activeTabKey].map((product) => {
                 if (product.ma === productId) {
-                    return { ...product, quantity: newQuantity };
+                    return { ...product, quantity: limitedQuantity };
                 }
                 return product;
             });
-            // Update the state with the modified products
+    
             return {
                 tabProducts: {
                     ...tabProducts,
@@ -749,6 +712,9 @@ class BanHangOffline extends Component {
             };
         });
     };
+    
+
+
     onEdit = (tabKey, action) => {
         if (action === 'add' && this.state.tabList.length < 5) {
             this.setState(prevState => ({
@@ -823,9 +789,8 @@ class BanHangOffline extends Component {
     };
 
     onChangeSwitch = () => {
-        // console.log('tài khoản', this.state.taiKhoan);
         this.setState(prevState => ({ checked: !prevState.checked }), () => {
-            console.log('checked', this.state.checked); // Đây là cách để log giá trị mới của checked
+            console.log('checked', this.state.checked);
         });
     };
 
@@ -883,7 +848,6 @@ class BanHangOffline extends Component {
             const newlySelectedPromotion = selectedValues[selectedValues.length - 1];
 
             if (selectedPromotion && selectedPromotion !== newlySelectedPromotion) {
-                // Hiển thị thông báo và không cho phép chọn nếu đã có mã khác được chọn trước đó
                 toast.error("Chỉ một mã khuyến mãi bạn chọn đầu tiên được áp dụng.", {
                     position: "top-right",
                     autoClose: 3000,
@@ -896,23 +860,18 @@ class BanHangOffline extends Component {
                 return;
             }
 
-            // Cập nhật state với mã khuyến mãi được chọn
             this.setState({ selectedPromotion: newlySelectedPromotion });
         } else {
-            // Nếu không có mã nào được chọn, reset selectedPromotion về null
             this.setState({ selectedPromotion: null });
         }
-
-        // Cập nhật state với các mã khuyến mãi được chọn
         this.setState({ selectedPromotions: selectedValues });
     };
     getStatusCounts = () => {
         const { sanPhamChiTiet } = this.state;
         const statusCounts = {
-            "": sanPhamChiTiet.length, // All
-            "0": 0, // Chờ xác nhận
-            "1": 0, // Đã xác nhận
-            // Hủy
+            "": sanPhamChiTiet.length,
+            "0": 0,
+            "1": 0,
         };
 
         sanPhamChiTiet.forEach(item => {
@@ -937,9 +896,6 @@ class BanHangOffline extends Component {
         const { currentPage, perPage } = this.state;
         const offset = currentPage * perPage;
         const currentSanPhamChiTietList = sanPhamList.slice(offset, offset + perPage);
-        /* 
-         
-        */
         const searchTermKH = localStorage.getItem('searchTermKH') || this.state.searchTermKH;
         const statusCountsKH = this.getStatusCounts();
         const ListKH = this.filteredDataKH();
@@ -1063,7 +1019,7 @@ class BanHangOffline extends Component {
                                                     title="Enter search keyword"
                                                     value={searchTerm}
                                                     onChange={this.handleSearch}
-                                                    onFocus={this.handleSearchFocus} // Thêm sự kiện onFocus
+                                                    onFocus={this.handleSearchFocus}
                                                 />
                                             </div>
                                             <div className="col-7">
@@ -1191,7 +1147,7 @@ class BanHangOffline extends Component {
                                                             title="Enter search keyword"
                                                             value={searchTermKH}
                                                             onChange={this.handleSearchKH}
-                                                            onFocus={this.handleSearchFocusKH} // Thêm sự kiện onFocus
+                                                            onFocus={this.handleSearchFocusKH}
                                                         />
                                                     </div>
 
@@ -1240,7 +1196,7 @@ class BanHangOffline extends Component {
                                             </Modal.Body>
                                         </Modal>
                                         <Button variant="btn btn-outline-primary" onClick={this.handleShowModal3}>
-                                            Dịa chỉ
+                                            Địa chỉ
                                         </Button>
                                         <Modal show={this.state.showModal3} onHide={this.handleCloseModal3} backdrop="static" dialogClassName="custom-modal-size">
                                             <Modal.Header closeButton>
@@ -1259,7 +1215,7 @@ class BanHangOffline extends Component {
                                                             title="Enter search keyword"
                                                             value={searchTermKH}
                                                             onChange={this.handleSearchKH}
-                                                            onFocus={this.handleSearchFocusKH} // Thêm sự kiện onFocus
+                                                            onFocus={this.handleSearchFocusKH}
                                                         />
                                                     </div>
 
@@ -1283,7 +1239,7 @@ class BanHangOffline extends Component {
                                                                                 <td>{index + 1}</td>
                                                                                 <td>{diaChi.thongTinNguoiDung.ten}</td>
                                                                                 <td>{diaChi.diaChiCuThe}, {diaChi.xaPhuongThiTran}, {diaChi.quanHuyen},{diaChi.tinhThanhPho}</td>
-                                                                                <td><button onClick={() => this.handleAddUser(diaChi.thongTinNguoiDung, this.state.activeTabKey)} className="btn btn-outline-info">chọn</button></td>
+                                                                                <td><button onClick={() => this.handleAddress(diaChi.diaChiCuThe, diaChi.xaPhuongThiTran, diaChi.quanHuyen, diaChi.tinhThanhPho)} className="btn btn-outline-info">chọn</button></td>
                                                                             </tr>
                                                                         )
                                                                     }
@@ -1402,7 +1358,7 @@ class BanHangOffline extends Component {
                             <br />
                             <br />
                             <Flex justify="space-between">
-                                <Button className="customButton" style={{ width: '40%', height: '70px', backgroundColor: 'white', color: 'black', fontWeight: 'bolder', borderColor: 'black', fontSize: '20px' }}>In tạm tính</Button>
+                                <Button icon={<></>} className="customButton" style={{ width: '40%', height: '70px', backgroundColor: 'white', color: 'black', fontWeight: 'bolder', borderColor: 'black', fontSize: '20px' }}>In tạm tính</Button>
                                 <Button className="customButton" style={{ width: '55%', height: '70px', backgroundColor: 'white', color: 'black', fontWeight: 'bolder', borderColor: 'black', fontSize: '20px' }} onClick={this.add}>Thanh toán</Button>
                             </Flex>
                         </div>
