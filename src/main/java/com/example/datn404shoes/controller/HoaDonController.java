@@ -76,6 +76,30 @@ public class HoaDonController {
 
             HoaDon hoaDonMoiNhat = hoaDonImpl.add(hoaDon);
 
+            String xaPhuongThiTran = thanhToanDTO.getXaPhuongThiTran();
+
+            String quanHuyen = thanhToanDTO.getQuanHuyen();
+
+            String tinhThanhPho = thanhToanDTO.getTinhThanhPho();
+
+            String diaChiCuThe = thanhToanDTO.getDiaChiCuThe();
+
+            if(xaPhuongThiTran != null){
+                hoaDonMoiNhat.setXaPhuongThiTran(xaPhuongThiTran);
+            }
+
+            if(tinhThanhPho != null){
+                hoaDonMoiNhat.setTinhThanhPho(tinhThanhPho);
+            }
+
+            if(quanHuyen != null){
+                hoaDonMoiNhat.setQuanHuyen(quanHuyen);
+            }
+
+            if(diaChiCuThe != null){
+                hoaDonMoiNhat.setDiaChiCuThe(diaChiCuThe);
+            }
+
             if(khuyenMai != null){
                 Optional<KhuyenMai> khuyenMaiOptional = khuyenMaiRepository.findById(khuyenMai);
                 if (khuyenMaiOptional.isPresent()) {
@@ -135,7 +159,8 @@ public class HoaDonController {
     }
     @PutMapping("huyHD/{id}")
     public ResponseEntity<?> huyHD(Model model,
-                                   @PathVariable("id") Long id) {
-        return ResponseEntity.ok(hoaDonImpl.huyHoaDon(id));
+                                   @PathVariable("id") Long id,
+                                   @RequestBody HoaDon hoaDon) {
+        return ResponseEntity.ok(hoaDonImpl.huyHoaDon(id,hoaDon));
     }
 }

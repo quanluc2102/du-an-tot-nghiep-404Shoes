@@ -14,4 +14,12 @@ public class ThanhToanDTO {
     private Long khuyenMai;
 
     private List<SPCTBanHangRequest> sanPhamChiTietList;
+
+    private String xaPhuongThiTran;
+
+    private String quanHuyen;
+
+    private String tinhThanhPho;
+
+    private String diaChiCuThe;
 }

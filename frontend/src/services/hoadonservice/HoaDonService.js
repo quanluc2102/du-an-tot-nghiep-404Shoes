@@ -19,9 +19,9 @@ class HoaDonService{
         console.log(hoaDonId)
         return axios.put(HOADON_API_BASE_URL_UPDATE + "/" + hoaDonId, hoaDon)
     }
-    huyHD(Id) {
+    huyHD(hoaDon,Id) {
         console.log(Id)
-        return axios.put(HOADON_API_BASE_URL_HUYHD + "/" + Id)
+        return axios.put(HOADON_API_BASE_URL_HUYHD + "/" + Id,hoaDon)
     }
 }
 export default new HoaDonService()
