@@ -27,6 +27,13 @@ class HoaDonChiTietComponents extends Component {
 
 
             },
+            hoaDonHuy: {
+                id: this.props.match.params.id,
+                ghiChuHuy: '',
+                
+
+
+            },
             diaChi:[],
             hoaDonId: {
                 id: this.props.match.params.id,
@@ -45,6 +52,7 @@ class HoaDonChiTietComponents extends Component {
             showModal: false,
             showModal1: false,
             showModal2: false,
+            showModal3: false,
             trangThaiLabels: [
                 'Chờ duyệt',
                 'Duyệt',
@@ -54,6 +62,7 @@ class HoaDonChiTietComponents extends Component {
             ],
         };
         this.update = this.update.bind(this);
+        this.thayDoiHDHuy = this.thayDoiHDHuy.bind(this);
         this.thayDoiMoTa = this.thayDoiMoTa.bind(this);
     }
     getStatusText = (status) => {
@@ -81,7 +90,12 @@ class HoaDonChiTietComponents extends Component {
         });
         
     }
-    
+    handleShowModal3 = () => {
+        this.setState({ showModal3: true });
+    };
+    handleCloseModal3 = () => {
+        this.setState({ showModal3: false });
+    };
     handleShowModal = () => {
         this.setState({ showModal: true });
     };
@@ -177,7 +191,14 @@ class HoaDonChiTietComponents extends Component {
             },
         }));
     };
-
+    thayDoiHDHuy = (event) => {
+        this.setState((prevState) => ({
+            hoaDonHuy: {
+                ...prevState.hoaDonHuy,
+                ghiChuHuy: event.target.value,
+            },
+        }));
+    };
     huyHD = (e) => {
         e.preventDefault();
         const confirmed = window.confirm('Bạn có chắc chắn hủy hóa đơn này không ?');
@@ -185,10 +206,15 @@ class HoaDonChiTietComponents extends Component {
             return;
         }
         const id = this.state.hoaDonId.id;
-        HoaDonService.huyHD(id)
+    
+        const hoaDon = { ghiChuHuy: this.state.hoaDonHuy.ghiChuHuy };
+
+        HoaDonService.huyHD(hoaDon,id)
             .then((res) => {
                 // Xử lý phản hồi thành công
+                
                 window.location.href = `/HoaDonChiTiet/${this.state.hoaDonId.id}`;
+               
             })
             .catch((error) => {
                 // Xử lý lỗi
@@ -234,7 +260,7 @@ class HoaDonChiTietComponents extends Component {
                         </ol>
                     </nav>
                 </div>
-
+<h1>{this.state.hoaDon.ghiChuHuy}</h1>
                 <OrderStatus currentStatus={this.state.hoaDon.trangThai} order={this.state.hoaDon} />
                 <div>
                     <div style={{ maxWidth: '960px' }}>  
@@ -251,7 +277,7 @@ class HoaDonChiTietComponents extends Component {
                             </Button>:""}
                             
                             <h1></h1>
-                            <button style={isHoaDonKoDcHuy ? { color: 'gray', borderColor: 'gray', cursor: 'not-allowed' } : {}} disabled={isHoaDonKoDcHuy} type="submit" value="huyHD" className="btn btn-outline-primary" onClick={this.huyHD}> {this.state.hoaDon.trangThai === 5 ? 'Hóa đơn này đã hủy' : "Hủy hóa đơn"}</button>
+                            <Button style={isHoaDonKoDcHuy ? { color: 'gray', borderColor: 'gray', cursor: 'not-allowed' } : {}} disabled={isHoaDonKoDcHuy} type="submit" value="huyHD" className="btn btn-outline-primary" onClick={this.handleShowModal3}> {this.state.hoaDon.trangThai === 5 ? 'Hóa đơn này đã hủy' : "Hủy hóa đơn"}</Button>
                             <Modal show={this.state.showModal1} onHide={this.handleCloseModal1} backdrop="static">
                                 <Modal.Header closeButton>
                                     <Modal.Title>{this.state.hoaDon.trangThai === 0 ? 'Xác nhận' : this.state.hoaDon.trangThai === 1 ? ' Xác nhận chuẩn bị giao' : this.state.hoaDon?.trangThai === 2 ? ' Xác nhận Đang giao' : this.state.hoaDon?.trangThai === 3 ? 'Xác nhận Hoàn thành' : ""}</Modal.Title>
@@ -264,6 +290,23 @@ class HoaDonChiTietComponents extends Component {
                                         <div className="d-flex justify-content-end">
                                             <button type="button" className="btn btn-outline-dark me-2">Hủy</button>  <h1> </h1>
                                             <button type="submit" value="Update" className="btn btn-outline-primary" onClick={this.update}>Xác nhận</button>
+                                        </div>
+                                    </div>
+                                    {this.popupContent}
+                                </Modal.Body>
+                            </Modal>
+                            <Modal show={this.state.showModal3} onHide={this.handleCloseModal3} backdrop="static">
+                                <Modal.Header closeButton>
+                                    <Modal.Title>Ghi chú hủy</Modal.Title>
+                                </Modal.Header>
+                                <Modal.Body>
+                                    <div className="form-floating">
+                                        <textarea className="form-control" placeholder="Leave a comment here" id="floatingTextarea2" onChange={this.thayDoiHDHuy}></textarea>
+                                        <label for="floatingTextarea2" >Mô tả</label>
+                                        <br />
+                                        <div className="d-flex justify-content-end">
+                                            <button type="button" className="btn btn-outline-dark me-2">Hủy</button>  <h1> </h1>
+                                            <button type="submit" value="Update" className="btn btn-outline-primary" onClick={this.huyHD}>Xác nhận</button>
                                         </div>
                                     </div>
                                     {this.popupContent}

@@ -62,5 +62,4 @@ public interface HoaDonChiTietRepository extends JpaRepository<HoaDonChiTiet, Lo
             "GROUP BY FUNCTION('MONTH', hd.ngayTao)")
     List<Object[]> thongKeDoanhThuTheoThangNew(@Param("startDate") Date startDate);
 
-
 }
