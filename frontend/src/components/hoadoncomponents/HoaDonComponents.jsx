@@ -11,6 +11,7 @@ class HoaDonComponents extends Component {
             sortedColumn: null,
             isSortAsc: true,
             searchTerm: '',
+            isButtonHidden: false,
             currentPage: 0, // Trang hiện tại
             perPage: 4, // Số mục trên mỗi trang// Initialize searchTerm
         }
@@ -29,6 +30,9 @@ class HoaDonComponents extends Component {
             this.setState({ searchTerm: storedSearchTerm });
         }
     }
+     toggleButtonVisibility = () => {
+    this.setState({ isButtonHidden: !this.state.isButtonHidden });
+  };    
     handleSearch = (event) => {
         const searchTerm = event.target.value;
         this.setState({ searchTerm });
@@ -330,8 +334,8 @@ class HoaDonComponents extends Component {
                                                                     <td>{index + 1}</td>
                                                                     <td>{hoaDon.maHoaDon}</td>
                                                                     <td>{hoaDon.taiKhoan && hoaDon.taiKhoan.maTaiKhoan ? hoaDon.taiKhoan.maTaiKhoan : "Tạm"}</td>
-                                                                    <td>{hoaDon && hoaDon.ten !== null ? hoaDon.ten : "Khách lẻ"}</td>
-                                                                    <td>{hoaDon && hoaDon.sdt !== null ? hoaDon.sdt : "Khách lẻ"}</td>
+                                                                    <td>{hoaDon.taiKhoanKhachHang && hoaDon.taiKhoanKhachHang.thongTinNguoiDung ? hoaDon.taiKhoanKhachHang.thongTinNguoiDung.ten : "Khách lẻ"}</td>
+                                                                    <td>{hoaDon.taiKhoanKhachHang && hoaDon.taiKhoanKhachHang.thongTinNguoiDung ? hoaDon.taiKhoanKhachHang.thongTinNguoiDung.ten : "Khách lẻ"}</td>
                                                                     <td>{hoaDon.ngayTao}</td>
                                                                     <td>{hoaDon.ngayCapNhat}</td>
                                                                     <td>{hoaDon.kieuHoaDon=== 0 ?"Tại quầy":hoaDon.kieuHoaDon=== 1?"Online":""}</td>
