@@ -159,7 +159,8 @@ public class HoaDonController {
     }
     @PutMapping("huyHD/{id}")
     public ResponseEntity<?> huyHD(Model model,
-                                   @PathVariable("id") Long id) {
-        return ResponseEntity.ok(hoaDonImpl.huyHoaDon(id));
+                                   @PathVariable("id") Long id,
+                                   @RequestBody HoaDon hoaDon) {
+        return ResponseEntity.ok(hoaDonImpl.huyHoaDon(id,hoaDon));
     }
 }

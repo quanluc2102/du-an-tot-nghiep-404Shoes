@@ -2,7 +2,11 @@ package com.example.datn404shoes.service.serviceimpl;
 
 import com.example.datn404shoes.entity.DanhMuc;
 import com.example.datn404shoes.entity.HoaDon;
+import com.example.datn404shoes.entity.HoaDonChiTiet;
+import com.example.datn404shoes.entity.SanPhamChiTiet;
+import com.example.datn404shoes.repository.HoaDonChiTietRepository;
 import com.example.datn404shoes.repository.HoaDonRepository;
+import com.example.datn404shoes.repository.SanPhamChiTietRepository;
 import com.example.datn404shoes.service.HoaDonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,6 +21,11 @@ public class HoaDonImpl implements HoaDonService {
     @Autowired
     HoaDonRepository hoaDonRepository;
 
+    @Autowired
+    SanPhamChiTietRepository SPCTRepository;
+
+    @Autowired
+    HoaDonChiTietRepository HDCTRepository;
     @Override
     public HoaDon add(HoaDon hd) {
 long count = hoaDonRepository.count()+1;
@@ -80,14 +89,24 @@ long count = hoaDonRepository.count()+1;
     }
 
     @Override
-    public HoaDon huyHoaDon(Long id) {
+    public HoaDon huyHoaDon(Long id, HoaDon hoaDon) {
         HoaDon hoaDon1 = hoaDonRepository.findById(id).get();
         hoaDon1.setTrangThai(5);
+        hoaDon1.setHuy(Date.valueOf(LocalDate.now()));
+        hoaDon1.setGhiChuHuy(hoaDon.getGhiChuHuy());
+        List<HoaDonChiTiet> hoaDonChiTiet = HDCTRepository.findAllByHd_Id(id);
+        hoaDonChiTiet.forEach(hoaDonChiTiets -> updateQuantityForCancel(hoaDonChiTiets.getSanPhamChiTiet().getId(),hoaDonChiTiets.getSoLuong()));
         return hoaDonRepository.save(hoaDon1);
     }
 
     @Override
     public long countHoaDons() {
         return hoaDonRepository.count();
+    }
+
+    @Override
+    public void updateQuantityForCancel(Long id, Integer quantity) {
+        SanPhamChiTiet product = SPCTRepository.findById(id).get();
+        product.setSoLuong(product.getSoLuong()+quantity);
     }
 }

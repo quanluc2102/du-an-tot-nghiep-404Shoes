@@ -39,7 +39,7 @@ const OrderStatus = ({ currentStatus, order }) => {
       icon: FaHandshake,
       dateKey: "hoanThanh",
     },
-    { value: 6, label: "Hàng bị hoàn", icon: TiArrowRight },
+    { value: 7, label: "Hàng bị hoàn", icon: TiArrowRight },
   ];
 
   const shouldDisplayOptionalStatus =
