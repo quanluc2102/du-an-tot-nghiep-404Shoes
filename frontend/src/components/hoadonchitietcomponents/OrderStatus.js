@@ -19,17 +19,16 @@ import { IoDocumentTextOutline } from "react-icons/io5";
 
 const OrderStatus = ({ currentStatus, order }) => {
   const mandatoryStatusList = [
-    { value: 0, label: "Chờ xác nhận", icon: IoDocumentTextOutline, dateKey: "ngayTao" },
-    { value: 1, label: "Xác nhận", icon: AiOutlineFileDone, dateKey: "choXacNhan" },
-    { value: 2, label: "Đóng gói", icon: BsBoxSeam, dateKey: "choGiao" },
+    { value: 0, label: "Chờ xác nhận", icon: IoDocumentTextOutline, dateKey: "ngayTao", note: "ghiChuXacNhan" },
+    { value: 1, label: "Xác nhận", icon: AiOutlineFileDone, dateKey: "choXacNhan", note: "ghiChuXacNhan" },
+    { value: 2, label: "Đóng gói", icon: BsBoxSeam, dateKey: "choGiao", note: "ghiChuChoGiao" },
     {
       value: 3,
       label: "Đang giao",
-      icon:LiaShippingFastSolid,
+      icon: LiaShippingFastSolid,
       dateKey: "dangGiao",
+      note: "ghiChuDangGiao",
     },
-    // Commented out "Hủy" status to separate it from other statuses
-    // { value: 7, label: "Hủy", icon: FaBan, dateKey: "cancelDate" },
   ];
 
   const optionalStatusList = [
@@ -38,6 +37,7 @@ const OrderStatus = ({ currentStatus, order }) => {
       label: "Hoàn thành",
       icon: FaHandshake,
       dateKey: "hoanThanh",
+      note: "ghiChuHoanThanh",
     },
     { value: 7, label: "Hàng bị hoàn", icon: TiArrowRight },
   ];
@@ -56,9 +56,9 @@ const OrderStatus = ({ currentStatus, order }) => {
         const isLastStatus = index === mandatoryStatusList.length - 1;
         const statusDate = order[status.dateKey];
 
-        // Kiểm tra nếu trạng thái hiện tại là 7
+        // Check if the current status is 5
         if (currentStatus === 5) {
-          // Nếu trạng thái đang xét không phải là 7, ẩn nó
+          // If the current status being considered is not 5, hide it
           if (status.value !== 5) {
             return null;
           }
@@ -89,10 +89,14 @@ const OrderStatus = ({ currentStatus, order }) => {
               >
                 {status.label}
               </span>
-              {/* Hiển thị ngày tương ứng */}
+              {/* Display the corresponding date */}
               {isStatusActive && statusDate && (
                 <div className="status-date">
                   {format(new Date(statusDate), "dd/MM/yyyy")}
+                  {/* Display the note */}
+                  {status.note && (
+                    <div className="status-note">{order[status.note]}</div>
+                  )}
                 </div>
               )}
             </div>
@@ -113,10 +117,14 @@ const OrderStatus = ({ currentStatus, order }) => {
             <FaBan className="status-icon" aria-label="Đơn hàng bị hủy" />
           </div>
           <span className="status-label active">Hủy</span>
-          {/* Hiển thị ngày tương ứng */}
+          {/* Display the corresponding date */}
           {order.cancelDate && (
             <div className="status-date">
               {format(new Date(order.cancelDate), "dd/MM/yyyy")}
+              {/* Display the note */}
+              {mandatoryStatusList[5].note && (
+                <div className="status-note">{order[mandatoryStatusList[5].note]}</div>
+              )}
             </div>
           )}
         </div>
@@ -138,12 +146,16 @@ const OrderStatus = ({ currentStatus, order }) => {
             <span className="status-label active">
               {displayedOptionalStatus.label}
             </span>
-            {/* Hiển thị ngày tương ứng */}
+            {/* Display the corresponding date */}
             {order[displayedOptionalStatus.dateKey] && (
               <div className="status-date">
                 {format(
                   new Date(order[displayedOptionalStatus.dateKey]),
                   "dd/MM/yyyy"
+                )}
+                {/* Display the note */}
+                {displayedOptionalStatus.note && (
+                  <div className="status-note">{order[displayedOptionalStatus.note]}</div>
                 )}
               </div>
             )}

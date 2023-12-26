@@ -24,26 +24,27 @@ class HoaDonChiTietComponents extends Component {
                 ghiChuDangGiao: '',
                 hoanThanh: '',
                 ghiChuHoanThanh: '',
+                phiShip: '',
 
 
             },
             hoaDonHuy: {
                 id: this.props.match.params.id,
                 ghiChuHuy: '',
-                
+
 
 
             },
-            diaChi:[],
+            diaChi: [],
             hoaDonId: {
                 id: this.props.match.params.id,
-                taiKhoanKhachHang:'',
+                taiKhoanKhachHang: '',
             },
             hoaDon: {
                 id: this.props.match.params.id,
                 thanhToan: '',
                 taiKhoan: '',
-                
+
                 trangThai: '',
             },
             sdt: '',
@@ -64,6 +65,7 @@ class HoaDonChiTietComponents extends Component {
         this.update = this.update.bind(this);
         this.thayDoiHDHuy = this.thayDoiHDHuy.bind(this);
         this.thayDoiMoTa = this.thayDoiMoTa.bind(this);
+        this.thayDoiPhiShip = this.thayDoiPhiShip.bind(this);
     }
     getStatusText = (status) => {
         switch (status) {
@@ -88,8 +90,9 @@ class HoaDonChiTietComponents extends Component {
         HoaDonService.getOneHD(this.state.hoaDonId.id).then((res) => {
             this.setState({ hoaDon: res.data });
         });
-        
+
     }
+
     handleShowModal3 = () => {
         this.setState({ showModal3: true });
     };
@@ -111,9 +114,9 @@ class HoaDonChiTietComponents extends Component {
     };
     handleShowModal2 = () => {
         BanHangService.getDC(this.state.hoaDon?.taiKhoanKhachHang.id).then((res) => {
-            this.setState({ diaChi :res.data });
+            this.setState({ diaChi: res.data });
             console.log(res.data)
-                });
+        });
         this.setState({ showModal2: true });
     };
     handleCloseModal2 = () => {
@@ -180,6 +183,17 @@ class HoaDonChiTietComponents extends Component {
                 return ''; // Handle default case
         }
     };
+    thayDoiPhiShip = (event) => {
+        const trangThai = this.state.hoaDon.trangThai;
+        const updateKey = this.getStatusUpdateKey(trangThai); // Fix the function call
+
+        this.setState((prevState) => ({
+            hoaDonUpdate: {
+                ...prevState.hoaDonUpdate,
+                phiShip: event.target.value,
+            },
+        }));
+    };
     thayDoiMoTa = (event) => {
         const trangThai = this.state.hoaDon.trangThai;
         const updateKey = this.getStatusUpdateKey(trangThai); // Fix the function call
@@ -206,15 +220,15 @@ class HoaDonChiTietComponents extends Component {
             return;
         }
         const id = this.state.hoaDonId.id;
-    
+
         const hoaDon = { ghiChuHuy: this.state.hoaDonHuy.ghiChuHuy };
 
-        HoaDonService.huyHD(hoaDon,id)
+        HoaDonService.huyHD(hoaDon, id)
             .then((res) => {
                 // Xử lý phản hồi thành công
-                
+
                 window.location.href = `/HoaDonChiTiet/${this.state.hoaDonId.id}`;
-               
+
             })
             .catch((error) => {
                 // Xử lý lỗi
@@ -232,7 +246,10 @@ class HoaDonChiTietComponents extends Component {
         const trangThai = this.state.hoaDon.trangThai;
         const updateKey = this.getStatusUpdateKey(trangThai); // Use 'this' to reference the method
 
-        const hoaDon = { [updateKey]: this.state.hoaDonUpdate[updateKey] };
+        const hoaDon = {
+            [updateKey]: this.state.hoaDonUpdate[updateKey],
+            phiShip: this.state.hoaDonUpdate.phiShip
+        };
         const id = this.state.hoaDonUpdate.id;
 
         HoaDonService.updateHoaDon(hoaDon, id).then((res) => {
@@ -243,10 +260,10 @@ class HoaDonChiTietComponents extends Component {
     render() {
         let total = 0;
         let giam = 0;
- 
+
         const isHoaDonDaHuy = this.state.hoaDon.trangThai === 5;
         const isHoaDonKoDcHuy = this.state.hoaDon.trangThai >= 3;
-        const isKhachLe  = this.state.hoaDon.taiKhoanKhachHang === '';
+        const isKhachLe = this.state.hoaDon.taiKhoanKhachHang === '';
         return (
 
             <div>
@@ -260,33 +277,43 @@ class HoaDonChiTietComponents extends Component {
                         </ol>
                     </nav>
                 </div>
-<h1>{this.state.hoaDon.ghiChuHuy}</h1>
+                {this.state.hoaDon.phiShip}
                 <OrderStatus currentStatus={this.state.hoaDon.trangThai} order={this.state.hoaDon} />
+                <center> {this.state.hoaDon.trangThai === 5 ? <button type="button" class="btn btn-outline-danger" disabled>Lí do đơn hàng bị Hủy : {this.state.hoaDon.ghiChuHuy}</button> : ''}</center>
                 <div>
-                    <div style={{ maxWidth: '960px' }}>  
+                    <div style={{ maxWidth: '960px' }}>
                         <br />
                         <br />
-                        <div>{this.state.hoaDon.trangThai === 6 || this.state.hoaDon.trangThai <5 ?<Button
-                                variant="btn btn-outline-primary"
-                                onClick={this.handleShowModal1}
-                                Visible
-                                disabled={isHoaDonDaHuy || this.state.hoaDon.trangThai === 4 || this.state.hoaDon.trangThai === 6}
-                                style={isHoaDonDaHuy ? { color: 'gray', borderColor: 'gray', cursor: 'not-allowed', visible: false } : this.state.hoaDon.trangThai === 4 ? { color: 'green', borderColor: 'green' } : this.state.hoaDon.trangThai === 6 ? { color: 'green', borderColor: 'green' } : {}}
-                            >
-                                {this.state.hoaDon.trangThai === 0 ? 'Xác nhận' : this.state.hoaDon.trangThai === 1 ? ' Xác nhận chuẩn bị giao' : this.state.hoaDon?.trangThai === 2 ? ' Xác nhận Đang giao' : this.state.hoaDon?.trangThai === 3 ? 'Xác nhận Hoàn thành' : this.state.hoaDon?.trangThai === 4 ? 'Đã hoàn thành' : this.state.hoaDon?.trangThai === 6 ? 'Đã hoàn thành bán tại quầy':''}
-                            </Button>:""}
-                            
+                        <div>{this.state.hoaDon.trangThai === 6 || this.state.hoaDon.trangThai < 5 ? <Button
+                            variant="btn btn-outline-primary"
+                            onClick={this.handleShowModal1}
+                            Visible
+                            disabled={isHoaDonDaHuy || this.state.hoaDon.trangThai === 4 || this.state.hoaDon.trangThai === 6}
+                            style={isHoaDonDaHuy ? { color: 'gray', borderColor: 'gray', cursor: 'not-allowed', visible: false } : this.state.hoaDon.trangThai === 4 ? { color: 'green', borderColor: 'green' } : this.state.hoaDon.trangThai === 6 ? { color: 'green', borderColor: 'green' } : {}}
+                        >
+                            {this.state.hoaDon.trangThai === 0 ? 'Xác nhận' : this.state.hoaDon.trangThai === 1 ? ' Xác nhận chuẩn bị giao' : this.state.hoaDon?.trangThai === 2 ? ' Xác nhận Đang giao' : this.state.hoaDon?.trangThai === 3 ? 'Xác nhận Hoàn thành' : this.state.hoaDon?.trangThai === 4 ? 'Đã hoàn thành' : this.state.hoaDon?.trangThai === 6 ? 'Đã hoàn thành bán tại quầy' : ''}
+                        </Button> : ""}
+
                             <h1></h1>
-                            <Button style={isHoaDonKoDcHuy ? { color: 'gray', borderColor: 'gray', cursor: 'not-allowed' } : {}} disabled={isHoaDonKoDcHuy} type="submit" value="huyHD" className="btn btn-outline-primary" onClick={this.handleShowModal3}> {this.state.hoaDon.trangThai === 5 ? 'Hóa đơn này đã hủy' : "Hủy hóa đơn"}</Button>
+                            <Button style={isHoaDonKoDcHuy ? { color: 'gray', borderColor: 'gray', cursor: 'not-allowed' } : {}} disabled={isHoaDonKoDcHuy} type="submit" value="huyHD" className="btn btn-outline-" onClick={this.handleShowModal3}> {this.state.hoaDon.trangThai === 5 ? 'Hóa đơn này đã hủy' : "Hủy hóa đơn"}</Button>
                             <Modal show={this.state.showModal1} onHide={this.handleCloseModal1} backdrop="static">
                                 <Modal.Header closeButton>
                                     <Modal.Title>{this.state.hoaDon.trangThai === 0 ? 'Xác nhận' : this.state.hoaDon.trangThai === 1 ? ' Xác nhận chuẩn bị giao' : this.state.hoaDon?.trangThai === 2 ? ' Xác nhận Đang giao' : this.state.hoaDon?.trangThai === 3 ? 'Xác nhận Hoàn thành' : ""}</Modal.Title>
                                 </Modal.Header>
                                 <Modal.Body>
                                     <div className="form-floating">
+
                                         <textarea className="form-control" placeholder="Leave a comment here" id="floatingTextarea2" onChange={this.thayDoiMoTa}></textarea>
                                         <label for="floatingTextarea2" >Mô tả</label>
                                         <br />
+                                        <div class="input-group mb-3">
+                                            {this.state.hoaDon.trangThai === 0 ? <div class="input-group mb-3">
+                                                <span class="input-group-text" id="basic-addon1">Phí vận chuyển </span>
+                                                <input type="text" class="form-control" placeholder="VND" aria-label="Username" aria-describedby="basic-addon1" onChange={this.thayDoiPhiShip} />
+                                            </div> : ''}
+
+
+                                        </div>
                                         <div className="d-flex justify-content-end">
                                             <button type="button" className="btn btn-outline-dark me-2">Hủy</button>  <h1> </h1>
                                             <button type="submit" value="Update" className="btn btn-outline-primary" onClick={this.update}>Xác nhận</button>
@@ -314,10 +341,10 @@ class HoaDonChiTietComponents extends Component {
                             </Modal>
                         </div>
                     </div>
-                </div>          
-                <br/>          
-               
-                <center>{this.state.hoaDon.kieuHoaDon=== 0?<button type="button" class="btn btn-outline-danger" onClick={this.handleShowModal2} >Thôn tin giao hàng :  {this.state.hoaDon.ten}( {this.state.hoaDon.sdt}) |{this.state.hoaDon.diaChiCuThe} - {this.state.hoaDon.xaPhuongThiTran} - {this.state.hoaDon.quanHuyen} - {this.state.hoaDon.tinhThanhPho}</button>:""}</center>
+                </div>
+                <br />
+
+                <center>{this.state.hoaDon.kieuHoaDon === 0 ? <button type="button" class="btn btn-outline-danger" onClick={this.handleShowModal2} >Thôn tin giao hàng :  {this.state.hoaDon.ten}( {this.state.hoaDon.sdt}) |{this.state.hoaDon.diaChiCuThe} - {this.state.hoaDon.xaPhuongThiTran} - {this.state.hoaDon.quanHuyen} - {this.state.hoaDon.tinhThanhPho}</button> : ""}</center>
                 <section className="section dashboard">
                     <div className="row">
                         <div className="col-lg-8">
@@ -386,6 +413,13 @@ class HoaDonChiTietComponents extends Component {
 
                                                                 </tr>
                                                                 <tr>
+                                                                    <th scope="row">Phi vận chuyển</th>
+                                                                    <td ><p style={{ color: 'red', fontSize: '14px' }}>
+                                                                        {this.state.hoaDon.phiShip} VNĐ
+                                                                    </p></td>
+
+                                                                </tr>
+                                                                <tr>
                                                                     <th scope="row">Thành tiền</th>
                                                                     <td ><p style={{ color: 'red', fontSize: '24px' }}>
                                                                         {this.state.hoaDon?.tongTien?.toLocaleString()} VNĐ
@@ -416,7 +450,7 @@ class HoaDonChiTietComponents extends Component {
                                             <button className="nav-link" id="profile-tab" data-bs-toggle="tab"
                                                 data-bs-target="#profile" type of="button" role="tab"
                                                 aria-controls="profile"
-                                                aria-selected="false">{this.state.hoaDon.taiKhoanKhachHang != null ? "Khách Hàng" :"Khách lẻ" }
+                                                aria-selected="false">{this.state.hoaDon.taiKhoanKhachHang != null ? "Khách Hàng" : "Khách lẻ"}
                                             </button>
                                         </li>
 
@@ -471,50 +505,50 @@ class HoaDonChiTietComponents extends Component {
                                                     <h10 className="nav-link">
                                                         Người mua: {this.state.hoaDon.taiKhoanKhachHang && this.state.hoaDon.taiKhoanKhachHang.thongTinNguoiDung ? this.state.hoaDon.taiKhoanKhachHang.thongTinNguoiDung.ten : "Khách lẻ"}</h10>
                                                     <h10 className="nav-link">
-                                            
+
                                                         Số điện thoại: {this.state.hoaDon.taiKhoanKhachHang && this.state.hoaDon.taiKhoanKhachHang.thongTinNguoiDung ? this.state.hoaDon.taiKhoanKhachHang.thongTinNguoiDung.sdt : "Khách lẻ"}</h10>
                                                     <h10 className="nav-link">
                                                         Email: {this.state.hoaDon.taiKhoanKhachHang && this.state.hoaDon.taiKhoanKhachHang ? this.state.hoaDon.taiKhoanKhachHang.email : "Khách lẻ"}</h10>
                                                     <div>
-                                                        {this.state.hoaDon.taiKhoanKhachHang != null ?<Button variant="btn btn-outline-primary" onClick={this.handleShowModal2} >
+                                                        {this.state.hoaDon.taiKhoanKhachHang != null ? <Button variant="btn btn-outline-primary" onClick={this.handleShowModal2} >
                                                             Danh sách địa chỉ
-                                                        </Button>: ''}
-                                                        
+                                                        </Button> : ''}
+
                                                         <Modal show={this.state.showModal2} onHide={this.handleCloseModal2} backdrop="static">
                                                             <Modal.Header closeButton>
                                                                 <Modal.Title>Thông tin nhân viên</Modal.Title>
                                                             </Modal.Header>
                                                             <Modal.Body>
-                                                            <table className="table table-borderless datatable">
-                                                    <thead>
-                                                        <tr>
-                                                            <th>STT</th>
-                                                            <th>Tên người nhận</th>
-                                                            <th>Số điện thoại</th>
-                                                            <th>Địa chỉ</th>
-                                                            <th>Action</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        {
-                                                            this.state.diaChi.map(
-                                                                (diaChi, index) => {
-                                                                    return (
-                                                                        <tr key={diaChi.id}>
-                                                                            <td>{index + 1}</td>   
-                                                                            <td>{diaChi.ten}</td>                                                                     
-                                                                           
-                                                                            <td>{diaChi.sdt}</td>
-                                                                            <td>{diaChi.diaChiCuThe}, {diaChi.xaPhuongThiTran}, {diaChi.quanHuyen},{diaChi.tinhThanhPho}</td>
-                                                                            <td><button
-                                                                            onClick={() => this.handleAddress(diaChi.diaChiCuThe, diaChi.xaPhuongThiTran, diaChi.quanHuyen, diaChi.tinhThanhPho)}  className="btn btn-outline-info">chọn</button></td>
+                                                                <table className="table table-borderless datatable">
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <th>STT</th>
+                                                                            <th>Tên người nhận</th>
+                                                                            <th>Số điện thoại</th>
+                                                                            <th>Địa chỉ</th>
+                                                                            <th>Action</th>
                                                                         </tr>
-                                                                    )
-                                                                }
-                                                            )
-                                                        }
-                                                    </tbody>
-                                                </table>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        {
+                                                                            this.state.diaChi.map(
+                                                                                (diaChi, index) => {
+                                                                                    return (
+                                                                                        <tr key={diaChi.id}>
+                                                                                            <td>{index + 1}</td>
+                                                                                            <td>{diaChi.ten}</td>
+
+                                                                                            <td>{diaChi.sdt}</td>
+                                                                                            <td>{diaChi.diaChiCuThe}, {diaChi.xaPhuongThiTran}, {diaChi.quanHuyen},{diaChi.tinhThanhPho}</td>
+                                                                                            <td><button
+                                                                                                onClick={() => this.handleAddress(diaChi.diaChiCuThe, diaChi.xaPhuongThiTran, diaChi.quanHuyen, diaChi.tinhThanhPho)} className="btn btn-outline-info">chọn</button></td>
+                                                                                        </tr>
+                                                                                    )
+                                                                                }
+                                                                            )
+                                                                        }
+                                                                    </tbody>
+                                                                </table>
                                                             </Modal.Body>
                                                         </Modal>
                                                     </div>
