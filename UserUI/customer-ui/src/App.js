@@ -1,3 +1,4 @@
+import React from 'react';
 import './App.css';
 import Home from './components/home/home'
 import ProductList from './components/productList/productList';
@@ -7,29 +8,34 @@ import UserInformation from './components/userInformation/userInformation';
 import Login from './components/login/login';
 import Register from './components/register/register';
 import CheckOut from './components/checkOut/checkout';
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
+import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
 import ErrorPage from './components/error/errorpage';
-import { Redirect } from 'react-router-dom/cjs/react-router-dom';
-import Payment from './components/payment/payment';
+import { ToastContainer } from "react-toastify";
+import Header from "../../../UserUI/customer-ui/src/components/customer/Header";
+import Footer from "../../../UserUI/customer-ui/src/components/customer/Footer";
+import Payment from "./components/payment/payment";
 
 function App() {
-  return (
-    <Router>
-      <Switch>
-        <Redirect exact from='/' to='/home' />
-        <Route path='/home' component={Home} />
-        <Route path='/product-list' component={ProductList} />
-        <Route path='/your-cart/:id' component={Cart} />
-        <Route path='/login' component={Login} />
-        <Route path='/register' component={Register} />
-        <Route path='/product-detail/:id' component={ProductDetail} />
-        <Route path='/user-info' component={UserInformation} />
-        <Route path='/payment' component={Payment}/>
-        <Route path='/check-out/:id' component={CheckOut} />
-        <Route path='*' component={ErrorPage} />
-      </Switch>
-    </Router>
-  );
+    return (
+        <Router>
+            <Header />
+            <ToastContainer />
+            <Switch>
+                <Redirect exact from='/' to='/home' />
+                <Route path='/home' component={Home} />
+                <Route path='/product-list' component={ProductList} />
+                <Route path='/your-cart/:id' component={Cart} />
+                <Route path='/login' component={Login} />
+                <Route path='/register' component={Register} />
+                <Route path='/product-detail/:id' component={ProductDetail} />
+                <Route path='/user-info' component={UserInformation} />
+                <Route path='/payment' component={Payment}/>
+                <Route path='/check-out/:id' component={CheckOut} />
+                <Route path='*' component={ErrorPage} />
+            </Switch>
+            <Footer />
+        </Router>
+    );
 }
 
 export default App;

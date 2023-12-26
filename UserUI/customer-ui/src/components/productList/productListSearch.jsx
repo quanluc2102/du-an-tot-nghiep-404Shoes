@@ -21,8 +21,6 @@ function ProductList() {
         xuatXu: [],
         kichThuoc: [],
         mauSac: [],
-        giaMin: null,
-        giaMax: null,
     });
     const [search, setSearch] = useState({
         searchString: ''
@@ -36,39 +34,30 @@ function ProductList() {
         fetchFilteredData();
     };
 
-    const handlePriceChange = (event) => {
-        const { name, value } = event.target;
-        setFilters((prevFilters) => ({
-            ...prevFilters,
-            [name]: value === '' ? null : parseInt(value, 10),
-        }));
-    };
-
-    useEffect(() => {
-        fetchDataFiltered();
-    }, [filters.giaMin, filters.giaMax]);
-
-    const fetchDataFiltered = () => {
-        // Thực hiện logic lọc dữ liệu ở đây và gọi hàm API
-        // Ví dụ:
-        console.log('Filters:', filters);
-        // Gọi hàm API hoặc hàm lọc dữ liệu tương ứng ở đây
-    };
-
     const fetchData = async () => {
         try {
-            const response = await fetch(`http://localhost:8080/san_pham/phan_trang_user?page=${page}`);
+            console.log("Chời ơi ưo", JSON.stringify(search));
+
+            const response = await fetch(`http://localhost:8080/san_pham/search_san_pham`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(search), // Chỉ cần truyền filters, không cần { filters }
+            });
+
             const data = await response.json();
-            console.log('Fetched Data:', data);
-            if (data.content.length === 0) {
-                setHasMore(false);
+
+            console.log('Filtered Data:', data);
+
+            // Kiểm tra xem thuộc tính 'content' có được định nghĩa không
+            if (data) {
+                setListSP(data);
             } else {
-                setListSP([...listSP, ...data.content]);
-                setPage(page + 1);
+                console.error('Data content is undefined:', data);
             }
-            setLoading(false);
         } catch (error) {
-            console.error('Error fetching data:', error);
+            console.error('Error fetching filtered data:', error);
         }
     };
 
@@ -100,55 +89,6 @@ function ProductList() {
     };
 
 
-    const fetchDataSearch = async () => {
-        try {
-            const response = await fetch(`http://localhost:8080/san_pham/search_san_pham`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(search),
-            });
-
-            const data = await response.json();
-
-            console.log('Filtered Data:', data);
-
-            if (data) {
-                setListSP(data);
-            } else {
-                console.error('Data content is undefined:', data);
-            }
-        } catch (error) {
-            console.error('Error fetching filtered data:', error);
-        }
-    };
-
-    useEffect(() => {
-        // Sử dụng useEffect để theo dõi sự thay đổi của giá trị tìm kiếm và gọi hàm tìm kiếm
-        const timer = setTimeout(() => {
-            // Nếu ô tìm kiếm trống, gọi lại fetchData để hiển thị toàn bộ sản phẩm
-            if (search.searchString.trim() === '') {
-                fetchData();
-            } else {
-                // Ngược lại, gọi fetchDataSearch để tìm kiếm
-                fetchDataSearch();
-            }
-        }, 300); // Đợi 300ms sau mỗi lần thay đổi trước khi gọi lại hàm tìm kiếm
-
-        return () => clearTimeout(timer); // Dọn dẹp timer khi giá trị thay đổi
-    }, [search.searchString]);
-
-
-    const handleSearch = () => {
-        if (search.searchString.trim() === '') {
-            // Nếu ô tìm kiếm trống, gọi lại fetchData
-            fetchData();
-        } else {
-            // Ngược lại, gọi fetchDataSearch
-            fetchDataSearch();
-        }
-    };
 
 
 
@@ -524,50 +464,6 @@ function ProductList() {
                                 </div>
                             </div>
                             <hr/>
-                            <div className="accordion" id="accordionExample2">
-                                <div className="accordion-item border-0 ">
-                                    <h1 className="accordion-header " id="headingOne2">
-                                        <button className="accordion-button " type="button" data-bs-toggle="collapse"
-                                                data-bs-target="#collapseOne2" aria-expanded="true"
-                                                aria-controls="collapseOne2">
-                                            <strong className="font-monospace">Lọc theo giá</strong>
-                                        </button>
-                                    </h1>
-                                    <div id="collapseOne2" className="accordion-collapse collapse show "
-                                         aria-labelledby="headingOne2" data-bs-parent="#accordionExample2">
-                                        <div className="accordion-body">
-                                            <ul className="list-group list-group-flush">
-                                                    <label className="list-group-item">
-                                                        <div className="input-group mb-3">
-                                                            <span className="input-group-text">Giá từ</span>
-                                                            <input
-                                                                type="text"
-                                                                className="form-control"
-                                                                name="giaMin"
-                                                                value={filters.giaMin === null ? '' : filters.giaMin}
-                                                                onChange={handlePriceChange}
-                                                                placeholder="Nhập giá từ"
-                                                            />
-                                                        </div>
-
-                                                        <div className="input-group mb-3">
-                                                            <span className="input-group-text">Giá đến</span>
-                                                            <input
-                                                                type="text"
-                                                                className="form-control"
-                                                                name="giaMax"
-                                                                value={filters.giaMax === null ? '' : filters.giaMax}
-                                                                onChange={handlePriceChange}
-                                                                placeholder="Nhập giá đến"
-                                                            />
-                                                        </div>
-
-                                                    </label>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
 
                         </div>
                         <div class="col-9 contentProductList-right">
@@ -575,23 +471,19 @@ function ProductList() {
                                 <div class="col-6">
                                     <h1 class="font-monospace fw-bolder"><strong>DANH SÁCH SẢN PHẨM</strong></h1>
                                 </div>
-                                <div className="col-6">
-                                    <form>
-                                        <div className="input-group mb-3">
-                                            <div className="form-floating">
-                                                <input
-                                                    type="text"
-                                                    className="form-control"
-                                                    id="floatingInputGroup1"
-                                                    placeholder="Username"
-                                                    value={search.searchString}
-                                                    onChange={(e) => setSearch({ searchString: e.target.value })}
-                                                />
-                                                <label htmlFor="floatingInputGroup1">Tìm Kiếm</label>
+                                <div class="col-6">
+                                    <form action="#">
+                                        <div class="input-group mb-3">
+
+                                            <div class="form-floating">
+                                                <input type="text" class="form-control" id="floatingInputGroup1"
+                                                       placeholder="Username"/>
+                                                <label for="floatingInputGroup1">Tìm Kiếm</label>
                                             </div>
-                                            <span className="input-group-text"><i className='bx bx-search'></i></span>
+                                            <span class="input-group-text"><i class='bx bx-search'></i></span>
                                         </div>
                                     </form>
+
                                 </div>
                             </div>
                             <hr/>

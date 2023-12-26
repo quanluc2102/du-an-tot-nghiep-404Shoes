@@ -40,7 +40,7 @@ import java.util.*;
 import java.util.regex.Pattern;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = {"http://localhost:3000","http://localhost:3006"})
 @RequestMapping("tai_khoan")
 public class TaiKhoanController {
     @Autowired

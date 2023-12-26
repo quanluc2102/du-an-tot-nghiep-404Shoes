@@ -1,6 +1,7 @@
 package com.example.datn404shoes.controller;
 
 import com.example.datn404shoes.DTO.LocDTO;
+import com.example.datn404shoes.DTO.SearchDTO;
 import com.example.datn404shoes.entity.*;
 import com.example.datn404shoes.helper.MatrixToImageWriter;
 import com.example.datn404shoes.helper.SanPhamExcelSave;
@@ -85,6 +86,27 @@ public class SanPhamController {
         return sanPhamServiceimpl.phanTrangUserFiltered(filters);
     }
 
+    @PostMapping("/search_san_pham")
+    public List<SanPhamUserCustom> searchSanPham(@RequestBody SearchDTO search) {
+        System.out.println("Filters from frontend: " + search.getSearchString());
+
+        // Log giá trị của searchString
+        System.out.println("Search String: " + search.getSearchString());
+
+        List<SanPhamUserCustom> sanPhamUserCustom = sanPhamServiceimpl.searchSanPham(search.getSearchString());
+
+        // Log kết quả tìm kiếm
+        for (SanPhamUserCustom sanPhamUserCustom1 : sanPhamUserCustom) {
+            System.out.println(sanPhamUserCustom1.getMaSanPham());
+            System.out.println(sanPhamUserCustom1.getTen());
+            System.out.println(sanPhamUserCustom1.getTen());
+            System.out.println("DM" + sanPhamUserCustom1.getDanhMuc());
+            System.out.println("TH" + sanPhamUserCustom1.getThuongHieu());
+            System.out.println("XX" + sanPhamUserCustom1.getXuatXu());
+        }
+
+        return sanPhamServiceimpl.searchSanPham(search.getSearchString());
+    }
 
 
     @GetMapping("index1")

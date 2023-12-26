@@ -1,9 +1,9 @@
 package com.example.datn404shoes.DTO;
 
-
 import lombok.Data;
 
 import java.util.List;
+
 @Data
 public class LocDTO {
     private List<Long> danhMuc;
@@ -11,6 +11,8 @@ public class LocDTO {
     private List<Long> xuatXu;
     private List<Long> kichThuoc;
     private List<Long> mauSac;
+    private Long giaMin;
+    private Long giaMax;
 
     public boolean isAnyFilterApplied() {
         // Thực hiện kiểm tra xem có bất kỳ bộ lọc nào được áp dụng không
@@ -18,6 +20,7 @@ public class LocDTO {
                 thuongHieu != null && !thuongHieu.isEmpty() ||
                 xuatXu != null && !xuatXu.isEmpty() ||
                 kichThuoc != null && !kichThuoc.isEmpty() ||
-                mauSac != null && !mauSac.isEmpty();
+                mauSac != null && !mauSac.isEmpty() ||
+                giaMin != null || giaMax != null;
     }
 }

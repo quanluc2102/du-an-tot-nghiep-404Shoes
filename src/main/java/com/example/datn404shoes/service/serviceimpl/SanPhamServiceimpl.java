@@ -88,8 +88,15 @@ public class SanPhamServiceimpl implements SanPhamService {
                 filters.getKichThuoc(),
                 filters.getKichThuoc(),
                 filters.getMauSac(),
-                filters.getMauSac()
+                filters.getMauSac(),
+                filters.getGiaMin(),
+                filters.getGiaMax()
         );
+    }
+
+    @Override
+    public List<SanPhamUserCustom> searchSanPham(String search) {
+        return sanPhamRespository.searchSanPham(search);
     }
 
     @Override
