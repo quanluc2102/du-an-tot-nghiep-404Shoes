@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './App.css';
 import Home from './components/home/home'
 import ProductList from './components/productList/productList';
@@ -14,8 +14,21 @@ import { ToastContainer } from "react-toastify";
 import Header from "../../../UserUI/customer-ui/src/components/customer/Header";
 import Footer from "../../../UserUI/customer-ui/src/components/customer/Footer";
 import Payment from "./components/payment/payment";
+// import LoginComponent from "../../../frontend/src/components/LoginComponent/LoginComponent";
 
 function App() {
+    const [isLoggedIn, setLoggedIn] = useState(!!localStorage.getItem('token'));
+
+    const handleLogin = () => {
+        setLoggedIn(true);
+    };
+
+    const handleLogout = () => {
+        // Thực hiện đăng xuất, xóa token khỏi localStorage
+        localStorage.removeItem('token');
+        setLoggedIn(false);
+    };
+
     return (
         <Router>
             <Header />
@@ -28,9 +41,18 @@ function App() {
                 <Route path='/login' component={Login} />
                 <Route path='/register' component={Register} />
                 <Route path='/product-detail/:id' component={ProductDetail} />
-                <Route path='/user-info' component={UserInformation} />
-                <Route path='/payment' component={Payment}/>
-                <Route path='/check-out/:id' component={CheckOut} />
+
+                {/* Sử dụng `{isLoggedIn ? () : ()}` để kiểm tra đăng nhập */}
+                {isLoggedIn ? (
+                    <>
+                        <Route path='/your-cart/:id' component={Cart} />
+                        <Route path='/user-info' component={UserInformation} />
+                        <Route path='/payment' component={Payment}/>
+                        <Route path='/check-out/:id' component={CheckOut} />
+                    </>
+                ) : (
+                    <Route path='/login' component={() => <Login onLogin={handleLogin} onLogout={handleLogout} />} />
+                )}
                 <Route path='*' component={ErrorPage} />
             </Switch>
             <Footer />

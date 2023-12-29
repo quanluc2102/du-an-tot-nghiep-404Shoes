@@ -1,4 +1,18 @@
+import React from 'react';
+import { useHistory } from 'react-router-dom';
+
 function Sidebar() {
+    const history = useHistory();
+
+    const handleLogout = () => {
+        // Thực hiện các thao tác đăng xuất, ví dụ: xóa token từ localStorage
+        localStorage.removeItem('token');
+
+        // Chuyển hướng người dùng về trang đăng nhập
+        history.push("/pages-login.html");
+    };
+
+
     return (
         <aside id="sidebar" className="sidebar">
 
@@ -128,7 +142,7 @@ function Sidebar() {
       </li> */}
 
                 <li className="nav-item">
-                    <a className="nav-link collapsed" href="pages-login.html">
+                    <a className="nav-link collapsed" onClick={handleLogout}>
                         <i className="bi bi-box-arrow-in-right"></i>
                         <span>Đăng xuất</span>
                     </a>

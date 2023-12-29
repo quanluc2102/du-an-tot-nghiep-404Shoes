@@ -138,9 +138,19 @@ class TrangTongQuan extends Component {
         window.location.href = (`/HoaDonChiTiet/${id}`);
     }
 
-    render() {
-        return (
+    getUserNameFromLocalStorage() {
+        const savedAddresses = JSON.parse(localStorage.getItem('savedAddresses'));
+        console.log('savedAddresses:', savedAddresses);
+        const user = savedAddresses && savedAddresses.length > 0 ? savedAddresses[0] : null;
+        return user ? user.maTaiKhoan : ''; // Đảm bảo trả về tên người dùng hoặc chuỗi rỗng nếu không có thông tin
+    }
 
+
+
+    render() {
+        const userName = this.getUserNameFromLocalStorage();
+
+        return (
             <div>
                 <div className="align-center">
                     <h1 style={{
@@ -150,7 +160,7 @@ class TrangTongQuan extends Component {
                         fontWeight: '600',
                         color: '#012970'
                     }}>
-                        Xin chào Tên người dùng!
+                        Xin chào {userName}!
                     </h1>
                     <nav>
                         <ol className="breadcrumb"></ol>

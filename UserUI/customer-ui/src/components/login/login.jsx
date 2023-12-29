@@ -1,8 +1,95 @@
-import React, { Fragment, useEffect } from "react"
+import React, {Fragment, useEffect, useState} from "react"
 import './style.css'
 import { Link } from "react-router-dom/cjs/react-router-dom";
+import AuthService from "./AuthService";
 
-function Login() {
+function Login({ onLogin, onLogout }) {
+    const [credentials, setCredentials] = useState({
+        email: '',
+        password: '',
+    });
+
+    const [userInfo, setUserInfo] = useState(null); // Thêm state để lưu thông tin người dùng
+
+    const handleInputChange = (e) => {
+        setCredentials({ ...credentials, [e.target.name]: e.target.value });
+    };
+
+    const handleLogin = async () => {
+        try {
+            const token = await AuthService.login(credentials);
+            localStorage.setItem('token', token);
+
+            // Sau khi đăng nhập thành công, gọi hàm để lấy thông tin người dùng
+            getUserInfo();
+
+            onLogin();
+        } catch (error) {
+            // Xử lý lỗi, hiển thị thông báo, vv.
+        }
+    };
+
+    const getUserInfo = async () => {
+        try {
+            const token = localStorage.getItem('token');
+
+            if (!token) {
+                throw new Error('Token not found');
+            }
+
+            // Fetch the specific user using the provided endpoint
+            const userEndpoint = 'http://localhost:8080/tai_khoan/nhan-vien-quyen-3';
+
+            const userResponse = await fetch(userEndpoint, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+            });
+
+            console.log(userResponse)
+            console.log("credentials"+credentials.email)
+            if (userResponse.ok) {
+                const allUsers = await userResponse.json();
+
+                // Example: Assuming each user in allUsers has an 'email' field
+                const desiredEmail = credentials.email; // Replace with the desired email
+
+                // Find the user with the matching email in the array
+                const matchingUser = allUsers.find(user => user.email === desiredEmail);
+
+                if (matchingUser) {
+                    localStorage.setItem('currentUser', JSON.stringify(matchingUser));
+                    console.log('User found and saved to local storage:', matchingUser);
+                } else {
+                    console.error('User not found with the specified email:', desiredEmail);
+
+                }
+            } else {
+                const errorResponse = await userResponse.json();
+                throw new Error(errorResponse.message || 'Failed to get user info');
+            }
+        } catch (error) {
+            console.error('Error getting user info:', error);
+            throw error;
+        }
+    };
+
+    const handleLogout = () => {
+        AuthService.logout();
+        onLogout(); // Ensure onLogout is defined before calling
+        setUserInfo(null); // Đăng xuất cũng cần xóa thông tin người dùng
+    };
+
+    // Hàm để lấy thông tin người dùng từ backend
+    // const getUserInfo = async () => {
+    //     try {
+    //         const user = await AuthService.getUserInfo();
+    //         setUserInfo(user);
+    //     } catch (error) {
+    //         console.error('Error fetching user info:', error);
+    //     }
+    // };
 
     useEffect(() => {
         const obse = new IntersectionObserver((enti) => {
@@ -86,19 +173,40 @@ function Login() {
                 <div className="login">
                     <h2> Đăng nhập </h2>
                     <div className="input">
-                        <input type="text" className="input1" placeholder="Email" required />
+                        <input
+                            type="text"
+                            name="email"
+                            id="yourEmail"
+                            className="input1"
+                            placeholder="Email"
+                            onChange={handleInputChange}
+                            required
+                        />
                         <i className="fa-solid fa-envelope"></i>
                     </div>
                     <div className="input">
-                        <input type="password" className="input1" placeholder="Password" required />
+                        <input
+                            type="password"
+                            className="input1"
+                            placeholder="Password"
+                            name="password"
+                            id="yourPassword"
+                            onChange={handleInputChange}
+                            required
+                        />
                         <i className="fa-solid fa-lock"></i>
                     </div>
                     <div className="check">
-                        <label> <input type="checkbox" />Remember me </label>
+                        <label>
+                            <input type="checkbox" />
+                            Remember me
+                        </label>
                         <Link to='/'>Quên mật khẩu?</Link>
                     </div>
                     <div className="buttonLogin" style={{ backgroundColor: 'rgb(0, 104, 139)' }}>
-                        <button className="btn" style={{ color: 'rgb(255, 255, 255)' }}> Đăng nhập </button>
+                        <button className="btn" style={{ color: 'rgb(255, 255, 255)' }} onClick={handleLogin}>
+                            Đăng nhập
+                        </button>
                     </div>
                     <div className="sign-up">
                         <p> Chưa có tài khoản?</p>
@@ -106,6 +214,7 @@ function Login() {
                     </div>
                 </div>
             </section>
+
 
             {/*<footer>*/}
             {/*    <footer class="bg-gray py-5" style={{ backgroundColor: 'rgba(0,0,0,0.03)' }}>*/}
