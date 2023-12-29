@@ -21,7 +21,7 @@ import java.security.Key;
 
 @CrossOrigin(origins = {"http://localhost:3000","http://localhost:3006"})
 @RestController
-@RequestMapping("/api/  auth")
+@RequestMapping("/api/auth")
 public class AuthController {
 
     @Autowired

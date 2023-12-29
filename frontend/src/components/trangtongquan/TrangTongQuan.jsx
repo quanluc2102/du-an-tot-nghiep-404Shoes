@@ -139,11 +139,17 @@ class TrangTongQuan extends Component {
     }
 
     getUserNameFromLocalStorage() {
-        const savedAddresses = JSON.parse(localStorage.getItem('savedAddresses'));
-        console.log('savedAddresses:', savedAddresses);
-        const user = savedAddresses && savedAddresses.length > 0 ? savedAddresses[0] : null;
-        return user ? user.maTaiKhoan : ''; // Đảm bảo trả về tên người dùng hoặc chuỗi rỗng nếu không có thông tin
+        try {
+            const savedUser = JSON.parse(localStorage.getItem('currentUser'));
+            console.log(savedUser.thongTinNguoiDung.ten)
+                return savedUser.thongTinNguoiDung.ten || '';
+        } catch (error) {
+            console.error('Error while retrieving user name from local storage:', error);
+            return '';
+        }
     }
+
+
 
 
 
