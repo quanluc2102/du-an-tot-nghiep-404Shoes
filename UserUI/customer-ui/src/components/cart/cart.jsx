@@ -70,12 +70,12 @@ function Cart({ match }) {
     }
     const xoaDon = async (id)=>{
         const res = await GioHangService.deleteOne(id);
-        if (res.status === 200) {
-            toast.success("Xóa thành công");
-        } else {
-            const errorMessage = "Có lỗi xảy ra khi xóa.";
-            toast.error("Lỗi: " + errorMessage);
-        }
+        // if (res.status === 200) {
+        //     toast.success("Xóa thành công");
+        // } else {
+        //     const errorMessage = "Có lỗi xảy ra khi xóa.";
+        //     toast.error("Lỗi: " + errorMessage);
+        // }
         // GioHangService.deleteOne(id).then((res) => {
         //     if (res.status === 200) {
         //         toast.success("Xóa thành công"); // Display success message

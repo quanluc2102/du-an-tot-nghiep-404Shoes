@@ -43,16 +43,16 @@ function App() {
                 <Route path='/product-detail/:id' component={ProductDetail} />
 
                 {/* Sử dụng `{isLoggedIn ? () : ()}` để kiểm tra đăng nhập */}
-                {isLoggedIn ? (
-                    <>
+                {/*{isLoggedIn ? (*/}
+                {/*    <>*/}
                         <Route path='/your-cart/:id' component={Cart} />
                         <Route path='/user-info' component={UserInformation} />
                         <Route path='/payment' component={Payment}/>
                         <Route path='/check-out/:id' component={CheckOut} />
-                    </>
-                ) : (
-                    <Route path='/login' component={() => <Login onLogin={handleLogin} onLogout={handleLogout} />} />
-                )}
+                    {/*</>*/}
+                {/*) : (*/}
+                {/*    <Route path='/login' component={() => <Login onLogin={handleLogin} onLogout={handleLogout} />} />*/}
+                {/*)}*/}
                 <Route path='*' component={ErrorPage} />
             </Switch>
             <Footer />

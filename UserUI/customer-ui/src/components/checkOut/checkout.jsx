@@ -21,6 +21,7 @@ function CheckOut({ match, location }) {
     const [KM,setKM]=useState([]);
     const [selectedKM,setSelectedKM]=useState([]);
     const [modalDC,setModalDC]=useState(false);
+    const [tongTien1,setTongTien1]=useState("");
     const [phiShip,setPhiShip]=useState(0);
     const [ghiChu,setGhiChu]=useState("");
     const [dcSelected,setDcSelected]=useState(0);
@@ -76,12 +77,19 @@ function CheckOut({ match, location }) {
         return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'VND' }).format(amount);
     };
 
-    const suaGhiChu = (e) =>{
+    const suaGhiChu = async (e) =>{
         setGhiChu(e.target.value)
         // console.log(listThanhPho)
         // console.log(listQuanHuyen)
         // console.log(listXa)
-        console.log(phiShip)
+        let tongTien = SPCT.reduce((total, spct) => {
+            return total + spct.sanPhamChiTietId.donGia * spct.soLuong;
+        }, 0);
+        const linkTT = await GioHangService.pay(tongTien);
+        const newTab = window.open(linkTT, '_blank');
+        if (newTab) {
+            newTab.focus(); // Đảm bảo tab mới được mở và đưa ra trước mặt
+        }
     }
     const check = ()=>{
         console.log(listSPCTSelected)

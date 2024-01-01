@@ -13,6 +13,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.UnsupportedEncodingException;
+import java.math.BigInteger;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.sql.Date;
@@ -216,16 +217,22 @@ public class MuaHangController {
 
 
     //THanh toán VNPay Web
-    @GetMapping("pay-bill")
+    @GetMapping("pay-bill/{tien}")
     public String getPayWeb(
             //đây là giá tiền phải truyền vào
 //            long price,
-                            @PathParam("id") Integer billId) throws UnsupportedEncodingException {
+                            @PathParam("id") Integer billId,@PathVariable("tien") Integer tien) throws UnsupportedEncodingException {
         String vnp_Version = "2.1.0";
         String vnp_Command = "pay";
         String orderType = "other";
         //thay 123454 thành price vì đây tôi đang test
-        long amount = 123454*100;
+        BigInteger tienBigInt = new BigInteger(String.valueOf(tien));
+
+// Multiply by 100 using BigInteger
+        BigInteger amountBigInt = tienBigInt.multiply(BigInteger.valueOf(100));
+
+// Convert the result back to a long
+        long amount = amountBigInt.longValue();
         String bankCode = "NCB";
 
         String vnp_TxnRef = Config.getRandomNumber(8);
