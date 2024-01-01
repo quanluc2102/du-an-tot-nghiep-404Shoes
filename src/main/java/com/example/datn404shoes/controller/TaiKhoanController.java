@@ -1,6 +1,7 @@
 package com.example.datn404shoes.controller;
 
 
+import com.example.datn404shoes.DTO.ForgotPasswordDTO;
 import com.example.datn404shoes.custom.TaiKhoanVaThongTin;
 import com.example.datn404shoes.entity.*;
 import com.example.datn404shoes.helper.SanPhamExcelSave;
@@ -397,4 +398,33 @@ public ResponseEntity<?> updateKhachHang(@PathVariable Long id, @RequestBody Tai
 
         return serviceimpl.getNhanVienByQuyenId4();
     }
+
+    @PostMapping("quenMatKhau")
+    public ResponseEntity<?> quenMatKhau(Model model, @RequestBody ForgotPasswordDTO email) {
+        // Tìm kiếm tài khoản theo email
+        TaiKhoan taiKhoan = taiKhoanRepository.findByEmail(email.getSearchString());
+
+        // Kiểm tra nếu tài khoản không tồn tại
+        if (taiKhoan == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Không tìm thấy tài khoản với email: " + email);
+        }
+
+        // Lấy thông tin người dùng từ tài khoản
+        ThongTinNguoiDung thongTinNguoiDung = taiKhoan.getThongTinNguoiDung();
+
+        // Tạo mật khẩu mới
+        String generatedPassword = generatePasswordFromName("NewPass");
+        taiKhoan.setPassword(generatedPassword);
+
+        // Send an email to the newly added employee
+        sendEmail(taiKhoan.getEmail(), "Xin chào", " Xin chào " + thongTinNguoiDung.getTen() +
+                ".\n\nChúng tôi vừa nhận được yêu cầu khôi phục mật khẩu của bạn và đã tạo một mật khẩu mới cho tài khoản của bạn. Dưới đây là thông tin chi tiết:"+
+                ".\n\nTên khách hàng : " + thongTinNguoiDung.getTen()+
+                ".\n\nMật khẩu mới   : " + generatedPassword+
+                ".\n\nChúng tôi khuyến khích bạn đổi mật khẩu ngay sau khi đăng nhập để bảo vệ tài khoản của mình."+
+                ".\n\nNếu bạn gặp bất kỳ vấn đề nào hoặc cần hỗ trợ, đừng ngần ngại liên hệ với chúng tôi qua Hotline: 0257xxxxx."+
+                ".\n\nChân thành cảm ơn và chúc bạn một ngày tốt lành! [404Shoes]" );
+        return ResponseEntity.ok(serviceimpl.update(taiKhoan.getId(),taiKhoan));
+    }
+
 }

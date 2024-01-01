@@ -153,6 +153,10 @@ class KhuyenMaiComponent extends Component {
             errorAdd.soLuong = 'Số lượng không hợp lệ!';
         }
 
+        if (dieuKien<giamGia) {
+            errorAdd.dieuKien = 'Điều kiện không được nhỏ hơn giá trị giảm';
+        }
+
         if (Object.values(errorAdd).some((error) => error !== '')) {
             this.setState({errorAdd});
             return;

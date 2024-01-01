@@ -318,6 +318,10 @@ class KhuyenMaiComponent extends Component {
             errorUpdate.dieuKien = 'Điều kiện không hợp lệ!';
         }
 
+        if (dieuKien<giamGia) {
+            errorUpdate.dieuKien = 'Điều kiện không được nhỏ hơn giá trị giảm';
+        }
+
         if (!soLuong || isNaN(parseInt(soLuong)) || parseInt(soLuong) < 0 || /[a-zA-Z]+/.test(soLuong)) {
             errorUpdate.soLuong = 'Số lượng không hợp lệ!';
         }

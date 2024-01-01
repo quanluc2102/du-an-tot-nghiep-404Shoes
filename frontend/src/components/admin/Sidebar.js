@@ -7,9 +7,10 @@ function Sidebar() {
     const handleLogout = () => {
         // Thực hiện các thao tác đăng xuất, ví dụ: xóa token từ localStorage
         localStorage.removeItem('token');
+        localStorage.removeItem('currentUser');
 
         // Chuyển hướng người dùng về trang đăng nhập
-        history.push("/pages-login.html");
+        window.location.href = (`/login`);
     };
 
 
