@@ -201,7 +201,7 @@ function Login({ onLogin, onLogout }) {
                             <input type="checkbox" />
                             Remember me
                         </label>
-                        <Link to='/'>Quên mật khẩu?</Link>
+                        <Link to='/forgotpassword'>Quên mật khẩu?</Link>
                     </div>
                     <div className="buttonLogin" style={{ backgroundColor: 'rgb(0, 104, 139)' }}>
                         <button className="btn" style={{ color: 'rgb(255, 255, 255)' }} onClick={handleLogin}>

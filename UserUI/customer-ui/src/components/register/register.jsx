@@ -278,22 +278,22 @@ class Register extends Component {
                     }));
 
                     setTimeout(() => {
-                        window.location.href = (`/khachhang`);
+                        window.location.href = (`/login`);
                     }, 2000);
                     window.scrollTo(0, 0);
 
-                    toast.success("Thêm thành công!");
+                    alert("Tài khoản của bạn đã được đăng ký thành công! Vui lòng đăng nhập");
                 } else {
                     const errorMessage = res.data.message || "Có lỗi xảy ra khi thêm danh mục.";
-                    toast.error("Lỗi: " + errorMessage);
+                    alert("Lỗi: " + errorMessage);
                     console.log(res.data.error);
                 }
             })
             .catch((error) => {
                 if (error.message === "Network Error") {
-                    toast.error("Lỗi kết nối mạng. Vui lòng kiểm tra kết nối của bạn.");
+                    alert("Lỗi kết nối mạng. Vui lòng kiểm tra kết nối của bạn.");
                 } else {
-                    toast.error("Lỗi khi gửi yêu cầu API: " + error);
+                    alert("Lỗi khi gửi yêu cầu API: " + error);
                 }
             });
     };
