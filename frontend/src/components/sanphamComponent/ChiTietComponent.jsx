@@ -570,7 +570,7 @@ class ChiTietComponent extends Component {
         const { selectedOptionMS } = this.state;
         const { selectedOptionKT } = this.state;
         const popupContent = (
-            <div className="popup">
+            <div>
                 <h2>Thêm sản phẩm chi tiết</h2>
                 <div>
                     <label>Kích thước : </label>

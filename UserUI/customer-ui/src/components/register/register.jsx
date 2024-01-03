@@ -585,11 +585,13 @@ class Register extends Component {
                     backgroundSize: 'cover',
                     backgroundRepeat: 'no-repeat'
                 }}>
+
                     <div className="container py-5 h-100" style={{width: '50%', opacity: '0.9'}}>
                         <div className="row d-flex justify-content-center h-100">
                             <div className="col-lg-10">
                                 <div className="card">
                                     <div className="card-body">
+                                        <h1 style={{textAlign: "center"}}>Đăng ký tài khoản</h1>
                                         <form>
 
                                             <div className="form-group">

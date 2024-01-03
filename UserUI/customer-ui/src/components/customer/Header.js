@@ -41,7 +41,7 @@ function Header() {
                     )}
                     <Link to='/your-cart/6' style={{textDecoration: 'none'}}>
                         <a className="navbar-brand" href="/your-cart/2" style={{fontSize: '13px'}}
-                           onClick={handleLogout}>
+                           >
                             <i className='bx bxs-cart'></i>Giỏ hàng {'(0)'}
                         </a>
                     </Link>
