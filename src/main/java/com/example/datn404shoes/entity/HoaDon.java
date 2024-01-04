@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.sql.Date;
+import java.sql.Timestamp;
 
 @Getter
 @Setter
@@ -28,31 +29,31 @@ public class HoaDon {
     private Date ngayCapNhat;
 
     @Column(name = "cho_xac_nhan")
-    private Date choXacNhan;
+    private Timestamp choXacNhan;
 
     @Column(name = "ghi_chu_cho_xac_nhan")
     private String ghiChuChoXacNhan;
 
     @Column(name = "cho_giao")
-    private Date choGiao;
+    private Timestamp choGiao;
 
     @Column(name = "ghi_chu_cho_giao")
     private String ghiChuChoGiao;
 
     @Column(name = "dang_giao")
-    private Date dangGiao;
+    private Timestamp dangGiao;
 
     @Column(name = "ghi_chu_dang_giao")
     private String ghiChuDangGiao;
 
     @Column(name = "hoan_thanh")
-    private Date hoanThanh;
+    private Timestamp hoanThanh;
 
     @Column(name = "ghi_chu_hoan_thanh")
     private String ghiChuHoanThanh;
 
     @Column(name = "huy")
-    private Date huy;
+    private Timestamp huy;
 
     @Column(name = "ghi_chu_huy")
     private String ghiChuHuy;
