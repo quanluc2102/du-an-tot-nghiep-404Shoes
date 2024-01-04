@@ -1,8 +1,9 @@
-import React, { Component, useState } from 'react';
+import React, { Component } from 'react';
 import HoaDonChiTietService from '../../services/hoadonchitietservice/HoaDonChiTietService';
 import HoaDonService from '../../services/hoadonservice/HoaDonService';
 import { Modal, Button } from 'react-bootstrap';
 import OrderStatus from './OrderStatus';
+import Select from 'react-select';
 // import { tichDiemDaCoTaiKhoan, tichDiemMoi } from "../tichdiemcomponent/TichDiemService";
 import 'font-awesome/css/font-awesome.min.css';
 import './hoadonchitiet.css'
@@ -27,7 +28,27 @@ class HoaDonChiTietComponents extends Component {
                 phiShip: '',
 
 
+
             },
+            selectedAddress: {
+                diaChiCuThe: '',
+                xaPhuongThiTran: '',
+                quanHuyen: '',
+                tinhThanhPho: '',
+            },
+            hoaDonUpdateDiaChi: {
+                id: this.props.match.params.id,
+                diaChiCuThe: '',
+                xaPhuongThiTran: '',
+                quanHuyen: '',
+                tinhThanhPho: '',
+
+
+
+            },
+            provinces: [],
+            districts: [],
+            communes: [],
             hoaDonHuy: {
                 id: this.props.match.params.id,
                 ghiChuHuy: '',
@@ -40,6 +61,7 @@ class HoaDonChiTietComponents extends Component {
                 id: this.props.match.params.id,
                 taiKhoanKhachHang: '',
             },
+            validationErrors: {},
             hoaDon: {
                 id: this.props.match.params.id,
                 thanhToan: '',
@@ -66,6 +88,10 @@ class HoaDonChiTietComponents extends Component {
         this.thayDoiHDHuy = this.thayDoiHDHuy.bind(this);
         this.thayDoiMoTa = this.thayDoiMoTa.bind(this);
         this.thayDoiPhiShip = this.thayDoiPhiShip.bind(this);
+        this.thayDoiDCCT = this.thayDoiDCCT.bind(this);
+        this.thayDoiDCTinhThanh = this.thayDoiDCTinhThanh.bind(this);
+        this.thayDoiHuyen = this.thayDoiHuyen(this);
+        this.thayDoiXaPhuongThiTran = this.thayDoiXaPhuongThiTran(this);
     }
     getStatusText = (status) => {
         switch (status) {
@@ -90,8 +116,24 @@ class HoaDonChiTietComponents extends Component {
         HoaDonService.getOneHD(this.state.hoaDonId.id).then((res) => {
             this.setState({ hoaDon: res.data });
         });
+    };
+    handleAddress = (diaChiCuThe, xaPhuongThiTran, quanHuyen, tinhThanhPho) => {
+        // Cập nhật trạng thái selectedAddress khi nút "chọn" được nhấn
+        this.setState({
+            selectedAddress: {
+                diaChiCuThe,
+                xaPhuongThiTran,
+                quanHuyen,
+                tinhThanhPho,
+            },
+        });
 
-    }
+        // Cập nhật giá trị của các ô input
+        document.getElementById('address-input').value = diaChiCuThe;
+        document.getElementById('city-input').value = tinhThanhPho;
+        document.getElementById('district-input').value = quanHuyen;
+        document.getElementById('ward-input').value = xaPhuongThiTran;
+    };
 
     handleShowModal3 = () => {
         this.setState({ showModal3: true });
@@ -184,9 +226,6 @@ class HoaDonChiTietComponents extends Component {
         }
     };
     thayDoiPhiShip = (event) => {
-        const trangThai = this.state.hoaDon.trangThai;
-        const updateKey = this.getStatusUpdateKey(trangThai); // Fix the function call
-
         this.setState((prevState) => ({
             hoaDonUpdate: {
                 ...prevState.hoaDonUpdate,
@@ -194,6 +233,42 @@ class HoaDonChiTietComponents extends Component {
             },
         }));
     };
+    thayDoiDCCT = (event) => {
+        this.setState((prevState) => ({
+            selectedAddress: {
+                ...prevState.selectedAddress,
+                diaChiCuThe: event.target.value,
+            },
+        }));
+    };
+
+    thayDoiDCTinhThanh = (event) => {
+        this.setState((prevState) => ({
+            selectedAddress: {
+                ...prevState.selectedAddress,
+                tinhThanhPho: event.target.value,
+            },
+        }));
+    };
+
+    thayDoiHuyen = (event) => {
+        this.setState((prevState) => ({
+            selectedAddress: {
+                ...prevState.selectedAddress,
+                quanHuyen: event.target.value,
+            },
+        }));
+    };
+
+    thayDoiXaPhuongThiTran = (event) => {
+        this.setState((prevState) => ({
+            selectedAddress: {
+                ...prevState.selectedAddress,
+                xaPhuongThiTran: event.target.value,
+            },
+        }));
+    };
+
     thayDoiMoTa = (event) => {
         const trangThai = this.state.hoaDon.trangThai;
         const updateKey = this.getStatusUpdateKey(trangThai); // Fix the function call
@@ -256,14 +331,67 @@ class HoaDonChiTietComponents extends Component {
             window.location.href = `/HoaDonChiTiet/${this.state.hoaDonId.id}`;
         });
     };
+    updateDC = (e) => {
+        e.preventDefault();
+        const confirmed = window.confirm('Bạn có chắc chắn muốn sửa địa chỉ không ?');
+        if (!confirmed) {
+            return;
+        }
+
+        // Validate required fields
+        const { diaChiCuThe, quanHuyen, tinhThanhPho, xaPhuongThiTran } = this.state.selectedAddress;
+        let validationErrors = {};
+
+        if (!diaChiCuThe) {
+            validationErrors.diaChiCuThe = 'Vui lòng nhập địa chỉ cụ thể.';
+        }
+
+        if (!quanHuyen) {
+            validationErrors.quanHuyen = 'Vui lòng nhập quận/huyện.';
+        }
+
+        if (!tinhThanhPho) {
+            validationErrors.tinhThanhPho = 'Vui lòng nhập tỉnh/thành phố.';
+        }
+
+        if (!xaPhuongThiTran) {
+            validationErrors.xaPhuongThiTran = 'Vui lòng nhập phường/xã/thị trấn.';
+        }
+
+        // Check if there are validation errors
+        if (Object.keys(validationErrors).length > 0) {
+            // Update state with validation errors
+            this.setState({ validationErrors });
+            return;
+        }
+
+        // Clear previous validation errors
+        this.setState({ validationErrors: {} });
+
+        // Proceed with the update
+        const hoaDon = {
+            diaChiCuThe: diaChiCuThe,
+            quanHuyen: quanHuyen,
+            tinhThanhPho: tinhThanhPho,
+            xaPhuongThiTran: xaPhuongThiTran,
+        };
+
+        // Perform the update using HoaDonService
+        const id = this.state.hoaDonUpdateDiaChi.id;
+        HoaDonService.updateHoaDonDC(id, hoaDon).then((res) => {
+            console.log(this.state.selectedAddress.diaChiCuThe);
+            window.location.href = `/HoaDonChiTiet/${this.state.hoaDonId.id}`;
+        });
+    };
+
 
     render() {
         let total = 0;
         let giam = 0;
-
+        const { provinces, districts, communes } = this.state;
         const isHoaDonDaHuy = this.state.hoaDon.trangThai === 5;
         const isHoaDonKoDcHuy = this.state.hoaDon.trangThai >= 3;
-        const isKhachLe = this.state.hoaDon.taiKhoanKhachHang === '';
+        const { validationErrors } = this.state;
         return (
 
             <div>
@@ -279,7 +407,7 @@ class HoaDonChiTietComponents extends Component {
                 </div>
                 {this.state.hoaDon.phiShip}
                 <OrderStatus currentStatus={this.state.hoaDon.trangThai} order={this.state.hoaDon} />
-                <center> {this.state.hoaDon.trangThai === 5 ? <button type="button" class="btn btn-outline-danger" disabled>Lí do đơn hàng bị Hủy : {this.state.hoaDon.ghiChuHuy}</button> : ''}</center>
+                <center> {this.state.hoaDon.trangThai === 5 ? <button type="button" class="btn btn-outline-danger" disabled>Lí do đơn hàng bị Hủy : {this.state.hoaDon.ghiChuHuy} </button> : ''}</center>
                 <div>
                     <div style={{ maxWidth: '960px' }}>
                         <br />
@@ -344,7 +472,7 @@ class HoaDonChiTietComponents extends Component {
                 </div>
                 <br />
 
-                <center>{this.state.hoaDon.kieuHoaDon === 0 ? <button type="button" class="btn btn-outline-danger" onClick={this.handleShowModal2} >Thôn tin giao hàng :  {this.state.hoaDon.ten}( {this.state.hoaDon.sdt}) |{this.state.hoaDon.diaChiCuThe} - {this.state.hoaDon.xaPhuongThiTran} - {this.state.hoaDon.quanHuyen} - {this.state.hoaDon.tinhThanhPho}</button> : ""}</center>
+                <center>{this.state.hoaDon.kieuHoaDon === 0 ? <button type="button" style={isHoaDonKoDcHuy ? { color: 'gray', borderColor: 'gray', cursor: 'not-allowed' } : {}} disabled={isHoaDonKoDcHuy} class="btn btn-outline-danger" onClick={this.handleShowModal2} >Thôn tin giao hàng :  {this.state.hoaDon.ten}( {this.state.hoaDon.sdt}) |{this.state.hoaDon.diaChiCuThe} - {this.state.hoaDon.xaPhuongThiTran} - {this.state.hoaDon.quanHuyen} - {this.state.hoaDon.tinhThanhPho}</button> : ""}</center>
                 <section className="section dashboard">
                     <div className="row">
                         <div className="col-lg-8">
@@ -396,35 +524,32 @@ class HoaDonChiTietComponents extends Component {
                                                                 <tr>
                                                                     <th scope="col"></th>
                                                                     <th scope="col"></th>
-
                                                                 </tr>
                                                             </thead>
                                                             <tbody>
                                                                 <tr>
                                                                     <th scope="row">Tổng tiền hàng</th>
-                                                                    <td><label color='red' className="text-right "><s> {total.toLocaleString()} VNĐ</s></label></td>
-
+                                                                    <td><label color='red' className="text-right "><s>{total.toLocaleString()} VNĐ</s></label></td>
                                                                 </tr>
                                                                 <tr>
-
                                                                     <th scope="row">Voucher từ Shop</th>
-                                                                    <td className="text-left col-4">- {giam.toLocaleString()
-                                                                    }đ (Giảm {this.state.hoaDon?.khuyenMai?.giamGia} {this.state.hoaDon?.khuyenMai?.kieuKhuyenMai === 1 ? "%" : this.state.hoaDon?.khuyenMai?.kieuKhuyenMai === 0 ? "VND" : ""})</td>
-
+                                                                    <td className="text-left col-4">- {giam.toLocaleString()}đ (Giảm {this.state.hoaDon?.khuyenMai?.giamGia} {this.state.hoaDon?.khuyenMai?.kieuKhuyenMai === 1 ? "%" : this.state.hoaDon?.khuyenMai?.kieuKhuyenMai === 0 ? "VND" : ""})</td>
                                                                 </tr>
                                                                 <tr>
                                                                     <th scope="row">Phi vận chuyển</th>
-                                                                    <td ><p style={{ color: 'red', fontSize: '14px' }}>
-                                                                        {this.state.hoaDon.phiShip} VNĐ
-                                                                    </p></td>
-
+                                                                    <td>
+                                                                        <p style={{ color: 'red', fontSize: '14px' }}>
+                                                                            {this.state.hoaDon.phiShip} VNĐ
+                                                                        </p>
+                                                                    </td>
                                                                 </tr>
                                                                 <tr>
                                                                     <th scope="row">Thành tiền</th>
-                                                                    <td ><p style={{ color: 'red', fontSize: '24px' }}>
-                                                                        {this.state.hoaDon?.tongTien?.toLocaleString()} VNĐ
-                                                                    </p></td>
-
+                                                                    <td>
+                                                                        <p style={{ color: 'red', fontSize: '24px' }}>
+                                                                            {(total + this.state.hoaDon.phiShip - giam).toLocaleString()} VNĐ
+                                                                        </p>
+                                                                    </td>
                                                                 </tr>
                                                             </tbody>
                                                         </table>
@@ -519,6 +644,84 @@ class HoaDonChiTietComponents extends Component {
                                                                 <Modal.Title>Thông tin nhân viên</Modal.Title>
                                                             </Modal.Header>
                                                             <Modal.Body>
+                                                                <div>
+                                                                    {/* ... Các ô input và bảng */}
+                                                                    <div class="input-group mb-3">
+                                                                        <label for="address-input" class="input-group-text" id="address-addon">
+                                                                            Địa chỉ cụ thể <span style={{ color: 'red' }}>*</span>
+                                                                        </label>
+                                                                        <input
+                                                                            type="text"
+                                                                            className={`form-control ${validationErrors.diaChiCuThe ? 'is-invalid' : ''}`}
+                                                                            id="address-input"
+                                                                            placeholder="Địa chỉ cụ thể"
+                                                                            aria-label="Địa chỉ cụ thể"
+                                                                            aria-describedby="address-addon"
+                                                                            onChange={this.thayDoiDCCT}
+                                                                            required
+                                                                        /> {validationErrors.diaChiCuThe && (
+                                                                            <span className="invalid-feedback">{validationErrors.diaChiCuThe}</span>
+                                                                        )}
+                                                                    </div>
+
+                                                                    <div class="input-group mb-3">
+                                                                        <label for="city-input" class="input-group-text" id="city-addon">
+                                                                            Tỉnh thành phố <span style={{ color: 'red' }}>*</span>
+                                                                        </label>
+                                                                        <input
+                                                                            type="text"
+                                                                            className={`form-control ${validationErrors.tinhThanhPho ? 'is-invalid' : ''}`}
+                                                                            id="city-input"
+                                                                            placeholder="Thành phố"
+                                                                            aria-label="Thành phố"
+                                                                            aria-describedby="city-addon"
+                                                                            onChange={this.thayDoiDCTinhThanh}
+                                                                            required
+                                                                        /> {validationErrors.tinhThanhPho && (
+                                                                            <span className="invalid-feedback">{validationErrors.tinhThanhPho}</span>
+                                                                        )}
+                                                                    </div>
+
+                                                                    <div class="input-group mb-3">
+                                                                        <label for="district-input" class="input-group-text" id="district-addon">
+                                                                            Quận Huyện <span style={{ color: 'red' }}>*</span>
+                                                                        </label>
+                                                                        <input
+                                                                            type="text"
+                                                                            className={`form-control ${validationErrors.quanHuyen ? 'is-invalid' : ''}`}
+                                                                            id="district-input"
+                                                                            placeholder="Huyện"
+                                                                            aria-label="Huyện"
+                                                                            aria-describedby="district-addon"
+                                                                            onChange={this.thayDoiHuyen}
+                                                                            required
+                                                                        />
+                                                                         {validationErrors.quanHuyen && (
+                        <span className="invalid-feedback">{validationErrors.quanHuyen}</span>
+                    )}
+                                                                    </div>
+
+                                                                    <div class="input-group mb-3">
+                                                                        <label for="ward-input" class="input-group-text" id="ward-addon">
+                                                                            Phường xã <span style={{ color: 'red' }}>*</span>
+                                                                        </label>
+                                                                        <input
+                                                                            type="text"
+                                                                            className={`form-control ${validationErrors.xaPhuongThiTran ? 'is-invalid' : ''}`}
+                                                                            id="ward-input"
+                                                                            placeholder="Xã"
+                                                                            aria-label="Xã"
+                                                                            aria-describedby="ward-addon"
+                                                                            onChange={this.thayDoiXaPhuongThiTran}
+                                                                            required
+                                                                        />
+                                                                         {validationErrors.xaPhuongThiTran && (
+                        <span className="invalid-feedback">{validationErrors.xaPhuongThiTran}</span>
+                    )}
+                                                                    </div>
+                                                                    <button type="button" class="btn btn-outline-warning" onClick={this.updateDC}>Cập nhật điạ chỉ cho đơn hàng</button>
+                                                                </div>
+<br />
                                                                 <table className="table table-borderless datatable">
                                                                     <thead>
                                                                         <tr>

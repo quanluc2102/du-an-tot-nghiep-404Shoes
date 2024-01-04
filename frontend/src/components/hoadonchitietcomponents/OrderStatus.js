@@ -20,7 +20,7 @@ import { IoDocumentTextOutline } from "react-icons/io5";
 const OrderStatus = ({ currentStatus, order }) => {
   const mandatoryStatusList = [
     { value: 0, label: "Chờ xác nhận", icon: IoDocumentTextOutline, dateKey: "ngayTao", note: "ghiChuXacNhan" },
-    { value: 1, label: "Xác nhận", icon: AiOutlineFileDone, dateKey: "choXacNhan", note: "ghiChuXacNhan" },
+    { value: 1, label: "Xác nhận", icon: AiOutlineFileDone, dateKey: "choXacNhan", note: "ghiChuChoXacNhan" },
     { value: 2, label: "Đóng gói", icon: BsBoxSeam, dateKey: "choGiao", note: "ghiChuChoGiao" },
     {
       value: 3,
@@ -89,10 +89,10 @@ const OrderStatus = ({ currentStatus, order }) => {
               >
                 {status.label}
               </span>
-              {/* Display the corresponding date */}
+              {/* Display the corresponding date and time */}
               {isStatusActive && statusDate && (
                 <div className="status-date">
-                  {format(new Date(statusDate), "dd/MM/yyyy")}
+                  {format(new Date(statusDate), "dd/MM/yyyy HH:mm:ss", { timeZone: "yourTimeZone" })}
                   {/* Display the note */}
                   {status.note && (
                     <div className="status-note">{order[status.note]}</div>
@@ -111,24 +111,24 @@ const OrderStatus = ({ currentStatus, order }) => {
 
       {/* Separate "Hủy" status from other statuses */}
       {currentStatus === 5 && (
-        <div className="status-item active">
-          <div className="status-circle active">
-            <div className="status-border"></div>
-            <FaBan className="status-icon" aria-label="Đơn hàng bị hủy" />
-          </div>
-          <span className="status-label active">Hủy</span>
-          {/* Display the corresponding date */}
-          {order.cancelDate && (
-            <div className="status-date">
-              {format(new Date(order.cancelDate), "dd/MM/yyyy")}
-              {/* Display the note */}
-              {mandatoryStatusList[5].note && (
-                <div className="status-note">{order[mandatoryStatusList[5].note]}</div>
-              )}
-            </div>
-          )}
-        </div>
-      )}
+  <div className="status-item active">
+    <div className="status-circle active">
+      <div className="status-border"></div>
+      <FaBan className="status-icon" aria-label="Đơn hàng bị hủy" />
+    </div>
+    <span className="status-label active">Hủy</span>
+    {/* Display the corresponding date and time */}
+    {order.cancelDate && (
+      <div className="status-date">
+        {format(new Date(order.cancelDate), "dd/MM/yyyy HH:mm:ss", { timeZone: "yourTimeZone" })}
+        {/* Display the note */}
+        {mandatoryStatusList[5].note && (
+          <div className="status-note">{order[mandatoryStatusList[5].note]}</div>
+        )}
+      </div>
+    )}
+  </div>
+)}
 
       {shouldDisplayOptionalStatus && displayedOptionalStatus && (
         <React.Fragment>
@@ -146,12 +146,13 @@ const OrderStatus = ({ currentStatus, order }) => {
             <span className="status-label active">
               {displayedOptionalStatus.label}
             </span>
-            {/* Display the corresponding date */}
+            {/* Display the corresponding date and time */}
             {order[displayedOptionalStatus.dateKey] && (
               <div className="status-date">
                 {format(
                   new Date(order[displayedOptionalStatus.dateKey]),
-                  "dd/MM/yyyy"
+                  "dd/MM/yyyy HH:mm:ss",
+                  { timeZone: "yourTimeZone" }
                 )}
                 {/* Display the note */}
                 {displayedOptionalStatus.note && (

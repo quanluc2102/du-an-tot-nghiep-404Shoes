@@ -157,6 +157,13 @@ public class HoaDonController {
 
         return ResponseEntity.ok(hoaDonImpl.update(id, hoaDon));
     }
+    @PutMapping("updateDC/{id}")
+    public ResponseEntity<?> updateDC(Model model,
+                                    @PathVariable("id") Long id,
+                                    @RequestBody HoaDon hoaDon) {
+
+        return ResponseEntity.ok(hoaDonImpl.updateDC(id, hoaDon));
+    }
     @PutMapping("huyHD/{id}")
     public ResponseEntity<?> huyHD(Model model,
                                    @PathVariable("id") Long id,
