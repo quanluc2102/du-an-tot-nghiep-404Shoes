@@ -14,18 +14,20 @@ class AuthService {
 
             if (response.ok) {
                 const token = await response.text();
+                alert('Đăng nhập thành công');
                 localStorage.setItem('token', token);
+                window.location.href = (`/product-list`);
                 console.log(credentials)
                                 return token;
             } else if (response.status === 401) {
-                toast.error('Đăng nhập thất bại, hãy kiểm tra lại tài khoản mật khẩu');
+                alert('Đăng nhập thất bại, hãy kiểm tra lại tài khoản mật khẩu');
                 throw new Error('Unauthorized');
             } else {
                 const errorResponse = await response.json();
                 throw new Error(errorResponse.message || 'Login failed');
             }
         } catch (error) {
-            toast.error('Đăng nhập thất bại, hãy kiểm tra lại tài khoản mật khẩu');
+            alert('Đăng nhập thất bại, hãy kiểm tra lại tài khoản mật khẩu');
             throw error;
         }
     }

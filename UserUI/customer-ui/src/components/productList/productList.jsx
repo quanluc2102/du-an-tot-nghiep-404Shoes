@@ -465,17 +465,17 @@ function ProductList() {
 
                             <hr/>
 
-                            <div class="accordion" id="accordionExample2">
+                            <div class="accordion" id="accordionExample25311">
                                 <div class="accordion-item border-0 ">
-                                    <h1 class="accordion-header " id="headingOne2">
+                                    <h1 class="accordion-header " id="headingOne275">
                                         <button class="accordion-button " type="button" data-bs-toggle="collapse"
-                                                data-bs-target="#collapseOne2" aria-expanded="true"
-                                                aria-controls="collapseOne2">
+                                                data-bs-target="#collapseOne299485" aria-expanded="true"
+                                                aria-controls="collapseOne299485">
                                             <strong class="font-monospace">KÍCH THƯỚC</strong>
                                         </button>
                                     </h1>
-                                    <div id="collapseOne2" class="accordion-collapse collapse show "
-                                         aria-labelledby="headingOne2" data-bs-parent="#accordionExample2">
+                                    <div id="collapseOne299485" class="accordion-collapse collapse show "
+                                         aria-labelledby="headingOne275" data-bs-parent="#accordionExample25311">
                                         <div class="accordion-body">
                                             <ul class="list-group list-group-flush">
                                                 {listKT.map((kichThuoc) => (
@@ -495,17 +495,17 @@ function ProductList() {
                             </div>
 
                             <hr/>
-                            <div className="accordion" id="accordionExample2">
+                            <div className="accordion" id="accordionExample23">
                                 <div className="accordion-item border-0 ">
-                                    <h1 className="accordion-header " id="headingOne2">
+                                    <h1 className="accordion-header " id="headingOne24">
                                         <button className="accordion-button " type="button" data-bs-toggle="collapse"
-                                                data-bs-target="#collapseOne2" aria-expanded="true"
-                                                aria-controls="collapseOne2">
+                                                data-bs-target="#collapseOne22" aria-expanded="true"
+                                                aria-controls="collapseOne22">
                                             <strong className="font-monospace">MÀU SẮC</strong>
                                         </button>
                                     </h1>
-                                    <div id="collapseOne2" className="accordion-collapse collapse show "
-                                         aria-labelledby="headingOne2" data-bs-parent="#accordionExample2">
+                                    <div id="collapseOne22" className="accordion-collapse collapse show "
+                                         aria-labelledby="headingOne24" data-bs-parent="#accordionExample23">
                                         <div className="accordion-body">
                                             <ul className="list-group list-group-flush">
                                                 {listMS.map((mauSac) => (
@@ -524,17 +524,17 @@ function ProductList() {
                                 </div>
                             </div>
                             <hr/>
-                            <div className="accordion" id="accordionExample2">
+                            <div className="accordion" id="accordionExample24345">
                                 <div className="accordion-item border-0 ">
-                                    <h1 className="accordion-header " id="headingOne2">
+                                    <h1 className="accordion-header " id="headingOne2004">
                                         <button className="accordion-button " type="button" data-bs-toggle="collapse"
-                                                data-bs-target="#collapseOne2" aria-expanded="true"
-                                                aria-controls="collapseOne2">
+                                                data-bs-target="#collapseOne2665" aria-expanded="true"
+                                                aria-controls="collapseOne2665">
                                             <strong className="font-monospace">Lọc theo giá</strong>
                                         </button>
                                     </h1>
-                                    <div id="collapseOne2" className="accordion-collapse collapse show "
-                                         aria-labelledby="headingOne2" data-bs-parent="#accordionExample2">
+                                    <div id="collapseOne2665" className="accordion-collapse collapse show "
+                                         aria-labelledby="headingOne2004" data-bs-parent="#accordionExample24345">
                                         <div className="accordion-body">
                                             <ul className="list-group list-group-flush">
                                                     <label className="list-group-item">

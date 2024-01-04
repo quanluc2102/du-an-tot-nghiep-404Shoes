@@ -278,22 +278,22 @@ class Register extends Component {
                     }));
 
                     setTimeout(() => {
-                        window.location.href = (`/khachhang`);
+                        window.location.href = (`/login`);
                     }, 2000);
                     window.scrollTo(0, 0);
 
-                    toast.success("Thêm thành công!");
+                    alert("Tài khoản của bạn đã được đăng ký thành công! Vui lòng đăng nhập");
                 } else {
                     const errorMessage = res.data.message || "Có lỗi xảy ra khi thêm danh mục.";
-                    toast.error("Lỗi: " + errorMessage);
+                    alert("Lỗi: " + errorMessage);
                     console.log(res.data.error);
                 }
             })
             .catch((error) => {
                 if (error.message === "Network Error") {
-                    toast.error("Lỗi kết nối mạng. Vui lòng kiểm tra kết nối của bạn.");
+                    alert("Lỗi kết nối mạng. Vui lòng kiểm tra kết nối của bạn.");
                 } else {
-                    toast.error("Lỗi khi gửi yêu cầu API: " + error);
+                    alert("Lỗi khi gửi yêu cầu API: " + error);
                 }
             });
     };
@@ -581,15 +581,17 @@ class Register extends Component {
                 {/*</header>*/}
 
                 <section className="h-100" style={{
-                    backgroundImage: 'url(https://c0.wallpaperflare.com/preview/475/119/659/shoe-street-basketball-sneaker.jpg)',
+                    backgroundImage: 'url(https://plus.unsplash.com/premium_photo-1682435561654-20d84cef00eb?q=80&w=1436&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)',
                     backgroundSize: 'cover',
                     backgroundRepeat: 'no-repeat'
                 }}>
+
                     <div className="container py-5 h-100" style={{width: '50%', opacity: '0.9'}}>
                         <div className="row d-flex justify-content-center h-100">
                             <div className="col-lg-10">
-                                <div className="card">
+                                <div className="card" style={{height: '935px'}}>
                                     <div className="card-body">
+                                        <h1 style={{textAlign: "center"}}>Đăng ký tài khoản</h1>
                                         <form>
 
                                             <div className="form-group">
