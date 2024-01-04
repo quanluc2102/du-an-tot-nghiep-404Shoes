@@ -7,8 +7,9 @@ import { Link } from 'react-router-dom/cjs/react-router-dom';
 import {Select} from "antd";
 import {GioHangService} from "../../service/GioHangService";
 import axios from "axios";
+import TextArea from "antd/es/input/TextArea";
 
-function CheckOut({ match, location }) {
+function CheckOut({ location }) {
     const [SPCT, setSPCT] = useState([]);
     const [listSPCTSelected,setListSPCTSelected] = useState([]);
     const [listDC,setListDC] = useState([]);
@@ -22,6 +23,7 @@ function CheckOut({ match, location }) {
     const [selectedKM,setSelectedKM]=useState([]);
     const [modalDC,setModalDC]=useState(false);
     const [tongTien1,setTongTien1]=useState("");
+    const [user,setUser]=useState([]);
     const [phiShip,setPhiShip]=useState(0);
     const [ghiChu,setGhiChu]=useState("");
     const [dcSelected,setDcSelected]=useState(0);
@@ -31,13 +33,23 @@ function CheckOut({ match, location }) {
     const [xaPhuongThiTran,setXaPhuongThiTran]=useState("");
     const [quanHuyen,setQuanHuyen]=useState("");
     const [tinhThanhPho,setTinhThanhPho]=useState("");
+    const [sdtNew,setSDTNew]=useState("");
+    const [tenNew,setTenNew]=useState("");
+    const [diaChiCuTheNew,setDiaChiCuTheNew]=useState("");
+    const [xaPhuongThiTranNew,setXaPhuongThiTranNew]=useState("");
+    const [quanHuyenNew,setQuanHuyenNew]=useState("");
+    const [tinhThanhPhoNew,setTinhThanhPhoNew]=useState("");
 
     const { id } = useParams();
     const history = useHistory();
     useEffect  ( () => {
         const fetchData = async () => {
             try {
-                const dataDC = await GioHangService.getDCByTaiKhoan(id);
+                const storedData = localStorage.getItem('currentUser');
+                if(storedData){
+                    setUser(JSON.parse(storedData))
+                }
+                const dataDC = await GioHangService.getDCByTaiKhoan(JSON.parse(storedData).id);
                 setListDC(dataDC)
             } catch (error) {
             }
@@ -72,24 +84,94 @@ function CheckOut({ match, location }) {
         }
 
         fetchData();
+        loadTP();
     }, [])
     const formatCurrency = (amount) => {
         return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'VND' }).format(amount);
     };
+    const changeTen = (event) =>{
+        setTen(event.target.value)
+        setTenNew(event.target.value)
+    }
+    const changeSDT = (event) =>{
+        setSDT(event.target.value)
+        setSDTNew(event.target.value)
+    }
+    const changeDiaChiCuThe = (event) =>{
+        setDiaChiCuThe(event.target.value)
+        setDiaChiCuTheNew(event.target.value)
+    }
+    const chonTP = (event) =>{
+        const tp = parseInt(event.target.value)
+        setCodeTP(tp)
+        listThanhPho.map(value => {
+            if(value.ProvinceID===tp){
+                setTinhThanhPhoNew(value.ProvinceName)
+                setTinhThanhPho(value.ProvinceName)
+            }
+        })
+        loadQH(tp)
+    }
+    const chonQH = (event) =>{
+        const qh = parseInt(event.target.value)
+        setCodeQuan(qh)
+        listQuanHuyen.map(value => {
+            if(value.DistrictID===qh){
+                setQuanHuyenNew(value.DistrictName)
+                setQuanHuyen(value.DistrictName)
+            }
+        })
+        loadXP(qh)
+    }
+    const chonXP = (event) =>{
+        const xp = String(event.target.value)
+        setCodeXa(xp)
+        listXa.map(value => {
+            if(value.WardCode===xp){
+                setXaPhuongThiTranNew(value.WardName)
+                setXaPhuongThiTran(value.WardName)
+            }
+        })
+    }
+    const loadTP = async () =>{
+        const responseTp = await axios.get('https://online-gateway.ghn.vn/shiip/public-api/master-data/province', {
+            headers: {
+                'token': '93254e5e-a301-11ee-b394-8ac29577e80e', // Thay YOUR_API_KEY bằng API key thực tế của bạn
+            },
+        });
+        const provincesData = responseTp.data.data;
+        setListThanhPho(provincesData)
+    }
+    const loadQH = async (tp) =>{
+        const responseQH = await axios.get(`https://online-gateway.ghn.vn/shiip/public-api/master-data/district?province_id=${tp}`, {
+            headers: {
+                'token': '93254e5e-a301-11ee-b394-8ac29577e80e', // Thay YOUR_API_KEY bằng API key thực tế của bạn
+            },
+        });
+        const districtData = responseQH.data.data;
+        setListQuanHuyen(districtData)
 
+    }
+    const loadXP = async (qh) =>{
+        const responseXP = await axios.get(`https://online-gateway.ghn.vn/shiip/public-api/master-data/ward?district_id=${qh}`, {
+            headers: {
+                'token': '93254e5e-a301-11ee-b394-8ac29577e80e', // Thay YOUR_API_KEY bằng API key thực tế của bạn
+            },
+        });
+        const wardData = responseXP.data.data;
+        setListXa(wardData)
+    }
     const suaGhiChu = async (e) =>{
         setGhiChu(e.target.value)
-        // console.log(listThanhPho)
-        // console.log(listQuanHuyen)
-        // console.log(listXa)
         let tongTien = SPCT.reduce((total, spct) => {
             return total + spct.sanPhamChiTietId.donGia * spct.soLuong;
         }, 0);
-        const linkTT = await GioHangService.pay(tongTien);
-        const newTab = window.open(linkTT, '_blank');
-        if (newTab) {
-            newTab.focus(); // Đảm bảo tab mới được mở và đưa ra trước mặt
-        }
+        // const linkTT = await GioHangService.pay(tongTien);
+        // const newTab = window.open(linkTT, '_blank');
+        // if (newTab) {
+        //     newTab.focus(); // Đảm bảo tab mới được mở và đưa ra trước mặt
+        // }
+        console.log(codeQuan)
     }
     const check = ()=>{
         console.log(listSPCTSelected)
@@ -172,12 +254,12 @@ function CheckOut({ match, location }) {
             tinhThanhPho:tinhThanhPho
         }
         console.log(hd)
-        if(diaChiCuThe===""){
+        if(phiShip===0){
             alert("Chưa chọn địa chỉ giao , không thanh toán được");
         }else{
             const thongBao = await GioHangService.sold(hd);
             alert(thongBao)
-            history.push(`/your-cart/${id}`)
+            history.push(`/your-cart`)
         }
     }
 
@@ -212,7 +294,7 @@ function CheckOut({ match, location }) {
         try {
             const requestBody = {
                 "service_type_id": 2,
-                "insurance_value": 10000000,
+                "insurance_value": tongTien,
                 "coupon": null,
                 "from_district_id": 1582,
                 "from_ward_code": "1A1319",
@@ -306,7 +388,7 @@ function CheckOut({ match, location }) {
 
     const popupContent = (
         <div className="popup">
-            <div className="card-body">
+            {user.length!=0?(<div className="card-body">
                 <div className="tab-pane fade show active" id="home" role="tabpanel"
                      aria-labelledby="home-tab">
                     <table style={{width: '100%',
@@ -335,10 +417,65 @@ function CheckOut({ match, location }) {
                     </table>
 
                 </div>
+                    <br/>
+                    <hr/>
+            </div>
+            ) : (<div></div>)}
 
+            <h4>Thêm mới</h4>
+            <div style={{float:"left",width:"48%",marginLeft:10,marginTop:10}}>
+                Họ và tên <a style={{color:"red"}}>*</a> :
+                <input className={`form-control`} type="text" onChange={changeTen} value={tenNew}/>
+                {/*{this.state.error.ten && <div className="text-danger">{this.state.error.ten}</div>}*/}
+            </div>
+            <div style={{float:"left",width:"48%",marginLeft:20,marginTop:10}}>
+                Số điện thoại <a style={{color:"red"}}>*</a> :
+                <input className={`form-control`} type="text" onChange={changeSDT} value={sdtNew}/>
+                {/*{this.state.error.ten && <div className="text-danger">{this.state.error.ten}</div>}*/}
+            </div>
 
+            <div style={{float:"left",width:"32%",marginLeft:10,marginTop:20}}>
+                Thành phố <a style={{color:"red"}}>*</a> :
+                {/*<input className={`form-control`} type="text"/>*/}
+                <select className={`form-control`} onChange={chonTP} value={codeTP}>
+                    <option value="">Chọn thành phố</option>
+                    {listThanhPho.map(tp=>(
+                        <option value={tp.ProvinceID}>{tp.ProvinceName}</option>
+                    ))}
+                </select>
+                {/*{this.state.error.ten && <div className="text-danger">{this.state.error.ten}</div>}*/}
+            </div>
+            <div style={{float:"left",width:"32%",marginLeft:10,marginTop:20}}>
+                Quận huyện <a style={{color:"red"}}>*</a> :
+                <select className={`form-control`} onChange={chonQH} value={codeQuan}>
+                    <option value="">Chọn quận huyện</option>
+                    {listQuanHuyen.map(tp=>(
+                        <option value={tp.DistrictID}>{tp.DistrictName}</option>
+                    ))}
+                </select>
+                {/*{this.state.error.ten && <div className="text-danger">{this.state.error.ten}</div>}*/}
+            </div>
+            <div style={{float:"left",width:"32%",marginLeft:10,marginTop:20}}>
+                Xã phường <a style={{color:"red"}}>*</a> :
+                <select className={`form-control`} onChange={chonXP} value={codeXa}>
+                    <option value="">Chọn xã phường</option>
+                    {listXa.map(tp=>(
+                        <option value={tp.WardCode}>{tp.WardName}</option>
+                    ))}
+                </select>
+                {/*{this.state.error.ten && <div className="text-danger">{this.state.error.ten}</div>}*/}
             </div>
             <br/>
+            <br/>
+            <div style={{float:"left",width:"100%",marginLeft:10,marginTop:30}}>
+                Địa chỉ cụ thể <a style={{color:"red"}}>*</a> :
+                <TextArea className={`form-control`} onChange={changeDiaChiCuThe} value={diaChiCuTheNew}/>
+                {/*{this.state.error.ten && <div className="text-danger">{this.state.error.ten}</div>}*/}
+            </div>
+            <div style={{float:"right",width:"20%",marginLeft:10,marginTop:20}}>
+                <input className={`form-control btn btn-primary`} onClick={dongModal} type={"submit"}/>
+                {/*{this.state.error.ten && <div className="text-danger">{this.state.error.ten}</div>}*/}
+            </div>
         </div>
     );
 
@@ -346,77 +483,6 @@ function CheckOut({ match, location }) {
         <Fragment>
             <body>
                 {/*<header>*/}
-                {/*    <nav className="navbar navbar-light bg-light">*/}
-                {/*        <div className="container-fluid justify-content-end">*/}
-                {/*            <Link to='/login' style={{textDecoration: 'none'}}><a className="navbar-brand" href="#"*/}
-                {/*                                                                  style={{fontSize: '13px'}}> <i*/}
-                {/*                className='bx bxs-user'></i> Đăng nhập</a></Link>*/}
-                {/*            <Link to='your-cart' style={{textDecoration: 'none'}}><a className="navbar-brand" href="#"*/}
-                {/*                                                                     style={{fontSize: '13px'}}> <i*/}
-                {/*                className='bx bxs-cart'></i>Giỏ hàng {'(0)'}</a></Link>*/}
-                {/*        </div>*/}
-                {/*    </nav>*/}
-
-                {/*    <nav className="navbar navbar-expand-lg navbar-light bg-0 py-1" id="navbarhead"*/}
-                {/*         style={{backgroundColor: 'rgb(255, 255, 255)'}}>*/}
-                {/*        <div className="container">*/}
-                {/*            <div className="d-flex justify-content-between align-items-left w-100"*/}
-                {/*                 style={{marginRight: '10px'}}>*/}
-                {/*                <Link to='/' style={{textDecoration: 'none'}}> <a*/}
-                {/*                    className="navbar-brand d-flex align-items-center">*/}
-                {/*                    <img style={{width: '90px'}}*/}
-                {/*                         src="https://t3.ftcdn.net/jpg/00/71/53/56/360_F_71535683_03OP8nG0N3YRVDTasetbEfT2BpucFmo5.jpg"*/}
-                {/*                         alt="site icon"/>*/}
-                {/*                    <a className="text-uppercase text-decoration-none brand text-black"*/}
-                {/*                       style={{fontWeight: 'bold', fontSize: '26px'}}>404SHOES</a>*/}
-                {/*                </a>*/}
-                {/*                </Link>*/}
-                {/*            </div>*/}
-
-                {/*            <div className="collapse navbar-collapse justify-content-center" id="navMenu">*/}
-                {/*                <ul className="navbar-nav mx-auto text-center">*/}
-                {/*                    <li className="nav-item px-1 py-1">*/}
-
-                {/*                        <Link to='/' style={{ textDecoration: 'none', fontWeight: 'bold', fontSize: '1.1em' }}>*/}
-                {/*                            <a className="nav-link text-uppercase">TRANG CHỦ</a>*/}
-                {/*                        </Link>*/}
-
-                {/*                    </li>*/}
-                {/*                    <li className="nav-item px-1 py-1">*/}
-                {/*                        <Link to='/product-list' style={{ textDecoration: 'none', fontWeight: 'bold', fontSize: '1.1em' }}>*/}
-                {/*                            <a className="nav-link text-uppercase">SẢN PHẨM</a>*/}
-                {/*                        </Link>*/}
-                {/*                    </li>*/}
-                {/*                    <li className="nav-item px-1 py-1">*/}
-                {/*                        <Link to='/product-list' style={{ textDecoration: 'none', fontWeight: 'bold', fontSize: '1.1em' }}>*/}
-                {/*                            <a className="nav-link text-uppercase">BÀI VIẾT</a>*/}
-                {/*                        </Link>*/}
-                {/*                    </li>*/}
-                {/*                    <li className="nav-item px-1 py-1">*/}
-                {/*                        <Link to='/product-list' style={{ textDecoration: 'none', fontWeight: 'bold', fontSize: '1.1em' }}>*/}
-                {/*                            <a className="nav-link text-uppercase">LIÊN HỆ</a>*/}
-                {/*                        </Link>*/}
-                {/*                    </li>*/}
-                {/*                    <li className="nav-item px-1 py-1">*/}
-                {/*                        <Link to='/product-list' style={{ textDecoration: 'none', fontWeight: 'bold', fontSize: '1.1em' }}>*/}
-                {/*                            <a className="nav-link text-uppercase">TRA CỨU ĐƠN HÀNG</a>*/}
-                {/*                        </Link>*/}
-                {/*                    </li>*/}
-                {/*                    <li className="nav-item px-1 py-1">*/}
-                {/*                        <Link to='/product-list' style={{ textDecoration: 'none', fontWeight: 'bold', fontSize: '1.1em' }}>*/}
-                {/*                            <a className="nav-link text-uppercase">VỀ CHÚNG TÔI</a>*/}
-                {/*                        </Link>*/}
-                {/*                    </li>*/}
-                {/*                    <li className="nav-item px-1 py-1" style={{ marginLeft: '65px' }}>*/}
-                {/*                        <form className="d-flex">*/}
-                {/*                            <input className="form-control me-2" type="search" placeholder="Tìm kiếm..." aria-label="Search" style={{ width: '200px' }} />*/}
-                {/*                            <button className="btn btn-outline-success" type="submit">Search</button>*/}
-                {/*                        </form>*/}
-                {/*                    </li>*/}
-                {/*                </ul>*/}
-                {/*            </div>*/}
-                {/*        </div>*/}
-                {/*    </nav>*/}
                 {/*</header>*/}
 
                 <main style={{minHeight: '120vh'}} data-bs-spy="scroll"
@@ -432,7 +498,8 @@ function CheckOut({ match, location }) {
                                 <h5 style={{color:"red",marginLeft:35}}>Địa chỉ giao hàng {dcSelected===0?(<a style={{marginLeft:50,textDecoration:"none",cursor:"pointer",color:"mediumblue"}} onClick={moModal}>Thay đổi</a>):(<strong></strong>)}</h5>
                                 <br/>
                                 <p style={{marginLeft:30}}>
-                                    {dcSelected===0?(<strong></strong>):(<strong>{ten} ({sdt}) : {diaChiCuThe} , {xaPhuongThiTran} , {quanHuyen} , {tinhThanhPho} </strong>)}
+
+                                    {codeXa===0?(<strong></strong>):(<strong>{ten} ({sdt}) : {diaChiCuThe} , {xaPhuongThiTran} , {quanHuyen} , {tinhThanhPho} </strong>)}
 
                                     {dcSelected===0?(<strong></strong>):(<a style={{marginLeft:50,textDecoration:"none",cursor:"pointer",color:"mediumblue"}} onClick={moModal}>Thay đổi</a>)}
                                 </p>
@@ -580,101 +647,6 @@ function CheckOut({ match, location }) {
                 </main>
                 <br/>
                 {/*<footer>*/}
-                {/*    <footer className="bg-gray py-5" style={{backgroundColor: 'rgba(0,0,0,0.03)'}}>*/}
-                {/*        <div className="container">*/}
-                {/*            <div className="row text-black g-4">*/}
-                {/*                <div className="col-md-6 col-lg-3">*/}
-                {/*                    <a className="text-uppercase text-decoration-none brand text-black"*/}
-                {/*                       style={{fontWeight: 'bold', fontSize: '26px'}}>404SHOES</a>*/}
-                {/*                    <p className="text-black text-muted mt-3"><strong>Giày thể thao chính*/}
-                {/*                        hãng </strong><br/>*/}
-                {/*                        Hoàn trả 100% nếu sản phẩm bị lỗi hoặc hỏng khi vận chuyển <br/>*/}
-                {/*                        Đội ngũ hỗ trợ khách hàng luôn luôn 24/7*/}
-                {/*                    </p>*/}
-                {/*                </div>*/}
-
-                {/*                <div className="col-md-6 col-lg-3">*/}
-                {/*                    <h5 className="fw-dark">Liên Kết</h5>*/}
-                {/*                    <ul className="list-unstyled">*/}
-                {/*                        <li className="my-3">*/}
-                {/*                            <a href="#" className="text-black text-decoration-none text-muted">*/}
-                {/*                                Home*/}
-                {/*                            </a>*/}
-                {/*                        </li>*/}
-                {/*                        <li className="my-3">*/}
-                {/*                            <a href="#" className="text-black text-decoration-none text-muted">*/}
-                {/*                                Bộ sưu tập*/}
-                {/*                            </a>*/}
-                {/*                        </li>*/}
-                {/*                        <li className="my-3">*/}
-                {/*                            <a href="#" className="text-black text-decoration-none text-muted">*/}
-                {/*                                Blogs*/}
-                {/*                            </a>*/}
-                {/*                        </li>*/}
-                {/*                        <li className="my-3">*/}
-                {/*                            <a href="#" className="text-black text-decoration-none text-muted">*/}
-                {/*                                Về chúng tôi*/}
-                {/*                            </a>*/}
-                {/*                        </li>*/}
-                {/*                    </ul>*/}
-                {/*                </div>*/}
-
-                {/*                <div className="col-md-6 col-lg-3">*/}
-                {/*                    <h5 className="fw-light mb-4">Liên Hệ</h5>*/}
-                {/*                    <div className="d-flex justify-content-start align-items-start my-2 text-muted">*/}
-                {/*                        <span className="me-0">*/}
-                {/*                            <i className="fas fa-map-marked-alt"></i>*/}
-                {/*                        </span>*/}
-                {/*                        <span className="fw-light">*/}
-                {/*                            Hoàng Quốc Việt - Cầu Giấy - Hà Nội*/}
-                {/*                        </span>*/}
-                {/*                    </div>*/}
-                {/*                    <div className="d-flex justify-content-start align-items-start my-2 text-muted">*/}
-                {/*                        <span className="me-0">*/}
-                {/*                            <i className="fas fa-envelope"></i>*/}
-                {/*                        </span>*/}
-                {/*                        <span className="fw-light">*/}
-                {/*                            404shopshoes@gmail.com*/}
-                {/*                        </span>*/}
-                {/*                    </div>*/}
-                {/*                    <div className="d-flex justify-content-start align-items-start my-2 text-muted">*/}
-                {/*                        <span className="me-0">*/}
-                {/*                            <i className="fas fa-phone-alt"></i>*/}
-                {/*                        </span>*/}
-                {/*                        <span className="fw-light">*/}
-                {/*                            +84 0819130199*/}
-                {/*                        </span>*/}
-                {/*                    </div>*/}
-                {/*                </div>*/}
-
-                {/*                <div className="col-md-6 col-lg-3">*/}
-                {/*                    <h5 className="fw-light mb-3">Theo Dõi</h5>*/}
-                {/*                    <div>*/}
-                {/*                        <ul className="list-unstyled d-flex flex-column">*/}
-                {/*                            <li>*/}
-                {/*                                <a href="#"*/}
-                {/*                                   className="text-black text-decoration-none text-muted fs-4 me-4">*/}
-                {/*                                    <i className="fab fa-facebook-f"> Facebook</i>*/}
-                {/*                                </a>*/}
-                {/*                            </li>*/}
-                {/*                            <li>*/}
-                {/*                                <a href="#"*/}
-                {/*                                   className="text-black text-decoration-none text-muted fs-4 me-4">*/}
-                {/*                                    <i className="fab fa-twitter"> Twitter</i>*/}
-                {/*                                </a>*/}
-                {/*                            </li>*/}
-                {/*                            <li>*/}
-                {/*                                <a href="#"*/}
-                {/*                                   className="text-black text-decoration-none text-muted fs-4 me-4">*/}
-                {/*                                    <i className="fab fa-instagram"> Instagram</i>*/}
-                {/*                                </a>*/}
-                {/*                            </li>*/}
-                {/*                        </ul>*/}
-                {/*                    </div>*/}
-                {/*                </div>*/}
-                {/*            </div>*/}
-                {/*        </div>*/}
-                {/*    </footer>*/}
                 {/*</footer>*/}
                 </body>
 
