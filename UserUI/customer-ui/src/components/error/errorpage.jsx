@@ -61,7 +61,7 @@ function ErrorPage() {
          {/*   </nav>*/}
          {/*</header>*/}
          
-            <div id="error-page" style={{ top: '15em' }}>
+            <div id="error-page">
                <div className="contentErrorPage" >
                   <h2 className="headerError" data-text="404">
                      404

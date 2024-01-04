@@ -1,9 +1,7 @@
 @import url('https://fonts.googleapis.com/css?family=Poppins:400,500,600,700&display=swap');
 
 #error-page {
-  position: absolute;
-  left: 25%;
-  right: 25%;
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;

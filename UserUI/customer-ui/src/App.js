@@ -14,6 +14,7 @@ import { ToastContainer } from "react-toastify";
 import Header from "../../../UserUI/customer-ui/src/components/customer/Header";
 import Footer from "../../../UserUI/customer-ui/src/components/customer/Footer";
 import Payment from "./components/payment/payment";
+import ForgotPassword from "./components/forgotpassword/forgotpassword";
 // import LoginComponent from "../../../frontend/src/components/LoginComponent/LoginComponent";
 
 function App() {
@@ -43,16 +44,17 @@ function App() {
                 <Route path='/product-detail/:id' component={ProductDetail} />
 
                 {/* Sử dụng `{isLoggedIn ? () : ()}` để kiểm tra đăng nhập */}
-                {isLoggedIn ? (
-                    <>
+                {/*{isLoggedIn ? (*/}
+                {/*    <>*/}
                         <Route path='/your-cart/:id' component={Cart} />
                         <Route path='/user-info' component={UserInformation} />
                         <Route path='/payment' component={Payment}/>
                         <Route path='/check-out/:id' component={CheckOut} />
-                    </>
-                ) : (
-                    <Route path='/login' component={() => <Login onLogin={handleLogin} onLogout={handleLogout} />} />
-                )}
+                        <Route path='/forgotpassword' component={ForgotPassword} />
+                    {/*</>*/}
+                {/*) : (*/}
+                {/*    <Route path='/login' component={() => <Login onLogin={handleLogin} onLogout={handleLogout} />} />*/}
+                {/*)}*/}
                 <Route path='*' component={ErrorPage} />
             </Switch>
             <Footer />
