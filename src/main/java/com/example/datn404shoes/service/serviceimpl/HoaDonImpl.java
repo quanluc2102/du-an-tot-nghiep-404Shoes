@@ -12,7 +12,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,26 +54,70 @@ long count = hoaDonRepository.count()+1;
     }
     @Override
     public HoaDon update(Long id,HoaDon hoaDon) {
+
         HoaDon hoaDon1 = hoaDonRepository.findById(id).get();
         if(hoaDon1.getTrangThai()==0) {
-            hoaDon1.setChoXacNhan(Date.valueOf(LocalDate.now()));
+            LocalDate currentDate = LocalDate.now();
+            LocalTime currentTime = LocalTime.now();
+
+// Combine date and time
+            LocalDateTime currentDateTime = LocalDateTime.of(currentDate, currentTime);
+
+// Convert LocalDateTime to Timestamp
+            Timestamp timeChoXacNhan = Timestamp.valueOf(currentDateTime);
+            hoaDon1.setChoXacNhan(timeChoXacNhan);
             hoaDon1.setTrangThai(hoaDon1.getTrangThai()+1);
             hoaDon1.setGhiChuChoXacNhan(hoaDon.getGhiChuChoXacNhan());
             hoaDon1.setPhiShip(hoaDon.getPhiShip());
         }else
         if(hoaDon1.getTrangThai()==1) {
-            hoaDon1.setChoGiao(Date.valueOf(LocalDate.now()));
+            LocalDate currentDate = LocalDate.now();
+            LocalTime currentTime = LocalTime.now();
+
+// Combine date and time
+            LocalDateTime currentDateTime = LocalDateTime.of(currentDate, currentTime);
+
+// Convert LocalDateTime to Timestamp
+            Timestamp timeChoGiao = Timestamp.valueOf(currentDateTime);
+            hoaDon1.setChoGiao(timeChoGiao);
             hoaDon1.setTrangThai(hoaDon1.getTrangThai()+1);
             hoaDon1.setGhiChuChoGiao(hoaDon.getGhiChuChoGiao());
         }else if(hoaDon1.getTrangThai()==2){
-            hoaDon1.setDangGiao(Date.valueOf(LocalDate.now()));
+            LocalDate currentDate = LocalDate.now();
+            LocalTime currentTime = LocalTime.now();
+
+// Combine date and time
+            LocalDateTime currentDateTime = LocalDateTime.of(currentDate, currentTime);
+
+// Convert LocalDateTime to Timestamp
+            Timestamp timeDangGiao= Timestamp.valueOf(currentDateTime);
+            hoaDon1.setDangGiao(timeDangGiao);
             hoaDon1.setTrangThai(hoaDon1.getTrangThai()+1);
             hoaDon1.setGhiChuDangGiao(hoaDon.getGhiChuDangGiao());
         }else if(hoaDon1.getTrangThai()==3) {
-            hoaDon1.setHoanThanh(Date.valueOf(LocalDate.now()));
+            LocalDate currentDate = LocalDate.now();
+            LocalTime currentTime = LocalTime.now();
+
+// Combine date and time
+            LocalDateTime currentDateTime = LocalDateTime.of(currentDate, currentTime);
+
+// Convert LocalDateTime to Timestamp
+            Timestamp timeHoanThanh= Timestamp.valueOf(currentDateTime);
+            hoaDon1.setHoanThanh(timeHoanThanh);
             hoaDon1.setTrangThai(hoaDon1.getTrangThai() + 1);
             hoaDon1.setGhiChuHoanThanh(hoaDon.getGhiChuHoanThanh());
         }
+        return hoaDonRepository.save(hoaDon1);
+    }
+
+    @Override
+    public HoaDon updateDC(Long id, HoaDon hoaDon) {
+        HoaDon hoaDon1 = hoaDonRepository.findById(id).get();
+            hoaDon1.setDiaChiCuThe(hoaDon.getDiaChiCuThe());
+            hoaDon1.setTinhThanhPho(hoaDon.getTinhThanhPho());
+            hoaDon1.setQuanHuyen(hoaDon.getQuanHuyen());
+            hoaDon1.setXaPhuongThiTran(hoaDon.getXaPhuongThiTran());
+        System.out.printf(hoaDon.getDiaChiCuThe());
         return hoaDonRepository.save(hoaDon1);
     }
 
@@ -91,9 +138,17 @@ long count = hoaDonRepository.count()+1;
 
     @Override
     public HoaDon huyHoaDon(Long id, HoaDon hoaDon) {
+        LocalDate currentDate = LocalDate.now();
+        LocalTime currentTime = LocalTime.now();
+
+// Combine date and time
+        LocalDateTime currentDateTime = LocalDateTime.of(currentDate, currentTime);
+
+// Convert LocalDateTime to Timestamp
+        Timestamp timeHuy= Timestamp.valueOf(currentDateTime);
         HoaDon hoaDon1 = hoaDonRepository.findById(id).get();
         hoaDon1.setTrangThai(5);
-        hoaDon1.setHuy(Date.valueOf(LocalDate.now()));
+        hoaDon1.setHuy(timeHuy);
         hoaDon1.setGhiChuHuy(hoaDon.getGhiChuHuy());
         List<HoaDonChiTiet> hoaDonChiTiet = HDCTRepository.findAllByHd_Id(id);
         hoaDonChiTiet.forEach(hoaDonChiTiets -> updateQuantityForCancel(hoaDonChiTiets.getSanPhamChiTiet().getId(),hoaDonChiTiets.getSoLuong()));

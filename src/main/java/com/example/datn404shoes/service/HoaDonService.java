@@ -9,6 +9,7 @@ public interface HoaDonService {
     HoaDon add(HoaDon sp);
     void delete(Long id);
     HoaDon update(Long id, HoaDon hoaDon);
+    HoaDon updateDC(Long id, HoaDon hoaDon);
     List<HoaDon> getAll();
     HoaDon getOne(Long id);
     void chuyenTrangThai(HoaDonService hoaDon);
