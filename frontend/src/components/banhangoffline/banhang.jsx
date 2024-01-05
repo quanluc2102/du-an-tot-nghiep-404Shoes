@@ -23,6 +23,8 @@ class BanHangOffline extends Component {
         super(props);
 
         this.state = {
+            ten: '',
+            sdt: '',
             kieuHoaDon: '',
             chooseUser: false,
             idKhachHang: '',
@@ -272,6 +274,13 @@ class BanHangOffline extends Component {
         }
     }
 
+    handleTenChange = (event) => {
+        this.setState({ ten: event.target.value });
+      };
+    
+      handleSdtChange = (event) => {
+        this.setState({ sdt: event.target.value });
+      };
 
     handleWardChange(event) {
         const selectedWardName = event.target.value;
@@ -521,6 +530,9 @@ class BanHangOffline extends Component {
         const customers = tabCustomers[tabKey] || [];
         const isCustomerExist = customers.length > 0;
         this.getIdKhachHang(userId);
+
+        this.setState({ ten: userId.ten }, () => { console.log("ten:", this.state.ten) })
+        this.setState({ sdt: userId.sdt }, () => { console.log("sdt:", this.state.sdt) })
 
         if (isCustomerExist) {
             this.setState({
@@ -1087,10 +1099,10 @@ class BanHangOffline extends Component {
                             <br />
                             <br />
                             <label htmlFor="ten">Tên khách hàng:</label>
-                            <input type="text" id="ten" name="ten"  placeholder="Nhập tên của bạn" required /><br />
+                            <input type="text" id="ten" name="ten" value={this.state.ten} placeholder="Nhập tên của khách hàng" required  onChange={this.handleTenChange}/><br />
                             <br />
                             <label htmlFor="sdt">Số điện thoại:</label>
-                            <input type="tel" id="sdt" name="sdt"  placeholder="Nhập số điện thoại" pattern="[0-9]{10}" title="Số điện thoại phải có 10 chữ số" required /><br />
+                            <input type="tel" id="sdt" name="sdt" value={this.state.sdt} placeholder="Nhập số điện thoại" pattern="[0-9]{10}" title="Số điện thoại phải có 10 chữ số" required  onChange={this.handleSdtChange} /><br />
                             <br />
 
 
