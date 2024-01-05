@@ -4,7 +4,7 @@ import './style.css';
 import accountservice from './accountservice';
 import React, {useState, useEffect} from 'react';
 
-function Account() {
+function AccountBill() {
     const history = useHistory();
     const [activeTab, setActiveTab] = useState('all'); // Default to 'all'
     const [hoaDonData, setHoaDonData] = useState([]);
@@ -275,126 +275,23 @@ function Account() {
     return (
         <div className="account-container">
             <div className="user-profile">
-                <a className="edit-profile" href="/user/account/profile">
-                    <div className="avatar-container">
-                        <div className="avatar-placeholder">
-                            <svg
-                                enableBackground="new 0 0 15 15"
-                                viewBox="0 0 15 15"
-                                x="0"
-                                y="0"
-                                className="avatar-svg"
-                            >
-                                {/* ... (your SVG content) */}
-                            </svg>
-                        </div>
-                        <img
-                            className="avatar-img"
-                            src={`/img/${getUserAvatarFromLocalStorage()}`}
-                            alt="user-avatar"
-                        />
-                    </div>
-                </a>
-                <div className="user-info">
-                    <div className="username">{getUserNameFromLocalStorage()}</div>
-                    <div>
-                        <a className="edit-profile-link" href="/user/account/profile">
-                            <svg width="12" height="12" viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg">
+                <div className="dropdown-container user-dropdown">
+                    <button className="yO9lYJ">
+                        <svg enable-background="new 0 0 11 11" viewBox="0 0 11 11" x="0" y="0" className="shopee-svg-icon icon-arrow-left">
+                            <g>
                                 <path
-                                    d="M8.54 0L6.987 1.56l3.46 3.48L12 3.48M0 8.52l.073 3.428L3.46 12l6.21-6.18-3.46-3.48"
-                                    fill="#9B9B9B"
-                                    fillRule="evenodd"
-                                ></path>
-                            </svg>
-                            Sửa hồ sơ
-                        </a>
-                    </div>
+                                    d="m8.5 11c-.1 0-.2 0-.3-.1l-6-5c-.1-.1-.2-.3-.2-.4s.1-.3.2-.4l6-5c .2-.2.5-.1.7.1s.1.5-.1.7l-5.5 4.6 5.5 4.6c.2.2.2.5.1.7-.1.1-.3.2-.4.2z"></path>
+                            </g>
+                        </svg>
+                        <span>TRỞ LẠI</span>
+                    </button>
                 </div>
             </div>
-            <div className="dropdown-container">
-                <div className="dropdown">
-                    {/* Dropdown content */}
-                </div>
 
-                {/* ... Các dropdown khác tương tự ... */}
-
-                <section className="purchase-tabs" role="tablist">
-                    <h2 className="a11y-hidden"></h2>
-                    <a
-                        className={`purchase-tab ${activeTab === 'all' ? 'active' : ''}`}
-                        title="Tất cả"
-                        role="tab"
-                        aria-selected={activeTab === 'all'}
-                        onClick={() => handleTabClick('all')}
-                    >
-                        <span>Tất cả</span>
-                    </a>
-                    <a
-                        className={`purchase-tab ${activeTab === 'choXacNhan' ? 'active' : ''}`}
-                        title="Chờ xác nhận"
-                        role="tab"
-                        aria-selected={activeTab === 'choXacNhan'}
-                        onClick={() => handleTabClick('choXacNhan')}
-                    >
-                        <span>Chờ xác nhận</span>
-                    </a>
-                    <a
-                        className={`purchase-tab ${activeTab === 'daXacNhan' ? 'active' : ''}`}
-                        title="Xác nhận"
-                        role="tab"
-                        aria-selected={activeTab === 'daXacNhan'}
-                        onClick={() => handleTabClick('daXacNhan')}
-                    >
-                        <span>Xác nhận</span>
-                    </a>
-
-                    <a
-                        className={`purchase-tab ${activeTab === 'dongGoi' ? 'active' : ''}`}
-                        title="Đóng gói"
-                        role="tab"
-                        aria-selected={activeTab === 'dongGoi'}
-                        onClick={() => handleTabClick('dongGoi')}
-                    >
-                        <span>Đóng gói</span>
-                    </a>
-
-                    <a
-                        className={`purchase-tab ${activeTab === 'dangGiao' ? 'active' : ''}`}
-                        title="Đang giao"
-                        role="tab"
-                        aria-selected={activeTab === 'dangGiao'}
-                        onClick={() => handleTabClick('dangGiao')}
-                    >
-                        <span>Đang giao</span>
-                    </a>
-
-                    <a
-                        className={`purchase-tab ${activeTab === 'hoanThanh' ? 'active' : ''}`}
-                        title="Hoàn thành"
-                        role="tab"
-                        aria-selected={activeTab === 'hoanThanh'}
-                        onClick={() => handleTabClick('hoanThanh')}
-                    >
-                        <span>Hoàn thành</span>
-                    </a>
-
-                    <a
-                        className={`purchase-tab ${activeTab === 'muaTaiQuay' ? 'active' : ''}`}
-                        title="Mua tại quầy"
-                        role="tab"
-                        aria-selected={activeTab === 'muaTaiQuay'}
-                        onClick={() => handleTabClick('muaTaiQuay')}
-                    >
-                        <span>Mua tại quầy</span>
-                    </a>
-                    {/* ... (similar for other tabs) */}
-                </section>
-
-                {/* Display content based on the active tab */}
-                {renderTabContent()}
-            </div>
         </div>
+
+
     );
 }
 
-export default Account;
+export default AccountBill;

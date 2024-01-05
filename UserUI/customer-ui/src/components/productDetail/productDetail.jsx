@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import './style.css'
 import { Link } from "react-router-dom/cjs/react-router-dom";
 import {SanPhamService} from "../../service/SanPhamService";
+import axios from "axios";
 
 function ProductDetail({ match }) {
     const [sanPham, setSanPham] = useState();
@@ -14,6 +15,7 @@ function ProductDetail({ match }) {
     const [selectedMauSac, setSelectedMauSac] = useState(null);
     const [selectedKichThuoc, setSelectedKichThuoc] = useState(null);
     const [soLuong, setSoLuong] = useState(0);
+    const [selectedAnh, setSelectedAnh] = useState(0);
     const { id } = match.params;
     const fetchData = async () =>{
 
@@ -90,9 +92,10 @@ function ProductDetail({ match }) {
         let sanPham = {
             spct: filteredSPCT[0],
             soLuong: soLuong,
-            nguoiDung: user.id
+            nguoiDung: user
         }
         console.log('nsx' + JSON.stringify(sanPham));
+        const gioHang = await SanPhamService.fakeGHGuest();
         try {
             if(sanPham.soLuong===0||!sanPham.soLuong===0){
                 alert("Không thể thêm vào giỏ hàng vì số lượng = 0 !")
@@ -105,7 +108,7 @@ function ProductDetail({ match }) {
                     const dataSPCT = storedDataSPCT ? JSON.parse(storedDataSPCT) : [];
                     const spct = {
                         id:Math.floor(Math.random() * 100000) + 1,
-                        gioHangId:0,
+                        gioHangId:gioHang,
                         sanPhamChiTietId: filteredSPCT[0],
                         soLuong: soLuong
                     }
@@ -137,12 +140,14 @@ function ProductDetail({ match }) {
     };
     const handleMauSacClick = (ms) => {
         setSelectedMauSac(ms === selectedMauSac ? null : ms);
+        setSoLuong(0)
         console.log(selectedMauSac)
         console.log(String(selectedMauSac) === String(ms))
     };
 
     const handleKichThuocClick = (kt) => {
         setSelectedKichThuoc(kt === String(selectedKichThuoc) ? null : kt);
+        setSoLuong(0)
         console.log(selectedKichThuoc)
         console.log(filteredSPCT)
     };
@@ -179,7 +184,7 @@ function ProductDetail({ match }) {
 
                                 <div className="mb-3">
                                     <img
-                                        src="https://assets.adidas.com/images/h_840,f_auto,q_auto,fl_lossy,c_fill,g_auto/ae1b69a78a2b452b96e5af9c00a31a34_9366/Ultra_4DFWD_Running_Shoes_Pink_GV9063_02_standard_hover.jpg"
+                                        src={'/img/'+listSPAnh[selectedAnh].anh}
                                         className="anh-to w-100" id="product-image" alt=""/>
 
                                 </div>
@@ -465,100 +470,6 @@ function ProductDetail({ match }) {
 
 
                 {/*<footer>*/}
-                {/*    <footer className="bg-gray py-5" style={{backgroundColor: 'rgba(0,0,0,0.03)'}}>*/}
-                {/*        <div className="container">*/}
-                {/*            <div className="row text-black g-4">*/}
-                {/*                <div className="col-md-6 col-lg-3">*/}
-                {/*                    <a className="text-uppercase text-decoration-none brand text-black"*/}
-                {/*                       style={{fontWeight: 'bold', fontSize: '26px'}}>404SHOES</a>*/}
-                {/*                    <p className="text-black text-muted mt-3"><strong>Giày thể thao chính hãng </strong><br/>*/}
-                {/*                        Hoàn trả 100% nếu sản phẩm bị lỗi hoặc hỏng khi vận chuyển <br/>*/}
-                {/*                        Đội ngũ hỗ trợ khách hàng luôn luôn 24/7*/}
-                {/*                    </p>*/}
-                {/*                </div>*/}
-
-                {/*                <div className="col-md-6 col-lg-3">*/}
-                {/*                    <h5 className="fw-dark">Liên Kết</h5>*/}
-                {/*                    <ul className="list-unstyled">*/}
-                {/*                        <li className="my-3">*/}
-                {/*                            <a href="#" className="text-black text-decoration-none text-muted">*/}
-                {/*                                Home*/}
-                {/*                            </a>*/}
-                {/*                        </li>*/}
-                {/*                        <li className="my-3">*/}
-                {/*                            <a href="#" className="text-black text-decoration-none text-muted">*/}
-                {/*                                Bộ sưu tập*/}
-                {/*                            </a>*/}
-                {/*                        </li>*/}
-                {/*                        <li className="my-3">*/}
-                {/*                            <a href="#" className="text-black text-decoration-none text-muted">*/}
-                {/*                                Blogs*/}
-                {/*                            </a>*/}
-                {/*                        </li>*/}
-                {/*                        <li className="my-3">*/}
-                {/*                            <a href="#" className="text-black text-decoration-none text-muted">*/}
-                {/*                                Về chúng tôi*/}
-                {/*                            </a>*/}
-                {/*                        </li>*/}
-                {/*                    </ul>*/}
-                {/*                </div>*/}
-
-                {/*                <div className="col-md-6 col-lg-3">*/}
-                {/*                    <h5 className="fw-light mb-4">Liên Hệ</h5>*/}
-                {/*                    <div className="d-flex justify-content-start align-items-start my-2 text-muted">*/}
-                {/*                        <span className="me-0">*/}
-                {/*                            <i className="fas fa-map-marked-alt"></i>*/}
-                {/*                        </span>*/}
-                {/*                        <span className="fw-light">*/}
-                {/*                            Hoàng Quốc Việt - Cầu Giấy - Hà Nội*/}
-                {/*                        </span>*/}
-                {/*                    </div>*/}
-                {/*                    <div className="d-flex justify-content-start align-items-start my-2 text-muted">*/}
-                {/*                        <span className="me-0">*/}
-                {/*                            <i className="fas fa-envelope"></i>*/}
-                {/*                        </span>*/}
-                {/*                        <span className="fw-light">*/}
-                {/*                            404shopshoes@gmail.com*/}
-                {/*                        </span>*/}
-                {/*                    </div>*/}
-                {/*                    <div className="d-flex justify-content-start align-items-start my-2 text-muted">*/}
-                {/*                        <span className="me-0">*/}
-                {/*                            <i className="fas fa-phone-alt"></i>*/}
-                {/*                        </span>*/}
-                {/*                        <span className="fw-light">*/}
-                {/*                            +84 0819130199*/}
-                {/*                        </span>*/}
-                {/*                    </div>*/}
-                {/*                </div>*/}
-
-                {/*                <div className="col-md-6 col-lg-3">*/}
-                {/*                    <h5 className="fw-light mb-3">Theo Dõi</h5>*/}
-                {/*                    <div>*/}
-                {/*                        <ul className="list-unstyled d-flex flex-column">*/}
-                {/*                            <li>*/}
-                {/*                                <a href="#"*/}
-                {/*                                   className="text-black text-decoration-none text-muted fs-4 me-4">*/}
-                {/*                                    <i className="fab fa-facebook-f"> Facebook</i>*/}
-                {/*                                </a>*/}
-                {/*                            </li>*/}
-                {/*                            <li>*/}
-                {/*                                <a href="#"*/}
-                {/*                                   className="text-black text-decoration-none text-muted fs-4 me-4">*/}
-                {/*                                    <i className="fab fa-twitter"> Twitter</i>*/}
-                {/*                                </a>*/}
-                {/*                            </li>*/}
-                {/*                            <li>*/}
-                {/*                                <a href="#"*/}
-                {/*                                   className="text-black text-decoration-none text-muted fs-4 me-4">*/}
-                {/*                                    <i className="fab fa-instagram"> Instagram</i>*/}
-                {/*                                </a>*/}
-                {/*                            </li>*/}
-                {/*                        </ul>*/}
-                {/*                    </div>*/}
-                {/*                </div>*/}
-                {/*            </div>*/}
-                {/*        </div>*/}
-                {/*    </footer>*/}
                 {/*</footer>*/}
 
                 <a href="#" className="back-to-top d-flex align-items-center justify-content-center"><i

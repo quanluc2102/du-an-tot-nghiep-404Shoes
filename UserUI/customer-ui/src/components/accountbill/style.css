@@ -208,30 +208,31 @@ body {
     background-color: #c1d2ea; /* Màu nền khi hover */
 }
 
-/*!* Thêm các quy tắc CSS để đặt dropdown-container ở góc trái trong account-container *!*/
-/*.account-container {*/
-/*    position: relative;*/
-/*}*/
+/* CSS cho account-container */
+.account-container {
+    position: relative;
+}
 
-/*.dropdown-container {*/
-/*    position: absolute;*/
-/*    top: 10px; !* Điều chỉnh giá trị top để cân bằng vị trí *!*/
-/*    left: 10px; !* Điều chỉnh giá trị left để cân bằng vị trí *!*/
-/*}*/
+/* CSS cho dropdown-container trong user-profile */
+.user-dropdown {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+}
 
-/*!* Định dạng lại nút trong dropdown-container *!*/
-/*.dropdown-container button {*/
-/*    background-color: transparent;*/
-/*    border: none;*/
-/*    cursor: pointer;*/
-/*    display: flex;*/
-/*    align-items: center;*/
-/*    font-size: 14px;*/
-/*    color: #333;*/
-/*}*/
+/* CSS cho nút trong dropdown-container */
+.user-dropdown button {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    color: #333;
+}
 
-/*!* Định dạng lại biểu tượng SVG *!*/
-/*.dropdown-container svg {*/
-/*    fill: #333;*/
-/*    margin-right: 5px;*/
-/*}*/
+/* CSS cho biểu tượng SVG trong dropdown-container */
+.user-dropdown svg {
+    fill: #333;
+    margin-right: 5px;
+}

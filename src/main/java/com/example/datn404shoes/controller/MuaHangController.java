@@ -101,15 +101,6 @@ public class MuaHangController {
     public ResponseEntity<?> addGioHang(Model model, @RequestBody AddGioHangRequest request) {
 
 //        TaiKhoan tk = TaiKhoan.builder().id(request.getNguoiDung()).build();
-        TaiKhoan tk = TaiKhoan.builder().id(1).build();
-        List<GioHang> listGioHang = gioHangRepository.findAll();
-        Long gioHangId = Long.valueOf(1);
-        for(GioHang list:listGioHang){
-            if(list.getTaiKhoan()==tk){
-                gioHangId=list.getId();
-            }
-        }
-        List<GioHangChiTiet> listGHCT = gioHangChiTietService.getAll();
         int total = 0 ;
         GioHangChiTiet gioHangChiTietCo = null;
 //        for(GioHangChiTiet ghct:listGHCT){
@@ -134,20 +125,23 @@ public class MuaHangController {
 //            }
 //            gioHangChiTietRepository.save(gioHangChiTietCo);
 //        }
-        List<GioHangChiTiet> list = gioHangChiTietService.getGioHangChiTietByKhachHang(2L);
-        for(GioHangChiTiet ghct:list){
-            if(ghct.getSanPhamChiTietId().getId()==request.getSpct().getId()){
-                total += 1;
-                gioHangChiTietCo = ghct;
+        GioHang gh = new GioHang();
+        List<GioHang> listGH = gioHangRepository.findAll();
+        for(GioHang list1:listGH){
+            if(list1.getTaiKhoan().getId()==request.getNguoiDung().getId()){
+                gh=list1;
             }
         }
-        if(total==0){
-            GioHangChiTiet gioHangChiTiet = new GioHangChiTiet();
-            gioHangChiTiet.setSanPhamChiTietId(request.getSpct());
-            gioHangChiTiet.setSoLuong(request.getSoLuong());
-            gioHangChiTiet.setGioHangId(GioHang.builder().id(gioHangId).build());
-            gioHangChiTietService.add(gioHangChiTiet);
-        }else{
+        List<GioHangChiTiet> list = gioHangChiTietService.getGioHangChiTietByKhachHang(request.getNguoiDung().getId());
+        for(GioHangChiTiet ghct:list){
+            if(ghct.getSanPhamChiTietId().getId()==request.getSpct().getId()){
+                total++;
+                gioHangChiTietCo = ghct;
+            }else{
+
+            }
+        }
+        if(total>0){
             int tong = gioHangChiTietCo.getSoLuong()+request.getSoLuong();
             if(tong > request.getSpct().getSoLuong()){
                 gioHangChiTietCo.setSoLuong(request.getSpct().getSoLuong());
@@ -156,6 +150,12 @@ public class MuaHangController {
 
             }
             gioHangChiTietRepository.save(gioHangChiTietCo);
+        }else {
+            GioHangChiTiet gioHangChiTiet = new GioHangChiTiet();
+            gioHangChiTiet.setSanPhamChiTietId(request.getSpct());
+            gioHangChiTiet.setSoLuong(request.getSoLuong());
+            gioHangChiTiet.setGioHangId(gh);
+            gioHangChiTietService.add(gioHangChiTiet);
         }
         return ResponseEntity.ok("Thêm thành công");
     }
@@ -168,7 +168,11 @@ public class MuaHangController {
         hoaDon.setNgayTao(Date.valueOf(LocalDate.now()));
         hoaDon.setTrangThai(0);
         hoaDon.setGhiChu(hoaDonUserRequest.getGhiChu());
-        hoaDon.setTaiKhoanKhachHang(taiKhoanServiceimpl.getOne(hoaDonUserRequest.getTaiKhoanId()));
+        if(hoaDonUserRequest.getTaiKhoanId()==0){
+
+        }else {
+            hoaDon.setTaiKhoanKhachHang(taiKhoanServiceimpl.getOne(hoaDonUserRequest.getTaiKhoanId()));
+        }
         if(hoaDonUserRequest.getKm()==0){
 
         }else{
@@ -192,8 +196,12 @@ public class MuaHangController {
 //        Optional<DiaChi> diaChi = diaChiResponsitory.findById(hoaDonUserRequest.getDiaChiId());
         hoaDon.setTen(hoaDonUserRequest.getTen());
         hoaDon.setSdt(hoaDonUserRequest.getSdt());
-        TaiKhoan taiKhoan = taiKhoanServiceimpl.getOne(hoaDonUserRequest.getTaiKhoanId());
-        hoaDon.setEmail(taiKhoan.getEmail());
+        if(hoaDonUserRequest.getTaiKhoanId()==0){
+
+        }else {
+            TaiKhoan taiKhoan = taiKhoanServiceimpl.getOne(hoaDonUserRequest.getTaiKhoanId());
+            hoaDon.setEmail(taiKhoan.getEmail());
+        }
         hoaDon.setDiaChiCuThe(hoaDonUserRequest.getDiaChiCuThe());
         hoaDon.setTinhThanhPho(hoaDonUserRequest.getTinhThanhPho());
         hoaDon.setQuanHuyen(hoaDonUserRequest.getQuanHuyen());
@@ -210,18 +218,22 @@ public class MuaHangController {
                 ghct.getSanPhamChiTietId().setSoLuong(0);
             }
             sanPhamChiTietRepository.save(ghct.getSanPhamChiTietId());
-            gioHangChiTietService.delete(ghct.getId());
+            if(hoaDonUserRequest.getTaiKhoanId()==0){
+
+            }else {
+                gioHangChiTietService.delete(ghct.getId());
+            }
         }
-        return ResponseEntity.ok("Thêm thành công");
+        return ResponseEntity.ok("Thanh toán thành công");
     }
 
 
     //THanh toán VNPay Web
-    @GetMapping("pay-bill/{tien}")
+    @GetMapping("pay-bill/{tien}/{code}")
     public String getPayWeb(
             //đây là giá tiền phải truyền vào
 //            long price,
-                            @PathParam("id") Integer billId,@PathVariable("tien") Integer tien) throws UnsupportedEncodingException {
+                            @PathParam("id") Integer billId,@PathVariable("tien") Integer tien,@PathVariable("code") String code) throws UnsupportedEncodingException {
         String vnp_Version = "2.1.0";
         String vnp_Command = "pay";
         String orderType = "other";
@@ -249,7 +261,7 @@ public class MuaHangController {
 
         vnp_Params.put("vnp_BankCode", bankCode);
         vnp_Params.put("vnp_TxnRef", vnp_TxnRef);
-        vnp_Params.put("vnp_OrderInfo", "Thanh toan don hang:" + vnp_TxnRef);
+        vnp_Params.put("vnp_OrderInfo", code);
         vnp_Params.put("vnp_OrderType", orderType);
 
         vnp_Params.put("vnp_Locale", "vn");

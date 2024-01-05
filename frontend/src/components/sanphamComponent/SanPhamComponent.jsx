@@ -44,7 +44,7 @@ class SanPhamComponent extends Component {
         console.error(err);
     };
     timKiem = (e)=>{
-        // var list = this.state.listThayThe.filter(value => value.ten.toLowerCase().includes(e.target.value.toLowerCase()))
+        var list = this.state.listThayThe.filter(value => value.ten.toLowerCase().includes(e.target.value.toLowerCase()))
         this.setState({
             search: e.target.value.toLowerCase()
         }, () => {
@@ -56,6 +56,7 @@ class SanPhamComponent extends Component {
                 sanPham:this.state.listThayThe
             })
         }
+        console.log(this.state.sanPham)
     }
     thayDoiTrangThai = (e) => {
         this.setState({
@@ -66,11 +67,11 @@ class SanPhamComponent extends Component {
     timKiemMoi(){
         if(this.state.trangThai==="2"){
             const filteredProducts = this.state.listThayThe.filter(product => {
-                return (product.ma.toLowerCase().includes(this.state.search) ||
+                return (product.maSanPham.toLowerCase().includes(this.state.search) ||
                     product.ten.toLowerCase().includes(this.state.search) ||
-                    product.danhMuc.ten.toLowerCase().includes(this.state.search) ||
-                    product.xuatXu.ten.toLowerCase().includes(this.state.search)||
-                    product.thuongHieu.ten.toLowerCase().includes(this.state.search)
+                    product.tenDanhMuc.toLowerCase().includes(this.state.search) ||
+                    product.tenXuatXu.toLowerCase().includes(this.state.search)||
+                    product.tenThuongHieu.toLowerCase().includes(this.state.search)
                 );
             });
 
@@ -80,11 +81,11 @@ class SanPhamComponent extends Component {
         }else{
             const filteredProducts = this.state.listThayThe.filter(product => {
                 return ( product.trangThai===parseInt(this.state.trangThai)&&
-                    (   product.ma.toLowerCase().includes(this.state.search) ||
+                    (   product.maSanPham.toLowerCase().includes(this.state.search) ||
                         product.ten.toLowerCase().includes(this.state.search) ||
-                        product.danhMuc.ten.toLowerCase().includes(this.state.search) ||
-                        product.xuatXu.ten.toLowerCase().includes(this.state.search)||
-                        product.thuongHieu.ten.toLowerCase().includes(this.state.search))
+                        product.tenDanhMuc.toLowerCase().includes(this.state.search) ||
+                        product.tenXuatXu.toLowerCase().includes(this.state.search)||
+                        product.tenThuongHieu.toLowerCase().includes(this.state.search))
                 );
             });
 
@@ -162,27 +163,27 @@ class SanPhamComponent extends Component {
                     <nav>
                     </nav>
                 </div>
-            {/*    <div>*/}
-            {/*        {isQRReaderOn && (*/}
-            {/*            <QrScanner*/}
-            {/*                ref={this.myRef}*/}
-            {/*                onScan={this.handleScan}*/}
-            {/*                onError={this.handleError}*/}
-            {/*                style={{ width: '300px',height:'300px' }}*/}
-            {/*            />*/}
-            {/*        )}*/}
+                {/*<div>*/}
+                {/*    {isQRReaderOn && (*/}
+                {/*        <QrScanner*/}
+                {/*            ref={this.myRef}*/}
+                {/*            onScan={this.handleScan}*/}
+                {/*            onError={this.handleError}*/}
+                {/*            style={{ width: '300px',height:'300px' }}*/}
+                {/*        />*/}
+                {/*    )}*/}
 
-            {/*        /!* Nút để bật/tắt quét QR *!/*/}
-            {/*    <button onClick={this.toggleQRReader}>*/}
-            {/*        {isQRReaderOn ? 'Turn Off QR Scanner' : 'Turn On QR Scanner'}*/}
-            {/*    </button>*/}
+                {/*    /!* Nút để bật/tắt quét QR *!/*/}
+                {/*<button onClick={this.toggleQRReader}>*/}
+                {/*    {isQRReaderOn ? 'Turn Off QR Scanner' : 'Turn On QR Scanner'}*/}
+                {/*</button>*/}
 
-            {/*    /!* Hiển thị kết quả quét QR *!/*/}
-            {/*    <p>QR Code Result: {result.text}</p>*/}
+                {/*/!* Hiển thị kết quả quét QR *!/*/}
+                {/*<p>QR Code Result: {result.text}</p>*/}
 
-            {/*    /!* Rest of your component *!/*/}
+                {/*/!* Rest of your component *!/*/}
                 {/*</div>*/}
-                <section className="section dashboard">
+                <section className="section_san_pham dashboard" style={{float: "right", maxWith: 1200}}>
                     <div className="row">
                         <div className="col-lg-12">
                             <div className="row">
@@ -229,7 +230,7 @@ class SanPhamComponent extends Component {
                                                     <th>Danh mục</th>
                                                     <th>Thương hiệu</th>
                                                     <th>Xuất xứ</th>
-                                                    <th>Mô tả</th>
+                                                    <th>Số lượng còn</th>
                                                     <th>Trạng thái</th>
                                                     <th>Action</th>
                                                 </tr>
@@ -241,13 +242,13 @@ class SanPhamComponent extends Component {
                                                     this.state.sanPham.map(
                                                         sp =>
                                                             <tr key={sp.id}>
-                                                                <td><img src={`/niceadmin/img/`+sp.anh} alt={sp.anh} style={{ width: '100px', height: '100px' ,margin:10,objectFit: 'cover',objectPosition: 'center'}}/></td>
-                                                                <td>{sp.ma}</td>
+                                                                <td><img src={`/niceadmin/img/`+sp.anhBia} alt={sp.anhBia} style={{ width: '100px', height: '100px' ,margin:10,objectFit: 'cover',objectPosition: 'center'}}/></td>
+                                                                <td>{sp.maSanPham}</td>
                                                                 <td>{sp.ten}</td>
-                                                                <td>{sp.danhMuc.ten}</td>
-                                                                <td>{sp.thuongHieu.ten}</td>
-                                                                <td>{sp.xuatXu.ten}</td>
-                                                                <td>{sp.moTa}</td>
+                                                                <td>{sp.tenDanhMuc}</td>
+                                                                <td>{sp.tenThuongHieu}</td>
+                                                                <td>{sp.tenXuatXu}</td>
+                                                                <td>{sp.soLuongCon}</td>
                                                                 <td style={{ color: sp.trangThai === 1 ? 'green' : 'red' }}>{sp.trangThai===1?"HD":"Ko HD"}</td>
                                                                 <td>
                                                                     <button onClick={()=>this.delete(sp.id)} className='btn btn-danger'>Xóa</button>

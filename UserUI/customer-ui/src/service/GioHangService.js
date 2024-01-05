@@ -47,8 +47,8 @@ export const GioHangService = {
         return response.data;
     },
 
-    pay:async (gia) =>{
-        const response = await axios.get(`${THANH_TOAN_HOA_DON}/${gia}`);
+    pay:async (gia,code) =>{
+        const response = await axios.get(`${THANH_TOAN_HOA_DON}/${gia}/${code}`);
         return response.data;
     }
 };

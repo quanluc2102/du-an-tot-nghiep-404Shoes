@@ -10,7 +10,7 @@ function Cart() {
     const [listSPCTSelected,setListSPCTSelected] = useState([]);
     const [user,setUser]=useState([]);
     const [tongTien,setTongTien] = useState(0);
-
+    const history = useHistory();
     const fetchData = async () => {
             const storedDataUser = localStorage.getItem('currentUser');
             const dataUser = storedDataUser ? JSON.parse(storedDataUser) : [];
@@ -51,7 +51,7 @@ function Cart() {
 
         });
         fetchData();
-    }, [tongTien])
+    }, [SPCT])
     const fetchDataLocal = () =>{
         const storedDataUser = localStorage.getItem('currentUser');
         if(storedDataUser){
@@ -84,6 +84,7 @@ function Cart() {
     const xoaDon = async (id,index)=>{
         if(user.length!=0){
             const res = await GioHangService.deleteOne(id);
+            // window.location.reload()
         }else {
             console.log("aaaaaaaaaa")
             const updatedList = [...SPCT];
