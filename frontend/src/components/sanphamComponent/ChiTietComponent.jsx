@@ -169,7 +169,7 @@ class ChiTietComponent extends Component {
 
     updateQuality = (productId,newQuality) => {
         const updatedProducts = this.state.listSPCT.map(product =>
-            product.id === productId ? { ...product, soLuong: Math.max(0, Math.min(200, newQuality)) } : product
+            product.id === productId ? { ...product, soLuong: Math.max(1, Math.min(200, newQuality)) } : product
         );
         this.setState({ listSPCT: updatedProducts });
         console.log(this.state.listSPCT[0].soLuong);
@@ -201,7 +201,7 @@ class ChiTietComponent extends Component {
     handleSoLuongChange = (index, newValue) => {
         const { listSPCTAdd } = this.state;
         const updatedListSPCT = [...listSPCTAdd];
-        updatedListSPCT[index].soLuong = Math.max(0, Math.min(200, newValue));
+        updatedListSPCT[index].soLuong = Math.max(1, Math.min(200, newValue));
         this.setState({ listSPCTAdd: updatedListSPCT });
         console.log(this.state.listSPCTAdd[index].soLuong)
         console.log(this.state.listSPCTAdd[0])
@@ -222,7 +222,7 @@ class ChiTietComponent extends Component {
                 anh:[],
                 kichThuoc: kt,
                 mauSac: ms,
-                soLuong: 0,
+                soLuong: 1,
                 gia: 0,
                 error:''
             }))
@@ -234,7 +234,7 @@ class ChiTietComponent extends Component {
 
     addSPCT = (e)=>{
         e.preventDefault();
-
+        try {
         if(this.state.listSPCTAdd.length===0){
 
         }else{
@@ -252,7 +252,18 @@ class ChiTietComponent extends Component {
         const id = this.props.match.params.id;
         SanPhamService.addSanPhamChiTiet(id,sanPham).then((res)=>{
             window.location.href = (`/detail/` + id);
-        })
+        })} catch (error) {
+            // Xử lý lỗi ở đây
+            if (error instanceof TypeError && error.message.includes('Cannot read properties of undefined (reading \'file\')')) {
+                // Nếu lỗi là do thuộc tính 'file' không tồn tại
+                alert('Chưa chọn đầy đủ ảnh của các sản phẩm');
+                // Hoặc hiển thị thông báo thông qua một cổng thông báo khác
+                // alert('Chưa chọn file');
+            } else {
+                // Xử lý các loại lỗi khác
+                console.error(error);
+            }
+        }
     }
 
     update = (e)=>{
@@ -541,7 +552,7 @@ class ChiTietComponent extends Component {
         let newValue = Number(event.target.value); // Chuyển đổi giá trị nhập thành số
 
         // Sử dụng Math.min và Math.max để giới hạn giá trị trong khoảng từ 0 đến 200
-        newValue = Math.min(200, Math.max(0, newValue));
+        newValue = Math.min(200, Math.max(1, newValue));
         this.setState(
             prevState=>({
                 detailSPCT:{
@@ -628,7 +639,7 @@ class ChiTietComponent extends Component {
                                     <th >{spct.mauSac.label}</th>
                                     <th ><input type={"number"} value={spct.soLuong} style={{padding: 10,
                                         border: '1px solid #ddd',
-                                        borderRadius: 5,width:'90%'}} onChange={(e) => this.handleSoLuongChange(index, e.target.value)} min={0}/> </th>
+                                        borderRadius: 5,width:'90%'}} onChange={(e) => this.handleSoLuongChange(index, e.target.value)} min={1}/> </th>
                                     <th ><input type={"number"} value={spct.gia} style={{padding: 10,
                                         border: '1px solid #ddd',
                                         borderRadius: 5,width:'90%'}} onChange={(e) => this.handleGiaChange(index, e.target.value)} min={0}/> </th>
@@ -786,7 +797,7 @@ class ChiTietComponent extends Component {
                                     <th >{spct.mauSac.ten}</th>
                                     <th ><input type={"number"} value={spct.soLuong} style={{padding: 10,
                                         border: '1px solid #ddd',
-                                        borderRadius: 5,width:'90%'}} onChange={(e)=>this.updateQuality(spct.id, e.target.value)} min={0}/> </th>
+                                        borderRadius: 5,width:'90%'}} onChange={(e)=>this.updateQuality(spct.id, e.target.value)} min={1}/> </th>
                                     <th ><input type={"number"} value={spct.donGia} style={{padding: 10,
                                         border: '1px solid #ddd',
                                         borderRadius: 5,width:'90%'}} onChange={(e) => this.updatePrice(spct.id, e.target.value)} min={0}/> </th>

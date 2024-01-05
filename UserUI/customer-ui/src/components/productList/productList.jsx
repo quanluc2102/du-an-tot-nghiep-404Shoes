@@ -263,7 +263,7 @@ function ProductList() {
                 danhSachSanPham.scrollIntoView({behavior: 'smooth'});
             });
         });
-
+        window.scrollTo(0, 0);
         fetchData();
         fetchDataLoc();
         // fetchFilteredData(); // Gọi hàm fetchFilteredData khi filters thay đổi
