@@ -293,7 +293,7 @@ class SanPhamAddComponnent extends Component {
     handleSoLuongChange = (index, newValue) => {
         const { listSPCT } = this.state;
         const updatedListSPCT = [...listSPCT];
-        updatedListSPCT[index].soLuong = Math.max(0, Math.min(200, newValue));
+        updatedListSPCT[index].soLuong = Math.max(1, Math.min(200, newValue));
         this.setState({ listSPCT: updatedListSPCT });
         console.log(this.state.listSPCT[index].soLuong)
     };
@@ -350,7 +350,7 @@ class SanPhamAddComponnent extends Component {
                     anh:[],
                     kichThuoc: kt,
                     mauSac: ms,
-                    soLuong: 0,
+                    soLuong: 1,
                     gia: 0,
                     error:''
                 }))
@@ -536,7 +536,7 @@ class SanPhamAddComponnent extends Component {
                                                     <th >{spct.mauSac.label}</th>
                                                     <th ><input type={"number"} value={spct.soLuong} style={{padding: 10,
                                                         border: '1px solid #ddd',
-                                                        borderRadius: 5,width:'90%'}} onChange={(e) => this.handleSoLuongChange(index, e.target.value)} min={0}/> </th>
+                                                        borderRadius: 5,width:'90%'}} onChange={(e) => this.handleSoLuongChange(index, e.target.value)} min={1}/> </th>
                                                     <th ><input type={"number"} value={spct.gia} style={{padding: 10,
                                                         border: '1px solid #ddd',
                                                         borderRadius: 5,width:'90%'}} onChange={(e) => this.handleGiaChange(index, e.target.value)} min={0}/> </th>
