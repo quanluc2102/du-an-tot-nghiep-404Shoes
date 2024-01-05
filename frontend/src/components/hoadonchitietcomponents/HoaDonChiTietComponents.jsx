@@ -472,7 +472,7 @@ class HoaDonChiTietComponents extends Component {
                 </div>
                 <br />
 
-                <center>{this.state.hoaDon.kieuHoaDon === 0 ? <button type="button" style={isHoaDonKoDcHuy ? { color: 'gray', borderColor: 'gray', cursor: 'not-allowed' } : {}} disabled={isHoaDonKoDcHuy} class="btn btn-outline-danger" onClick={this.handleShowModal2} >Thôn tin giao hàng :  {this.state.hoaDon.ten}( {this.state.hoaDon.sdt}) |{this.state.hoaDon.diaChiCuThe} - {this.state.hoaDon.xaPhuongThiTran} - {this.state.hoaDon.quanHuyen} - {this.state.hoaDon.tinhThanhPho}</button> : ""}</center>
+                <center>{this.state.hoaDon.kieuHoaDon === 0 ? <button type="button" style={isHoaDonKoDcHuy ? { color: 'red', borderColor: 'red', cursor: 'not-allowed' } : {}} disabled={isHoaDonKoDcHuy} class="btn btn-outline-danger" onClick={this.handleShowModal2} >Thôn tin giao hàng :  {this.state.hoaDon.ten}( {this.state.hoaDon.sdt}) |{this.state.hoaDon.diaChiCuThe} - {this.state.hoaDon.xaPhuongThiTran} - {this.state.hoaDon.quanHuyen} - {this.state.hoaDon.tinhThanhPho}</button> : ""}</center>
                 <section className="section dashboard">
                     <div className="row">
                         <div className="col-lg-8">

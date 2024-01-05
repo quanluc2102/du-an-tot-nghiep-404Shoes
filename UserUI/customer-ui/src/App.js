@@ -14,6 +14,7 @@ import { ToastContainer } from "react-toastify";
 import Header from "../../../UserUI/customer-ui/src/components/customer/Header";
 import Footer from "../../../UserUI/customer-ui/src/components/customer/Footer";
 import Payment from "./components/payment/payment";
+import Account from "./components/account/Account";
 import ForgotPassword from "./components/forgotpassword/forgotpassword";
 // import LoginComponent from "../../../frontend/src/components/LoginComponent/LoginComponent";
 
@@ -49,8 +50,9 @@ function App() {
                         <Route path='/your-cart/:id' component={Cart} />
                         <Route path='/user-info' component={UserInformation} />
                         <Route path='/payment' component={Payment}/>
-                        <Route path='/check-out/:id' component={CheckOut} />
+                        <Route path='/check-out' component={CheckOut} />
                         <Route path='/forgotpassword' component={ForgotPassword} />
+                        <Route path='/account' component={Account} />
                     {/*</>*/}
                 {/*) : (*/}
                 {/*    <Route path='/login' component={() => <Login onLogin={handleLogin} onLogout={handleLogout} />} />*/}
