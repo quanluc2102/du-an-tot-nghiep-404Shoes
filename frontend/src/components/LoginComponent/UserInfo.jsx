@@ -1,15 +1,15 @@
 import React, {Component} from 'react';
-import taikhoanservice from "../../services/taikhoanservice/taikhoanservice";
 import {toast} from "react-toastify";
 import axios from "axios";
-import "./nhanvien.css";
-import $ from 'jquery';
+import taikhoanservice from "../../services/taikhoanservice/taikhoanservice";
+import thongtinservice from "../../services/thongtinservice/thongtinservice";
+import ReactPaginate from "react-paginate";
 
-class TaiKhoanNVUpdate extends Component {
-
+class UserInfo extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            id:this.props.match.params.id,
             nhanVienQuyen1: [],
             thongTinNguoiDung: [],
             tinhThanhPho: '',
@@ -70,8 +70,20 @@ class TaiKhoanNVUpdate extends Component {
         this.handleDistrictChange = this.handleDistrictChange.bind(this);
         this.handleWardChange = this.handleWardChange.bind(this);
     }
+
+    getUserNameFromLocalStorage() {
+        try {
+            const savedUser = JSON.parse(localStorage.getItem('currentUser'));
+            console.log(savedUser.id)
+            return savedUser.id|| '';
+        } catch (error) {
+            console.error('Error while retrieving user name from local storage:', error);
+            return '';
+        }
+    }
+
     componentDidMount() {
-        const id = this.props.match.params.id;
+        const id = this.getUserNameFromLocalStorage() ;
 
         taikhoanservice.getTaiKhoanById(id)
             .then((response) => {
@@ -815,6 +827,7 @@ class TaiKhoanNVUpdate extends Component {
 
         )
     }
+
 }
 
-export default TaiKhoanNVUpdate
+export default UserInfo;
