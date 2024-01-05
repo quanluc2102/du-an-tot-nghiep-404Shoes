@@ -1,6 +1,7 @@
 // App.js
 import React, { useState } from 'react';
 import LoginComponent from './components/LoginComponent/LoginComponent';
+
 import {
     BrowserRouter as Router,
     Route,
@@ -42,7 +43,8 @@ import BanHangOffline from './components/banhangoffline/banhang';
 import TrangTongQuan from "./components/trangtongquan/TrangTongQuan";
 import HoaDonComponents from "./components/hoadoncomponents/HoaDonComponents";
 import KhuyenMaiComponent from "./components/khuyenmaicomponent/KhuyenMaiComponent";
-
+import ForgotPasswordComponent from "./components/LoginComponent/ForgotPasswordComponent";
+import UserInfo from "./components/LoginComponent/UserInfo";
 function App() {
     const [isLoggedIn, setLoggedIn] = useState(!!localStorage.getItem('token'));
 
@@ -57,7 +59,6 @@ function App() {
     };
 
     return (
-
         <div className="header align-items-center">
             <ToastContainer />
             {isLoggedIn ? (
@@ -111,8 +112,9 @@ function App() {
                                 <Route path='/HoaDonChiTiet/:id' component={HoaDonChiTietComponents} />
                                 <Route path='/thongke' component={ThongKeDoanhThuSanPham} />
                                 <Route path='/banhangoffline' component={BanHangOffline} />
-                                <Route path='/tongquan' component={TrangTongQuan} />
-
+                                <Route path='/tongquan' component={TrangTongQuan} />>
+                                <Route path='/userinfo' component={UserInfo} />
+                                <Route path='/forgot-password' component={ForgotPasswordComponent} />
                                 <Redirect to="/" />
                             </Switch>
                         </main>

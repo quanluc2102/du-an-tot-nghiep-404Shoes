@@ -113,7 +113,7 @@ function Sidebar() {
                 <li className="nav-heading">Người dùng</li>
 
                 <li className="nav-item">
-                    <a className="nav-link collapsed" href="users-profile.html">
+                    <a className="nav-link collapsed" href="/userinfo">
                         <i className="bi bi-person"></i>
                         <span>Thông tin nhân viên</span>
                     </a>
