@@ -250,10 +250,25 @@ public class TaiKhoanController {
         phanQuyen.setQuyen(quyenServiceimpl.findOne(Long.valueOf(3)));
 //        phanQuyen.setQuyen(Quyen.builder().id(3).build());
         phanQuyenServiceimpl.add(phanQuyen);
+
+        // Lưu mật khẩu vào một biến tạm thời
+        String matKhau = taiKhoan.getPassword();
+
+// Xóa mật khẩu ngẫu nhiên
+        taiKhoan.setPassword("");
+
+// Gửi email
+        sendEmail(taiKhoan.getEmail(), "Chào mừng bạn gia nhập gia đình 404Shoes", "Dear " + b.getTen() +
+                ".\n\nTôi hy vọng bạn đang có một ngày tốt lành. Chúng tôi muốn thông báo với bạn về việc thêm một thành viên mới vào đội ngũ của chúng tôi."+
+                ".\n\nTên khách hàng  : " + b.getTen()+
+                ".\n\nChúng tôi đã tạo một tài khoản cho bạn và  mật khẩu đăng nhập  là : " + matKhau +
+                ".\n\nNếu bạn có bất kỳ câu hỏi hoặc thắc mắc gì , đừng ngần ngại liên hệ với chúng tôi theo Hotline: 0986xxxxx."+
+                ".\n\nTrân trọng !" );
+
+// Tiếp tục xử lý và trả về kết quả
         taiKhoan.setPassword("");
         return ResponseEntity.ok(serviceimpl.add(taiKhoan));
     }
-
 @PutMapping("updateKhachHang/{id}")
 public ResponseEntity<?> updateKhachHang(@PathVariable Long id, @RequestBody TaiKhoanVaThongTin taiKhoanVaThongTin) {
         ThongTinNguoiDung thongTinNguoiDung = taiKhoanVaThongTin.getThongTinNguoiDung();

@@ -723,10 +723,11 @@ class KhachHangComponent extends Component {
                                                 <thead>
                                                 <tr>
                                                     <th>Mã KH</th>
-                                                    <th>Tên</th>
+                                                    <th>Ảnh</th>
+                                                    <th>Tên khách hàng </th>
                                                     <th>Email</th>
                                                     <th>SDT</th>
-                                                    <th>Ngày tạo</th>
+                                                    <th>TT</th>
                                                     <th>Trạng thái</th>
                                                     <th>Action</th>
                                                 </tr>
@@ -735,10 +736,14 @@ class KhachHangComponent extends Component {
                                                 {currentItems.map(tk => (
                                                     <tr key={tk.id}>
                                                         <td>{tk.maTaiKhoan}</td>
+                                                        <td>
+                                                            {tk.anh && <img src={`/niceadmin/img/${tk.anh}`} width="100px" height="100px" />}
+
+                                                        </td>
                                                         <td>{tk.thongTinNguoiDung.ten}</td>
                                                         <td>{tk.email}</td>
                                                         <td>{tk.thongTinNguoiDung ? tk.thongTinNguoiDung.sdt : 'N/A'}</td>
-                                                        <td>{tk.ngayTao}</td>
+                                                        {/*<td>{tk.ngayTao}</td>*/}
                                                         <td>{tk.trangThai === true ? "Hoạt động" : "Ngừng hoạt động"}</td>
                                                         <td>
                                                             <label className="switch">
@@ -939,7 +944,21 @@ class KhachHangComponent extends Component {
                                                     )}
 
                                                 </div>
+
                                             </div>
+                                            <ul className="pagination justify-content-center">
+                                                {Array.from({length: Math.ceil(nhanVienQuyen3.length / itemsPerPage)}, (_, i) => (
+                                                    <li key={i}
+                                                        className={`page-item ${i + 1 === currentPage ? 'active' : ''}`}>
+                                                        <button
+                                                            className="page-link"
+                                                            onClick={() => this.handlePageChange(i + 1)}
+                                                        >
+                                                            {i + 1}
+                                                        </button>
+                                                    </li>
+                                                ))}
+                                            </ul>
                                         </div>
                                     </div>
                                 </div>
