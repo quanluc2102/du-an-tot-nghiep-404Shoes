@@ -20,7 +20,6 @@ import {
 } from "antd";
 import { ProfileOutlined, DeleteOutlined } from "@ant-design/icons/lib/icons";
 import BanHangService from "../../services/banhangservice/BanHangService";
-import QrScanner from 'react-qr-scanner';
 import { Modal } from 'react-bootstrap';
 
 const { Search } = Input;
@@ -50,16 +49,14 @@ class BanHangOffline extends Component {
             selectedRowKeys: [],
             loading: false,
             sanPhamChiTietList: [],
-            isQRReaderOn: false,
             showModal: false,
             showModal1: false,
             showModal2: false,
             showModal3: false,
-            currentPage: 0, 
+            currentPage: 0,
             perPage: 4,
             currentPageKH: 0,
             perPageKH: 4,
-            result: 'No QR code scanned yet',
             tabProducts: {
                 tabKey1: [],
                 tabKey2: [],
@@ -112,7 +109,7 @@ class BanHangOffline extends Component {
         }).catch((error) => {
             console.error("Error fetching data:", error);
         });
-        BanHangService.getKMTT(100000000000).then((res) => {
+        BanHangService.getKMTT(10000000000).then((res) => {
             this.setState({ khuyenMai: res.data })
         }).catch((error) => {
             console.error("Error fetching data:", error);
@@ -135,15 +132,17 @@ class BanHangOffline extends Component {
             }
         }
 
+
         if (this.state.quanHuyen !== prevState.quanHuyen) {
             const { districts, quanHuyen } = this.state;
             const selectedDistrict = districts.find(district => district.name === quanHuyen);
-    
+
             if (selectedDistrict) {
                 this.fetchWards(selectedDistrict);
             }
         }
     }
+
 
     getIdKhachHang(id) {
         this.setState({ idKhachHang: id });
@@ -219,40 +218,33 @@ class BanHangOffline extends Component {
         });
     }
 
-    fetchCities() {
-        axios.get('https://provinces.open-api.vn/api/?depth=1')
-            .then((response) => {
-                this.setState({ cities: response.data });
-            })
-            .catch((error) => {
-                console.error('Error fetching cities:', error);
-            });
+    async fetchCities() {
+        try {
+            const response = await axios.get('https://provinces.open-api.vn/api/?depth=1');
+            this.setState({ cities: response.data });
+        } catch (error) {
+            console.error('Error fetching cities:', error);
+        }
     }
 
-    fetchDistricts(selectedCity) {
-        console.log('first city selected:', selectedCity)
-        axios.get(`https://provinces.open-api.vn/api/p/${selectedCity.code}?depth=2`)
-            .then((response) => {
-                const districtsData = response.data.districts;
-                this.setState({ districts: districtsData });
-            })
-            .catch((error) => {
-                console.error('Error fetching districts:', error);
-            });
+    async fetchDistricts(selectedCity) {
+        try {
+            const response = await axios.get(`https://provinces.open-api.vn/api/p/${selectedCity.code}?depth=2`);
+            const districtsData = response.data.districts;
+            this.setState({ districts: districtsData });
+        } catch (error) {
+            console.error('Error fetching districts:', error);
+        }
     }
 
-    fetchWards(selectedDistrict) {
-        axios.get(`https://provinces.open-api.vn/api/d/${selectedDistrict.code}?depth=2`)
-            .then((response) => {
-                const wardsData = response.data.wards;
-                this.setState({ wards: wardsData }, () => {
-                    console.log('Wards:', response.data.wards)
-                });
-
-            })
-            .catch((error) => {
-                console.error('Error fetching wards:', error);
-            });
+    async fetchWards(selectedDistrict) {
+        try {
+            const response = await axios.get(`https://provinces.open-api.vn/api/d/${selectedDistrict.code}?depth=2`);
+            const wardsData = response.data.wards;
+            this.setState({ wards: wardsData });
+        } catch (error) {
+            console.error('Error fetching wards:', error);
+        }
     }
 
     handleCityChange(event) {
@@ -271,7 +263,6 @@ class BanHangOffline extends Component {
     handleDistrictChange(event) {
         const selectedDistrictName = event.target.value;
         const selectedDistrict = this.state.districts.find(district => district.name === selectedDistrictName);
-        console.log('llllllllllllllllllllllllllllllllllllllllllllll', selectedDistrictName)
 
         this.setState({
             quanHuyen: selectedDistrictName,
@@ -282,19 +273,30 @@ class BanHangOffline extends Component {
         }
     }
 
+
     handleWardChange(event) {
         const selectedWardName = event.target.value;
         this.setState({ xaPhuongThiTran: selectedWardName });
     }
 
-    handleAddress = (diaChiCuThe, xaPhuongThiTran, quanHuyen, tinhThanhPho) => {
+    handleAddress = async (diaChiCuThe, xaPhuongThiTran, quanHuyen, tinhThanhPho) => {
         this.setState({
             diaChiCuThe,
-            xaPhuongThiTran,
-            quanHuyen,
             tinhThanhPho
+        }, () => {
+            console.log('XaPhuongThiTran after setState:', this.state.xaPhuongThiTran);
+            console.log('quanHuyen after setState:', this.state.quanHuyen);
         });
+
+        this.setState({
+            quanHuyen,
+        });
+
+        this.setState({
+            xaPhuongThiTran,
+        })
     };
+
     handleCloseModal = () => {
         this.setState({ showModal: false });
     };
@@ -322,48 +324,14 @@ class BanHangOffline extends Component {
     handleError = (err) => {
         console.error(err);
     };
-    toggleQRReader = () => {
-        this.setState((prevState) => ({
-            isQRReaderOn: !prevState.isQRReaderOn,
-            isQRCodeScanned: false,
-            result: 'No QR code scanned yet',
-        }));
-    };
+
     handleSearchFocus = () => {
         this.setState({ currentPage: 0 });
     }
     handleSearchFocusKH = () => {
         this.setState({ currentPageKH: 0 });
     }
-    handleScan = (data) => {
-        const { isQRCodeScanned, selectedProducts, tabProducts } = this.state;
 
-        if (data && data.text && typeof data.text === 'string' && !isQRCodeScanned) {
-            this.setState({ isQRCodeScanned: true });
-
-            const slicedMaQR = data.text.slice(5);
-            const existingProduct = selectedProducts.find((product) => product.ma === slicedMaQR);
-            if (!existingProduct) {
-                const productToAdd = selectedProducts.find((product) => product.ma === slicedMaQR);
-
-                if (productToAdd) {
-                    const updatedSelectedProducts = [...selectedProducts, { ...productToAdd, quantity: 1 }];
-                    this.setState({ selectedProducts: updatedSelectedProducts });
-                    const currentTabKey = this.state.tabKey; 
-                    const updatedTabProducts = { ...tabProducts };
-                    updatedTabProducts[currentTabKey] = [...updatedTabProducts[currentTabKey], { ...productToAdd, quantity: 1 }];
-
-                    this.setState({ tabProducts: updatedTabProducts });
-                } else {
-                    console.error("Product not found with ma:", slicedMaQR);
-                }
-            }
-
-            setTimeout(() => {
-                this.setState({ isQRCodeScanned: false });
-            }, 1000);
-        }
-    };
     handlePageClickKH = (data) => {
         this.setState({ currentPageKH: data.selected });
     }
@@ -627,7 +595,6 @@ class BanHangOffline extends Component {
         return customers.map((customer) => {
             BanHangService.getDC(customer.id).then((res) => {
                 this.setState({ diaChi: res.data }, () => {
-                    console.log('dia chi vua call', res.data)
                 })
             }).catch((error) => {
                 console.error("Error fetching data:", error);
@@ -677,9 +644,20 @@ class BanHangOffline extends Component {
 
                     <div className="form-group">
                         <label htmlFor="xaPhuongThiTran">Xã/Phường/Thị trấn:</label>
-                        <input type="text" value={this.state.xaPhuongThiTran} className="form-control" />
+                        <select
+                            className="form-control"
+                            name="xaPhuongThiTran"
+                            onChange={(event) => this.handleWardChange(event)}
+                            value={this.state.xaPhuongThiTran}
+                        >
+                            <option>Chọn xã/phường/thị trấn</option>
+                            {this.state.wards.map(ward => (
+                                <option key={ward.code} value={ward.name} selected={ward.name === this.state.xaPhuongThiTran}>
+                                    {ward.name}
+                                </option>
+                            ))}
+                        </select>
                     </div>
-
                 </div>
             )
         });
@@ -689,12 +667,12 @@ class BanHangOffline extends Component {
         const newQuantity = parseInt(e.target.value, 10);
         const { sanPhamChiTiet } = this.state;
         console.log('newQuantity:', newQuantity);
-       
+
         const selectedProduct = sanPhamChiTiet.find(product => product.ma === productId);
         console.log('selectedProduct:', selectedProduct);
-       
+
         const limitedQuantity = Math.min(newQuantity, selectedProduct ? selectedProduct.soLuong : 1);
-    
+
         this.setState((prevState) => {
             const { activeTabKey, tabProducts } = prevState;
             const updatedProducts = tabProducts[activeTabKey].map((product) => {
@@ -703,7 +681,7 @@ class BanHangOffline extends Component {
                 }
                 return product;
             });
-    
+
             return {
                 tabProducts: {
                     ...tabProducts,
@@ -712,7 +690,7 @@ class BanHangOffline extends Component {
             };
         });
     };
-    
+
 
 
     onEdit = (tabKey, action) => {
@@ -792,13 +770,6 @@ class BanHangOffline extends Component {
         this.setState(prevState => ({ checked: !prevState.checked }), () => {
             console.log('checked', this.state.checked);
         });
-    };
-
-    start = () => {
-        this.setState({ loading: true });
-        setTimeout(() => {
-            this.setState({ selectedRowKeys: [], loading: false });
-        }, 1000);
     };
 
     onSelectChange = newSelectedRowKeys => {
@@ -903,13 +874,6 @@ class BanHangOffline extends Component {
         const offsetKH = currentPageKH * perPageKH;
         const currentKHList = ListKH.slice(offsetKH, offsetKH + perPageKH);
         const { isQRReaderOn, result } = this.state;
-
-        if (result && result.text) {
-            const slicedMaQR = result.text.slice(5);
-            console.log(slicedMaQR);
-        } else {
-            console.error("Biến result không có giá trị hoặc không có thuộc tính 'text'.");
-        }
         const activeTabKey = this.state.activeTabKey;
         const activeTabProducts = this.state.tabProducts[activeTabKey] || [];
         return (
@@ -974,31 +938,6 @@ class BanHangOffline extends Component {
                                 <Button style={{ color: 'black', backgroundColor: '#fff' }} onClick={this.handleAddToCart}>
                                     Thêm
                                 </Button>
-                                <Button variant="btn btn-outline-primary" onClick={this.handleShowModal}>
-                                    Quét QR
-                                </Button>
-                                <Modal show={this.state.showModal} onHide={this.handleCloseModal} backdrop="static">
-                                    <Modal.Header closeButton>
-                                        <Modal.Title>Quét QR</Modal.Title>
-                                    </Modal.Header>
-                                    <Modal.Body>
-                                        <Button style={{ float: 'right', marginRight: '20px', color: 'black', backgroundColor: '#fff' }} onClick={this.toggleQRReader}>
-                                            {isQRReaderOn ? 'Turn Off QR Scanner' : 'Turn On QR Scanner'}
-                                        </Button>
-                                        <div>
-                                            {isQRReaderOn && (
-                                                <QrScanner
-                                                    ref={this.myRef}
-                                                    onScan={this.handleScan}
-                                                    onError={this.handleError}
-                                                    style={{ width: '300px', height: '300px' }}
-                                                />
-                                            )}
-                                            <p>QR Code Result: {result.text}</p>
-                                        </div>
-                                        {this.popupContent}
-                                    </Modal.Body>
-                                </Modal>
                                 <Button variant="btn btn-outline-primary" onClick={this.handleShowModal1}>
                                     Chọn sản phẩm
                                 </Button>
