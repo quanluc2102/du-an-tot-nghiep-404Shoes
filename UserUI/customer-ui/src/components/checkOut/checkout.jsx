@@ -16,6 +16,7 @@ function CheckOut({ location }) {
     const [listXa,setListXa] = useState([]);
     const [listQuanHuyen,setListQuanHuyen] = useState([]);
     const [listThanhPho,setListThanhPho] = useState([]);
+    const [listHD,setListHD] = useState([]);
     const [codeTP,setCodeTP] = useState(0);
     const [codeQuan,setCodeQuan] = useState(0);
     const [codeXa,setCodeXa] = useState(0);
@@ -25,6 +26,7 @@ function CheckOut({ location }) {
     const [tongTien1,setTongTien1]=useState("");
     const [user,setUser]=useState([]);
     const [phiShip,setPhiShip]=useState(0);
+    const [PTTT,setPTTT]=useState(1);
     const [ghiChu,setGhiChu]=useState("");
     const [dcSelected,setDcSelected]=useState(0);
     const [sdt,setSDT]=useState("");
@@ -39,12 +41,18 @@ function CheckOut({ location }) {
     const [xaPhuongThiTranNew,setXaPhuongThiTranNew]=useState("");
     const [quanHuyenNew,setQuanHuyenNew]=useState("");
     const [tinhThanhPhoNew,setTinhThanhPhoNew]=useState("");
+    const [code,setCode]=useState("");
+
 
     const { id } = useParams();
     const history = useHistory();
     useEffect  ( () => {
         const fetchData = async () => {
             try {
+                const currentDate = new Date();
+                const formattedDate = currentDate.toISOString().split('T')[0];
+                // setListHD(response.data);
+                setCode(generateCode(10))
                 const storedData = localStorage.getItem('currentUser');
                 if(storedData){
                     setUser(JSON.parse(storedData))
@@ -86,6 +94,18 @@ function CheckOut({ location }) {
         fetchData();
         loadTP();
     }, [])
+    function generateCode(length) {
+        const charset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        let randomString = '';
+
+        for (let i = 0; i < length; i++) {
+            const randomIndex = Math.floor(Math.random() * charset.length);
+            randomString += charset.charAt(randomIndex);
+        }
+
+        return randomString;
+    }
+
     const formatCurrency = (amount) => {
         return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'VND' }).format(amount);
     };
@@ -163,15 +183,13 @@ function CheckOut({ location }) {
     }
     const suaGhiChu = async (e) =>{
         setGhiChu(e.target.value)
-        let tongTien = SPCT.reduce((total, spct) => {
-            return total + spct.sanPhamChiTietId.donGia * spct.soLuong;
-        }, 0);
-        // const linkTT = await GioHangService.pay(tongTien);
-        // const newTab = window.open(linkTT, '_blank');
-        // if (newTab) {
-        //     newTab.focus(); // Đảm bảo tab mới được mở và đưa ra trước mặt
-        // }
-        console.log(codeQuan)
+        let tongTien = tinhTongTienHang();
+        const linkTT = await GioHangService.pay(tongTien,code);
+        const newTab = window.open(linkTT, '_blank');
+        if (newTab) {
+            newTab.focus(); // Đảm bảo tab mới được mở và đưa ra trước mặt
+        }
+        console.log(listHD)
     }
     const check = ()=>{
         console.log(listSPCTSelected)
@@ -191,7 +209,12 @@ function CheckOut({ location }) {
         }
         return tongTien;
     }
-
+    const tinhTongTien = () =>{
+        let tongTien = SPCT.reduce((total, spct) => {
+            return total + spct.sanPhamChiTietId.donGia * spct.soLuong;
+        }, 0);
+        return tongTien;
+    }
     const reloadKM = async () =>{
         const getKM = await GioHangService.reloadKM(tinhTongTienHang());
         setKM(getKM);
@@ -227,6 +250,10 @@ function CheckOut({ location }) {
     }
 
     const save = async ()=>{
+        const confirm = window.confirm("Bạn xác nhận muốc thanh toán hóa đơn này ?");
+        if(!confirm){
+            return;
+        }
         const tong = SPCT.reduce((total, spct) => {
             return total + spct.sanPhamChiTietId.donGia * spct.soLuong;
         }, 0);
@@ -238,7 +265,7 @@ function CheckOut({ location }) {
             tongTienSauKhiGiam:tongTienSauKhiGiam+30000,
             tienGiam:tong-tongTienSauKhiGiam,
             tienShip:phiShip,
-            taiKhoanId:parseInt(id),
+            taiKhoanId:user.length!=0?parseInt(user.id):0,
             diaChiId:3,
             thanhToanId:2,
             ghiChu: ghiChu,
@@ -259,6 +286,11 @@ function CheckOut({ location }) {
         }else{
             const thongBao = await GioHangService.sold(hd);
             alert(thongBao)
+            if(user.length!=0){
+
+            }else {
+                localStorage.removeItem('listSPCT')
+            }
             history.push(`/your-cart`)
         }
     }
@@ -610,12 +642,23 @@ function CheckOut({ location }) {
 
                             <div className="col-12 bg-light pt-3" style={{marginTop:30}}>
                                 <div className="col-12 bg-light pt-3" >
-                                    <h5 style={{marginLeft:35}}>Phương thức thanh toán <a style={{textDecoration:"none",cursor:"pointer",color:"mediumblue",marginLeft:980}}>Đổi</a></h5>
+                                    <h5 style={{marginLeft:35}}>Phương thức thanh toán
+                                        <a href="#" className={`btn btn-sm btn-outline-dark size-item ${PTTT===1 ? 'selected' : ''}`} style={{marginLeft:960}} >
+                                            <div>Thanh toán khi nhận hàng</div>
+                                        </a>
+                                        <a href="#" className={`btn btn-sm btn-outline-dark size-item ${PTTT===2 ? 'selected' : ''}`} style={{marginLeft:20}} >
+                                            <div>VN Pay</div>
+                                        </a>
+                                    </h5>
+                                    {/*<a style={{textDecoration:"none",cursor:"pointer",color:"mediumblue",marginLeft:980}}>Đổi</a>*/}
                                     <hr className="dashed-hr" style={{marginTop:30}}/>
-                                    <h7 style={{marginTop:8,marginLeft:980,textAlign: 'right'}}>Tổng tiền hàng : <span style={{float:"right"}}> {formatCurrency(tinhTongTienHang())}</span></h7>
+                                    <h7 style={{marginTop:8,marginLeft:980,textAlign: 'right'}}>Tổng tiền : <span style={{float:"right"}}> {formatCurrency(tinhTongTien())}</span></h7>
                                     <br/>
                                     <br/>
-                                    <h7 style={{marginTop:8,marginLeft:980,textAlign: 'right'}}>Phí ship : <span style={{float:"right"}}>  {formatCurrency(phiShip)}</span></h7>
+                                    <h7 style={{marginTop:8,marginLeft:980,textAlign: 'right'}}>Tiền giảm : <span style={{float:"right"}}> - {formatCurrency(tinhTongTien()-tinhTongTienHang())}</span></h7>
+                                    <br/>
+                                    <br/>
+                                    <h7 style={{marginTop:8,marginLeft:980,textAlign: 'right'}}>Phí ship : <span style={{float:"right"}}> + {formatCurrency(phiShip)}</span></h7>
                                     <br/>
                                     <br/>
                                     {/*{formatCurrency(selectedKM.length===0?tinhTongTienHang():tongTien)}*/}

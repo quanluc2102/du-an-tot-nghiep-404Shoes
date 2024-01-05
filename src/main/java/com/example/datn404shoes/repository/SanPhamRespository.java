@@ -4,6 +4,7 @@ package com.example.datn404shoes.repository;
 
 import com.example.datn404shoes.entity.SanPham;
 import com.example.datn404shoes.request.SanPhamUserCustom;
+import com.example.datn404shoes.request.SanPhamUserCustom1;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -27,6 +28,14 @@ public interface SanPhamRespository extends JpaRepository<SanPham, Long> {
             "order by SUM(hdct.so_luong) desc", nativeQuery = true)
     Page<SanPhamUserCustom> findAllKhoangGia(Pageable pageable);
 
+    @Query(value = "select sp.id,sp.ma_san_pham AS maSanPham,sp.anh_bia AS anhBia,sp.danh_muc AS danhMuc,dm.ten AS tenDanhMuc,sp.mo_ta AS moTa,sp.ten,sp.thuong_hieu AS thuongHieu,th.ten AS tenThuongHieu,sp.xuat_xu AS xuatXU,xx.ten AS tenXuatXu, SUM(spct.so_luong) AS soLuongCon,sp.trang_thai AS trangThai from san_pham sp \n" +
+            "join san_pham_chi_tiet spct on sp.id=spct.san_pham_id\n" +
+            "join danh_muc dm on dm.id=sp.danh_muc\n" +
+            "join xuat_xu xx on xx.id=sp.xuat_xu\n" +
+            "join thuong_hieu th on th.id=sp.thuong_hieu\n" +
+            "GROUP BY sp.id,sp.ma_san_pham,sp.anh_bia,sp.danh_muc,sp.mo_ta,sp.ten,sp.thuong_hieu,sp.trang_thai,sp.xuat_xu,dm.ten,xx.ten,th.ten\n" +
+            "order by sp.id desc", nativeQuery = true)
+    List<SanPhamUserCustom1> findAllSoLuong();
 
     //    @Query(value = "SELECT spct.* FROM san_pham sp LEFT JOIN san_pham_chi_tiet spct ON sp.id = spct.san_pham_id " +
 //            "LEFT JOIN hoa_don_chi_tiet hdct ON hdct.san_pham_chi_tiet_id = spct.id LEFT JOIN danh_muc dm " +
@@ -112,6 +121,9 @@ public interface SanPhamRespository extends JpaRepository<SanPham, Long> {
             "GROUP BY sp.id, sp.ma_san_pham, sp.anh_bia, sp.danh_muc, dm.ten, sp.mo_ta, sp.ten, sp.thuong_hieu, sp.xuat_xu, xx.ten, th.ten \n" +
             "ORDER BY soLuongDaBan DESC", nativeQuery = true)
     List<SanPhamUserCustom> searchSanPham(@Param("searchSanPham") String searchSanPham);
+
+    @Query(value = "select COALESCE(SUM(san_pham_chi_tiet.so_luong), 0) from san_pham join san_pham_chi_tiet on san_pham_chi_tiet.san_pham_id=san_pham.id where san_pham.id =:id",nativeQuery = true)
+    Integer getSL(Long id);
 
 
 }
