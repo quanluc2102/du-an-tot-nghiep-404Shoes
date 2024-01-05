@@ -276,11 +276,11 @@ class BanHangOffline extends Component {
 
     handleTenChange = (event) => {
         this.setState({ ten: event.target.value });
-      };
-    
-      handleSdtChange = (event) => {
+    };
+
+    handleSdtChange = (event) => {
         this.setState({ sdt: event.target.value });
-      };
+    };
 
     handleWardChange(event) {
         const selectedWardName = event.target.value;
@@ -360,59 +360,62 @@ class BanHangOffline extends Component {
         const firstSelectedPromotion = selectedPromotions.length > 0 ? selectedPromotions[0] : null;
         const activeTabProducts = tabProducts[activeTabKey] || [];
 
-
-        const confirm = window.confirm('Bạn xác nhận muốn thanh toán hóa đơn này chứ?');
-        if (!confirm) {
-            return;
-        }
-
-        const thanhToan = {
-
-            sanPhamChiTietList: selectedProducts,
-
-            khuyenMai: firstSelectedPromotion ? firstSelectedPromotion : null,
-
-            hoaDon: {
-                tongTien: this.getTotalAmount(selectedProducts),
-                ghiChu: document.getElementById("ghiChuDonHang").value,
-            },
-
-            xaPhuongThiTran: this.state.xaPhuongThiTran,
-
-            quanHuyen: this.state.quanHuyen,
-
-            tinhThanhPho: this.state.tinhThanhPho,
-
-            diaChiCuThe: this.state.diaChiCuThe,
-
-            kieuHoaDon: this.state.kieuHoaDon,
-
-            giaGiam: this.getTotalAmountWithoutPromotions(activeTabProducts) - this.getTotalAmount(activeTabProducts),
-
-            sdt: document.getElementById("sdt").value,
-
-            ten: document.getElementById("ten").value,
-        };
-
-        try {
-            const response = await BanHangService.createHoaDon(thanhToan);
-
-            if (response.status === 201) {
-                toast.success("Thanh toán thành công!!!");
-                console.log(response.status);
-            } else {
-                toast.success("Thanh toán thành công!!!!");
-                console.log(thanhToan);
+        if (this.state.enteredAmount !== null && this.state.enteredAmount > 0 && this.state.enteredAmount - this.getTotalAmount(activeTabProducts) >= 0) {
+            const confirm = window.confirm('Bạn xác nhận muốn thanh toán hóa đơn này chứ?');
+            if (!confirm) {
+                return;
             }
-        } catch (error) {
-            if (error.response && error.response.status === 400) {
-                toast.error('Thanh toán không thành công, vui lòng kiểm tra lại!!!.');
-                console.log(thanhToan);
-            } else {
-                console.error('Error', error);
-                console.log(thanhToan);
-                toast.error('Thanh toán không thành công, vui lòng kiểm tra lại!!!');
+
+            const thanhToan = {
+
+                sanPhamChiTietList: selectedProducts,
+
+                khuyenMai: firstSelectedPromotion ? firstSelectedPromotion : null,
+
+                hoaDon: {
+                    tongTien: this.getTotalAmount(selectedProducts),
+                    ghiChu: document.getElementById("ghiChuDonHang").value,
+                },
+
+                xaPhuongThiTran: this.state.xaPhuongThiTran,
+
+                quanHuyen: this.state.quanHuyen,
+
+                tinhThanhPho: this.state.tinhThanhPho,
+
+                diaChiCuThe: this.state.diaChiCuThe,
+
+                kieuHoaDon: this.state.kieuHoaDon,
+
+                giaGiam: this.getTotalAmountWithoutPromotions(activeTabProducts) - this.getTotalAmount(activeTabProducts),
+
+                sdt: document.getElementById("sdt").value,
+
+                ten: document.getElementById("ten").value,
+            };
+
+            try {
+                const response = await BanHangService.createHoaDon(thanhToan);
+
+                if (response.status === 201) {
+                    toast.success("Thanh toán thành công!!!");
+                    console.log(response.status);
+                } else {
+                    toast.success("Thanh toán thành công!!!!");
+                    console.log(thanhToan);
+                }
+            } catch (error) {
+                if (error.response && error.response.status === 400) {
+                    toast.error('Thanh toán không thành công, vui lòng kiểm tra lại!!!.');
+                    console.log(thanhToan);
+                } else {
+                    console.error('Error', error);
+                    console.log(thanhToan);
+                    toast.error('Thanh toán không thành công, vui lòng kiểm tra lại!!!');
+                }
             }
+        } else {
+            toast.error("Vui lòng kiểm tra lại số tiền nhập và chọn sản phẩm!");
         }
     };
 
@@ -1099,10 +1102,10 @@ class BanHangOffline extends Component {
                             <br />
                             <br />
                             <label htmlFor="ten">Tên khách hàng:</label>
-                            <input type="text" id="ten" name="ten" value={this.state.ten} placeholder="Nhập tên của khách hàng" required  onChange={this.handleTenChange}/><br />
+                            <input type="text" id="ten" name="ten" value={this.state.ten} placeholder="Nhập tên của khách hàng" required onChange={this.handleTenChange} /><br />
                             <br />
                             <label htmlFor="sdt">Số điện thoại:</label>
-                            <input type="tel" id="sdt" name="sdt" value={this.state.sdt} placeholder="Nhập số điện thoại" pattern="[0-9]{10}" title="Số điện thoại phải có 10 chữ số" required  onChange={this.handleSdtChange} /><br />
+                            <input type="tel" id="sdt" name="sdt" value={this.state.sdt} placeholder="Nhập số điện thoại" pattern="[0-9]{10}" title="Số điện thoại phải có 10 chữ số" required onChange={this.handleSdtChange} /><br />
                             <br />
 
 
