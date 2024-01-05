@@ -12,6 +12,7 @@ import com.example.datn404shoes.repository.SanPhamRespository;
 import com.example.datn404shoes.request.SPCTRequest;
 import com.example.datn404shoes.request.SanPhamRequest;
 import com.example.datn404shoes.request.SanPhamUserCustom;
+import com.example.datn404shoes.request.SanPhamUserCustom1;
 import com.example.datn404shoes.service.serviceimpl.SanPhamAnhServiceimpl;
 import com.example.datn404shoes.service.serviceimpl.SanPhamServiceimpl;
 import com.google.zxing.BarcodeFormat;
@@ -110,8 +111,8 @@ public class SanPhamController {
 
 
     @GetMapping("index1")
-    public List<SanPham> index1(){
-        return sanPhamServiceimpl.getAll();
+    public List<SanPhamUserCustom1> index1(){
+        return sanPhamServiceimpl.getSL();
     }
     @PostMapping("add")
 //    public SanPham add(@RequestBody SanPham sanPham){
@@ -371,5 +372,10 @@ public class SanPhamController {
             e.printStackTrace();
             return ResponseEntity.status(500).body("Error generating and saving QR code");
         }
+    }
+
+    @GetMapping("/getSL/{id}")
+    public ResponseEntity<?> getSL(@PathVariable Long id){
+        return ResponseEntity.ok(sanPhamRespository.getSL(id));
     }
 }

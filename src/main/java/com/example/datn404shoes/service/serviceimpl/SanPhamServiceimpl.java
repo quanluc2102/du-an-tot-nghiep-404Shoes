@@ -5,6 +5,7 @@ import com.example.datn404shoes.entity.SanPham;
 import com.example.datn404shoes.helper.SanPhamExcelSave;
 import com.example.datn404shoes.repository.SanPhamRespository;
 import com.example.datn404shoes.request.SanPhamUserCustom;
+import com.example.datn404shoes.request.SanPhamUserCustom1;
 import com.example.datn404shoes.service.SanPhamService;
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -109,7 +110,10 @@ public class SanPhamServiceimpl implements SanPhamService {
     public SanPham getOne(Long id) {
         return sanPhamRespository.findById(id).orElse(null);
     }
-
+    @Override
+    public List<SanPhamUserCustom1> getSL() {
+        return sanPhamRespository.findAllSoLuong();
+    }
     @Override
     public void chuyenSoLuong(SanPham sp) {
 //        if(sp.getSoLuong()<0){
