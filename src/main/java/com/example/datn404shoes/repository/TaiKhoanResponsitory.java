@@ -3,7 +3,7 @@ package com.example.datn404shoes.repository;
 
 //import com.poly.duanbangiay.entity.TaiKhoan;
 import com.example.datn404shoes.entity.TaiKhoan;
-import com.example.datn404shoes.entity.ThongTinNguoiDung;
+import com.example.datn404shoes.request.TaiKhoanCustome;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -44,12 +44,12 @@ public interface TaiKhoanResponsitory extends JpaRepository<TaiKhoan,Long> {
 //    @Query(value = "SELECT * FROM tai_khoan WHERE thong_tin_nguoi_dung_id = id;",nativeQuery = true)
 //    public List<TaiKhoan> getAllTaiKhoan(@Param("id") long id);
 
-    @Query("SELECT tk.anh, ttn.ten, dc.tinhThanhPho, dc.quanHuyen, dc.xaPhuongThiTran, dc.diaChiCuThe, ttn.CCCD,ttn.sdt, ttn.gioiTinh, ttn.ngaySinh, tk.email, tk.password " +
+    @Query("SELECT tk.anh,ttn.CCCD,ttn.ten,ttn.ngaySinh,ttn.gioiTinh,dc.tinhThanhPho,dc.quanHuyen,dc.xaPhuongThiTran,dc.diaChiCuThe,ttn.sdt,tk.email " +
             "FROM ThongTinNguoiDung ttn " +
             "JOIN DiaChi dc ON ttn.id = dc.thongTinNguoiDung.id " +
             "JOIN TaiKhoan tk ON ttn.id = tk.thongTinNguoiDung.id " +
             "WHERE ttn.id = :id")
-    List<Object[]> findUserDetailsById( Long id);
+    List<Object[]> findUserDetailsById(@Param("id") Long id);
 
 
 

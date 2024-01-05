@@ -62,8 +62,33 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
+
+        const forgotPassword = async (email) => {
+            try {
+                const response = await fetch('http://localhost:8080/api/auth/forgot-password', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email }),
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to initiate forgot password process');
+                }
+
+                // Assuming the server responds with a success message
+                const result = await response.json();
+                console.log(result);
+            } catch (error) {
+                console.error('Forgot password error:', error.message);
+                throw error;
+            }
+        };
+
+
     return (
-        <AuthContext.Provider value={{ isAuthenticated, login, logout }}>
+        <AuthContext.Provider value={{ isAuthenticated, login, logout, forgotPassword }}>
             {children}
         </AuthContext.Provider>
     );
