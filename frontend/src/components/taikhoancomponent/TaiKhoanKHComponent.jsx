@@ -112,7 +112,23 @@ class TaiKhoanKHComponent extends Component {
         });
     }
 
+    sendEmail = (recipientEmail) => {
+        const emailData = {
+            to: recipientEmail,
+            subject: 'Subject of the email',
+            text: 'Body of the email',
+        };
 
+        axios.post('http://localhost:3000/tai_khoan/addKhachHang', emailData)
+            .then(response => {
+                console.log('Email sent successfully:', response.data);
+                // Handle success, e.g., show a success message to the user
+            })
+            .catch(error => {
+                console.error('Error sending email:', error);
+                // Handle error, e.g., show an error message to the user
+            });
+    };
 
     // ... (Các xử lý khác)
     add = (e) => {
