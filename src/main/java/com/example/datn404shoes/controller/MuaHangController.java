@@ -189,7 +189,7 @@ public class MuaHangController {
         }
         hoaDon.setThanhToan(ThanhToan.builder().id(hoaDonUserRequest.getThanhToanId()).build());
         hoaDon.setKieuHoaDon(1);
-        hoaDon.setTongTien(Float.valueOf(hoaDonUserRequest.getTongTienSauKhiGiam()));
+        hoaDon.setTongTien(Float.valueOf(hoaDonUserRequest.getTongTien()));
         hoaDon.setPhiShip(Float.valueOf(hoaDonUserRequest.getTienShip()));
         hoaDon.setTongTienSauGiam(Float.valueOf(hoaDonUserRequest.getTongTienSauKhiGiam()));
         hoaDon.setTienGiam(Float.valueOf(hoaDonUserRequest.getTienGiam()));
