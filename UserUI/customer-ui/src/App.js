@@ -49,7 +49,7 @@ function App() {
                 {/* Sử dụng `{isLoggedIn ? () : ()}` để kiểm tra đăng nhập */}
                 {/*{isLoggedIn ? (*/}
                 {/*    <>*/}
-                        <Route path='/your-cart/:id' component={Cart} />
+                        <Route path='/your-cart' component={Cart} />
                         <Route path='/user-info' component={UserInformation} />
                         <Route path='/payment' component={Payment}/>
                         <Route path='/check-out' component={CheckOut} />
