@@ -43,7 +43,6 @@ function CheckOut({ location }) {
     const [tinhThanhPhoNew,setTinhThanhPhoNew]=useState("");
     const [code,setCode]=useState("");
 
-
     const { id } = useParams();
     const history = useHistory();
     useEffect  ( () => {
@@ -130,6 +129,8 @@ function CheckOut({ location }) {
                 setTinhThanhPho(value.ProvinceName)
             }
         })
+        setCodeQuan(0)
+        setCodeXa(0)
         loadQH(tp)
     }
     const chonQH = (event) =>{
@@ -141,6 +142,7 @@ function CheckOut({ location }) {
                 setQuanHuyen(value.DistrictName)
             }
         })
+        setCodeXa(0)
         loadXP(qh)
     }
     const chonXP = (event) =>{
@@ -183,17 +185,22 @@ function CheckOut({ location }) {
     }
     const suaGhiChu = async (e) =>{
         setGhiChu(e.target.value)
-        let tongTien = tinhTongTienHang();
-        const linkTT = await GioHangService.pay(tongTien,code);
-        const newTab = window.open(linkTT, '_blank');
-        if (newTab) {
-            newTab.focus(); // Đảm bảo tab mới được mở và đưa ra trước mặt
-        }
-        console.log(listHD)
     }
     const check = ()=>{
         console.log(listSPCTSelected)
         console.log(SPCT)
+    }
+    const PTTTCod = ()=>{
+        setPTTT(1);
+    }
+    const PTTTVNPay = async () => {
+        setPTTT(2);
+        let tongTien = tinhTongTienHang();
+        const linkTT = await GioHangService.pay(tongTien);
+        const newTab = window.open(linkTT, '_blank');
+        if (newTab) {
+            newTab.focus(); // Đảm bảo tab mới được mở và đưa ra trước mặt
+        }
     }
     const tinhTongTienHang = () =>{
         let tongTien = SPCT.reduce((total, spct) => {
@@ -250,7 +257,13 @@ function CheckOut({ location }) {
     }
 
     const save = async ()=>{
-        const confirm = window.confirm("Bạn xác nhận muốc thanh toán hóa đơn này ?");
+        let confirm;
+        if(PTTT===1){
+            confirm = window.confirm("Bạn xác nhận muốn thanh toán hóa đơn này ?");
+        }else{
+            confirm = window.confirm("Bạn xác nhận đã thanh toán cho hóa đơn này ?");
+        }
+
         if(!confirm){
             return;
         }
@@ -643,11 +656,11 @@ function CheckOut({ location }) {
                             <div className="col-12 bg-light pt-3" style={{marginTop:30}}>
                                 <div className="col-12 bg-light pt-3" >
                                     <h5 style={{marginLeft:35}}>Phương thức thanh toán
-                                        <a href="#" className={`btn btn-sm btn-outline-dark size-item ${PTTT===1 ? 'selected' : ''}`} style={{marginLeft:960}} >
+                                        <a href="#" className={`btn btn-sm btn-outline-dark size-item ${PTTT===1 ? 'selected' : ''}`} style={{marginLeft:860}} onClick={PTTTCod} >
                                             <div>Thanh toán khi nhận hàng</div>
                                         </a>
-                                        <a href="#" className={`btn btn-sm btn-outline-dark size-item ${PTTT===2 ? 'selected' : ''}`} style={{marginLeft:20}} >
-                                            <div>VN Pay</div>
+                                        <a href="#" className={`btn btn-sm btn-outline-dark size-item ${PTTT===2 ? 'selected' : ''}`} style={{marginLeft:20}} onClick={PTTTVNPay}>
+                                            <div>Thanh toán bằng VNPay</div>
                                         </a>
                                     </h5>
                                     {/*<a style={{textDecoration:"none",cursor:"pointer",color:"mediumblue",marginLeft:980}}>Đổi</a>*/}

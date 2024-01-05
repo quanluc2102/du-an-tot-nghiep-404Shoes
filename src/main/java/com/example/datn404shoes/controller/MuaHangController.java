@@ -229,11 +229,11 @@ public class MuaHangController {
 
 
     //THanh toán VNPay Web
-    @GetMapping("pay-bill/{tien}/{code}")
+    @GetMapping("pay-bill/{tien}")
     public String getPayWeb(
             //đây là giá tiền phải truyền vào
 //            long price,
-                            @PathParam("id") Integer billId,@PathVariable("tien") Integer tien,@PathVariable("code") String code) throws UnsupportedEncodingException {
+                            @PathParam("id") Integer billId,@PathVariable("tien") Integer tien) throws UnsupportedEncodingException {
         String vnp_Version = "2.1.0";
         String vnp_Command = "pay";
         String orderType = "other";
@@ -261,7 +261,7 @@ public class MuaHangController {
 
         vnp_Params.put("vnp_BankCode", bankCode);
         vnp_Params.put("vnp_TxnRef", vnp_TxnRef);
-        vnp_Params.put("vnp_OrderInfo", code);
+        vnp_Params.put("vnp_OrderInfo", "Thanh toan don hang:" + vnp_TxnRef);
         vnp_Params.put("vnp_OrderType", orderType);
 
         vnp_Params.put("vnp_Locale", "vn");

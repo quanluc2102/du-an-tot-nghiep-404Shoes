@@ -63,6 +63,9 @@ function Cart() {
     const formatCurrency = (amount) => {
         return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'VND' }).format(amount);
     };
+    const goToListSP = () => {
+        history.push(`/product-list`)
+    };
     const thayDoiSoLuong = (id, soLuongMoi) =>{
         const updatedProducts = SPCT.map(product => {
             if (product.id === id) {
@@ -218,7 +221,7 @@ function Cart() {
                                     <hr className="dashed-hr"/></div>
                                 )}
                             {/*<button className="btn btn-danger" style={{marginLeft: '0em', width: '25%'}} onClick={()=>xoaNhieu()}>Xóa ({listSPCTSelected.length})</button>*/}
-                            <button className="btn btn-primary" style={{marginLeft: '5px', width: '25%'}}>Tiếp tục mua
+                            <button className="btn btn-primary" style={{marginLeft: '5px', width: '25%'}} onClick={goToListSP}>Tiếp tục mua
                                 hàng
                             </button>
 

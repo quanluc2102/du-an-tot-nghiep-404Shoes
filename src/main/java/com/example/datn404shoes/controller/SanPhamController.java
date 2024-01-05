@@ -189,6 +189,11 @@ public class SanPhamController {
             int count = 0;
             for(int i = 0 ; i <list.size();i++){
                 if(list.get(i).getMauSac().getId() == request.getMauSac().getValue() && list.get(i).getKichThuoc().getId() == request.getKichThuoc().getValue()){
+                    list.get(i).setSoLuong(list.get(i).getSoLuong()+request.getSoLuong());
+                    if(list.get(i).getDonGia()< request.getGia()){
+                        list.get(i).setDonGia(request.getGia());
+                    }
+                    sanPhamChiTietRepository.save(list.get(i));
                     count++;
                 }
             }
