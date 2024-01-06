@@ -19,7 +19,9 @@ import TraCuuDonHang from "./components/tracuudonhang/tracuudonhang";
 import ForgotPassword from "./components/forgotpassword/forgotpassword";
 import AccountBill from "./components/accountbill/AccountBill";
 import AccountBill1 from "./components/accountbill/AccountBill1";
+import Dathangthanhcong from "./components/dathangthanhcong/dathangthanhcong";
 import AccountBill1Guest from "./components/tracuudonhang/guest/AccountBill1Guest";
+import Thanhtoanthanhcongvnpay from "./components/thanhtoanthanhcongvnpay/thanhtoanthanhcongvnpay";
 // import LoginComponent from "../../../frontend/src/components/LoginComponent/LoginComponent";
 
 function App() {
@@ -60,6 +62,8 @@ function App() {
                         <Route path='/tracuudonhang' component={TraCuuDonHang} />
                         <Route path='/billdetail/:id' component={AccountBill1} />
                         <Route path='/billdetailguest/:id' component={AccountBill1Guest} />
+                        <Route path='/thanhcong' component={Dathangthanhcong} />
+                        <Route path='/thanhtoanthanhcong' component={Thanhtoanthanhcongvnpay} />
                     {/*</>*/}
                 {/*) : (*/}
                 {/*    <Route path='/login' component={() => <Login onLogin={handleLogin} onLogout={handleLogout} />} />*/}

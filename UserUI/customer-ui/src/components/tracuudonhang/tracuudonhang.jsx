@@ -20,10 +20,10 @@ function Tracuudonhang(props) {
           .then((response) => {
              const orderDetails = response.data;
              // const idHD = orderDetails.id;
-             console.log("id HD", orderDetails)
+             // console.log("id HD", orderDetails)
              if (orderDetails) {
                 const orderId = orderDetails; // Lấy ID của hóa đơn từ thuộc tính hd
-                // setOrderId(orderId);
+                setOrderId(orderId);
                 // setErrorMessage("");
                 detail(); // Gọi hàm detail() ở đây để chuyển hướng
              } else {
