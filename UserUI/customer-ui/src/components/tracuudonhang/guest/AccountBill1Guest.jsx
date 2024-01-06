@@ -392,7 +392,7 @@ class HoaDonChiTietComponents extends Component {
     };
 
     back = () => {
-        this.props.history.push("/account")
+        this.props.history.push("/tracuudonhang")
     };
 
 

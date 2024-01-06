@@ -92,7 +92,7 @@ function Header() {
                                 </Link>
                             </li>
                             <li className="nav-item px-1 py-1">
-                                <Link to='/product-list'
+                                <Link to='/tracuudonhang'
                                       style={{textDecoration: 'none', fontWeight: 'bold', fontSize: '1.1em'}}>
                                     <a className="nav-link text-uppercase">TRA CỨU ĐƠN HÀNG</a>
                                 </Link>

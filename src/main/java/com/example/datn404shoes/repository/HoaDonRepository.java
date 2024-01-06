@@ -9,7 +9,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-public interface HoaDonRepository extends JpaRepository<HoaDon,Long> {
+public interface HoaDonRepository extends JpaRepository<HoaDon, Long> {
 
     @Query("SELECT hd.id, MAX(hd.maHoaDon) AS maHoaDon " +
             "FROM HoaDon hd " +
@@ -22,20 +22,22 @@ public interface HoaDonRepository extends JpaRepository<HoaDon,Long> {
             "    hd.ma_hoa_don AS MaHoaDon,\n" +
             "    hd.trang_thai AS TrangThai,\n" +
             "    hd.ngay_tao AS NgayMua,\n" +
-            "    hd.tong_tien AS TongTien\n" +
+            "    hd.tong_tien_sau_giam AS TongTien,\n" +
+            "    hd.id AS TongTien\n" +
             "FROM\n" +
             "    hoa_don hd\n" +
             "WHERE\n" +
             "    hd.tai_khoan_khach_hang_id = :id\n" +
             "ORDER BY\n" +
             "hd.ngay_tao DESC;", nativeQuery = true)
-    List<Object[]> all(@Param("id")Long id);
+    List<Object[]> all(@Param("id") Long id);
 
     @Query(value = "SELECT\n" +
             "    hd.ma_hoa_don AS MaHoaDon,\n" +
             "    hd.trang_thai AS TrangThai,\n" +
             "    hd.ngay_tao AS NgayMua,\n" +
-            "    hd.tong_tien AS TongTien\n" +
+            "    hd.tong_tien_sau_giam AS TongTien,\n" +
+            "    hd.id AS TongTien\n" +
             "FROM\n" +
             "    hoa_don hd\n" +
             "WHERE\n" +
@@ -43,13 +45,14 @@ public interface HoaDonRepository extends JpaRepository<HoaDon,Long> {
             "    AND hd.trang_thai = 0\n" +
             "ORDER BY\n" +
             "hd.ngay_tao DESC;", nativeQuery = true)
-    List<Object[]> hoaDonChuaXacNhan(@Param("id")Long id);
+    List<Object[]> hoaDonChuaXacNhan(@Param("id") Long id);
 
     @Query(value = "SELECT\n" +
             "    hd.ma_hoa_don AS MaHoaDon,\n" +
             "    hd.trang_thai AS TrangThai,\n" +
             "    hd.ngay_tao AS NgayMua,\n" +
-            "    hd.tong_tien AS TongTien\n" +
+            "    hd.tong_tien_sau_giam AS TongTien,\n" +
+            "    hd.id AS TongTien\n" +
             "FROM\n" +
             "    hoa_don hd\n" +
             "WHERE\n" +
@@ -57,13 +60,14 @@ public interface HoaDonRepository extends JpaRepository<HoaDon,Long> {
             "    AND hd.trang_thai = 1\n" +
             "ORDER BY\n" +
             "hd.ngay_tao DESC;", nativeQuery = true)
-    List<Object[]> xacNhan(@Param("id")Long id);
+    List<Object[]> xacNhan(@Param("id") Long id);
 
     @Query(value = "SELECT\n" +
             "    hd.ma_hoa_don AS MaHoaDon,\n" +
             "    hd.trang_thai AS TrangThai,\n" +
             "    hd.ngay_tao AS NgayMua,\n" +
-            "    hd.tong_tien AS TongTien\n" +
+            "    hd.tong_tien_sau_giam AS TongTien,\n" +
+            "    hd.id AS TongTien\n" +
             "FROM\n" +
             "    hoa_don hd\n" +
             "WHERE\n" +
@@ -71,13 +75,14 @@ public interface HoaDonRepository extends JpaRepository<HoaDon,Long> {
             "    AND hd.trang_thai = 2\n" +
             "ORDER BY\n" +
             "hd.ngay_tao DESC;", nativeQuery = true)
-    List<Object[]> dongGoi(@Param("id")Long id);
+    List<Object[]> dongGoi(@Param("id") Long id);
 
     @Query(value = "SELECT\n" +
             "    hd.ma_hoa_don AS MaHoaDon,\n" +
             "    hd.trang_thai AS TrangThai,\n" +
             "    hd.ngay_tao AS NgayMua,\n" +
-            "    hd.tong_tien AS TongTien\n" +
+            "    hd.tong_tien_sau_giam AS TongTien,\n" +
+            "    hd.id AS TongTien\n" +
             "FROM\n" +
             "    hoa_don hd\n" +
             "WHERE\n" +
@@ -85,13 +90,14 @@ public interface HoaDonRepository extends JpaRepository<HoaDon,Long> {
             "    AND hd.trang_thai = 3\n" +
             "ORDER BY\n" +
             "hd.ngay_tao DESC;", nativeQuery = true)
-    List<Object[]> dangGiao(@Param("id")Long id);
+    List<Object[]> dangGiao(@Param("id") Long id);
 
     @Query(value = "SELECT\n" +
             "    hd.ma_hoa_don AS MaHoaDon,\n" +
             "    hd.trang_thai AS TrangThai,\n" +
             "    hd.ngay_tao AS NgayMua,\n" +
-            "    hd.tong_tien AS TongTien\n" +
+            "    hd.tong_tien_sau_giam AS TongTien,\n" +
+            "    hd.id AS TongTien\n" +
             "FROM\n" +
             "    hoa_don hd\n" +
             "WHERE\n" +
@@ -99,13 +105,14 @@ public interface HoaDonRepository extends JpaRepository<HoaDon,Long> {
             "    AND hd.trang_thai = 4\n" +
             "ORDER BY\n" +
             "hd.ngay_tao DESC;", nativeQuery = true)
-    List<Object[]> hoanThanh(@Param("id")Long id);
+    List<Object[]> hoanThanh(@Param("id") Long id);
 
     @Query(value = "SELECT\n" +
             "    hd.ma_hoa_don AS MaHoaDon,\n" +
             "    hd.trang_thai AS TrangThai,\n" +
             "    hd.ngay_tao AS NgayMua,\n" +
-            "    hd.tong_tien AS TongTien\n" +
+            "    hd.tong_tien_sau_giam AS TongTien,\n" +
+            "    hd.id AS TongTien\n" +
             "FROM\n" +
             "    hoa_don hd\n" +
             "WHERE\n" +
@@ -113,13 +120,14 @@ public interface HoaDonRepository extends JpaRepository<HoaDon,Long> {
             "    AND hd.trang_thai = 5\n" +
             "ORDER BY\n" +
             "hd.ngay_tao DESC;", nativeQuery = true)
-    List<Object[]> huy(@Param("id")Long id);
+    List<Object[]> huy(@Param("id") Long id);
 
     @Query(value = "SELECT\n" +
             "    hd.ma_hoa_don AS MaHoaDon,\n" +
             "    hd.trang_thai AS TrangThai,\n" +
             "    hd.ngay_tao AS NgayMua,\n" +
-            "    hd.tong_tien AS TongTien\n" +
+            "    hd.tong_tien_sau_giam AS TongTien,\n" +
+            "    hd.id AS TongTien\n" +
             "FROM\n" +
             "    hoa_don hd\n" +
             "WHERE\n" +
@@ -127,7 +135,7 @@ public interface HoaDonRepository extends JpaRepository<HoaDon,Long> {
             "    AND hd.trang_thai = 6\n" +
             "ORDER BY\n" +
             "hd.ngay_tao DESC;", nativeQuery = true)
-    List<Object[]> muaTaiQuay(@Param("id")Long id);
+    List<Object[]> muaTaiQuay(@Param("id") Long id);
 
 
 }
