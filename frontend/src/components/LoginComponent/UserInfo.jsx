@@ -84,10 +84,13 @@ class UserInfo extends Component {
 
     componentDidMount() {
         const id = this.getUserNameFromLocalStorage() ;
+        console.log("User Account Id Data :", id);
 
         taikhoanservice.getTaiKhoanById(id)
             .then((response) => {
                 const taiKhoanDataArray = response.data;
+                console.log("User Account Data:", taiKhoanDataArray);
+
                 if (Array.isArray(taiKhoanDataArray) && taiKhoanDataArray.length > 0) {
                     const taiKhoanData = taiKhoanDataArray[0];
                     console.log("User Account Data:", taiKhoanData);

@@ -23,8 +23,8 @@ function Tracuudonhang(props) {
              console.log("id HD", orderDetails)
              if (orderDetails) {
                 const orderId = orderDetails; // Lấy ID của hóa đơn từ thuộc tính hd
-                setOrderId(orderId);
-                setErrorMessage("");
+                // setOrderId(orderId);
+                // setErrorMessage("");
                 detail(); // Gọi hàm detail() ở đây để chuyển hướng
              } else {
                 setOrderId(null);
