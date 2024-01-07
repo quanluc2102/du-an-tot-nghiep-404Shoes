@@ -18,8 +18,8 @@ public interface HoaDonChiTietRepository extends JpaRepository<HoaDonChiTiet, Lo
     @Query("SELECT hdct.hd.id " +
             "FROM HoaDonChiTiet hdct " +
             "JOIN HoaDon hd ON hdct.hd.id = hd.id " +
-            "WHERE hd.maHoaDon = :maHoaDon AND hd.email = :email ")
-    String findAllByHd_MaHoaDonandEmail(@Param("maHoaDon") String maHoaDon, @Param("email") String email);
+            "WHERE hd.maHoaDon = :maHoaDon AND hd.sdt = :sdt ")
+    String findAllByHd_MaHoaDonandEmail(@Param("maHoaDon") String maHoaDon, @Param("sdt") String sdt);
 
     @Query("SELECT sp.ten AS ten_san_pham, " +
             "SUM(hdct.soLuong) AS so_luong_ban, " +

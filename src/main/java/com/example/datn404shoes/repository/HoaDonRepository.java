@@ -141,4 +141,8 @@ public interface HoaDonRepository extends JpaRepository<HoaDon, Long> {
     @Query("SELECT hd FROM HoaDon hd order by hd.ngayTao desc")
     List<HoaDon> findAllByDescByNgayTao();
 
+
+    @Query(value = "SELECT TOP 1 hd.ma_hoa_don AS MaHoaDon FROM hoa_don hd ORDER BY hd.id DESC", nativeQuery = true)
+    Object[] thanhToanThanhCong();
+
 }

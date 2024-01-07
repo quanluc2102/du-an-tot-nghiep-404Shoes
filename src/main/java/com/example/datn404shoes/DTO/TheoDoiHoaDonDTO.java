@@ -6,14 +6,14 @@ import lombok.Data;
 @Data
 public class TheoDoiHoaDonDTO {
     private String maHoaDon;
-    private String email;
+    private String sdt;
 
-    public String getemailString() {
-        return email;
+    public String getsdtString() {
+        return sdt;
     }
 
-    public void setemailString(String email) {
-        this.email = email;
+    public void setsdtString(String sdt) {
+        this.sdt = sdt;
     }
 
 
