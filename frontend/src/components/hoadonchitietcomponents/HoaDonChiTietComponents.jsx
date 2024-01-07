@@ -26,6 +26,7 @@ class HoaDonChiTietComponents extends Component {
                 hoanThanh: '',
                 ghiChuHoanThanh: '',
                 phiShip: '',
+                taiKhoan:''
 
 
 
@@ -233,6 +234,14 @@ class HoaDonChiTietComponents extends Component {
             },
         }));
     };
+    thayDoitaiKhoanNhanVienId = (event) => {
+        this.setState((prevState) => ({
+            hoaDonUpdate: {
+                ...prevState.hoaDonUpdate,
+                taiKhoanNhanVienId: event.target.value,
+            },
+        }));
+    };
     thayDoiDCCT = (event) => {
         this.setState((prevState) => ({
             selectedAddress: {
@@ -317,16 +326,17 @@ class HoaDonChiTietComponents extends Component {
         if (!confirmed) {
             return;
         }
-
+    
         const trangThai = this.state.hoaDon.trangThai;
-        const updateKey = this.getStatusUpdateKey(trangThai); // Use 'this' to reference the method
-
+        const updateKey = this.getStatusUpdateKey(trangThai);
+    console.log(this.getUserNameFromLocalStorage() +"đây")
         const hoaDon = {
             [updateKey]: this.state.hoaDonUpdate[updateKey],
-            phiShip: this.state.hoaDonUpdate.phiShip
+            phiShip: this.state.hoaDonUpdate.phiShip,
+            taiKhoan: this.getUserNameFromLocalStorage(), // G t 
         };
         const id = this.state.hoaDonUpdate.id;
-
+    
         HoaDonService.updateHoaDon(hoaDon, id).then((res) => {
             window.location.href = `/HoaDonChiTiet/${this.state.hoaDonId.id}`;
         });
@@ -384,11 +394,21 @@ class HoaDonChiTietComponents extends Component {
         });
     };
 
-
+    getUserNameFromLocalStorage() {
+        try {
+            const savedUser = JSON.parse(localStorage.getItem('currentUser'));
+            console.log(savedUser);
+            return savedUser || {};
+        } catch (error) {
+            console.error('Error while retrieving user data from local storage:', error);
+            return {};
+        }
+    }
+    
     render() {
         let total = 0;
+        const userId = this.getUserNameFromLocalStorage();
         let giam = 0;
-        const { provinces, districts, communes } = this.state;
         const isHoaDonDaHuy = this.state.hoaDon.trangThai === 5;
         const isHoaDonKoDcHuy = this.state.hoaDon.trangThai >= 3;
         const { validationErrors } = this.state;
@@ -396,6 +416,20 @@ class HoaDonChiTietComponents extends Component {
 
             <div>
                 <div className="pagetitle">
+                <div className="align-center">
+                    <h1 style={{
+                        textAlign: 'center',
+                        fontSize: '24px',
+                        marginBottom: '0',
+                        fontWeight: '600',
+                        color: '#012970'
+                    }}>
+                        ID Nhân viên : {userId[0]}
+                    </h1>
+                    <nav>
+                        <ol className="breadcrumb"></ol>
+                    </nav>
+                </div>
                     <h1>Hóa đơn</h1>
                     <nav>
                         <ol className="breadcrumb">
@@ -497,7 +531,7 @@ class HoaDonChiTietComponents extends Component {
                                                     <tbody>
                                                         {this.state.hoaDonChiTiet.map((hoaDonChiTiet, index) => {
                                                             total += hoaDonChiTiet.sanPhamChiTiet.donGia * hoaDonChiTiet.soLuong;
-                                                            giam = total - this.state.hoaDon?.tongTien;// Cộng dồn tổng
+                                                          
 
                                                             return (
                                                                 <tr key={hoaDonChiTiet.id}>
@@ -533,7 +567,11 @@ class HoaDonChiTietComponents extends Component {
                                                                 </tr>
                                                                 <tr>
                                                                     <th scope="row">Voucher từ Shop</th>
-                                                                    <td className="text-left col-4">- {giam.toLocaleString()}đ (Giảm {this.state.hoaDon?.khuyenMai?.giamGia} {this.state.hoaDon?.khuyenMai?.kieuKhuyenMai === 1 ? "%" : this.state.hoaDon?.khuyenMai?.kieuKhuyenMai === 0 ? "VND" : ""})</td>
+                                                                    <td className="text-left col-4">- {this.state.hoaDon?.tienGiam?.toLocaleString()}đ (Giảm {this.state.hoaDon?.khuyenMai?.giamGia} {this.state.hoaDon?.khuyenMai?.kieuKhuyenMai === 1 ? "%" : this.state.hoaDon?.khuyenMai?.kieuKhuyenMai === 0 ? "VND" : ""})</td>   
+                                                                </tr>
+                                                                <tr>
+                                                                    <th scope="row">Tổng tiền sau giảm</th>
+                                                                    <td className="text-left col-4">{this.state.hoaDon?.tongTienSauGiam?.toLocaleString()} VNĐ </td>
                                                                 </tr>
                                                                 <tr>
                                                                     <th scope="row">Phi vận chuyển</th>
@@ -547,7 +585,7 @@ class HoaDonChiTietComponents extends Component {
                                                                     <th scope="row">Thành tiền</th>
                                                                     <td>
                                                                         <p style={{ color: 'red', fontSize: '24px' }}>
-                                                                            {(total + this.state.hoaDon.phiShip - giam).toLocaleString()} VNĐ
+                                                                            {(this.state.hoaDon.tongTienSauGiam+ this.state.hoaDon.phiShip).toLocaleString()} VNĐ
                                                                         </p>
                                                                     </td>
                                                                 </tr>
