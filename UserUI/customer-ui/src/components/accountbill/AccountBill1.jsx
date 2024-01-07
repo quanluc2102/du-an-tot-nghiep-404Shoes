@@ -489,7 +489,7 @@ class HoaDonChiTietComponents extends Component {
                                                     <tbody>
                                                     {this.state.hoaDonChiTiet.map((hoaDonChiTiet, index) => {
                                                         total += hoaDonChiTiet.sanPhamChiTiet.donGia * hoaDonChiTiet.soLuong;
-                                                        giam = total - this.state.hoaDon?.tongTien;
+
 
                                                         return (
                                                             <tr key={hoaDonChiTiet.id}>
@@ -498,7 +498,7 @@ class HoaDonChiTietComponents extends Component {
                                                                 <td>
                                                                     <img
                                                                         src={`/img/${hoaDonChiTiet.sanPhamChiTiet.sanPham.anh}`}
-                                                                        style={{ width: '50px', height: '50px' }}
+                                                                        style={{width: '50px', height: '50px'}}
                                                                     />
                                                                 </td>
                                                                 <td>{hoaDonChiTiet.sanPhamChiTiet.sanPham.ten}</td>
@@ -510,7 +510,7 @@ class HoaDonChiTietComponents extends Component {
                                                     </tbody>
                                                 </table>
                                                 <div className='row'>
-                                                    <div className="text-left col-12">
+                                                    <div className="text-right col-12">
                                                         <table className="table">
                                                             <thead>
                                                             <tr>
@@ -521,20 +521,24 @@ class HoaDonChiTietComponents extends Component {
                                                             <tbody>
                                                             <tr>
                                                                 <th scope="row">Tổng tiền hàng</th>
-                                                                <td>
-                                                                    <label className="text-left"><s>{total.toLocaleString()} VNĐ</s></label>
+                                                                <td><label color='red'
+                                                                           className="text-right "><s>{total.toLocaleString()} VNĐ</s></label>
                                                                 </td>
                                                             </tr>
                                                             <tr>
                                                                 <th scope="row">Voucher từ Shop</th>
-                                                                <td className="text-left col-4">
-                                                                    - {giam.toLocaleString()}đ (Giảm {this.state.hoaDon?.khuyenMai?.giamGia} {this.state.hoaDon?.khuyenMai?.kieuKhuyenMai === 1 ? "%" : this.state.hoaDon?.khuyenMai?.kieuKhuyenMai === 0 ? "VND" : ""})
+                                                                <td className="text-right col-4">- {this.state.hoaDon?.tienGiam?.toLocaleString()}đ
+                                                                    (Giảm {this.state.hoaDon?.khuyenMai?.giamGia} {this.state.hoaDon?.khuyenMai?.kieuKhuyenMai === 1 ? "%" : this.state.hoaDon?.khuyenMai?.kieuKhuyenMai === 0 ? "VND" : ""})
                                                                 </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <th scope="row">Tổng tiền sau giảm</th>
+                                                                <td className="text-right col-4">{this.state.hoaDon?.tongTienSauGiam?.toLocaleString()} VNĐ</td>
                                                             </tr>
                                                             <tr>
                                                                 <th scope="row">Phi vận chuyển</th>
                                                                 <td>
-                                                                    <p style={{ color: 'red', fontSize: '14px' }}>
+                                                                    <p style={{color: 'red', fontSize: '14px'}}>
                                                                         {this.state.hoaDon.phiShip} VNĐ
                                                                     </p>
                                                                 </td>
@@ -542,8 +546,8 @@ class HoaDonChiTietComponents extends Component {
                                                             <tr>
                                                                 <th scope="row">Thành tiền</th>
                                                                 <td>
-                                                                    <p style={{ color: 'red', fontSize: '24px' }}>
-                                                                        {(total + this.state.hoaDon.phiShip - giam).toLocaleString()} VNĐ
+                                                                    <p style={{color: 'red', fontSize: '24px'}}>
+                                                                        {(this.state.hoaDon.tongTienSauGiam + this.state.hoaDon.phiShip).toLocaleString()} VNĐ
                                                                     </p>
                                                                 </td>
                                                             </tr>
