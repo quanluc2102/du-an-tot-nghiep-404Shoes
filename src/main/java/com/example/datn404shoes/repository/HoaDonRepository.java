@@ -138,4 +138,7 @@ public interface HoaDonRepository extends JpaRepository<HoaDon, Long> {
     List<Object[]> muaTaiQuay(@Param("id") Long id);
 
 
+    @Query("SELECT hd FROM HoaDon hd order by hd.ngayTao desc")
+    List<HoaDon> findAllByDescByNgayTao();
+
 }
