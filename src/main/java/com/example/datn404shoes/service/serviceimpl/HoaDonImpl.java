@@ -1,9 +1,6 @@
 package com.example.datn404shoes.service.serviceimpl;
 
-import com.example.datn404shoes.entity.DanhMuc;
-import com.example.datn404shoes.entity.HoaDon;
-import com.example.datn404shoes.entity.HoaDonChiTiet;
-import com.example.datn404shoes.entity.SanPhamChiTiet;
+import com.example.datn404shoes.entity.*;
 import com.example.datn404shoes.repository.HoaDonChiTietRepository;
 import com.example.datn404shoes.repository.HoaDonRepository;
 import com.example.datn404shoes.repository.SanPhamChiTietRepository;
@@ -68,9 +65,11 @@ public class HoaDonImpl implements HoaDonService {
 // Convert LocalDateTime to Timestamp
             Timestamp timeChoXacNhan = Timestamp.valueOf(currentDateTime);
             hoaDon1.setChoXacNhan(timeChoXacNhan);
+
             hoaDon1.setTrangThai(hoaDon1.getTrangThai()+1);
             hoaDon1.setGhiChuChoXacNhan(hoaDon.getGhiChuChoXacNhan());
             hoaDon1.setPhiShip(hoaDon.getPhiShip());
+            hoaDon1.setTaiKhoan(TaiKhoan.builder().id(hoaDon.getTaiKhoan().getId()).build());
         }else
         if(hoaDon1.getTrangThai()==1) {
             LocalDate currentDate = LocalDate.now();
@@ -125,7 +124,7 @@ public class HoaDonImpl implements HoaDonService {
 
     @Override
     public List<HoaDon> getAll() {
-        return hoaDonRepository.findAll();
+        return hoaDonRepository.findAllByDescByNgayTao();
     }
 
     @Override

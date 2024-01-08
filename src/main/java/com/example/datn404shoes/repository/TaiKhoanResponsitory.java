@@ -48,7 +48,7 @@ public interface TaiKhoanResponsitory extends JpaRepository<TaiKhoan,Long> {
             "FROM ThongTinNguoiDung ttn " +
             "JOIN DiaChi dc ON ttn.id = dc.thongTinNguoiDung.id " +
             "JOIN TaiKhoan tk ON ttn.id = tk.thongTinNguoiDung.id " +
-            "WHERE ttn.id = :id")
+            "WHERE tk.id = :id")
     List<Object[]> findUserDetailsById(@Param("id") Long id);
 
 

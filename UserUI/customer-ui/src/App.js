@@ -15,9 +15,13 @@ import Header from "../../../UserUI/customer-ui/src/components/customer/Header";
 import Footer from "../../../UserUI/customer-ui/src/components/customer/Footer";
 import Payment from "./components/payment/payment";
 import Account from "./components/account/Account";
+import TraCuuDonHang from "./components/tracuudonhang/tracuudonhang";
 import ForgotPassword from "./components/forgotpassword/forgotpassword";
 import AccountBill from "./components/accountbill/AccountBill";
 import AccountBill1 from "./components/accountbill/AccountBill1";
+import Dathangthanhcong from "./components/dathangthanhcong/dathangthanhcong";
+import AccountBill1Guest from "./components/tracuudonhang/guest/AccountBill1Guest";
+import Thanhtoanthanhcongvnpay from "./components/thanhtoanthanhcongvnpay/thanhtoanthanhcongvnpay";
 // import LoginComponent from "../../../frontend/src/components/LoginComponent/LoginComponent";
 
 function App() {
@@ -55,7 +59,11 @@ function App() {
                         <Route path='/check-out' component={CheckOut} />
                         <Route path='/forgotpassword' component={ForgotPassword} />
                         <Route path='/account' component={Account} />
-                        {/*<Route path='/billdetail' component={AccountBill1} />*/}
+                        <Route path='/tracuudonhang' component={TraCuuDonHang} />
+                        <Route path='/billdetail/:id' component={AccountBill1} />
+                        <Route path='/billdetailguest/:id' component={AccountBill1Guest} />
+                        <Route path='/thanhcong' component={Dathangthanhcong} />
+                        <Route path='/thanhtoanthanhcong' component={Thanhtoanthanhcongvnpay} />
                     {/*</>*/}
                 {/*) : (*/}
                 {/*    <Route path='/login' component={() => <Login onLogin={handleLogin} onLogout={handleLogout} />} />*/}

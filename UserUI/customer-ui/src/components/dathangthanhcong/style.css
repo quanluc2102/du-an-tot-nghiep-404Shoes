@@ -1,0 +1,54 @@
+/* General Styles */
+.success-container {
+  max-width: 600px;
+  margin: 50px auto;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+}
+
+.success-message {
+  text-align: center;
+  color: #333;
+}
+
+.order-code {
+  font-weight: bold;
+  color: #e44d26;
+}
+
+.note {
+  font-style: italic;
+}
+
+/* Button Styles */
+.button-container {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.home-button,
+.tracking-button {
+  display: inline-block;
+  margin: 10px;
+  padding: 10px 20px;
+  text-decoration: none;
+  color: #fff;
+  border-radius: 5px;
+  font-weight: bold;
+}
+
+.home-button img,
+.tracking-button img {
+  width: 20px; /* Điều chỉnh chiều rộng của hình ảnh theo ý bạn */
+  height: auto; /* Giữ tỷ lệ khung của hình ảnh */
+}
+
+.home-button {
+  background-color: #3498db;
+}
+
+.tracking-button {
+  background-color: #2ecc71;
+}

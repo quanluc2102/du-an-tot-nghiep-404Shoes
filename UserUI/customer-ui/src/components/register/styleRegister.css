@@ -46,7 +46,7 @@ header{
 }
 
 .card {
-    height: 1120px;
+    height: auto;
     overflow: hidden;
 }
 

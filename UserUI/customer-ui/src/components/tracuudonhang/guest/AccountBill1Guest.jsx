@@ -392,7 +392,7 @@ class HoaDonChiTietComponents extends Component {
     };
 
     back = () => {
-        this.props.history.push("/account")
+        this.props.history.push("/tracuudonhang")
     };
 
 
@@ -450,17 +450,17 @@ class HoaDonChiTietComponents extends Component {
                                                     <table className="table">
                                                         <tbody>
                                                         <tr>
-                                                            <th scope="row">Tên người nhận: {this.state.hoaDon.taiKhoanKhachHang && this.state.hoaDon.taiKhoanKhachHang.thongTinNguoiDung ? this.state.hoaDon.taiKhoanKhachHang.thongTinNguoiDung.ten : "Khách lẻ"} </th>
+                                                            <th scope="row">Tên người nhận: {this.state.hoaDon.ten ? this.state.hoaDon.ten : "Khách lẻ"} </th>
                                                             <td>
                                                             </td>
                                                         </tr>
                                                         <tr>
-                                                            <th scope="row">Số điện thoại: {this.state.hoaDon.taiKhoanKhachHang && this.state.hoaDon.taiKhoanKhachHang.thongTinNguoiDung ? this.state.hoaDon.taiKhoanKhachHang.thongTinNguoiDung.sdt : "Khách lẻ"}</th>
+                                                            <th scope="row">Số điện thoại: {this.state.hoaDon.ten ? this.state.hoaDon.sdt : "Khách lẻ"}</th>
                                                             <td className="text-left col-4">
                                                             </td>
                                                         </tr>
                                                         <tr>
-                                                            <th scope="row">Địa chỉ: {this.state.hoaDon.taiKhoanKhachHang && this.state.hoaDon.taiKhoanKhachHang.thongTinNguoiDung ? this.state.hoaDon.diaChiCuThe +", "+ this.state.hoaDon.xaPhuongThiTran +", "+ this.state.hoaDon.quanHuyen +", "+ this.state.hoaDon.tinhThanhPho : "Khách lẻ"}</th>
+                                                            <th scope="row">Địa chỉ: {this.state.hoaDon.ten ? this.state.hoaDon.diaChiCuThe +", "+ this.state.hoaDon.xaPhuongThiTran +", "+ this.state.hoaDon.quanHuyen +", "+ this.state.hoaDon.tinhThanhPho : "Khách lẻ"}</th>
                                                             <td>
                                                             </td>
                                                         </tr>

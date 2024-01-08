@@ -19,6 +19,11 @@ public class HoaDonChiTietimpl implements HoaDonChiTietService {
     }
 
     @Override
+    public String findAllByHd_MaHoaDonandEmail(String maHoaDon, String email) {
+        return hoaDonChiTietRepository.findAllByHd_MaHoaDonandEmail(maHoaDon, email);
+    }
+
+    @Override
     public HoaDonChiTiet addNewHDCT(HoaDonChiTiet hoaDonChiTiet) {
         return hoaDonChiTietRepository.save(hoaDonChiTiet);
     }

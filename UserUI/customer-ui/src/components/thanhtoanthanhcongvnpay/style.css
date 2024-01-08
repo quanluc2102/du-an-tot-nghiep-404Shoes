@@ -1,0 +1,51 @@
+/* General Styles */
+.payment-success-modal {
+  position: fixed;
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 9999;
+}
+
+.modal-wrap {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+  padding: 20px;
+  text-align: center;
+}
+
+.modal-content {
+  text-align: center;
+}
+
+.modal-content-icon {
+  width: 100px;
+  height: 100px;
+  margin: 0 auto;
+  display: block;
+  margin-bottom: 20px;
+}
+
+.modal-content-text {
+  color: #333;
+  font-size: 16px;
+  margin-bottom: 20px;
+}
+
+.modal-content-btn {
+  background-color: #3498db;
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 5px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.modal-content-btn:hover {
+  background-color: #2980b9;
+}
