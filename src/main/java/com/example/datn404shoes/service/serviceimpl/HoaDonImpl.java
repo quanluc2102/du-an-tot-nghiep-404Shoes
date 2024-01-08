@@ -31,13 +31,14 @@ public class HoaDonImpl implements HoaDonService {
     HoaDonChiTietRepository HDCTRepository;
     @Override
     public HoaDon add(HoaDon hd) {
-long count = hoaDonRepository.count()+1;
+        long count = hoaDonRepository.count() + 2;
         hd.setKieuHoaDon(0);
         hd.setMaHoaDon("HD00" + count);
         hd.setTen(null);
         hd.setSdt(null);
-        hd.setTrangThai(4);
-        hd.setKieuHoaDon(0);
+        hd.setTrangThai(0);
+        hd.setKieuHoaDon(2);
+        hd.setTongTien(Float.valueOf(0));
         hd.setEmail(null);
         hd.setDiaChiCuThe(null);
         hd.setTinhThanhPho(null);
@@ -50,8 +51,9 @@ long count = hoaDonRepository.count()+1;
 
     @Override
     public void delete(Long id) {
-
+        hoaDonRepository.deleteById(id);
     }
+
     @Override
     public HoaDon update(Long id,HoaDon hoaDon) {
 
