@@ -5,31 +5,29 @@ import './style.css'
 import { Link } from 'react-router-dom/cjs/react-router-dom'
 import {GioHangService} from "../../service/GioHangService";
 
-function Cart({ match }) {
+function Cart() {
     const [SPCT, setSPCT] = useState([]);
     const [listSPCTSelected,setListSPCTSelected] = useState([]);
+    const [user,setUser]=useState([]);
     const [tongTien,setTongTien] = useState(0);
-    const { id } = match.params;
-    // const fetchData = async () =>{
-    //
-    //     try {
-    //         const dataGioHang = await GioHangService.getGHOne(id)
-    //
-    //         setSPCT(dataGioHang);
-    //         console.log(dataGioHang)
-    //         console.log(SPCT)
-    //     } catch (error) {
-    //         console.error('Error fetching data:', error);
-    //     }
-    // }
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const dataGioHang = await GioHangService.getGHOne(id);
-                setSPCT(dataGioHang);
-            } catch (error) {
+    const history = useHistory();
+    const fetchData = async () => {
+            const storedDataUser = localStorage.getItem('currentUser');
+            const dataUser = storedDataUser ? JSON.parse(storedDataUser) : [];
+            let data ;
+            if(storedDataUser){
+                data = await GioHangService.getGHOne(JSON.parse(storedDataUser).id);
+                // setSPCT(dataGioHang);
+            }else {
+                data = JSON.parse(localStorage.getItem('listSPCT'));
+                // setSPCT(JSON.parse(dataGioHangGuest));
             }
-        };
+            setSPCT(data);
+            setUser(dataUser)
+
+    };
+    useEffect(() => {
+
         const obse = new IntersectionObserver((enti) => {
             enti.forEach((enty) => {
                 if (enty.isIntersecting) {
@@ -53,9 +51,20 @@ function Cart({ match }) {
 
         });
         fetchData();
-    }, )
+    }, [SPCT])
+    const fetchDataLocal = () =>{
+        const storedDataUser = localStorage.getItem('currentUser');
+        if(storedDataUser){
+            setUser(JSON.parse(storedDataUser))
+        }else{
+            const storedDataUser = localStorage.getItem('currentUser');
+        }
+    }
     const formatCurrency = (amount) => {
         return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'VND' }).format(amount);
+    };
+    const goToListSP = () => {
+        history.push(`/product-list`)
     };
     const thayDoiSoLuong = (id, soLuongMoi) =>{
         const updatedProducts = SPCT.map(product => {
@@ -66,28 +75,32 @@ function Cart({ match }) {
             return product;
         });
         setSPCT(updatedProducts);
-        GioHangService.updateGHCT(id,soLuongMoi);
-    }
-    const xoaDon = async (id)=>{
-        const res = await GioHangService.deleteOne(id);
-        if (res.status === 200) {
-            toast.success("Xóa thành công");
-        } else {
-            const errorMessage = "Có lỗi xảy ra khi xóa.";
-            toast.error("Lỗi: " + errorMessage);
+        if(user.length!=0){
+            GioHangService.updateGHCT(id,soLuongMoi);
+        }else {
+            localStorage.setItem("listSPCT", JSON.stringify(updatedProducts));
         }
-        // GioHangService.deleteOne(id).then((res) => {
-        //     if (res.status === 200) {
-        //         toast.success("Xóa thành công"); // Display success message
-        //         alert("Xóa thành công");
-        //     } else {
-        //         const errorMessage = "Có lỗi xảy ra khi xóa.";
-        //         toast.error("Lỗi: " + errorMessage);
-        //     }
-        // })
-        //     .catch((error) => {
-        //         console.error("Error deleting item:", error);
-        //     });
+
+        console.log(SPCT)
+    }
+
+    const xoaDon = async (id,index)=>{
+        if(user.length!=0){
+            const res = await GioHangService.deleteOne(id);
+            // window.location.reload()
+        }else {
+            console.log("aaaaaaaaaa")
+            const updatedList = [...SPCT];
+
+            // Xóa phần tử tại index cụ thể
+            updatedList.splice(index, 1);
+
+            // Cập nhật state với mảng mới (đã xóa phần tử)
+            setSPCT(updatedList);
+            localStorage.setItem("listSPCT", JSON.stringify(updatedList));
+        }
+
+
     }
 
     const xoaNhieu = ()=>{
@@ -135,77 +148,6 @@ function Cart({ match }) {
             {SPCT && (<body>
 
             {/*<header>*/}
-            {/*    <nav className="navbar navbar-light bg-light">*/}
-            {/*        <div className="container-fluid justify-content-end">*/}
-            {/*            <Link to='/login' style={{textDecoration: 'none'}}><a className="navbar-brand" href="#"*/}
-            {/*                                                                  style={{fontSize: '13px'}}> <i*/}
-            {/*                className='bx bxs-user'></i> Đăng nhập</a></Link>*/}
-            {/*            <Link to='your-cart' style={{textDecoration: 'none'}}><a className="navbar-brand" href="#"*/}
-            {/*                                                                     style={{fontSize: '13px'}}> <i*/}
-            {/*                className='bx bxs-cart'></i>Giỏ hàng {'(0)'}</a></Link>*/}
-            {/*        </div>*/}
-            {/*    </nav>*/}
-
-            {/*    <nav className="navbar navbar-expand-lg navbar-light bg-0 py-1" id="navbarhead"*/}
-            {/*         style={{backgroundColor: 'rgb(255, 255, 255)'}}>*/}
-            {/*        <div className="container">*/}
-            {/*            <div className="d-flex justify-content-between align-items-left w-100"*/}
-            {/*                 style={{marginRight: '10px'}}>*/}
-            {/*                <Link to='/' style={{textDecoration: 'none'}}> <a*/}
-            {/*                    className="navbar-brand d-flex align-items-center">*/}
-            {/*                    <img style={{width: '90px'}}*/}
-            {/*                         src="https://t3.ftcdn.net/jpg/00/71/53/56/360_F_71535683_03OP8nG0N3YRVDTasetbEfT2BpucFmo5.jpg"*/}
-            {/*                         alt="site icon"/>*/}
-            {/*                    <a className="text-uppercase text-decoration-none brand text-black"*/}
-            {/*                       style={{fontWeight: 'bold', fontSize: '26px'}}>404SHOES</a>*/}
-            {/*                </a>*/}
-            {/*                </Link>*/}
-            {/*            </div>*/}
-
-            {/*            <div className="collapse navbar-collapse justify-content-center" id="navMenu">*/}
-            {/*                <ul className="navbar-nav mx-auto text-center">*/}
-            {/*                    <li className="nav-item px-1 py-1">*/}
-
-            {/*                        <Link to='/' style={{ textDecoration: 'none', fontWeight: 'bold', fontSize: '1.1em' }}>*/}
-            {/*                            <a className="nav-link text-uppercase">TRANG CHỦ</a>*/}
-            {/*                        </Link>*/}
-
-            {/*                    </li>*/}
-            {/*                    <li className="nav-item px-1 py-1">*/}
-            {/*                        <Link to='/product-list' style={{ textDecoration: 'none', fontWeight: 'bold', fontSize: '1.1em' }}>*/}
-            {/*                            <a className="nav-link text-uppercase">SẢN PHẨM</a>*/}
-            {/*                        </Link>*/}
-            {/*                    </li>*/}
-            {/*                    <li className="nav-item px-1 py-1">*/}
-            {/*                        <Link to='/product-list' style={{ textDecoration: 'none', fontWeight: 'bold', fontSize: '1.1em' }}>*/}
-            {/*                            <a className="nav-link text-uppercase">BÀI VIẾT</a>*/}
-            {/*                        </Link>*/}
-            {/*                    </li>*/}
-            {/*                    <li className="nav-item px-1 py-1">*/}
-            {/*                        <Link to='/product-list' style={{ textDecoration: 'none', fontWeight: 'bold', fontSize: '1.1em' }}>*/}
-            {/*                            <a className="nav-link text-uppercase">LIÊN HỆ</a>*/}
-            {/*                        </Link>*/}
-            {/*                    </li>*/}
-            {/*                    <li className="nav-item px-1 py-1">*/}
-            {/*                        <Link to='/product-list' style={{ textDecoration: 'none', fontWeight: 'bold', fontSize: '1.1em' }}>*/}
-            {/*                            <a className="nav-link text-uppercase">TRA CỨU ĐƠN HÀNG</a>*/}
-            {/*                        </Link>*/}
-            {/*                    </li>*/}
-            {/*                    <li className="nav-item px-1 py-1">*/}
-            {/*                        <Link to='/product-list' style={{ textDecoration: 'none', fontWeight: 'bold', fontSize: '1.1em' }}>*/}
-            {/*                            <a className="nav-link text-uppercase">VỀ CHÚNG TÔI</a>*/}
-            {/*                        </Link>*/}
-            {/*                    </li>*/}
-            {/*                    <li className="nav-item px-1 py-1" style={{ marginLeft: '65px' }}>*/}
-            {/*                        <form className="d-flex">*/}
-            {/*                            <input className="form-control me-2" type="search" placeholder="Tìm kiếm..." aria-label="Search" style={{ width: '200px' }} />*/}
-            {/*                            <button className="btn btn-outline-success" type="submit">Search</button>*/}
-            {/*                        </form>*/}
-            {/*                    </li>*/}
-            {/*                </ul>*/}
-            {/*            </div>*/}
-            {/*        </div>*/}
-            {/*    </nav>*/}
             {/*</header>*/}
 
             <main style={{minHeight: '120vh'}} data-bs-spy="scroll"
@@ -233,7 +175,7 @@ function Cart({ match }) {
                                                 {/*<input type="checkbox" className="btn-check" id={spct.id}*/}
                                                 {/*       autoComplete="off" onChange={(e)=>chonSPCT(spct)}/>*/}
                                                 {/*<label className="btn btn-outline-primary" htmlFor={spct.id}>✔</label>*/}
-                                                <button className="btn btn-outline-danger" style={{width:40,marginTop:10}} onClick={()=>xoaDon(spct.id)}>X</button>
+                                                <button className="btn btn-outline-danger" style={{width:40,marginTop:10}} onClick={()=>xoaDon(spct.id,index)}>X</button>
                                             </div>
 
                                             <div className="col-4">
@@ -250,9 +192,9 @@ function Cart({ match }) {
                                                     <div style={{display: 'flex'}} className="col-6">
                                                         <span style={{color:"red"}}><strong style={{color:"black"}}>Giá : </strong> {formatCurrency(spct.sanPhamChiTietId.donGia)} </span></div>
                                                     <div style={{display: 'flex'}} className="col-6">
-                                                        <span><strong>Size</strong> : {spct.sanPhamChiTietId.kichThuoc.giaTri}</span></div>
+                                                        </div>
                                                     <div style={{display: 'flex'}} className="col-6">
-                                                        <span style={{color:"red"}}><strong style={{color:"black"}}>Đơn giá : </strong> {formatCurrency(spct.sanPhamChiTietId.donGia * spct.soLuong)} </span></div>
+                                                        <span><strong>Size</strong> : {spct.sanPhamChiTietId.kichThuoc.giaTri}</span></div>
                                                     <div style={{display: 'flex'}} className="col-6">
                                                         <span><strong>Màu</strong> : {spct.sanPhamChiTietId.mauSac.ten}</span></div>
                                                 </div>
@@ -279,7 +221,7 @@ function Cart({ match }) {
                                     <hr className="dashed-hr"/></div>
                                 )}
                             {/*<button className="btn btn-danger" style={{marginLeft: '0em', width: '25%'}} onClick={()=>xoaNhieu()}>Xóa ({listSPCTSelected.length})</button>*/}
-                            <button className="btn btn-primary" style={{marginLeft: '5px', width: '25%'}}>Tiếp tục mua
+                            <button className="btn btn-primary" style={{marginLeft: '5px', width: '25%'}} onClick={goToListSP}>Tiếp tục mua
                                 hàng
                             </button>
 
@@ -327,7 +269,7 @@ function Cart({ match }) {
 
                                 <div className={`col-12 mt-2 ${listSPCTSelected.length === 0 ? 'disabled' : ''}`}>
                                     <Link to={{
-                                        pathname: SPCT.length===0 ? `/your-cart/${match.params.id}` : `/check-out/${match.params.id}`,
+                                        pathname: SPCT.length===0 ? `/your-cart` : `/check-out`,
                                         state: { listSPCTSelected, SPCT },
                                     }}
                                        className={`btn btn-warning btn-lg`}
@@ -344,101 +286,6 @@ function Cart({ match }) {
             <br/>
             <br/>
             {/*<footer>*/}
-            {/*    <footer className="bg-gray py-5" style={{backgroundColor: 'rgba(0,0,0,0.03)'}}>*/}
-            {/*        <div className="container">*/}
-            {/*            <div className="row text-black g-4">*/}
-            {/*                <div className="col-md-6 col-lg-3">*/}
-            {/*                    <a className="text-uppercase text-decoration-none brand text-black"*/}
-            {/*                       style={{fontWeight: 'bold', fontSize: '26px'}}>404SHOES</a>*/}
-            {/*                    <p className="text-black text-muted mt-3"><strong>Giày thể thao chính*/}
-            {/*                        hãng </strong><br/>*/}
-            {/*                        Hoàn trả 100% nếu sản phẩm bị lỗi hoặc hỏng khi vận chuyển <br/>*/}
-            {/*                        Đội ngũ hỗ trợ khách hàng luôn luôn 24/7*/}
-            {/*                    </p>*/}
-            {/*                </div>*/}
-
-            {/*                <div className="col-md-6 col-lg-3">*/}
-            {/*                    <h5 className="fw-dark">Liên Kết</h5>*/}
-            {/*                    <ul className="list-unstyled">*/}
-            {/*                        <li className="my-3">*/}
-            {/*                            <a href="#" className="text-black text-decoration-none text-muted">*/}
-            {/*                                Home*/}
-            {/*                            </a>*/}
-            {/*                        </li>*/}
-            {/*                        <li className="my-3">*/}
-            {/*                            <a href="#" className="text-black text-decoration-none text-muted">*/}
-            {/*                                Bộ sưu tập*/}
-            {/*                            </a>*/}
-            {/*                        </li>*/}
-            {/*                        <li className="my-3">*/}
-            {/*                            <a href="#" className="text-black text-decoration-none text-muted">*/}
-            {/*                                Blogs*/}
-            {/*                            </a>*/}
-            {/*                        </li>*/}
-            {/*                        <li className="my-3">*/}
-            {/*                            <a href="#" className="text-black text-decoration-none text-muted">*/}
-            {/*                                Về chúng tôi*/}
-            {/*                            </a>*/}
-            {/*                        </li>*/}
-            {/*                    </ul>*/}
-            {/*                </div>*/}
-
-            {/*                <div className="col-md-6 col-lg-3">*/}
-            {/*                    <h5 className="fw-light mb-4">Liên Hệ</h5>*/}
-            {/*                    <div className="d-flex justify-content-start align-items-start my-2 text-muted">*/}
-            {/*                            <span className="me-0">*/}
-            {/*                                <i className="fas fa-map-marked-alt"></i>*/}
-            {/*                            </span>*/}
-            {/*                        <span className="fw-light">*/}
-            {/*                                Hoàng Quốc Việt - Cầu Giấy - Hà Nội*/}
-            {/*                            </span>*/}
-            {/*                    </div>*/}
-            {/*                    <div className="d-flex justify-content-start align-items-start my-2 text-muted">*/}
-            {/*                            <span className="me-0">*/}
-            {/*                                <i className="fas fa-envelope"></i>*/}
-            {/*                            </span>*/}
-            {/*                        <span className="fw-light">*/}
-            {/*                                404shopshoes@gmail.com*/}
-            {/*                            </span>*/}
-            {/*                    </div>*/}
-            {/*                    <div className="d-flex justify-content-start align-items-start my-2 text-muted">*/}
-            {/*                            <span className="me-0">*/}
-            {/*                                <i className="fas fa-phone-alt"></i>*/}
-            {/*                            </span>*/}
-            {/*                        <span className="fw-light">*/}
-            {/*                                +84 0819130199*/}
-            {/*                            </span>*/}
-            {/*                    </div>*/}
-            {/*                </div>*/}
-
-            {/*                <div className="col-md-6 col-lg-3">*/}
-            {/*                    <h5 className="fw-light mb-3">Theo Dõi</h5>*/}
-            {/*                    <div>*/}
-            {/*                        <ul className="list-unstyled d-flex flex-column">*/}
-            {/*                            <li>*/}
-            {/*                                <a href="#"*/}
-            {/*                                   className="text-black text-decoration-none text-muted fs-4 me-4">*/}
-            {/*                                    <i className="fab fa-facebook-f"> Facebook</i>*/}
-            {/*                                </a>*/}
-            {/*                            </li>*/}
-            {/*                            <li>*/}
-            {/*                                <a href="#"*/}
-            {/*                                   className="text-black text-decoration-none text-muted fs-4 me-4">*/}
-            {/*                                    <i className="fab fa-twitter"> Twitter</i>*/}
-            {/*                                </a>*/}
-            {/*                            </li>*/}
-            {/*                            <li>*/}
-            {/*                                <a href="#"*/}
-            {/*                                   className="text-black text-decoration-none text-muted fs-4 me-4">*/}
-            {/*                                    <i className="fab fa-instagram"> Instagram</i>*/}
-            {/*                                </a>*/}
-            {/*                            </li>*/}
-            {/*                        </ul>*/}
-            {/*                    </div>*/}
-            {/*                </div>*/}
-            {/*            </div>*/}
-            {/*        </div>*/}
-            {/*    </footer>*/}
             {/*</footer>*/}
             </body>
             )}

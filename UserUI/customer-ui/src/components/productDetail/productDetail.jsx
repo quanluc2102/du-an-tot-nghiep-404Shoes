@@ -3,9 +3,11 @@ import { useParams } from 'react-router-dom';
 import './style.css'
 import { Link } from "react-router-dom/cjs/react-router-dom";
 import {SanPhamService} from "../../service/SanPhamService";
+import axios from "axios";
 
 function ProductDetail({ match }) {
     const [sanPham, setSanPham] = useState();
+    const [user,setUser]=useState([]);
     const [listSPCT, setListSPCT] = useState([]);
     const [listSPAnh, setListSPAnh] = useState([]);
     const [listMauSac, setListMauSac] = useState([]);
@@ -13,6 +15,7 @@ function ProductDetail({ match }) {
     const [selectedMauSac, setSelectedMauSac] = useState(null);
     const [selectedKichThuoc, setSelectedKichThuoc] = useState(null);
     const [soLuong, setSoLuong] = useState(0);
+    const [selectedAnh, setSelectedAnh] = useState(0);
     const { id } = match.params;
     const fetchData = async () =>{
 
@@ -20,7 +23,11 @@ function ProductDetail({ match }) {
             const dataSanPham = await SanPhamService.getSPOne(id);
             const dataSPCT = await SanPhamService.getSPCT(id);
             const dataSPAnh = await SanPhamService.getSPAnh(id);
-
+            const storedDataUser = localStorage.getItem('currentUser');
+            const dataUser = storedDataUser ? JSON.parse(storedDataUser) : [];
+            if(storedDataUser){
+                setUser(dataUser)
+            }
             setSanPham(dataSanPham);
             setListSPAnh(dataSPAnh);
             setListSPCT(dataSPCT);
@@ -85,15 +92,47 @@ function ProductDetail({ match }) {
         let sanPham = {
             spct: filteredSPCT[0],
             soLuong: soLuong,
-            nguoiDung: ""
+            nguoiDung: user
         }
         console.log('nsx' + JSON.stringify(sanPham));
+        const gioHang = await SanPhamService.fakeGHGuest();
         try {
-            if(sanPham.soLuong===0){
+            if(sanPham.soLuong===0||!sanPham.soLuong===0){
                 alert("Không thể thêm vào giỏ hàng vì số lượng = 0 !")
             }else{
-                const response = await SanPhamService.addGioHang(sanPham);
-                alert('Sản phẩm đã được thêm vào giỏ hàng !');
+                if(user.length!=0){
+                    const response = await SanPhamService.addGioHang(sanPham);
+                    alert('Sản phẩm đã được thêm vào giỏ hàng !');
+                }else{
+                    const storedDataSPCT = localStorage.getItem("listSPCT");
+                    const dataSPCT = storedDataSPCT ? JSON.parse(storedDataSPCT) : [];
+                    const spct = {
+                        id:Math.floor(Math.random() * 100000) + 1,
+                        gioHangId:gioHang,
+                        sanPhamChiTietId: filteredSPCT[0],
+                        soLuong: soLuong
+                    }
+                    let total =0;
+                    dataSPCT.map(sp=>{
+                        if(sp.sanPhamChiTietId.id===spct.sanPhamChiTietId.id){
+                            total+=1;
+                        }
+                    })
+
+                    if(total===0){
+                        dataSPCT.push(spct);
+                    }else {
+                        dataSPCT.map(sp=>{
+                            if(sp.sanPhamChiTietId.id===spct.sanPhamChiTietId.id){
+                                sp.soLuong+=spct.soLuong;
+                            }
+                        })
+                    }
+
+                    console.log(total)
+                    localStorage.setItem("listSPCT", JSON.stringify(dataSPCT));
+                    alert("Thêm vào giỏ hàng thành công !")
+                }
             }
         } catch (error) {
             console.error('Error adding to cart:', error);
@@ -101,12 +140,14 @@ function ProductDetail({ match }) {
     };
     const handleMauSacClick = (ms) => {
         setSelectedMauSac(ms === selectedMauSac ? null : ms);
+        setSoLuong(0)
         console.log(selectedMauSac)
         console.log(String(selectedMauSac) === String(ms))
     };
 
     const handleKichThuocClick = (kt) => {
         setSelectedKichThuoc(kt === String(selectedKichThuoc) ? null : kt);
+        setSoLuong(0)
         console.log(selectedKichThuoc)
         console.log(filteredSPCT)
     };
@@ -133,77 +174,6 @@ function ProductDetail({ match }) {
             {sanPham && (
                 <body>
                 {/*<header>*/}
-                {/*    <nav className="navbar navbar-light bg-light">*/}
-                {/*        <div className="container-fluid justify-content-end">*/}
-                {/*            <Link to='/login' style={{textDecoration: 'none'}}><a className="navbar-brand" href="#"*/}
-                {/*                                                                  style={{fontSize: '13px'}}> <i*/}
-                {/*                className='bx bxs-user'></i> Đăng nhập</a></Link>*/}
-                {/*            <Link to='/your-cart/2' style={{textDecoration: 'none'}}><a className="navbar-brand" href="#"*/}
-                {/*                                                                     style={{fontSize: '13px'}}> <i*/}
-                {/*                className='bx bxs-cart'></i>Giỏ hàng {'(0)'}</a></Link>*/}
-                {/*        </div>*/}
-                {/*    </nav>*/}
-
-                {/*    <nav className="navbar navbar-expand-lg navbar-light bg-0 py-1" id="navbarhead"*/}
-                {/*         style={{backgroundColor: 'rgb(255, 255, 255)'}}>*/}
-                {/*        <div className="container">*/}
-                {/*            <div className="d-flex justify-content-between align-items-left w-100"*/}
-                {/*                 style={{marginRight: '10px'}}>*/}
-                {/*                <Link to='/' style={{textDecoration: 'none'}}> <a*/}
-                {/*                    className="navbar-brand d-flex align-items-center">*/}
-                {/*                    <img style={{width: '90px'}}*/}
-                {/*                         src="https://t3.ftcdn.net/jpg/00/71/53/56/360_F_71535683_03OP8nG0N3YRVDTasetbEfT2BpucFmo5.jpg"*/}
-                {/*                         alt="site icon"/>*/}
-                {/*                    <a className="text-uppercase text-decoration-none brand text-black"*/}
-                {/*                       style={{fontWeight: 'bold', fontSize: '26px'}}>404SHOES</a>*/}
-                {/*                </a>*/}
-                {/*                </Link>*/}
-                {/*            </div>*/}
-
-                {/*            <div className="collapse navbar-collapse justify-content-center" id="navMenu">*/}
-                {/*                <ul className="navbar-nav mx-auto text-center">*/}
-                {/*                    <li className="nav-item px-1 py-1">*/}
-
-                {/*                        <Link to='/' style={{ textDecoration: 'none', fontWeight: 'bold', fontSize: '1.1em' }}>*/}
-                {/*                            <a className="nav-link text-uppercase">TRANG CHỦ</a>*/}
-                {/*                        </Link>*/}
-
-                {/*                    </li>*/}
-                {/*                    <li className="nav-item px-1 py-1">*/}
-                {/*                        <Link to='/product-list' style={{ textDecoration: 'none', fontWeight: 'bold', fontSize: '1.1em' }}>*/}
-                {/*                            <a className="nav-link text-uppercase">SẢN PHẨM</a>*/}
-                {/*                        </Link>*/}
-                {/*                    </li>*/}
-                {/*                    <li className="nav-item px-1 py-1">*/}
-                {/*                        <Link to='/product-list' style={{ textDecoration: 'none', fontWeight: 'bold', fontSize: '1.1em' }}>*/}
-                {/*                            <a className="nav-link text-uppercase">BÀI VIẾT</a>*/}
-                {/*                        </Link>*/}
-                {/*                    </li>*/}
-                {/*                    <li className="nav-item px-1 py-1">*/}
-                {/*                        <Link to='/product-list' style={{ textDecoration: 'none', fontWeight: 'bold', fontSize: '1.1em' }}>*/}
-                {/*                            <a className="nav-link text-uppercase">LIÊN HỆ</a>*/}
-                {/*                        </Link>*/}
-                {/*                    </li>*/}
-                {/*                    <li className="nav-item px-1 py-1">*/}
-                {/*                        <Link to='/product-list' style={{ textDecoration: 'none', fontWeight: 'bold', fontSize: '1.1em' }}>*/}
-                {/*                            <a className="nav-link text-uppercase">TRA CỨU ĐƠN HÀNG</a>*/}
-                {/*                        </Link>*/}
-                {/*                    </li>*/}
-                {/*                    <li className="nav-item px-1 py-1">*/}
-                {/*                        <Link to='/product-list' style={{ textDecoration: 'none', fontWeight: 'bold', fontSize: '1.1em' }}>*/}
-                {/*                            <a className="nav-link text-uppercase">VỀ CHÚNG TÔI</a>*/}
-                {/*                        </Link>*/}
-                {/*                    </li>*/}
-                {/*                    <li className="nav-item px-1 py-1" style={{ marginLeft: '65px' }}>*/}
-                {/*                        <form className="d-flex">*/}
-                {/*                            <input className="form-control me-2" type="search" placeholder="Tìm kiếm..." aria-label="Search" style={{ width: '200px' }} />*/}
-                {/*                            <button className="btn btn-outline-success" type="submit">Search</button>*/}
-                {/*                        </form>*/}
-                {/*                    </li>*/}
-                {/*                </ul>*/}
-                {/*            </div>*/}
-                {/*        </div>*/}
-                {/*    </nav>*/}
                 {/*</header>*/}
 
                 <main style={{minHeight: '100vh'}} data-bs-spy="scroll"
@@ -214,7 +184,7 @@ function ProductDetail({ match }) {
 
                                 <div className="mb-3">
                                     <img
-                                        src="https://assets.adidas.com/images/h_840,f_auto,q_auto,fl_lossy,c_fill,g_auto/ae1b69a78a2b452b96e5af9c00a31a34_9366/Ultra_4DFWD_Running_Shoes_Pink_GV9063_02_standard_hover.jpg"
+                                        src={'/img/'+listSPAnh[selectedAnh].anh}
                                         className="anh-to w-100" id="product-image" alt=""/>
 
                                 </div>
@@ -232,38 +202,6 @@ function ProductDetail({ match }) {
 
                                                     </div>
                                                 ))}
-                                                {/*<div className="col-3">*/}
-                                                {/*    <img*/}
-                                                {/*        src="https://assets.adidas.com/images/h_840,f_auto,q_auto,fl_lossy,c_fill,g_auto/ae1b69a78a2b452b96e5af9c00a31a34_9366/Ultra_4DFWD_Running_Shoes_Pink_GV9063_02_standard_hover.jpg"*/}
-                                                {/*        height="140px"*/}
-                                                {/*        onClick="changeProductImage('/imgs/shoe-banner (2).jpg')"*/}
-                                                {/*        alt="First slide"/>*/}
-
-                                                {/*</div>*/}
-                                                {/*<div className="col-3">*/}
-                                                {/*    <img*/}
-                                                {/*        src="https://assets.adidas.com/images/h_840,f_auto,q_auto,fl_lossy,c_fill,g_auto/aeb405a727294b148ee7af9c00a32c92_9366/Ultra_4DFWD_Running_Shoes_Pink_GV9063_04_standard.jpg"*/}
-                                                {/*        height="140px"*/}
-                                                {/*        onClick="changeProductImage('/imgs/shoe-banner (5).jpg')"*/}
-                                                {/*        alt="First slide"/>*/}
-
-                                                {/*</div>*/}
-                                                {/*<div className="col-3">*/}
-                                                {/*    <img*/}
-                                                {/*        src="https://assets.adidas.com/images/h_840,f_auto,q_auto,fl_lossy,c_fill,g_auto/2137b3245f1641198a34af9c00a322a1_9366/Ultra_4DFWD_Running_Shoes_Pink_GV9063_03_standard.jpg"*/}
-                                                {/*        height="140px"*/}
-                                                {/*        onClick="changeProductImage('/imgs/shoe-banner (4).jpg')"*/}
-                                                {/*        alt="First slide"/>*/}
-
-                                                {/*</div>*/}
-                                                {/*<div className="col-3">*/}
-                                                {/*    <img*/}
-                                                {/*        src="https://assets.adidas.com/images/h_840,f_auto,q_auto,fl_lossy,c_fill,g_auto/26848b484b1d49e78be5af9c00a3050a_9366/Ultra_4DFWD_Running_Shoes_Pink_GV9063_01_standard.jpg"*/}
-                                                {/*        height="140px"*/}
-                                                {/*        onClick="changeProductImage('/imgs/shoe-banner (6).jpg')"*/}
-                                                {/*        alt="First slide"/>*/}
-
-                                                {/*</div>*/}
                                             </div>
                                         </div>
 
@@ -276,32 +214,6 @@ function ProductDetail({ match }) {
                                                 {/*        height="140px"*/}
                                                 {/*        onClick="changeProductImage('/imgs/shoe-banner (2).jpg')"*/}
                                                 {/*        alt="First slide"/>*/}
-
-                                                {/*</div>*/}
-                                                {/*<div className="col-3">*/}
-                                                {/*    <img*/}
-                                                {/*        src="https://assets.adidas.com/images/h_840,f_auto,q_auto,fl_lossy,c_fill,g_auto/80d366ab86384d81a96baf9c00a33f9a_9366/Ultra_4DFWD_Running_Shoes_Pink_GV9063_41_detail.jpg"*/}
-                                                {/*        height="140px"*/}
-                                                {/*        onClick="changeProductImage('/imgs/shoe-banner (5).jpg')"*/}
-                                                {/*        alt="First slide"/>*/}
-
-                                                {/*</div>*/}
-                                                {/*<div className="col-3">*/}
-                                                {/*    <img*/}
-                                                {/*        src="https://assets.adidas.com/images/h_840,f_auto,q_auto,fl_lossy,c_fill,g_auto/9b11dd3c8c0948cdad66af9c00a35a95_9366/Ultra_4DFWD_Running_Shoes_Pink_GV9063_09_standard.jpg"*/}
-                                                {/*        height="140px"*/}
-                                                {/*        onClick="changeProductImage('/imgs/shoe-banner (4).jpg')"*/}
-                                                {/*        alt="First slide"/>*/}
-
-                                                {/*</div>*/}
-                                                {/*<div className="col-3">*/}
-                                                {/*    <img*/}
-                                                {/*        src="https://assets.adidas.com/images/h_840,f_auto,q_auto,fl_lossy,c_fill,g_auto/ee4cdcd2bcb54260afceaf9c00a349c5_9366/Ultra_4DFWD_Running_Shoes_Pink_GV9063_42_detail.jpg"*/}
-                                                {/*        height="140px"*/}
-                                                {/*        onClick="changeProductImage('/imgs/shoe-banner (6).jpg')"*/}
-                                                {/*        alt="First slide"/>*/}
-
-                                                {/*</div>*/}
 
                                             </div>
                                         </div>
@@ -423,7 +335,7 @@ function ProductDetail({ match }) {
                                                    value={soLuong}
                                                     onChange={(e)=>changeSoLuong(e)}/>
                                             <label htmlFor="formId1" className="font-monospace"><strong>Số Lượng
-                                                : {filteredSPCT.length===1 ? filteredSPCT[0].soLuong : "" }</strong></label>
+                                                : {filteredSPCT.length===1 ? filteredSPCT[0].soLuong : "0" }</strong></label>
                                         </div>
                                     </div>
                                 </div>
@@ -558,100 +470,6 @@ function ProductDetail({ match }) {
 
 
                 {/*<footer>*/}
-                {/*    <footer className="bg-gray py-5" style={{backgroundColor: 'rgba(0,0,0,0.03)'}}>*/}
-                {/*        <div className="container">*/}
-                {/*            <div className="row text-black g-4">*/}
-                {/*                <div className="col-md-6 col-lg-3">*/}
-                {/*                    <a className="text-uppercase text-decoration-none brand text-black"*/}
-                {/*                       style={{fontWeight: 'bold', fontSize: '26px'}}>404SHOES</a>*/}
-                {/*                    <p className="text-black text-muted mt-3"><strong>Giày thể thao chính hãng </strong><br/>*/}
-                {/*                        Hoàn trả 100% nếu sản phẩm bị lỗi hoặc hỏng khi vận chuyển <br/>*/}
-                {/*                        Đội ngũ hỗ trợ khách hàng luôn luôn 24/7*/}
-                {/*                    </p>*/}
-                {/*                </div>*/}
-
-                {/*                <div className="col-md-6 col-lg-3">*/}
-                {/*                    <h5 className="fw-dark">Liên Kết</h5>*/}
-                {/*                    <ul className="list-unstyled">*/}
-                {/*                        <li className="my-3">*/}
-                {/*                            <a href="#" className="text-black text-decoration-none text-muted">*/}
-                {/*                                Home*/}
-                {/*                            </a>*/}
-                {/*                        </li>*/}
-                {/*                        <li className="my-3">*/}
-                {/*                            <a href="#" className="text-black text-decoration-none text-muted">*/}
-                {/*                                Bộ sưu tập*/}
-                {/*                            </a>*/}
-                {/*                        </li>*/}
-                {/*                        <li className="my-3">*/}
-                {/*                            <a href="#" className="text-black text-decoration-none text-muted">*/}
-                {/*                                Blogs*/}
-                {/*                            </a>*/}
-                {/*                        </li>*/}
-                {/*                        <li className="my-3">*/}
-                {/*                            <a href="#" className="text-black text-decoration-none text-muted">*/}
-                {/*                                Về chúng tôi*/}
-                {/*                            </a>*/}
-                {/*                        </li>*/}
-                {/*                    </ul>*/}
-                {/*                </div>*/}
-
-                {/*                <div className="col-md-6 col-lg-3">*/}
-                {/*                    <h5 className="fw-light mb-4">Liên Hệ</h5>*/}
-                {/*                    <div className="d-flex justify-content-start align-items-start my-2 text-muted">*/}
-                {/*                        <span className="me-0">*/}
-                {/*                            <i className="fas fa-map-marked-alt"></i>*/}
-                {/*                        </span>*/}
-                {/*                        <span className="fw-light">*/}
-                {/*                            Hoàng Quốc Việt - Cầu Giấy - Hà Nội*/}
-                {/*                        </span>*/}
-                {/*                    </div>*/}
-                {/*                    <div className="d-flex justify-content-start align-items-start my-2 text-muted">*/}
-                {/*                        <span className="me-0">*/}
-                {/*                            <i className="fas fa-envelope"></i>*/}
-                {/*                        </span>*/}
-                {/*                        <span className="fw-light">*/}
-                {/*                            404shopshoes@gmail.com*/}
-                {/*                        </span>*/}
-                {/*                    </div>*/}
-                {/*                    <div className="d-flex justify-content-start align-items-start my-2 text-muted">*/}
-                {/*                        <span className="me-0">*/}
-                {/*                            <i className="fas fa-phone-alt"></i>*/}
-                {/*                        </span>*/}
-                {/*                        <span className="fw-light">*/}
-                {/*                            +84 0819130199*/}
-                {/*                        </span>*/}
-                {/*                    </div>*/}
-                {/*                </div>*/}
-
-                {/*                <div className="col-md-6 col-lg-3">*/}
-                {/*                    <h5 className="fw-light mb-3">Theo Dõi</h5>*/}
-                {/*                    <div>*/}
-                {/*                        <ul className="list-unstyled d-flex flex-column">*/}
-                {/*                            <li>*/}
-                {/*                                <a href="#"*/}
-                {/*                                   className="text-black text-decoration-none text-muted fs-4 me-4">*/}
-                {/*                                    <i className="fab fa-facebook-f"> Facebook</i>*/}
-                {/*                                </a>*/}
-                {/*                            </li>*/}
-                {/*                            <li>*/}
-                {/*                                <a href="#"*/}
-                {/*                                   className="text-black text-decoration-none text-muted fs-4 me-4">*/}
-                {/*                                    <i className="fab fa-twitter"> Twitter</i>*/}
-                {/*                                </a>*/}
-                {/*                            </li>*/}
-                {/*                            <li>*/}
-                {/*                                <a href="#"*/}
-                {/*                                   className="text-black text-decoration-none text-muted fs-4 me-4">*/}
-                {/*                                    <i className="fab fa-instagram"> Instagram</i>*/}
-                {/*                                </a>*/}
-                {/*                            </li>*/}
-                {/*                        </ul>*/}
-                {/*                    </div>*/}
-                {/*                </div>*/}
-                {/*            </div>*/}
-                {/*        </div>*/}
-                {/*    </footer>*/}
                 {/*</footer>*/}
 
                 <a href="#" className="back-to-top d-flex align-items-center justify-content-center"><i

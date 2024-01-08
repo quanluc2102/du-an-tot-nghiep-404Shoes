@@ -1,5 +1,6 @@
 package com.example.datn404shoes.controller;
 
+import com.example.datn404shoes.entity.GioHang;
 import com.example.datn404shoes.entity.GioHangChiTiet;
 import com.example.datn404shoes.repository.GioHangChiTietRepository;
 import com.example.datn404shoes.repository.GioHangRepository;
@@ -15,11 +16,18 @@ import java.util.List;
 public class GioHangChiTietController {
     @Autowired
     GioHangChiTietRepository gioHangChiTietRepository;
+    @Autowired
+    GioHangRepository gioHangRepository;
     private final GioHangChiTietService gioHangChiTietService;
 
     @Autowired
     public GioHangChiTietController(GioHangChiTietService gioHangChiTietService){
         this.gioHangChiTietService = gioHangChiTietService;
+    }
+
+    @GetMapping("/get-gio-hang")
+    public ResponseEntity<?> getGioHang(){
+        return ResponseEntity.ok(gioHangRepository.findById(0L).orElse(new GioHang()));
     }
 
     @GetMapping("/danh-sach")

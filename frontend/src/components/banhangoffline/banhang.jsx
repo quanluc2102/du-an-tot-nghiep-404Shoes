@@ -7,29 +7,26 @@ import ReactPaginate from 'react-paginate';
 import _ from 'lodash';
 import {
     Col,
-    Table,
     Tabs,
     Input,
     Select,
-    Space,
-    Row,
-    InputNumber,
     Flex,
     Switch,
     Button
 } from "antd";
 import { ProfileOutlined, DeleteOutlined } from "@ant-design/icons/lib/icons";
 import BanHangService from "../../services/banhangservice/BanHangService";
-import QrScanner from 'react-qr-scanner';
 import { Modal } from 'react-bootstrap';
-
-const { Search } = Input;
+let renderHDCT;
 class BanHangOffline extends Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            chooseUser: false,
+            ten: '',
+            sdt: '',
+            kieuHoaDon: '',
+            sanPhamChiTietList: [],
             idKhachHang: '',
             searchTerm: '',
             searchTermKH: '',
@@ -38,35 +35,20 @@ class BanHangOffline extends Component {
             khuyenMai: [],
             selectedProducts: [],
             sanPhamChiTiet: [],
-            activeTabKey: 'tabKey1',
-            tabList: [
-                {
-                    tab: 'Đơn hàng 1',
-                    key: 'tabKey1',
-                },
-            ],
+            activeTabKey: '',
+            tabList: [],
             diaChi: [],
             enteredAmount: 0,
             selectedRowKeys: [],
-            loading: false,
-            sanPhamChiTietList: [],
-            isQRReaderOn: false,
             showModal: false,
             showModal1: false,
             showModal2: false,
             showModal3: false,
-            currentPage: 0, 
+            currentPage: 0,
             perPage: 4,
             currentPageKH: 0,
             perPageKH: 4,
-            result: 'No QR code scanned yet',
-            tabProducts: {
-                tabKey1: [],
-                tabKey2: [],
-                tabKey3: [],
-                tabKey4: [],
-                tabKey5: [],
-            },
+            tabProducts: [],
             tabCustomers: {
                 tabKey1: [],
                 tabKey2: [],
@@ -75,10 +57,6 @@ class BanHangOffline extends Component {
                 tabKey5: [],
             },
             checked: false,
-            inputValue: '',
-            customerDetail: [],
-            name: '',
-            phone: '',
             tinhThanhPho: '',
             quanHuyen: '',
             xaPhuongThiTran: '',
@@ -86,12 +64,7 @@ class BanHangOffline extends Component {
             cities: [],
             districts: [],
             wards: [],
-            diaChi: [],
             currentSanPhamChiTietList: [],
-            addressUser: [],
-            commune: [],
-            ward: [],
-            town: [],
         };
         this.onChangeSearchInput = this.onChangeSearchInput.bind(this);
         this.nextTabIndex = 0
@@ -103,27 +76,31 @@ class BanHangOffline extends Component {
     }
 
     componentDidMount() {
-        const { tabProducts, activeTabKey, tabCustomers } = this.state;
-        const selectedProducts = tabProducts[activeTabKey] || [];
+        // const { tabProducts, activeTabKey } = this.state;
 
-        console.log(this.getTotalAmount(selectedProducts))
         BanHangService.getSPCT().then((res) => {
             this.setState({ sanPhamChiTiet: res.data })
         }).catch((error) => {
             console.error("Error fetching data:", error);
         });
-        BanHangService.getKMTT(100000000000).then((res) => {
+
+        BanHangService.getKMTT(parseInt("1000000000")).then((res) => {
             this.setState({ khuyenMai: res.data })
         }).catch((error) => {
             console.error("Error fetching data:", error);
         });
+
         BanHangService.getKhachHang().then((res) => {
             this.setState({ taiKhoan: res.data })
         }).catch((error) => {
             console.error("Error fetching data:", error);
         });
-        this.fetchCities()
+
+        this.fetchCities();
+
+        this.fetchHoaDonChoDauTien();
     }
+
 
     componentDidUpdate(prevProps, prevState) {
         if (this.state.tinhThanhPho !== prevState.tinhThanhPho) {
@@ -138,10 +115,14 @@ class BanHangOffline extends Component {
         if (this.state.quanHuyen !== prevState.quanHuyen) {
             const { districts, quanHuyen } = this.state;
             const selectedDistrict = districts.find(district => district.name === quanHuyen);
-    
+
             if (selectedDistrict) {
                 this.fetchWards(selectedDistrict);
             }
+        }
+
+        if (this.state.activeTabKey !== prevState.activeTabKey) {
+            this.fetchHDCT(this.state.activeTabKey);
         }
     }
 
@@ -153,24 +134,29 @@ class BanHangOffline extends Component {
         window.location.href = '/addKhachHang';
 
     }
+
     handleSearch = (event) => {
         const searchTerm = event.target.value;
         this.setState({ searchTerm });
 
         localStorage.setItem('searchTerm', searchTerm);
     }
+
     handleSearchKH = (event) => {
         const searchTermKH = event.target.value;
         this.setState({ searchTermKH });
 
         localStorage.setItem('searchTermKH', searchTermKH);
     }
+
     handleStatusFilter = (filterValue) => {
         this.setState({ searchTerm: filterValue });
     }
+
     formAdd() {
         window.location.href = (`/sanpham/formadd`);
     }
+
     filteredData = () => {
         const { sanPhamChiTiet, searchTerm } = this.state;
 
@@ -183,14 +169,19 @@ class BanHangOffline extends Component {
 
             switch (searchTerm) {
                 case "0":
-                    return item.trangThai == 0;
+                    return item.trangThai === 0;
                 case "1":
-                    return item.trangThai == 1;
+                    return item.trangThai === 1;
                 default:
                     return searchValues.includes(searchTerm.toLowerCase());
             }
         });
     }
+
+    formatCurrency = (amount) => {
+        return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
+    };
+
     filteredDataKH = () => {
         const { taiKhoan, searchTermKH } = this.state;
 
@@ -201,14 +192,15 @@ class BanHangOffline extends Component {
 
             switch (searchTermKH) {
                 case "0":
-                    return item.trangThai == 0;
+                    return item.trangThai === 0;
                 case "1":
-                    return item.trangThai == 1;
+                    return item.trangThai === 1;
                 default:
                     return searchValues.includes(searchTermKH.toLowerCase());
             }
         });
     }
+
     reloadKM = () => {
         const { tabProducts, activeTabKey } = this.state;
         const selectedProducts = tabProducts[activeTabKey] || [];
@@ -219,40 +211,33 @@ class BanHangOffline extends Component {
         });
     }
 
-    fetchCities() {
-        axios.get('https://provinces.open-api.vn/api/?depth=1')
-            .then((response) => {
-                this.setState({ cities: response.data });
-            })
-            .catch((error) => {
-                console.error('Error fetching cities:', error);
-            });
+    async fetchCities() {
+        try {
+            const response = await axios.get('https://provinces.open-api.vn/api/?depth=1');
+            this.setState({ cities: response.data });
+        } catch (error) {
+            console.error('Error fetching cities:', error);
+        }
     }
 
-    fetchDistricts(selectedCity) {
-        console.log('first city selected:', selectedCity)
-        axios.get(`https://provinces.open-api.vn/api/p/${selectedCity.code}?depth=2`)
-            .then((response) => {
-                const districtsData = response.data.districts;
-                this.setState({ districts: districtsData });
-            })
-            .catch((error) => {
-                console.error('Error fetching districts:', error);
-            });
+    async fetchDistricts(selectedCity) {
+        try {
+            const response = await axios.get(`https://provinces.open-api.vn/api/p/${selectedCity.code}?depth=2`);
+            const districtsData = response.data.districts;
+            this.setState({ districts: districtsData });
+        } catch (error) {
+            console.error('Error fetching districts:', error);
+        }
     }
 
-    fetchWards(selectedDistrict) {
-        axios.get(`https://provinces.open-api.vn/api/d/${selectedDistrict.code}?depth=2`)
-            .then((response) => {
-                const wardsData = response.data.wards;
-                this.setState({ wards: wardsData }, () => {
-                    console.log('Wards:', response.data.wards)
-                });
-
-            })
-            .catch((error) => {
-                console.error('Error fetching wards:', error);
-            });
+    async fetchWards(selectedDistrict) {
+        try {
+            const response = await axios.get(`https://provinces.open-api.vn/api/d/${selectedDistrict.code}?depth=2`);
+            const wardsData = response.data.wards;
+            this.setState({ wards: wardsData });
+        } catch (error) {
+            console.error('Error fetching wards:', error);
+        }
     }
 
     handleCityChange(event) {
@@ -271,7 +256,6 @@ class BanHangOffline extends Component {
     handleDistrictChange(event) {
         const selectedDistrictName = event.target.value;
         const selectedDistrict = this.state.districts.find(district => district.name === selectedDistrictName);
-        console.log('llllllllllllllllllllllllllllllllllllllllllllll', selectedDistrictName)
 
         this.setState({
             quanHuyen: selectedDistrictName,
@@ -282,19 +266,37 @@ class BanHangOffline extends Component {
         }
     }
 
+    handleTenChange = (event) => {
+        this.setState({ ten: event.target.value });
+    };
+
+    handleSdtChange = (event) => {
+        this.setState({ sdt: event.target.value });
+    };
+
     handleWardChange(event) {
         const selectedWardName = event.target.value;
         this.setState({ xaPhuongThiTran: selectedWardName });
     }
 
-    handleAddress = (diaChiCuThe, xaPhuongThiTran, quanHuyen, tinhThanhPho) => {
+    handleAddress = async (diaChiCuThe, xaPhuongThiTran, quanHuyen, tinhThanhPho) => {
         this.setState({
             diaChiCuThe,
-            xaPhuongThiTran,
-            quanHuyen,
             tinhThanhPho
+        }, () => {
+            console.log('XaPhuongThiTran after setState:', this.state.xaPhuongThiTran);
+            console.log('quanHuyen after setState:', this.state.quanHuyen);
         });
+
+        this.setState({
+            quanHuyen,
+        });
+
+        this.setState({
+            xaPhuongThiTran,
+        })
     };
+
     handleCloseModal = () => {
         this.setState({ showModal: false });
     };
@@ -319,76 +321,42 @@ class BanHangOffline extends Component {
     handleShowModal3 = () => {
         this.setState({ showModal3: true });
     };
-    handleError = (err) => {
-        console.error(err);
-    };
-    toggleQRReader = () => {
-        this.setState((prevState) => ({
-            isQRReaderOn: !prevState.isQRReaderOn,
-            isQRCodeScanned: false,
-            result: 'No QR code scanned yet',
-        }));
-    };
+
     handleSearchFocus = () => {
         this.setState({ currentPage: 0 });
     }
+
     handleSearchFocusKH = () => {
         this.setState({ currentPageKH: 0 });
     }
-    handleScan = (data) => {
-        const { isQRCodeScanned, selectedProducts, tabProducts } = this.state;
 
-        if (data && data.text && typeof data.text === 'string' && !isQRCodeScanned) {
-            this.setState({ isQRCodeScanned: true });
-
-            const slicedMaQR = data.text.slice(5);
-            const existingProduct = selectedProducts.find((product) => product.ma === slicedMaQR);
-            if (!existingProduct) {
-                const productToAdd = selectedProducts.find((product) => product.ma === slicedMaQR);
-
-                if (productToAdd) {
-                    const updatedSelectedProducts = [...selectedProducts, { ...productToAdd, quantity: 1 }];
-                    this.setState({ selectedProducts: updatedSelectedProducts });
-                    const currentTabKey = this.state.tabKey; 
-                    const updatedTabProducts = { ...tabProducts };
-                    updatedTabProducts[currentTabKey] = [...updatedTabProducts[currentTabKey], { ...productToAdd, quantity: 1 }];
-
-                    this.setState({ tabProducts: updatedTabProducts });
-                } else {
-                    console.error("Product not found with ma:", slicedMaQR);
-                }
-            }
-
-            setTimeout(() => {
-                this.setState({ isQRCodeScanned: false });
-            }, 1000);
-        }
-    };
     handlePageClickKH = (data) => {
         this.setState({ currentPageKH: data.selected });
     }
+
     handlePageClick = (data) => {
         this.setState({ currentPage: data.selected });
     }
+
     getCurrentPageData = () => {
         const { sanPhamChiTiet, currentPage, perPage } = this.state;
         const offset = currentPage * perPage;
         return sanPhamChiTiet.slice(offset, offset + perPage);
     }
+
     add = async (e) => {
         e.preventDefault();
 
         const { tabProducts, activeTabKey, selectedPromotions } = this.state;
         const selectedProducts = tabProducts[activeTabKey] || [];
         const firstSelectedPromotion = selectedPromotions.length > 0 ? selectedPromotions[0] : null;
+        // const activeTabProducts = tabProducts[activeTabKey] || [];
 
-
-        const confirm = window.confirm('Bạn xác nhận muốn thanh toán hóa đơn này chứ?');
-        if (!confirm) {
-            return;
-        }
-
-        const ngayTao = new Date().toISOString();
+        // if (this.state.enteredAmount !== null && this.state.enteredAmount > 0 && this.state.enteredAmount - this.getTotalAmount(activeTabProducts) >= 0) {
+        // const confirm = window.confirm('Bạn xác nhận muốn thanh toán hóa đơn này chứ?');
+        // if (!confirm) {
+        //     return;
+        // }
 
         const thanhToan = {
 
@@ -408,6 +376,14 @@ class BanHangOffline extends Component {
             tinhThanhPho: this.state.tinhThanhPho,
 
             diaChiCuThe: this.state.diaChiCuThe,
+
+            kieuHoaDon: this.state.kieuHoaDon,
+
+            // giaGiam: this.getTotalAmountWithoutPromotions(activeTabProducts) - this.getTotalAmount(activeTabProducts),
+
+            sdt: document.getElementById("sdt").value,
+
+            ten: document.getElementById("ten").value,
         };
 
         try {
@@ -422,12 +398,12 @@ class BanHangOffline extends Component {
             }
         } catch (error) {
             if (error.response && error.response.status === 400) {
-                toast.error('Lỗi dữ liệu không hợp lệ, vui lòng kiểm tra lại.');
+                toast.error('Thanh toán không thành công, vui lòng kiểm tra lại!!!.');
                 console.log(thanhToan);
             } else {
                 console.error('Error', error);
                 console.log(thanhToan);
-                toast.error('Có lỗi khi thanh toán, vui lòng thử lại!!!!');
+                toast.error('Thanh toán không thành công, vui lòng kiểm tra lại!!!');
             }
         }
     };
@@ -460,95 +436,68 @@ class BanHangOffline extends Component {
         return totalAmount;
     };
 
-    handlePayment = () => {
-        this.closeCurrentTab();
-    }
-
-    closeCurrentTab = () => {
-        const { tabList } = this.state;
-        const activeTabKey = tabList.find(tab => tab.active)?.key;
-        if (activeTabKey) {
-            this.onEdit(activeTabKey, 'remove');
-        }
-    }
-
-    addToCurrentTab = (product, tabKey) => {
-        const { tabList } = this.state;
-        console.log(product, tabKey)
-
-        const updatedTabList = tabList.map(tab => {
-            if (tab.key === tabKey) {
-                const updatedProducts = tab.products ? [...tab.products, product] : [product];
-                return {
-                    ...tab,
-                    products: updatedProducts
-                };
-            }
-            return tab;
-        });
-
-        this.setState({ tabList: updatedTabList });
-        console.log(tabList)
+    getTotalAmountWithoutPromotions = (products) => {
+        return products.reduce((total, product) => total + product.donGia * product.quantity, 0);
     };
 
-    handleTabChange = (activeKey) => {
-        this.setState({ activeTabKey: activeKey })
-    }
+    handleTabChange = (idHoaDon) => {
+        this.setState({ activeTabKey: idHoaDon }, () => {
+        })
+    };
 
-    handleProductClick = (productId, tabKey) => {
-        const { tabProducts, currentSanPhamChiTietList } = this.state;
-        const products = tabProducts[tabKey] || [];
-        const selectedProduct = products.find(item => item.id === productId.id);
+    handleProductClick = async (productId, idHoaDon) => {
 
-        if (selectedProduct) {
-            const updatedProducts = products.map(item =>
-                item.id === productId.id ? { ...item, quantity: item.quantity + 1 } : item
-            );
-
-            const updatedSanPhamChiTietList = currentSanPhamChiTietList.map(item =>
-                item.id === productId.id ? { ...item, soLuong: item.soLuong - 1 } : item,
-
-            );
-
-
-            this.setState(prevState => ({
-                tabProducts: {
-                    ...prevState.tabProducts,
-                    [tabKey]: updatedProducts,
-                },
-                currentSanPhamChiTietList: updatedSanPhamChiTietList,
-            }));
-            console.log("Updated quantity:", updatedSanPhamChiTietList.find(item => item.id === productId.id)?.soLuong);
-            toast.success("Đã thêm vào giỏ", { position: toast.POSITION.MID_RIGHT });
-            this.handleCloseModal1();
+        if (idHoaDon === null || idHoaDon === undefined) {
+            toast.warning("Hãy chọn hóa đơn để thêm sản phẩm vào!!!");
         } else {
-            const newSelectedProduct = { ...productId, quantity: 1 };
-            const updatedProducts = [...products, newSelectedProduct];
-            this.setState(prevState => ({
-                tabProducts: {
-                    ...prevState.tabProducts,
-                    [tabKey]: updatedProducts,
-                },
-            }));
 
-            toast.success("Đã thêm vào giỏ", { position: toast.POSITION.MID_RIGHT });
-            this.handleCloseModal1();
+            const UpdateHoaDonChiTietDTO = {
+                sanPhamChiTiet: productId
+            }
+            if (idHoaDon === null || idHoaDon === undefined) {
+                toast.warning("Hãy chọn hóa đơn để thêm sản phẩm vào!!!");
+            } else {
+                try {
+                    const response = await axios.post(`http://localhost:8080/ban_hang/update_hdct/${idHoaDon}`, UpdateHoaDonChiTietDTO);
+                    this.setState({ tabProducts: response.data }, () => {
+                        console.log('Thêm sản phẩm thành công!!!', response.data);
+                        if (response.status === 200) {
+                            this.fetchDanhSachSP();
+                            toast.success('Đã thêm sản phẩm vào giỏ hàng!!!');
+                        }
+
+                        this.handleCloseModal1();
+                    });
+                } catch (error) {
+                    console.log('Error: ', error);
+                }
+            }
         }
+
     };
+
     handleAddUser = (userId, tabKey) => {
         const { tabCustomers } = this.state;
         const customers = tabCustomers[tabKey] || [];
         const isCustomerExist = customers.length > 0;
-        this.getIdKhachHang(userId)
+        this.getIdKhachHang(userId);
+
+        this.setState({ ten: userId.ten }, () => { console.log("ten:", this.state.ten) })
+        this.setState({ sdt: userId.sdt }, () => { console.log("sdt:", this.state.sdt) })
+
+        console.log('Dữ liệu khách hàng: ', this.state.idKhachHang);
+
         if (isCustomerExist) {
             this.setState({
                 tabCustomers: {
                     ...tabCustomers,
                     [tabKey]: [{ ...userId }],
                 },
+            }, () => {
+                console.log("idKhachHang updated:", this.state.idKhachHang);
+                toast.success("Đã cập nhật khách hàng", { position: toast.POSITION.MID_RIGHT, autoClose: true });
+                this.handleCloseModal2();
             });
-            toast.success("Đã cập nhật thông tin khách hàng", { position: toast.POSITION.MID_RIGHT, autoClose: true });
-            this.handleCloseModal1();
         } else {
             const newCustomer = { ...userId };
             const updatedCustomers = [...customers, newCustomer];
@@ -558,22 +507,49 @@ class BanHangOffline extends Component {
                     ...prevState.tabCustomers,
                     [tabKey]: updatedCustomers,
                 },
-            }));
-
-            toast.success("Đã thêm khách hàng mới", { position: toast.POSITION.MID_RIGHT });
-            this.handleCloseModal1();
+            }), () => {
+                console.log("idKhachHang state updated:", this.state.idKhachHang);
+                toast.success("Đã thêm khách hàng!!!", { position: toast.POSITION.MID_RIGHT });
+                this.handleCloseModal2();
+            });
         }
     };
 
-    renderProductsForTab = (tabKey) => {
-        const { tabProducts } = this.state;
-        const products = tabProducts[tabKey] || [];
+    fetchHDCT = async (idHoaDon) => {
+        try {
+            if (idHoaDon === null || idHoaDon === undefined) {
+                console.log('Không có ID!!!');
+                return;
+            }
+            const response = await axios.get(`http://localhost:8080/ban_hang/hdct/${idHoaDon}`);
+            const danhSachHDCT = response.data;
+            this.setState({ tabProducts: danhSachHDCT });
+        } catch (error) {
+            console.log('Lỗi lấy dữ liệu!!!', error);
+        }
+    };
+
+    fetchDanhSachSP = async () => {
+        try {
+            const response = await axios.get(`http://localhost:8080/san_pham_chi_tiet/hien-thi`);
+            this.setState({ sanPhamChiTiet: response.data }, () => {
+                console.log('Du lieu spct: ', response.data);
+            });
+        } catch (error) {
+            console.log('Error: ', error);
+        }
+    };
+
+    renderProductsForTab = (idHoaDon) => {
+
+        const products = this.state.tabProducts || [];
+
         let path = require('./img/cart-empty.png')
 
-        if (products.length == 0) {
+        if (products.length === 0) {
             return (
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '10px' }}>
-                    <img style={{ width: '400px', height: '300px' }} src={path} />
+                    <img style={{ width: '400px', height: '300px' }} src={path} alt="" />
                     <p>Giỏ hàng trống</p>
                 </div>
             )
@@ -583,26 +559,26 @@ class BanHangOffline extends Component {
                     <Col key={index} style={{ backgroundColor: '#fff', height: '75px', padding: '10px', display: 'flex', alignItems: 'center' }}>
                         <Col span={1} style={{ fontWeight: 'bold', fontSize: '15px' }}>{index + 1}</Col>
                         <Col span={2} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center' }}>
-                            <img style={{ height: '60px', width: '60px' }} src={`/niceadmin/img/${product.anh}`} />
+                            <img style={{ height: '60px', width: '60px' }} src={`/niceadmin/img/${product.sanPhamChiTiet.anh}`} alt="" />
                         </Col>
-                        <Col span={2} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center' }}>{product.mauSac.ten}</Col>
-                        <Col span={2} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center', }}>{product.kichThuoc.giaTri}</Col>
-                        <Col span={6} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center', }}>{product.sanPham.ten}</Col>
+                        <Col span={2} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center' }}>{product.sanPhamChiTiet.mauSac.ten}</Col>
+                        <Col span={2} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center', }}>{product.sanPhamChiTiet.kichThuoc.giaTri}</Col>
+                        <Col span={6} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center', }}>{product.sanPhamChiTiet.sanPham.ten}</Col>
                         <Col span={3} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center' }}>
                             <input
                                 type="number"
                                 className="soLuong"
                                 min="1"
                                 style={{ width: '50px' }}
-                                value={product.quantity}
+                                value={product.soLuong}
                                 onChange={(e) => this.handleQuantityChange(e, product.ma)}
                             />
                         </Col>
-                        <Col span={3} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center' }}>{product.donGia}</Col>
-                        <Col span={4} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center' }}>{product.donGia * product.quantity}</Col>
+                        <Col span={3} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center' }}>{this.formatCurrency(product.sanPhamChiTiet.donGia)}</Col>
+                        <Col span={4} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center' }}>{this.formatCurrency(product.sanPhamChiTiet.donGia * product.soLuong)}</Col>
                         <Col span={1} style={{ transition: 'color 0.3s' }}>
                             <DeleteOutlined
-                                onClick={() => this.onDelete(tabKey, product.ma)}
+                                onClick={() => this.onDelete(product.id, this.state.activeTabKey)}
                                 style={{ cursor: 'pointer' }}
                                 onMouseEnter={(e) => e.target.style.color = 'red'}
                                 onMouseLeave={(e) => e.target.style.color = 'black'}
@@ -617,70 +593,9 @@ class BanHangOffline extends Component {
     renderUserForTab = (tabKey) => {
         const { tabCustomers } = this.state;
         const customers = tabCustomers[tabKey] || [];
-        if (customers.length === 0) {
-            return (
-                <tr key="no-customer">
-                    <td colSpan="5">Không có khách hàng</td>
-                </tr>
-            );
-        }
         return customers.map((customer) => {
-            BanHangService.getDC(customer.id).then((res) => {
-                this.setState({ diaChi: res.data }, () => {
-                    console.log('dia chi vua call', res.data)
-                })
-            }).catch((error) => {
-                console.error("Error fetching data:", error);
-            });
             return (
-                <div>
-                    <div>
-                        <label htmlFor="ten">Tên khách hàng:{customer.ten} </label> <br />
-                        <label htmlFor="sdt">Số điện thoại:{customer.sdt}</label><br />
-                        <label htmlFor="diaChiCuthe">Địa chỉ cụ thể : </label>
-                        <input
-                            type="text"
-                            className="form-control"
-                            value={this.state.diaChiCuThe}
-                            onChange={(event) => this.setState({ diaChiCuThe: event.target.value })}
-                        /><br />
-                        <label htmlFor="tinhThanhPho">Tỉnh/Thành phố:</label>
-                        <select
-                            className="form-control"
-                            name="tinhThanhPho"
-                            onChange={(event) => this.handleCityChange(event)}
-                        >
-                            <option value={this.state.tinhThanhPho}>Chọn tỉnh thành</option>
-                            {this.state.cities.map(city => (
-                                <option key={city.code} value={city.name} selected={city.name === this.state.tinhThanhPho}>
-                                    {city.name}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
-
-                    <div className="form-group">
-                        <label htmlFor="quanHuyen">Quận/Huyện:</label>
-                        <select
-                            className="form-control"
-                            name="quanHuyen"
-                            onChange={(event) => this.handleDistrictChange(event)}
-                        >
-                            <option value={this.state.quanHuyen}>Chọn quận huyện</option>
-                            {this.state.districts.map(district => (
-                                <option key={district.code} value={district.name} selected={district.name === this.state.quanHuyen}>
-                                    {district.name}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
-
-                    <div className="form-group">
-                        <label htmlFor="xaPhuongThiTran">Xã/Phường/Thị trấn:</label>
-                        <input type="text" value={this.state.xaPhuongThiTran} className="form-control" />
-                    </div>
-
-                </div>
+                {}
             )
         });
     }
@@ -689,12 +604,12 @@ class BanHangOffline extends Component {
         const newQuantity = parseInt(e.target.value, 10);
         const { sanPhamChiTiet } = this.state;
         console.log('newQuantity:', newQuantity);
-       
+
         const selectedProduct = sanPhamChiTiet.find(product => product.ma === productId);
         console.log('selectedProduct:', selectedProduct);
-       
+
         const limitedQuantity = Math.min(newQuantity, selectedProduct ? selectedProduct.soLuong : 1);
-    
+
         this.setState((prevState) => {
             const { activeTabKey, tabProducts } = prevState;
             const updatedProducts = tabProducts[activeTabKey].map((product) => {
@@ -703,7 +618,7 @@ class BanHangOffline extends Component {
                 }
                 return product;
             });
-    
+
             return {
                 tabProducts: {
                     ...tabProducts,
@@ -712,76 +627,100 @@ class BanHangOffline extends Component {
             };
         });
     };
-    
 
+    fetchHoaDonCho = async () => {
+        try {
+            const response = await axios.get(`http://localhost:8080/ban_hang`);
+            const danhSachHD = response.data;
+            renderHDCT = await response.data[0].id;
+            this.setState({ tabList: danhSachHD });
+            console.log('Dữ liệu tabList:', renderHDCT);
+        } catch (error) {
+            console.log('Lỗi lấy dữ liệu!!!', error)
+        }
+    }
+
+    fetchHoaDonChoDauTien = async () => {
+        try {
+            const response = await axios.get(`http://localhost:8080/ban_hang`);
+            const danhSachHD = response.data;
+            this.setState({ activeTabKey: response.data[0].id })
+            this.setState({ tabList: danhSachHD });
+            this.fetchHDCT(response.data[0].id);
+        } catch (error) {
+            console.log('Lỗi lấy dữ liệu!!!', error)
+        }
+    }
+
+    addHoaDon = async () => {
+        try {
+            const response = await axios.post(`http://localhost:8080/ban_hang/create`);
+            console.log('Tạo hóa đơn thành công!!!', response.data);
+            this.setState({ tabList: [...this.state.tabList, response.data] })
+        } catch (error) {
+            console.log('Không tạo được hóa đơn mới!!!', error);
+        }
+    }
+
+    deleteHoaDonCho = async (idHoaDon) => {
+
+        const deleteHoaDonDTO = {
+            listHoaDonChiTiet: this.state.tabProducts
+        }
+        console.log(deleteHoaDonDTO);
+        try {
+            const response = await axios.put(`http://localhost:8080/ban_hang/delete/${idHoaDon}`, deleteHoaDonDTO || { listHoaDonChiTiet: [] });
+            this.setState({ tabList: response.data });
+            this.setState({ activeTabKey: response.data[0].id });
+        } catch (error) {
+            console.log('Xóa hóa đơn thất bại!!!', error);
+        }
+    }
+
+    scrollToDeleteButton = () => {
+        const deleteButton = document.getElementById('deleteButton');
+        deleteButton.scrollIntoView({ behavior: 'smooth' });
+    }
 
     onEdit = (tabKey, action) => {
         if (action === 'add' && this.state.tabList.length < 5) {
-            this.setState(prevState => ({
-                tabList: [
-                    ...prevState.tabList,
-                    {
-                        tab: `Đơn hàng ${this.nextTabIndex + 1}`,
-                        key: `${this.nextTabIndex}`
-                    }
-                ]
-            }));
+
+            this.addHoaDon();
+
             this.nextTabIndex += 1;
+
         } else if (action === 'remove') {
-
-            const tabIndexToRemove = this.state.tabList.findIndex(tab => tab.key === tabKey);
-
-            if (tabIndexToRemove !== -1) {
-
-                const newTabList = [...this.state.tabList];
-                newTabList.splice(tabIndexToRemove, 1);
-
-                this.setState({ tabList: newTabList });
-
-                if (newTabList.length === 0) {
-                    this.nextTabIndex = 0;
-                }
-            }
+            this.scrollToDeleteButton();
+            console.log('Button dieu huong!!!');
         } else if (action === 'add') {
             alert('Hàng chờ đã đầy');
+
         } else if (action === 'prev') {
             this.nextTabIndex -= 1;
+
         } else if (action === 'next') {
+
             this.nextTabIndex += 1;
         }
     };
 
-    onDelete = (tabKey, productId) => {
-        this.setState(prevState => {
-            const updatedProducts = prevState.tabProducts[tabKey].map(product => {
-                if (product.ma === productId) {
-                    const newQuantity = Math.max(product.quantity - 1, 0);
+    onDelete = async (hdctId, activeTabKey) => {
 
-                    return newQuantity > 0
-                        ? { ...product, quantity: newQuantity, soLuong: product.soLuong + 1 }
-                        : null;
-                }
-                return product;
-            });
-
-            const updatedTabList = prevState.tabList.map(tab => {
-                if (tab.key === tabKey) {
-                    return {
-                        ...tab,
-                        products: updatedProducts.filter(product => product && product.quantity > 0),
-                    };
-                }
-                return tab;
-            });
-
-            return {
-                tabProducts: {
-                    ...prevState.tabProducts,
-                    [tabKey]: updatedProducts.filter(product => product && product.quantity > 0),
-                },
-                tabList: updatedTabList,
-            };
-        });
+        if (activeTabKey !== null || activeTabKey !== undefined) {
+            const DeleteHdctDTO = {
+                hoaDonId: activeTabKey
+            }
+            console.log(DeleteHdctDTO);
+            try {
+                const response = await axios.put(`http://localhost:8080/ban_hang/delete_hdct/${hdctId}`, DeleteHdctDTO);
+                this.setState({ tabProducts: response.data })
+                console.log('Du lieu sau xoa: ', response.data);
+            } catch (error) {
+                console.log('Error: ', error);
+            }
+        } else {
+            toast.error("Hãy chọn hóa đơn để xóa!!!!");
+        }
     };
 
     onChangePay = value => {
@@ -789,56 +728,22 @@ class BanHangOffline extends Component {
     };
 
     onChangeSwitch = () => {
-        this.setState(prevState => ({ checked: !prevState.checked }), () => {
-            console.log('checked', this.state.checked);
-        });
-    };
+        this.setState(
+            (prevState) => ({ checked: !prevState.checked }),
+            () => {
+                console.log('checked', this.state.checked);
 
-    start = () => {
-        this.setState({ loading: true });
-        setTimeout(() => {
-            this.setState({ selectedRowKeys: [], loading: false });
-        }, 1000);
-    };
-
-    onSelectChange = newSelectedRowKeys => {
-        console.log('selectedRowKeys changed: ', newSelectedRowKeys);
-        this.setState({ selectedRowKeys: newSelectedRowKeys });
-    };
-    handleAddToCart = () => {
-        const { tabProducts, selectedRowKeys, activeTabKey } = this.state;
-
-
-        const selectedProductsToAdd = this.state.sanPhamChiTiet
-            .filter(product => selectedRowKeys.includes(product.ma))
-            .map(product => ({ ...product, quantity: 1 }));
-
-
-        const existingProducts = tabProducts[activeTabKey] || [];
-
-        selectedProductsToAdd.forEach(selectedProduct => {
-            const existingProductIndex = existingProducts.findIndex(
-                product => product.ma === selectedProduct.ma
-            );
-
-            if (existingProductIndex !== -1) {
-
-                existingProducts[existingProductIndex].quantity += 1;
-            } else {
-
-                existingProducts.push(selectedProduct);
+                if (this.state.checked) {
+                    this.setState({ kieuHoaDon: 0 }, () => {
+                        console.log('kieuHoaDon', this.state.kieuHoaDon);
+                    });
+                } else {
+                    this.setState({ kieuHoaDon: 2 }, () => {
+                        console.log('kieuHoaDon', this.state.kieuHoaDon);
+                    });
+                }
             }
-        });
-
-        this.setState(prevState => ({
-            tabProducts: {
-                ...prevState.tabProducts,
-                [activeTabKey]: existingProducts,
-            },
-            selectedRowKeys: [],
-        }));
-
-        this.setState({ inputValue: '' });
+        );
     };
 
     onChangeSearchInput = (selectedValues) => {
@@ -866,6 +771,7 @@ class BanHangOffline extends Component {
         }
         this.setState({ selectedPromotions: selectedValues });
     };
+
     getStatusCounts = () => {
         const { sanPhamChiTiet } = this.state;
         const statusCounts = {
@@ -889,6 +795,7 @@ class BanHangOffline extends Component {
 
         return statusCounts;
     }
+
     render() {
         const searchTerm = localStorage.getItem('searchTerm') || this.state.searchTerm;
         const statusCounts = this.getStatusCounts();
@@ -897,42 +804,32 @@ class BanHangOffline extends Component {
         const offset = currentPage * perPage;
         const currentSanPhamChiTietList = sanPhamList.slice(offset, offset + perPage);
         const searchTermKH = localStorage.getItem('searchTermKH') || this.state.searchTermKH;
-        const statusCountsKH = this.getStatusCounts();
         const ListKH = this.filteredDataKH();
         const { currentPageKH, perPageKH } = this.state;
         const offsetKH = currentPageKH * perPageKH;
         const currentKHList = ListKH.slice(offsetKH, offsetKH + perPageKH);
-        const { isQRReaderOn, result } = this.state;
-
-        if (result && result.text) {
-            const slicedMaQR = result.text.slice(5);
-            console.log(slicedMaQR);
-        } else {
-            console.error("Biến result không có giá trị hoặc không có thuộc tính 'text'.");
-        }
-        const activeTabKey = this.state.activeTabKey;
-        const activeTabProducts = this.state.tabProducts[activeTabKey] || [];
+        // const activeTabKey = this.state.activeTabKey;
+        // const activeTabProducts = this.state.tabProducts[activeTabKey] || [];
         return (
 
             <div className="wrapper-sell">
                 <br />
-
                 <div className="content_sell">
                     <div className="content_sell_left">
-
-                        <Tabs onChange={this.handleTabChange} defaultActiveKey="1" type="editable-card" onEdit={this.onEdit}>
+                        <Tabs onChange={this.handleTabChange} activeKey={this.state.activeTabKey} type="editable-card" onEdit={this.onEdit}>
                             {this.state.tabList && this.state.tabList.map((tabinfo, index) => {
                                 return (
-                                    <Tabs.TabPane tab={<span><ProfileOutlined /> {tabinfo.tab}</span>}
-                                        key={tabinfo.key}
+                                    <Tabs.TabPane tab={<span><ProfileOutlined /> {tabinfo.maHoaDon}</span>}
+                                        key={tabinfo.id}
                                         closable={index >= 0}
-                                        forceRender={true}>
+                                        forceRender={true}
+                                    >
                                         <div style={{ overflowX: 'auto', overflowY: 'auto', width: '750px' }}>
                                             <Col style={{ backgroundColor: 'rgb(0,0,0,0.2)', height: '50px', padding: '10px', display: 'flex' }}>
                                                 <Col span={1} style={{ fontWeight: 'bold', fontSize: '15px' }} >STT</Col>
                                                 <Col span={2} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center' }} >Ảnh SP</Col>
                                                 <Col span={2} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center' }} >Màu sắc</Col>
-                                                <Col span={2} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center' }} >Size</Col>
+                                                <Col span={2} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center' }} >Kích cỡ</Col>
                                                 <Col span={6} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center' }} >Tên SP</Col>
                                                 <Col span={3} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center' }} >Số lượng</Col>
                                                 <Col span={3} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center' }} >Đơn giá</Col>
@@ -948,57 +845,6 @@ class BanHangOffline extends Component {
                         <div><section className="section dashboard">
                             <hr />
                             <div>
-                                <p style={{ fontWeight: 'bolder', fontSize: '20px' }}>Danh sách sản phẩm</p>
-                                <Select
-                                    mode="multiple"
-                                    style={{ width: '100%', maxWidth: '500px' }}
-                                    dropdownStyle={{ maxHeight: '300px', overflowY: 'auto' }}
-                                    optionLabelProp="label"
-                                    onChange={this.onChangeSearchInput}
-                                    placeholder="Tìm kiếm sản phẩm"
-                                    options={this.state.sanPhamChiTiet.map((option, index) => ({
-                                        label: (
-                                            <div style={{ overflowX: 'auto', overflowY: 'auto' }}>
-                                                <div>{index + 1}</div>
-                                                <div>
-                                                    {option.anh && <img src={`/niceadmin/img/${option.anh}`} width="100px" height="100px" />}
-
-                                                </div>
-                                                <div style={{ marginLeft: '75px' }}>{option.sanPham.ten} <br /> {'Size: '}{option.kichThuoc.giaTri} - {'Màu: '}{option.mauSac.ten}</div>
-                                                <div style={{ marginLeft: '75px' }}> {'Giá: '}{option.donGia}{' VND'} - SL: {option.soLuong}</div>
-                                            </div>
-                                        ),
-                                        value: option.ma,
-                                    }))}
-                                />
-                                <Button style={{ color: 'black', backgroundColor: '#fff' }} onClick={this.handleAddToCart}>
-                                    Thêm
-                                </Button>
-                                <Button variant="btn btn-outline-primary" onClick={this.handleShowModal}>
-                                    Quét QR
-                                </Button>
-                                <Modal show={this.state.showModal} onHide={this.handleCloseModal} backdrop="static">
-                                    <Modal.Header closeButton>
-                                        <Modal.Title>Quét QR</Modal.Title>
-                                    </Modal.Header>
-                                    <Modal.Body>
-                                        <Button style={{ float: 'right', marginRight: '20px', color: 'black', backgroundColor: '#fff' }} onClick={this.toggleQRReader}>
-                                            {isQRReaderOn ? 'Turn Off QR Scanner' : 'Turn On QR Scanner'}
-                                        </Button>
-                                        <div>
-                                            {isQRReaderOn && (
-                                                <QrScanner
-                                                    ref={this.myRef}
-                                                    onScan={this.handleScan}
-                                                    onError={this.handleError}
-                                                    style={{ width: '300px', height: '300px' }}
-                                                />
-                                            )}
-                                            <p>QR Code Result: {result.text}</p>
-                                        </div>
-                                        {this.popupContent}
-                                    </Modal.Body>
-                                </Modal>
                                 <Button variant="btn btn-outline-primary" onClick={this.handleShowModal1}>
                                     Chọn sản phẩm
                                 </Button>
@@ -1010,7 +856,7 @@ class BanHangOffline extends Component {
 
                                         <div><div className="row">
                                             <div className="col-2 container">
-                                                <button className="btn btn-primary " style={{ margin: 10, }} onClick={this.formAdd}> <i class="bi bi-plus-circle"></i> Thêm sản phẩm </button>
+                                                <button className="btn btn-primary " style={{ margin: 10, }} onClick={this.formAdd}> <i className="bi bi-plus-circle"></i> Thêm sản phẩm </button>
 
                                                 <input
                                                     type="text"
@@ -1033,7 +879,7 @@ class BanHangOffline extends Component {
                                                         onChange={() => this.handleStatusFilter("")}
                                                         className="form-check-input"
                                                     />
-                                                    <label htmlFor="filterAll" className="form-check-label">Tất cả  <span class="badge bg-danger translate-middle badge-number rounded-circle">{statusCounts[""]}</span></label>
+                                                    <label htmlFor="filterAll" className="form-check-label">Tất cả  <span className="badge bg-danger translate-middle badge-number rounded-circle">{statusCounts[""]}</span></label>
                                                 </div>
                                                 <div className="form-check form-check-inline">
                                                     <input
@@ -1045,7 +891,7 @@ class BanHangOffline extends Component {
                                                         onChange={() => this.handleStatusFilter("0")}
                                                         className="form-check-input"
                                                     />
-                                                    <label htmlFor="filterPending" className="form-check-label">Ngưng hoạt động  <span class="badge bg-danger translate-middle badge-number rounded-circle"></span></label>
+                                                    <label htmlFor="filterPending" className="form-check-label">Ngưng hoạt động  <span className="badge bg-danger translate-middle badge-number rounded-circle"></span></label>
                                                 </div>
                                                 <div className="form-check form-check-inline">
                                                     <input
@@ -1057,9 +903,8 @@ class BanHangOffline extends Component {
                                                         onChange={() => this.handleStatusFilter("1")}
                                                         className="form-check-input"
                                                     />
-                                                    <label htmlFor="filterPaid" className="form-check-label">Đang hoạt động <span class="badge bg-danger translate-middle badge-number rounded-circle"></span></label>
+                                                    <label htmlFor="filterPaid" className="form-check-label">Đang hoạt động <span className="badge bg-danger translate-middle badge-number rounded-circle"></span></label>
                                                 </div>
-
                                             </div>
                                         </div>
                                             <table className="table table-borderless datatable">
@@ -1085,12 +930,12 @@ class BanHangOffline extends Component {
                                                                     <tr key={sanPhamChiTiet.id}>
                                                                         <td>{index + 1}</td>
                                                                         <td>{sanPhamChiTiet.sanPham.ten}</td>
-                                                                        <td>{<img style={{ height: '60px', width: '60px', float: 'left' }} src={`/niceadmin/img/${sanPhamChiTiet.anh}`} />}</td>
+                                                                        <td>{<img style={{ height: '60px', width: '60px', float: 'left' }} src={`/niceadmin/img/${sanPhamChiTiet.anh}`} alt="" />}</td>
                                                                         <td>{sanPhamChiTiet.kichThuoc.giaTri}</td>
                                                                         <td>{sanPhamChiTiet.mauSac.ten}</td>
                                                                         <td>{sanPhamChiTiet.soLuong}</td>
                                                                         <td>{sanPhamChiTiet.donGia}</td>
-                                                                        <td>{sanPhamChiTiet.trangThai == 0 ? "Nghỉ bán" : "Đang bán"}</td>
+                                                                        <td>{sanPhamChiTiet.trangThai === 0 ? "Nghỉ bán" : "Đang bán"}</td>
                                                                         <td><button
                                                                             className={`btn ${isSoLuongPositive ? 'btn-outline-info' : 'btn-danger'}`}
                                                                             onClick={() => isSoLuongPositive && this.handleProductClick(sanPhamChiTiet, this.state.activeTabKey)}
@@ -1122,148 +967,7 @@ class BanHangOffline extends Component {
                                 </Modal>
                                 <br />
 
-                            </div>  </section>
-                            {this.state.checked === true ?
-                                <div>
-                                    <section className="section dashboard">
-                                        <p style={{ fontWeight: 'bolder', fontSize: '20px' }}>Thông tin khách hàng</p>
-                                        <Button variant="btn btn-outline-primary" onClick={this.handleShowModal2}>
-                                            Chọn khách hàng
-                                        </Button>
-                                        <Modal show={this.state.showModal2} onHide={this.handleCloseModal2} backdrop="static" dialogClassName="custom-modal-size">
-                                            <Modal.Header closeButton>
-                                                <Modal.Title>Chọn sản phẩm</Modal.Title>
-                                            </Modal.Header>
-                                            <Modal.Body>
-
-                                                <div><div className="row">
-                                                    <div className="col-2 container">
-                                                        <button className="btn btn-primary " style={{ margin: 10 }} onClick={this.addKH}> Thêm khách hàng  </button>
-
-                                                        <input
-                                                            type="text"
-                                                            name="query"
-                                                            placeholder="Tìm kiếm"
-                                                            title="Enter search keyword"
-                                                            value={searchTermKH}
-                                                            onChange={this.handleSearchKH}
-                                                            onFocus={this.handleSearchFocusKH}
-                                                        />
-                                                    </div>
-
-                                                </div>
-                                                    <table className="table table-borderless datatable">
-                                                        <thead>
-                                                            <tr>
-                                                                <th>STT</th>
-                                                                <th>Ảnh </th>
-                                                                <th>Tên Khách Hàng</th>
-                                                                <th>Số Điện Thoại</th>
-                                                                <th>Action</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            {
-                                                                currentKHList.map(
-                                                                    (taiKhoan, index) => {
-                                                                        return (
-                                                                            <tr key={taiKhoan.id}>
-                                                                                <td>{index + 1}</td>
-                                                                                <td>{taiKhoan.thongTinNguoiDung.ten}</td>
-                                                                                <td>{<img style={{ height: '60px', width: '60px', float: 'left' }} src={`/niceadmin/img/${taiKhoan.anh}`} />}</td>
-                                                                                <td>{taiKhoan.thongTinNguoiDung.sdt}</td>
-                                                                                <td><button onClick={() => this.handleAddUser(taiKhoan.thongTinNguoiDung, this.state.activeTabKey)} className="btn btn-outline-info">chọn</button></td>
-                                                                            </tr>
-                                                                        )
-                                                                    }
-                                                                )
-                                                            }
-                                                        </tbody>
-                                                    </table>
-
-                                                    <ReactPaginate
-                                                        pageCount={Math.ceil(this.state.taiKhoan.length / this.state.perPageKH)}
-                                                        pageRangeDisplayed={5}
-                                                        marginPagesDisplayed={2}
-                                                        onPageChange={this.handlePageClickKH}
-                                                        containerClassName={'pagination'}
-                                                        activeClassName={'active'}
-                                                        previousLabel={"Previous"}
-                                                        nextLabel={"Next"}
-                                                    />
-                                                </div>
-                                                {this.popupContent}
-                                            </Modal.Body>
-                                        </Modal>
-                                        <Button variant="btn btn-outline-primary" onClick={this.handleShowModal3}>
-                                            Địa chỉ
-                                        </Button>
-                                        <Modal show={this.state.showModal3} onHide={this.handleCloseModal3} backdrop="static" dialogClassName="custom-modal-size">
-                                            <Modal.Header closeButton>
-                                                <Modal.Title>thông tin địa chỉ khách hàng</Modal.Title>
-                                            </Modal.Header>
-                                            <Modal.Body>
-
-                                                <div><div className="row">
-                                                    <div className="col-2 container">
-                                                        <button className="btn btn-primary " style={{ margin: 10 }} onClick={this.addKH}> Thêm khách hàng  </button>
-
-                                                        <input
-                                                            type="text"
-                                                            name="query"
-                                                            placeholder="Tìm kiếm"
-                                                            title="Enter search keyword"
-                                                            value={searchTermKH}
-                                                            onChange={this.handleSearchKH}
-                                                            onFocus={this.handleSearchFocusKH}
-                                                        />
-                                                    </div>
-
-                                                </div>
-                                                    <table className="table table-borderless datatable">
-                                                        <thead>
-                                                            <tr>
-                                                                <th>STT</th>
-                                                                <th>Tên </th>
-                                                                <th>Số điện thoại</th>
-                                                                <th>Địa chỉ</th>
-                                                                <th>Action</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            {
-                                                                this.state.diaChi.map(
-                                                                    (diaChi, index) => {
-                                                                        return (
-                                                                            <tr key={diaChi.id}>
-                                                                                <td>{index + 1}</td>
-                                                                                <td>{diaChi.thongTinNguoiDung.ten}</td>
-                                                                                <td>{diaChi.diaChiCuThe}, {diaChi.xaPhuongThiTran}, {diaChi.quanHuyen},{diaChi.tinhThanhPho}</td>
-                                                                                <td><button onClick={() => this.handleAddress(diaChi.diaChiCuThe, diaChi.xaPhuongThiTran, diaChi.quanHuyen, diaChi.tinhThanhPho)} className="btn btn-outline-info">chọn</button></td>
-                                                                            </tr>
-                                                                        )
-                                                                    }
-                                                                )
-                                                            }
-                                                        </tbody>
-                                                    </table>
-
-                                                    <ReactPaginate
-                                                        pageCount={Math.ceil(this.state.taiKhoan.length / this.state.perPageKH)}
-                                                        pageRangeDisplayed={5}
-                                                        marginPagesDisplayed={2}
-                                                        onPageChange={this.handlePageClickKH}
-                                                        containerClassName={'pagination'}
-                                                        activeClassName={'active'}
-                                                        previousLabel={"Previous"}
-                                                        nextLabel={"Next"}
-                                                    />
-                                                </div>
-                                                {this.popupContent}
-                                            </Modal.Body>
-                                        </Modal>
-                                        {this.renderUserForTab(this.state.activeTabKey)}
-                                    </section> </div> : null}
+                            </div></section>
                         </div>
                     </div>
                     <div className="content_sell_right">
@@ -1271,16 +975,148 @@ class BanHangOffline extends Component {
                             <div className="checkbox_sell">
                                 <span><Switch checked={this.state.checked} onChange={this.onChangeSwitch} />Giao hàng</span>
                             </div>
+
+                            <Button variant="btn btn-outline-primary" onClick={this.handleShowModal2}>
+                                Chọn khách hàng
+                            </Button>
+                            <Modal show={this.state.showModal2} onHide={this.handleCloseModal2} backdrop="static" dialogClassName="custom-modal-size">
+                                <Modal.Header closeButton>
+                                    <Modal.Title>Chọn khách hàng</Modal.Title>
+                                </Modal.Header>
+                                <Modal.Body>
+                                    <div className="row">
+                                        <div className="col-2 container">
+                                            <button className="btn btn-primary " style={{ margin: 10 }} onClick={this.addKH}> Thêm khách hàng  </button>
+                                            <input
+                                                type="text"
+                                                name="query"
+                                                placeholder="Tìm kiếm"
+                                                title="Enter search keyword"
+                                                value={searchTermKH}
+                                                onChange={this.handleSearchKH}
+                                                onFocus={this.handleSearchFocusKH}
+                                            />
+                                        </div>
+                                    </div>
+                                    <table className="table table-borderless datatable">
+                                        <thead>
+                                            <tr>
+                                                <th>STT</th>
+                                                <th>Ảnh</th>
+                                                <th>Tên Khách Hàng</th>
+                                                <th>Số Điện Thoại</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {currentKHList.map((taiKhoan, index) => (
+                                                <tr key={taiKhoan.id}>
+                                                    <td>{index + 1}</td>
+                                                    <td><img style={{ height: '60px', width: '60px', float: 'left' }} src={`/niceadmin/img/${taiKhoan.anh}`} alt="" /></td>
+                                                    <td>{taiKhoan.thongTinNguoiDung.ten}</td>
+                                                    <td>{taiKhoan.thongTinNguoiDung.sdt}</td>
+                                                    <td><button onClick={() => this.handleAddUser(taiKhoan.thongTinNguoiDung, this.state.activeTabKey)} className="btn btn-outline-info">chọn</button></td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                    <ReactPaginate
+                                        pageCount={Math.ceil(this.state.taiKhoan.length / this.state.perPageKH)}
+                                        pageRangeDisplayed={5}
+                                        marginPagesDisplayed={2}
+                                        onPageChange={this.handlePageClickKH}
+                                        containerClassName={'pagination'}
+                                        activeClassName={'active'}
+                                        previousLabel={"Previous"}
+                                        nextLabel={"Next"}
+                                    />
+                                </Modal.Body>
+                                {this.popupContent}
+                            </Modal>
+                            <br />
+                            <br />
+                            <label htmlFor="ten">Tên khách hàng:</label>
+                            <input type="text" id="ten" name="ten" value={this.state.ten} placeholder="Nhập tên của khách hàng" required onChange={this.handleTenChange} /><br />
+                            <br />
+                            <label htmlFor="sdt">Số điện thoại:</label>
+                            <input type="tel" id="sdt" name="sdt" value={this.state.sdt} placeholder="Nhập số điện thoại" pattern="[0-9]{10}" title="Số điện thoại phải có 10 chữ số" required onChange={this.handleSdtChange} /><br />
+                            <br />
+
+
+                            {this.state.checked === true ?
+                                <div>
+                                    <div>
+                                        <div>
+                                            <label htmlFor="tinhThanhPho">Tỉnh/Thành phố:</label>
+                                            <select
+                                                className="form-control"
+                                                name="tinhThanhPho"
+                                                onChange={(event) => this.handleCityChange(event)}
+                                                value={this.state.tinhThanhPho}
+                                            >
+                                                <option>Chọn tỉnh thành</option>
+                                                {this.state.cities.map(city => (
+                                                    <option key={city.code} value={city.name}>
+                                                        {city.name}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        </div>
+
+                                        <div className="form-group">
+                                            <label htmlFor="quanHuyen">Quận/Huyện:</label>
+                                            <select
+                                                className="form-control"
+                                                name="quanHuyen"
+                                                onChange={(event) => this.handleDistrictChange(event)}
+                                                value={this.state.quanHuyen}
+                                            >
+                                                <option >Chọn quận huyện</option>
+                                                {this.state.districts.map(district => (
+                                                    <option key={district.code} value={district.name}>
+                                                        {district.name}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        </div>
+
+                                        <div className="form-group">
+                                            <label htmlFor="xaPhuongThiTran">Xã/Phường/Thị trấn:</label>
+                                            <select
+                                                className="form-control"
+                                                name="xaPhuongThiTran"
+                                                onChange={(event) => this.handleWardChange(event)}
+                                                value={this.state.xaPhuongThiTran}
+                                            >
+                                                <option >Chọn xã/phường/thị trấn</option>
+                                                {this.state.wards.map(ward => (
+                                                    <option key={ward.code} value={ward.name}>
+                                                        {ward.name}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        </div>
+
+                                        <label htmlFor="diaChiCuthe">Địa chỉ cụ thể : </label>
+                                        <input
+                                            type="text"
+                                            className="form-control"
+                                            value={this.state.diaChiCuThe}
+                                            onChange={(event) => this.setState({ diaChiCuThe: event.target.value })}
+                                        />
+                                    </div>
+                                </div> : null}
+
                             <div className="payment_sell">
                                 <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', width: '100%' }}>
                                     <Col>
-                                        <Col style={{ fontSize: '16px', margin: '5px 0px 5px 0px' }}>Tổng tiền: ({this.getTotalQuantity(activeTabProducts)} sản phẩm)</Col>
+                                        {/* <Col style={{ fontSize: '16px', margin: '5px 0px 5px 0px' }}>Tổng tiền: ({this.getTotalQuantity(activeTabProducts)} sản phẩm)</Col> */}
                                         <Col style={{ fontSize: '16px' }}>Mã khuyến mãi: </Col>
                                         <Col style={{ fontSize: '16px', marginTop: '5px ' }}>Giảm giá:</Col>
                                         <Col style={{ fontSize: '16px' }}>Tiền khách đưa </Col>
                                     </Col>
                                     <Col style={{ width: '55%', borderStyle: 'solid', borderTop: 'none', borderRight: 'none', borderLeft: 'none', borderWidth: '1px' }}>
-                                        <Col style={{ fontSize: '16px', textAlign: 'right', margin: '5px 0px 5px 0px' }}><span style={{ color: 'red' }}>{this.getTotalAmount(activeTabProducts)}</span></Col>
+                                        {/* <Col style={{ fontSize: '16px', textAlign: 'right', margin: '5px 0px 5px 0px' }}><span style={{ color: 'red' }}>{this.formatCurrency(this.getTotalAmountWithoutPromotions(activeTabProducts))}</span></Col> */}
                                         <Col style={{ fontSize: '16px', textAlign: 'left' }}>
                                             <Select
                                                 mode="tags"
@@ -1309,7 +1145,7 @@ class BanHangOffline extends Component {
                                                 }))}
                                             />
                                         </Col>
-                                        <Col style={{ fontSize: '16px', textAlign: 'right', marginTop: '5px' }}>0</Col>
+                                        {/* <Col style={{ fontSize: '16px', textAlign: 'right', marginTop: '5px' }}>{this.formatCurrency(this.getTotalAmountWithoutPromotions(activeTabProducts) - this.getTotalAmount(activeTabProducts))}</Col> */}
                                         <Col style={{ fontSize: '16px', textAlign: 'right' }}><Input
                                             type="text"
                                             placeholder="Nhập tiền khách đưa..."
@@ -1341,15 +1177,15 @@ class BanHangOffline extends Component {
                             <Flex flex={"row"} align="center" justify="space-between">
                                 <p style={{ fontSize: '16px', fontWeight: 'bold' }}>Tiền thừa trả khách</p>
                                 <p style={{ fontSize: '20px', fontWeight: 'bold' }}>
-                                    {this.state.enteredAmount >= this.getTotalAmount(activeTabProducts) ? (
+                                    {/* {this.state.enteredAmount >= this.getTotalAmount(activeTabProducts) ? (
                                         <span style={{ color: 'red' }}>
-                                            {this.state.enteredAmount - this.getTotalAmount(activeTabProducts)}
+                                            Dư {this.formatCurrency(this.state.enteredAmount - this.getTotalAmount(activeTabProducts))}
                                         </span>
                                     ) : (
                                         <span style={{ color: 'red' }}>
-                                            Thiếu {this.getTotalAmount(activeTabProducts) - this.state.enteredAmount} VND
+                                            Thiếu {this.formatCurrency(this.getTotalAmount(activeTabProducts) - this.state.enteredAmount)}
                                         </span>
-                                    )}
+                                    )} */}
                                 </p>
                             </Flex>
                         </div>
@@ -1360,6 +1196,22 @@ class BanHangOffline extends Component {
                             <Flex justify="space-between">
                                 <Button icon={<></>} className="customButton" style={{ width: '40%', height: '70px', backgroundColor: 'white', color: 'black', fontWeight: 'bolder', borderColor: 'black', fontSize: '20px' }}>In tạm tính</Button>
                                 <Button className="customButton" style={{ width: '55%', height: '70px', backgroundColor: 'white', color: 'black', fontWeight: 'bolder', borderColor: 'black', fontSize: '20px' }} onClick={this.add}>Thanh toán</Button>
+                                <Button
+                                    id="deleteButton"
+                                    className="customButton"
+                                    style={{
+                                        width: '55%',
+                                        height: '70px',
+                                        backgroundColor: 'white',
+                                        color: 'black',
+                                        fontWeight: 'bolder',
+                                        borderColor: 'black',
+                                        fontSize: '20px',
+                                    }}
+                                    onClick={() => this.deleteHoaDonCho(this.state.activeTabKey)}
+                                >
+                                    Xóa Hóa Đơn
+                                </Button>
                             </Flex>
                         </div>
                     </div>

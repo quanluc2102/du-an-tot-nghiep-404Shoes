@@ -14,6 +14,7 @@ class SanPhamAddComponnent extends Component {
             selectedOptionMS:null,
             selectedOptionKT:null,
             listSPValue:[],
+            listAnhSPCT:[],
             listKichThuoc:[],
             listMauSac:[],
             listThuongHieu:[],
@@ -55,10 +56,12 @@ class SanPhamAddComponnent extends Component {
         if(!confirm){
             return;
         }
+        try {
         let listFile = [];
         for(let i=0;i<this.state.files.length;i++){
             listFile.push(this.state.files[i].file.name);
         }
+
         if(this.state.listSPCT.length===0){
 
         }else{
@@ -121,23 +124,6 @@ class SanPhamAddComponnent extends Component {
         } else {
             this.setState({ error: { ...this.state.error, moTa: "" } });
         }
-        let count = 0;
-        for(let i=0;i<this.state.listSPCT.length;i++){
-            if(this.state.listSPCT[i].anh.length===0){
-                count++;
-            }
-        }
-        if(count>0){
-            return;
-        }else {
-            for(let i=0;i<this.state.listSPCT.length;i++){
-                if(this.state.listSPCT[i].anh.length===0){
-                    const { listSPCT } = this.state;
-                    const updatedListSPCT = [...listSPCT];
-                    updatedListSPCT[i].error = "Bạn cần chọn ít nhất 1 ảnh";
-                }
-            }
-        }
         this.handleUpload();
         SanPhamService.addSanPham(sanPham).then((res)=>{
             if (res.status=== 200) {
@@ -152,7 +138,18 @@ class SanPhamAddComponnent extends Component {
                 console.log(res.data.error)
             }
 
-        })
+        })} catch (error) {
+            // Xử lý lỗi ở đây
+            if (error instanceof TypeError && error.message.includes('Cannot read properties of undefined (reading \'file\')')) {
+                // Nếu lỗi là do thuộc tính 'file' không tồn tại
+                alert('Chưa chọn đầy đủ ảnh của các sản phẩm');
+                // Hoặc hiển thị thông báo thông qua một cổng thông báo khác
+                // alert('Chưa chọn file');
+            } else {
+                // Xử lý các loại lỗi khác
+                console.error(error);
+            }
+        }
     }
 
     fileSelectedHandler = (e) => {
@@ -202,7 +199,7 @@ class SanPhamAddComponnent extends Component {
             let error = {...this.state.error,ten:""};
             this.setState({error:error});
         }
-        console.log(this.state.listFileTong)
+        console.log(this.state.listAnhSPCT)
     }
 
     thayDoiMoTaAdd=(event)=>{
@@ -296,7 +293,7 @@ class SanPhamAddComponnent extends Component {
     handleSoLuongChange = (index, newValue) => {
         const { listSPCT } = this.state;
         const updatedListSPCT = [...listSPCT];
-        updatedListSPCT[index].soLuong = Math.max(0, Math.min(200, newValue));
+        updatedListSPCT[index].soLuong = Math.max(1, Math.min(200, newValue));
         this.setState({ listSPCT: updatedListSPCT });
         console.log(this.state.listSPCT[index].soLuong)
     };
@@ -314,6 +311,7 @@ class SanPhamAddComponnent extends Component {
         const selectedImagesArray = Array.from(selectedFiles).map(file => ({file,URL: URL.createObjectURL(file),}));
         const { listSPCT } = this.state;
         this.setState({ listFileTong: [ ...this.state.listFileTong,...selectedImagesArray] })
+        this.setState({ listAnhSPCT: [ ...this.state.listAnhSPCT,...selectedImagesArray] })
         const updatedListSPCT = [...listSPCT];
         updatedListSPCT[index].anh = selectedImagesArray;
         if (selectedImagesArray.length ===0){
@@ -352,7 +350,7 @@ class SanPhamAddComponnent extends Component {
                     anh:[],
                     kichThuoc: kt,
                     mauSac: ms,
-                    soLuong: 0,
+                    soLuong: 1,
                     gia: 0,
                     error:''
                 }))
@@ -538,7 +536,7 @@ class SanPhamAddComponnent extends Component {
                                                     <th >{spct.mauSac.label}</th>
                                                     <th ><input type={"number"} value={spct.soLuong} style={{padding: 10,
                                                         border: '1px solid #ddd',
-                                                        borderRadius: 5,width:'90%'}} onChange={(e) => this.handleSoLuongChange(index, e.target.value)} min={0}/> </th>
+                                                        borderRadius: 5,width:'90%'}} onChange={(e) => this.handleSoLuongChange(index, e.target.value)} min={1}/> </th>
                                                     <th ><input type={"number"} value={spct.gia} style={{padding: 10,
                                                         border: '1px solid #ddd',
                                                         borderRadius: 5,width:'90%'}} onChange={(e) => this.handleGiaChange(index, e.target.value)} min={0}/> </th>

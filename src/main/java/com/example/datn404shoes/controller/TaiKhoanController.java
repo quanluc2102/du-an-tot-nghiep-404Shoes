@@ -1,46 +1,32 @@
 package com.example.datn404shoes.controller;
 
 
+import com.example.datn404shoes.DTO.ForgotPasswordDTO;
 import com.example.datn404shoes.custom.TaiKhoanVaThongTin;
 import com.example.datn404shoes.entity.*;
-import com.example.datn404shoes.helper.SanPhamExcelSave;
 //import com.example.datn404shoes.helper.TaiKhoanExport;
-import com.example.datn404shoes.repository.TaiKhoanRepository;
 import com.example.datn404shoes.repository.TaiKhoanResponsitory;
 import com.example.datn404shoes.repository.ThongTinNguoiDungRespository;
-import com.example.datn404shoes.request.SanPhamRequest;
+//import com.example.datn404shoes.request.TaiKhoanCustome;
 import com.example.datn404shoes.service.serviceimpl.*;
-import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.math.BigDecimal;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.sql.Date;
-import java.text.DateFormat;
 import java.text.Normalizer;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.util.*;
 import java.util.regex.Pattern;
 
 @RestController
-@CrossOrigin(origins = {"http://localhost:3000","http://localhost:3006"})
+@CrossOrigin(origins = "http://localhost:3000")
 @RequestMapping("tai_khoan")
 public class TaiKhoanController {
     @Autowired
@@ -191,7 +177,17 @@ public class TaiKhoanController {
 
             taiKhoan.setThongTinNguoiDung(b);
             taiKhoan.setTrangThai(true);
-            taiKhoan.setAnh(taiKhoanVaThongTin.getFiles().get(0));
+
+            // Kiểm tra xem có file được chọn hay không
+            if (taiKhoanVaThongTin.getFiles() != null && !taiKhoanVaThongTin.getFiles().isEmpty()) {
+                taiKhoan.setAnh(taiKhoanVaThongTin.getFiles().get(0));
+            } else {
+                // Xử lý khi không có file mới được chọn
+                // Lấy ảnh từ tài khoản người dùng hiện tại (có thể cần thay đổi tùy theo cấu trúc dữ liệu của bạn)
+                TaiKhoan existingTaiKhoan = serviceimpl.getOne(id);
+                taiKhoan.setAnh(existingTaiKhoan.getAnh());
+            }
+
             serviceimpl.update(id, taiKhoan);
 
             DiaChi diaChi = new DiaChi();
@@ -215,6 +211,7 @@ public class TaiKhoanController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Không tìm thấy thông tin người dùng");
         }
     }
+
 
 
 
@@ -249,12 +246,30 @@ public class TaiKhoanController {
         phanQuyen.setQuyen(quyenServiceimpl.findOne(Long.valueOf(3)));
 //        phanQuyen.setQuyen(Quyen.builder().id(3).build());
         phanQuyenServiceimpl.add(phanQuyen);
+
+        // Lưu mật khẩu vào một biến tạm thời
+        String matKhau = taiKhoan.getPassword();
+
+// Xóa mật khẩu ngẫu nhiên
+        taiKhoan.setPassword("");
+
+// Gửi email
+        sendEmail(taiKhoan.getEmail(), "Chào mừng bạn gia nhập gia đình 404Shoes", "Dear " + b.getTen() +
+                ".\n\nTôi hy vọng bạn đang có một ngày tốt lành. Chúng tôi muốn thông báo với bạn về việc thêm một thành viên mới vào đội ngũ của chúng tôi."+
+                ".\n\nTên khách hàng  : " + b.getTen()+
+                ".\n\nChúng tôi đã tạo một tài khoản cho bạn và  mật khẩu đăng nhập  là : " + matKhau +
+                ".\n\nNếu bạn có bất kỳ câu hỏi hoặc thắc mắc gì , đừng ngần ngại liên hệ với chúng tôi theo Hotline: 0986xxxxx."+
+                ".\n\nTrân trọng !" );
+
+// Tiếp tục xử lý và trả về kết quả
         taiKhoan.setPassword("");
         return ResponseEntity.ok(serviceimpl.add(taiKhoan));
     }
 
-@PutMapping("updateKhachHang/{id}")
-public ResponseEntity<?> updateKhachHang(@PathVariable Long id, @RequestBody TaiKhoanVaThongTin taiKhoanVaThongTin) {
+
+    @PutMapping("updateKhachHang/{id}")
+    public ResponseEntity<?> updateKhachHang(@PathVariable Long id, @RequestBody TaiKhoanVaThongTin taiKhoanVaThongTin) {
+
         ThongTinNguoiDung thongTinNguoiDung = taiKhoanVaThongTin.getThongTinNguoiDung();
         TaiKhoan taiKhoan = taiKhoanVaThongTin.getTaiKhoan();
 
@@ -305,60 +320,6 @@ public ResponseEntity<?> updateKhachHang(@PathVariable Long id, @RequestBody Tai
 
         return ResponseEntity.ok(serviceimpl.getOne(id));
     }
-//    @GetMapping("detail_tt/{id}")
-//    public ResponseEntity<?> detailTT(@PathVariable("id") Long id) {
-//
-//        return ResponseEntity.ok(serviceimpl.getAllTaiKhoan(id));
-//    }
-
-//    @PutMapping("update/{id}")
-//    public ResponseEntity<?> update(Model model,
-//                                    @PathVariable("id") Long id,
-//                                    @RequestBody TaiKhoan taiKhoan) {
-//
-//        return ResponseEntity.ok(serviceimpl.update(id, taiKhoan));
-//    }
-
-//    @PutMapping("updateQuanLy/{id}")
-//    public ResponseEntity<?> updateQuanLy(Model model,
-//                                          @PathVariable("id") Long id,
-//                                          @RequestBody TaiKhoan taiKhoan) {
-//
-//        return ResponseEntity.ok(serviceimpl.update(id, taiKhoan));
-//    }
-
-//    @PutMapping("updateNhanVien/{id}")
-//    public ResponseEntity<?> updateNhanVien(Model model,
-//                                            @PathVariable("id") Long id,
-//                                            @RequestBody TaiKhoan taiKhoan) {
-//
-//        return ResponseEntity.ok(serviceimpl.update(id, taiKhoan));
-//    }
-//
-//    @PutMapping("updateKhacHang/{id}")
-//    public ResponseEntity<?> updateKhachHang(Model model,
-//                                             @PathVariable("id") Long id,
-//                                             @RequestBody TaiKhoan taiKhoan) {
-//
-//        return ResponseEntity.ok(serviceimpl.update(id, taiKhoan));
-//    }
-
-    //    @GetMapping("export")
-//    public void exportToExcel(HttpServletResponse response) throws IOException {
-//        response.setContentType("application/octet-stream");
-//        DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
-//        String currentDateTime = dateFormatter.format(new java.util.Date());
-//
-//        String headerKey = "Content-Disposition";
-//        String headerValue = "attachment; filename=users_" + currentDateTime + ".xlsx";
-//        response.setHeader(headerKey, headerValue);
-//
-//        List listTK = taiKhoanServiceimpl.getAll();
-//
-//        TaiKhoanExport excelExporter = new TaiKhoanExport(listTK);
-//
-//        excelExporter.export(response);
-//    }
 
     @PutMapping("updatett/{id}")
     public ResponseEntity<?> updatett(Model model,
@@ -397,4 +358,33 @@ public ResponseEntity<?> updateKhachHang(@PathVariable Long id, @RequestBody Tai
 
         return serviceimpl.getNhanVienByQuyenId4();
     }
+
+    @PostMapping("quenMatKhau")
+    public ResponseEntity<?> quenMatKhau(Model model, @RequestBody ForgotPasswordDTO email) {
+        // Tìm kiếm tài khoản theo email
+        TaiKhoan taiKhoan = taiKhoanRepository.findByEmail(email.getSearchString());
+
+        // Kiểm tra nếu tài khoản không tồn tại
+        if (taiKhoan == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Không tìm thấy tài khoản với email: " + email);
+        }
+
+        // Lấy thông tin người dùng từ tài khoản
+        ThongTinNguoiDung thongTinNguoiDung = taiKhoan.getThongTinNguoiDung();
+
+        // Tạo mật khẩu mới
+        String generatedPassword = generatePasswordFromName("NewPass");
+        taiKhoan.setPassword(generatedPassword);
+
+        // Send an email to the newly added employee
+        sendEmail(taiKhoan.getEmail(), "Xin chào", " Xin chào " + thongTinNguoiDung.getTen() +
+                ".\n\nChúng tôi vừa nhận được yêu cầu khôi phục mật khẩu của bạn và đã tạo một mật khẩu mới cho tài khoản của bạn. Dưới đây là thông tin chi tiết:"+
+                ".\n\nTên khách hàng : " + thongTinNguoiDung.getTen()+
+                ".\n\nMật khẩu mới   : " + generatedPassword+
+                ".\n\nChúng tôi khuyến khích bạn đổi mật khẩu ngay sau khi đăng nhập để bảo vệ tài khoản của mình."+
+                ".\n\nNếu bạn gặp bất kỳ vấn đề nào hoặc cần hỗ trợ, đừng ngần ngại liên hệ với chúng tôi qua Hotline: 0257xxxxx."+
+                ".\n\nChân thành cảm ơn và chúc bạn một ngày tốt lành! [404Shoes]" );
+        return ResponseEntity.ok(serviceimpl.update(taiKhoan.getId(),taiKhoan));
+    }
+
 }

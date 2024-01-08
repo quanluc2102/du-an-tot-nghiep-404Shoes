@@ -23,17 +23,18 @@ class TaiKhoanNVUpdate extends Component {
             diaChi: [],
             files: null,
             showPassword: false,
+            listThongTin:[],
             taiKhoanUpdate: {
                 email: '',
                 password: '',
                 anh: ''
             },
             nguoiDungUpdate: {
-                sdt: '',
-                ten: '',
                 cccd: '',
                 gioiTinh: '',
                 ngaySinh: '',
+                ten: '',
+                sdt: '',
                 tinhThanhPho: '',
                 quanHuyen: '',
                 xaPhuongThiTran: '',
@@ -69,42 +70,74 @@ class TaiKhoanNVUpdate extends Component {
         this.handleDistrictChange = this.handleDistrictChange.bind(this);
         this.handleWardChange = this.handleWardChange.bind(this);
     }
-
     componentDidMount() {
         const id = this.props.match.params.id;
+
         taikhoanservice.getTaiKhoanById(id)
             .then((response) => {
-                const taiKhoanData = response.data;
-                console.log("User Account Data:", taiKhoanData);
-                this.setState({taiKhoanUpdate: taiKhoanData});
+                const taiKhoanDataArray = response.data;
+                if (Array.isArray(taiKhoanDataArray) && taiKhoanDataArray.length > 0) {
+                    const taiKhoanData = taiKhoanDataArray[0];
+                    console.log("User Account Data:", taiKhoanData);
 
-                // Sau khi lấy thông tin tài khoản, bạn có thể tiếp tục lấy thông tin người dùng.
-                taikhoanservice.getThongTinByTaiKhoan(taiKhoanData)
-                    .then((thongTinResponse) => {
-                        const thongTinData = thongTinResponse.data;
-                        console.log("User Information Data:", thongTinData);
-                        this.setState({
-                            nguoiDungUpdate: thongTinData,
-                            tinhThanhPho: thongTinData.tinhThanhPho || '', // Kiểm tra null hoặc undefined
-                            quanHuyen: thongTinData.quanHuyen || '',
-                            xaPhuongThiTran: thongTinData.xaPhuongThiTran || '',
-                            diaChiCuThe: thongTinData.diaChiCuThe || '',
-                        });
-                    })
-                    .catch((error) => {
-                        console.error("Error fetching user information:", error);
+                    // Extract values from the array
+                    const [
+                        anh,
+                        cccd,
+                        ten,
+                        ngaySinh,
+                        gioiTinh,
+                        tinhThanhPho,
+                        quanHuyen,
+                        xaPhuongThiTran,
+                        diaChiCuThe,
+                        sdt,
+                        email,
+                        password,
+                    ] = taiKhoanData;
+
+                    // Update quanHuyen and xaPhuongThiTran in the array
+                    const updatedTaiKhoanData = [...taiKhoanData];
+                    updatedTaiKhoanData[6] = quanHuyen;
+                    updatedTaiKhoanData[7] = xaPhuongThiTran;
+
+                    // Update state with extracted values
+                    this.setState({
+                        taiKhoanUpdate: {
+                            anh,
+                            email,
+                            password,
+                        },
+                        nguoiDungUpdate: {
+                            cccd,
+                            ten,
+                            ngaySinh,
+                            gioiTinh,
+                            tinhThanhPho,
+                            quanHuyen,
+                            xaPhuongThiTran,
+                            diaChiCuThe,
+                            sdt,
+                        },
+                        // ... other state updates
                     });
+
+                    // Continue with the rest of your code...
+                } else {
+                    console.error("Invalid user account data format");
+                }
             })
+            .catch((error) => {
+                console.error("Error fetching user account information:", error);
+            });
+
         this.fetchCities();
+        // this.fetchDistricts();
+        // this.fetchWards();
     }
 
-    kiemtra(){
-        console.log(this.state.quanHuyen);
-        console.log(this.state.diaChiCuThe);
-        console.log(this.state.tinhThanhPho);
-        console.log(this.state.diaChiCuThe);
 
-    }
+
     update = (e) => {
         e.preventDefault();
 
@@ -125,6 +158,7 @@ class TaiKhoanNVUpdate extends Component {
         const requestData = {
             taiKhoan: {
                 email : taiKhoanUpdate.email,
+                password : taiKhoanUpdate.password,
             },
             thongTinNguoiDung: {
                 ten: nguoiDungUpdate.ten,
@@ -281,25 +315,25 @@ class TaiKhoanNVUpdate extends Component {
 
 
         // Log the request data for debugging purposes
-            console.log('Request Data: ' + JSON.stringify(requestData));
-            taikhoanservice.updateNhanVien(requestData, this.state.taiKhoanUpdate.id)
-                .then((response) => {
-                    const {taiKhoan, thongTinNguoiDung} = response.data;
-                    this.setState({
-                        taiKhoanUpdate: taiKhoan,
-                        nguoiDungUpdate: thongTinNguoiDung,
-                    });
-                    setTimeout(() => {
-                        window.location.href = (`/nhanvien`);
-                    }, 2000);
-                    toast.success("Sửa thành công!");
-                })
-                .catch((error) => {
-                    console.error("Update request error:", error);
-                    toast.error("Lỗi khi cập nhật");
+        console.log('Request Data: ' + JSON.stringify(requestData));
+        taikhoanservice.updateNhanVien(requestData, this.state.taiKhoanUpdate.id)
+            .then((response) => {
+                const {taiKhoan, thongTinNguoiDung} = response.data;
+                this.setState({
+                    taiKhoanUpdate: taiKhoan,
+                    nguoiDungUpdate: thongTinNguoiDung,
                 });
-        }
-        ;
+                setTimeout(() => {
+                    window.location.href = (`/nhanvien`);
+                }, 2000);
+                toast.success("Sửa thành công!");
+            })
+            .catch((error) => {
+                console.error("Update request error:", error);
+                toast.error("Lỗi khi cập nhật");
+            });
+    }
+    ;
 
 
     thayDoiTenUpdate = (event) => {
@@ -452,7 +486,17 @@ class TaiKhoanNVUpdate extends Component {
     fetchDistricts(selectedCity) {
         axios.get(`https://provinces.open-api.vn/api/p/${selectedCity.code}?depth=2`)
             .then((response) => {
-                this.setState({ districts: response.data.districts });
+                const districts = response.data.districts.map(district => ({
+                    name: district.name,
+                    code: district.code,
+                }));
+                this.setState({ districts }, () => {
+                    // After setting districts, fetch wards if needed
+                    const selectedDistrict = this.state.districts.find(d => d.name === this.state.nguoiDungUpdate.quanHuyen);
+                    if (selectedDistrict) {
+                        this.fetchWards(selectedDistrict);
+                    }
+                });
             })
             .catch((error) => {
                 console.error('Error fetching districts:', error);
@@ -462,7 +506,11 @@ class TaiKhoanNVUpdate extends Component {
     fetchWards(selectedDistrict) {
         axios.get(`https://provinces.open-api.vn/api/d/${selectedDistrict.code}?depth=2`)
             .then((response) => {
-                this.setState({ wards: response.data.wards });
+                const wards = response.data.wards.map(ward => ({
+                    name: ward.name,
+                    code: ward.code,
+                }));
+                this.setState({ wards });
             })
             .catch((error) => {
                 console.error('Error fetching wards:', error);
@@ -473,32 +521,60 @@ class TaiKhoanNVUpdate extends Component {
         const selectedCityName = event.target.value;
         const selectedCity = this.state.cities.find(city => city.name === selectedCityName);
 
-        this.setState({
-            tinhThanhPho: selectedCityName,
+        this.setState((prevState) => ({
+            nguoiDungUpdate: {
+                ...prevState.nguoiDungUpdate,
+                tinhThanhPho: selectedCityName,
+                quanHuyen: '', // Reset quanHuyen when the city changes
+                xaPhuongThiTran: '', // Reset xaPhuongThiTran when the city changes
+            },
+            errorUpdate: {
+                ...prevState.errorUpdate,
+                quanHuyen: '',  // Reset the error for quanHuyen
+                xaPhuongThiTran: '',  // Reset the error for xaPhuongThiTran
+            },
+        }), () => {
+            // After setting city, fetch districts if needed
+            if (selectedCity) {
+                this.fetchDistricts(selectedCity);
+            }
         });
-
-        if (selectedCity) {
-            this.fetchDistricts(selectedCity); // Chỉ thực hiện fetchDistricts nếu có dữ liệu cho selectedCity
-        }
     }
+
 
     handleDistrictChange(event) {
         const selectedDistrictName = event.target.value;
         const selectedDistrict = this.state.districts.find(district => district.name === selectedDistrictName);
 
-        this.setState({
-            quanHuyen: selectedDistrictName,
+        this.setState((prevState) => ({
+            nguoiDungUpdate: {
+                ...prevState.nguoiDungUpdate,
+                quanHuyen: selectedDistrictName,
+                xaPhuongThiTran: '', // Reset xaPhuongThiTran when the district changes
+            },
+            errorUpdate: {
+                ...prevState.errorUpdate,
+                xaPhuongThiTran: '',  // Reset the error for xaPhuongThiTran
+            },
+        }), () => {
+            // After setting district, fetch wards if needed
+            if (selectedDistrict) {
+                this.fetchWards(selectedDistrict);
+            }
         });
-
-        if (selectedDistrict) {
-            this.fetchWards(selectedDistrict); // Chỉ thực hiện fetchWards nếu có dữ liệu cho selectedDistrict
-        }
     }
+
 
     handleWardChange(event) {
         const selectedWardName = event.target.value;
-        this.setState({ xaPhuongThiTran: selectedWardName });
+        this.setState((prevState) => ({
+            nguoiDungUpdate: {
+                ...prevState.nguoiDungUpdate,
+                xaPhuongThiTran: selectedWardName,
+            },
+        }));
     }
+
 
     render() {
 
@@ -521,7 +597,7 @@ class TaiKhoanNVUpdate extends Component {
                             <div className="card">
                                 <div className="card-body">
                                     <h5 className="card-title">ADD<span>| xx</span></h5>
-                                    <form onSubmit={this.update}>
+                                    <form>
 
                                         {/* Ảnh */}
                                         <div className="form-group">
@@ -624,62 +700,66 @@ class TaiKhoanNVUpdate extends Component {
                                             )}
                                         </div>
                                         {/* Địa chỉ */}
-                                        <div className="form-group">
-                                            <label>Địa chỉ: <span style={{ color: 'red' }}>*</span></label>
-                                            <div className="row">
-                                                <div className="col-md-4">
-                                                    <select
-                                                        className="form-control"
-                                                        name="tinhThanhPho"
-                                                        onChange={(event) => this.handleCityChange(event)}
-                                                    >
-                                                        <option value="">Chọn tỉnh thành</option>
-                                                        {this.state.cities.map(city => (
-                                                            <option key={city.code} value={city.name}>
-                                                                {city.name}
-                                                            </option>
-                                                        ))}
-                                                    </select>
-                                                    {this.state.errorUpdate.tinhThanhPho && (
-                                                        <div className="text-danger">{this.state.errorUpdate.tinhThanhPho}</div>
-                                                    )}
-                                                </div>
-                                                <div className="col-md-4">
-                                                    <select
-                                                        className="form-control"
-                                                        name="quanHuyen"
-                                                        onChange={(event) => this.handleDistrictChange(event)}
-                                                    >
-                                                        <option value="">Chọn quận huyện</option>
-                                                        {this.state.districts.map(district => (
-                                                            <option key={district.code} value={district.name}>
-                                                                {district.name}
-                                                            </option>
-                                                        ))}
-                                                    </select>
-                                                    {this.state.errorUpdate.quanHuyen && (
-                                                        <div className="text-danger">{this.state.errorUpdate.quanHuyen}</div>
-                                                    )}
-                                                </div>
-                                                <div className="col-md-4">
-                                                    <select
-                                                        className="form-control"
-                                                        name="xaPhuongThiTran"
-                                                        onChange={(event) => this.handleWardChange(event)}
-                                                    >
-                                                        <option value="">Chọn phường xã</option>
-                                                        {this.state.wards.map(ward => (
-                                                            <option key={ward.code} value={ward.name}>
-                                                                {ward.name}
-                                                            </option>
-                                                        ))}
-                                                    </select>
-                                                    {this.state.errorUpdate.xaPhuongThiTran && (
-                                                        <div className="text-danger">{this.state.errorUpdate.xaPhuongThiTran}</div>
-                                                    )}
-                                                </div>
+
+                                        <label>Địa chỉ: <span style={{ color: 'red' }}>*</span></label>
+                                        <div className="row">
+                                            <div className="col-md-4">
+                                                <select
+                                                    className="form-control"
+                                                    name="tinhThanhPho"
+                                                    onChange={(event) => this.handleCityChange(event)}
+                                                    value={this.state.nguoiDungUpdate.tinhThanhPho}
+
+                                                >
+                                                    <option value="">Chọn tỉnh thành</option>
+                                                    {this.state.cities.map(city => (
+                                                        <option key={city.code} value={city.name}>
+                                                            {city.name}
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                                {this.state.errorUpdate.tinhThanhPho && (
+                                                    <div className="text-danger">{this.state.errorUpdate.tinhThanhPho}</div>
+                                                )}
+                                            </div>
+                                            <div className="col-md-4">
+                                                <select
+                                                    className="form-control"
+                                                    name="quanHuyen"
+                                                    onChange={(event) => this.handleDistrictChange(event)}
+                                                    value={this.state.nguoiDungUpdate.quanHuyen}
+                                                >
+                                                    <option value="">Chọn quận huyện</option>
+                                                    {this.state.districts.map(district => (
+                                                        <option key={district.code} value={district.name}>
+                                                            {district.name}
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                                {this.state.errorUpdate.quanHuyen && (
+                                                    <div className="text-danger">{this.state.errorUpdate.quanHuyen}</div>
+                                                )}
+                                            </div>
+                                            <div className="col-md-4">
+                                                <select
+                                                    className="form-control"
+                                                    name="xaPhuongThiTran"
+                                                    onChange={(event) => this.handleWardChange(event)}
+                                                    value={this.state.nguoiDungUpdate.xaPhuongThiTran}
+                                                >
+                                                    <option value="">Chọn phường xã</option>
+                                                    {this.state.wards.map(ward => (
+                                                        <option key={ward.code} value={ward.name}>
+                                                            {ward.name}
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                                {this.state.errorUpdate.xaPhuongThiTran && (
+                                                    <div className="text-danger">{this.state.errorUpdate.xaPhuongThiTran}</div>
+                                                )}
                                             </div>
                                         </div>
+
 
                                         {/* Số nhà/Thôn */}
                                         <div className="form-group">
@@ -722,8 +802,8 @@ class TaiKhoanNVUpdate extends Component {
                                             {this.state.errorUpdate.email && <div className="invalid-feedback">{this.state.errorUpdate.email}</div>}
                                         </div>
 
-                                        <input type="submit" className="btn btn-primary" value="Update" style={{ marginTop: '10px' }} />
-                                        <button onClick={this.kiemtra} className='btn btn-primary'>Detail</button>
+                                        <input type="submit" className="btn btn-primary" value="Update"
+                                               style={{marginTop: '10px'}} onClick={this.update}/>
                                     </form>
                                 </div>
                             </div>

@@ -176,207 +176,207 @@ class TaiKhoanNVComponent extends Component {
             listFile.push(this.state.files[i].name);
         }
 
-            const {taiKhoanAdd, nguoiDungAdd} = this.state;
-            const requestData = {
-                taiKhoan: {
-                    email : taiKhoanAdd.email,
-                },
-                thongTinNguoiDung: {
-                    ten: nguoiDungAdd.ten,
-                    cccd: nguoiDungAdd.cccd,
-                    sdt: nguoiDungAdd.sdt,
-                    gioiTinh: nguoiDungAdd.gioiTinh,
-                    ngaySinh: nguoiDungAdd.ngaySinh,
-                },
-                files: listFile,
-                diaChiCuThe: nguoiDungAdd.diaChiCuThe,
-                tinhThanhPho: this.state.tinhThanhPho,
-                quanHuyen: this.state.quanHuyen,
-                xaPhuongThiTran: this.state.xaPhuongThiTran,
+        const {taiKhoanAdd, nguoiDungAdd} = this.state;
+        const requestData = {
+            taiKhoan: {
+                email : taiKhoanAdd.email,
+            },
+            thongTinNguoiDung: {
+                ten: nguoiDungAdd.ten,
+                cccd: nguoiDungAdd.cccd,
+                sdt: nguoiDungAdd.sdt,
+                gioiTinh: nguoiDungAdd.gioiTinh,
+                ngaySinh: nguoiDungAdd.ngaySinh,
+            },
+            files: listFile,
+            diaChiCuThe: nguoiDungAdd.diaChiCuThe,
+            tinhThanhPho: this.state.tinhThanhPho,
+            quanHuyen: this.state.quanHuyen,
+            xaPhuongThiTran: this.state.xaPhuongThiTran,
 
-            };
+        };
+        console.log('nsx' + JSON.stringify(requestData));
+
+        if (listFile.length === 0) {
+            this.setState({error: {...this.state.errorAdd, files: "Chọn ít nhất 1 ảnh !"}});
             console.log('nsx' + JSON.stringify(requestData));
+            return;
+        } else {
+            this.setState({ error: { ...this.state.errorAdd, files: "" } });
+        }
 
-            if (listFile.length === 0) {
-                this.setState({error: {...this.state.errorAdd, files: "Chọn ít nhất 1 ảnh !"}});
-                console.log('nsx' + JSON.stringify(requestData));
-                return;
-            } else {
-                this.setState({ error: { ...this.state.errorAdd, files: "" } });
-            }
-
-            // Kiểm tra không được để trống
-            if (!nguoiDungAdd.cccd.trim()) {
-                this.setState({ errorAdd: { ...this.state.errorAdd, cccd: "CCCD không được bỏ trống!" } });
-                return;
-            } else if (!/^\d+$/.test(nguoiDungAdd.cccd)) {
-                // Kiểm tra là số nguyên
-                this.setState({ errorAdd: { ...this.state.errorAdd, cccd: "CCCD phải là số nguyên và không được chứa khoảng trắng !" } });
-                return;
-            } else if (nguoiDungAdd.cccd.length !== 12) {
-                // Kiểm tra có đủ 12 số
-                this.setState({ errorAdd: { ...this.state.errorAdd, cccd: "CCCD phải có đủ 12 số!" } });
-                return;
-            } else if (this.state.nhanVienQuyen1.some(user => user.thongTinNguoiDung.cccd === nguoiDungAdd.cccd)) {
-                // Kiểm tra trùng căn cước
-                this.setState({ errorAdd: { ...this.state.errorAdd, cccd: "CCCD đã tồn tại trong hệ thống!" } });
-                return;
-            } else {
-                this.setState({ errorAdd: { ...this.state.errorAdd, cccd: "" } });
-            }
+        // Kiểm tra không được để trống
+        if (!nguoiDungAdd.cccd.trim()) {
+            this.setState({ errorAdd: { ...this.state.errorAdd, cccd: "CCCD không được bỏ trống!" } });
+            return;
+        } else if (!/^\d+$/.test(nguoiDungAdd.cccd)) {
+            // Kiểm tra là số nguyên
+            this.setState({ errorAdd: { ...this.state.errorAdd, cccd: "CCCD phải là số nguyên và không được chứa khoảng trắng !" } });
+            return;
+        } else if (nguoiDungAdd.cccd.length !== 12) {
+            // Kiểm tra có đủ 12 số
+            this.setState({ errorAdd: { ...this.state.errorAdd, cccd: "CCCD phải có đủ 12 số!" } });
+            return;
+        } else if (this.state.nhanVienQuyen1.some(user => user.thongTinNguoiDung.cccd === nguoiDungAdd.cccd)) {
+            // Kiểm tra trùng căn cước
+            this.setState({ errorAdd: { ...this.state.errorAdd, cccd: "CCCD đã tồn tại trong hệ thống!" } });
+            return;
+        } else {
+            this.setState({ errorAdd: { ...this.state.errorAdd, cccd: "" } });
+        }
 
 
-            //check ten
-            if (!nguoiDungAdd.ten.trim()) {
-                this.setState({ errorAdd: { ...this.state.errorAdd, ten: "Tên không được bỏ trống!" } });
-                return;
-            } else if (!/^[\p{L}\s]+$/u.test(nguoiDungAdd.ten)) {
-                this.setState({ errorAdd: { ...this.state.errorAdd, ten: "Tên chỉ được chứa chữ cái và không có kí tự đặc biệt!" } });
-                return;
+        //check ten
+        if (!nguoiDungAdd.ten.trim()) {
+            this.setState({ errorAdd: { ...this.state.errorAdd, ten: "Tên không được bỏ trống!" } });
+            return;
+        } else if (!/^[\p{L}\s]+$/u.test(nguoiDungAdd.ten)) {
+            this.setState({ errorAdd: { ...this.state.errorAdd, ten: "Tên chỉ được chứa chữ cái và không có kí tự đặc biệt!" } });
+            return;
             // } else if (/\s/.test(nguoiDungAdd.ten)) {
             //     this.setState({ errorAdd: { ...this.state.errorAdd, ten: "Tên không được chứa khoảng trắng!" } });
             //     return;
-            } else {
-                this.setState({ errorAdd: { ...this.state.errorAdd, ten: "" } });
-            }
-
-           //check ngaySinh
-            const inputDate = new Date(nguoiDungAdd.ngaySinh.trim());
-            const currentDate = new Date();
-
-            if (!nguoiDungAdd.ngaySinh.trim()) {
-                this.setState({ errorAdd: { ...this.state.errorAdd, ngaySinh: "Ngày sinh không được bỏ trống!" } });
-                return;
-            } else if (inputDate > currentDate) {
-                this.setState({ errorAdd: { ...this.state.errorAdd, ngaySinh: "Không được lấy ngày sinh trong tương lai!" } });
-                return;
-            } else if (inputDate.toDateString() === currentDate.toDateString()) {
-                this.setState({ errorAdd: { ...this.state.errorAdd, ngaySinh: "Ngày sinh không được lấy ngày hiện tại!" } });
-                return;
-            } else {
-                this.setState({ errorAdd: { ...this.state.errorAdd, ngaySinh: "" } });
-            }
-            // check gioiTinh
-            if (nguoiDungAdd.gioiTinh === null || nguoiDungAdd.gioiTinh === undefined || nguoiDungAdd.gioiTinh === "") {
-                this.setState({ errorAdd: { ...this.state.errorAdd, gioiTinh: "Giới tính không được bỏ trống !" } });
-                return;
-            } else {
-                this.setState({ errorAdd: { ...this.state.errorAdd, gioiTinh: "" } });
-            }
-            // check thanhPho
-            if (!this.state.tinhThanhPho.trim()) {
-                this.setState({ errorAdd: { ...this.state.errorAdd, tinhThanhPho: "Tỉnh/Thành phố không được bỏ trống!" } });
-                return;
-            } else {
-                this.setState({ errorAdd: { ...this.state.errorAdd, tinhThanhPho: "" } });
-            }
-            // check quanHuyen
-            if (!this.state.quanHuyen.trim()) {
-                this.setState({ errorAdd: { ...this.state.errorAdd, quanHuyen: "Quận/Huyện không được bỏ trống!" } });
-                return;
-            } else {
-                this.setState({ errorAdd: { ...this.state.errorAdd, quanHuyen: "" } });
-            }
-            // check xaPhuongThiTran
-            if (!this.state.xaPhuongThiTran.trim()) {
-                this.setState({ errorAdd: { ...this.state.errorAdd, xaPhuongThiTran: "Xã/Phường/Thị trấn không được bỏ trống!" } });
-                return;
-            } else {
-                this.setState({errorAdd: {...this.state.errorAdd, xaPhuongThiTran: ""}});
-            }
-            // check diaChiCuThe
-            if (!nguoiDungAdd.diaChiCuThe.trim()) {
-                this.setState({ errorAdd: { ...this.state.errorAdd, diaChiCuThe: "Địa chỉ cụ thể không được bỏ trống !" } });
-                return;
-            } else {
-                this.setState({ errorAdd: { ...this.state.errorAdd, diaChiCuThe: "" } });
-            }
-            // check sdt
-            const sdtRegex = /^[0-9]{10}$/; // Regex for 10 digits
-
-            if (!nguoiDungAdd.sdt.trim()) {
-                this.setState({ errorAdd: { ...this.state.errorAdd, sdt: "SDT không được bỏ trống!" } });
-                return;
-            } else if (!sdtRegex.test(nguoiDungAdd.sdt.trim())) {
-                this.setState({
-                    errorAdd: {
-                        ...this.state.errorAdd,
-                        sdt: "SDT phải là số nguyên, không có kí tự đặc biệt và phải có 10 chữ số!"
-                    }
-                });
-                return;
-            } else if (/\s/.test(nguoiDungAdd.sdt.trim())) {
-                this.setState({ errorAdd: { ...this.state.errorAdd, sdt: "SDT không được chứa khoảng trắng!" } });
-                return;
-            } else if (this.state.nhanVienQuyen1.some(user => user.thongTinNguoiDung.sdt === nguoiDungAdd.sdt)) {
-                this.setState({ errorAdd: { ...this.state.errorAdd, sdt: "SDT đã tồn tại trong hệ thống!" } });
-                return;
-            } else {
-                this.setState({ errorAdd: { ...this.state.errorAdd, sdt: "" } });
-            }
-
-            // check email
-            if (!taiKhoanAdd || !taiKhoanAdd.email || !taiKhoanAdd.email.trim()) {
-                this.setState({ errorAdd: { ...this.state.errorAdd, email: "Email không được bỏ trống!" } });
-                return;
-            } else if (!/^\S+@\S+\.\S+$/.test(taiKhoanAdd.email)) {
-                // Check if email is in correct format
-                this.setState({ errorAdd: { ...this.state.errorAdd, email: "Địa chỉ email không đúng định dạng!" } });
-                return;
-            } else if (/\s/.test(taiKhoanAdd.email)) {
-                // Check if email contains whitespace
-                this.setState({ errorAdd: { ...this.state.errorAdd, email: "Email không được chứa khoảng trắng!" } });
-                return;
-            } else if (this.state.nhanVienQuyen1.some(user => user.taiKhoan && user.taiKhoan.email === taiKhoanAdd.email)) {
-                this.setState({ errorAdd: { ...this.state.errorAdd, email: "Email đã tồn tại trong hệ thống!" } });
-                return;
-            } else {
-                this.setState({ errorAdd: { ...this.state.errorAdd, email: "" } });
-            }
-
-            console.log(requestData);
-            // Gọi API để thêm tài khoản
-            taikhoanservice.addNhanVien(requestData)
-                .then((res) => {
-                    if (res.status === 200) {
-                        // Xử lý khi thêm thành công
-                        let taiKhoanMoi = res.data.taiKhoan;
-                        let nguoiDungMoi = res.data.thongTinNguoiDung;
-                        let diaChiMoi = res.data.diaChi;
-
-                        this.setState((prevState) => ({
-                            nhanVienQuyen1: [...prevState.nhanVienQuyen1, taiKhoanMoi],
-                            thongTinNguoiDung: [...prevState.thongTinNguoiDung, nguoiDungMoi],
-                            diaChi: [...prevState.diaChi, diaChiMoi],
-                        }));
-
-                        this.sendEmail(
-                            taiKhoanAdd.email,
-                            "Welcome to Our Company",
-                            "Dear " + nguoiDungAdd.ten +
-                            ",\n\nWelcome to our company! Your account has been successfully created."
-                        );
-
-                        setTimeout(() => {
-                            window.location.href = (`/nhanvien`);
-                        }, 2000);
-                        toast.success("Thêm thành công!");
-                    } else {
-                        // Xử lý khi có lỗi trả về từ API
-                        const errorMessage = res.data.message || "Có lỗi xảy ra khi thêm danh mục.";
-                        toast.error("Lỗi: " + errorMessage);
-                        console.log(res.data.error);
-                    }
-                })
-                .catch((error) => {
-                    // Xử lý lỗi khi gửi yêu cầu API
-                    if (error.message === "Network Error") {
-                        toast.error("Lỗi kết nối mạng. Vui lòng kiểm tra kết nối của bạn.");
-                    } else {
-                        toast.error("Lỗi khi gửi yêu cầu API: " + error);
-                    }
-                });
+        } else {
+            this.setState({ errorAdd: { ...this.state.errorAdd, ten: "" } });
         }
+
+        //check ngaySinh
+        const inputDate = new Date(nguoiDungAdd.ngaySinh.trim());
+        const currentDate = new Date();
+
+        if (!nguoiDungAdd.ngaySinh.trim()) {
+            this.setState({ errorAdd: { ...this.state.errorAdd, ngaySinh: "Ngày sinh không được bỏ trống!" } });
+            return;
+        } else if (inputDate > currentDate) {
+            this.setState({ errorAdd: { ...this.state.errorAdd, ngaySinh: "Không được lấy ngày sinh trong tương lai!" } });
+            return;
+        } else if (inputDate.toDateString() === currentDate.toDateString()) {
+            this.setState({ errorAdd: { ...this.state.errorAdd, ngaySinh: "Ngày sinh không được lấy ngày hiện tại!" } });
+            return;
+        } else {
+            this.setState({ errorAdd: { ...this.state.errorAdd, ngaySinh: "" } });
+        }
+        // check gioiTinh
+        if (nguoiDungAdd.gioiTinh === null || nguoiDungAdd.gioiTinh === undefined || nguoiDungAdd.gioiTinh === "") {
+            this.setState({ errorAdd: { ...this.state.errorAdd, gioiTinh: "Giới tính không được bỏ trống !" } });
+            return;
+        } else {
+            this.setState({ errorAdd: { ...this.state.errorAdd, gioiTinh: "" } });
+        }
+        // check thanhPho
+        if (!this.state.tinhThanhPho.trim()) {
+            this.setState({ errorAdd: { ...this.state.errorAdd, tinhThanhPho: "Tỉnh/Thành phố không được bỏ trống!" } });
+            return;
+        } else {
+            this.setState({ errorAdd: { ...this.state.errorAdd, tinhThanhPho: "" } });
+        }
+        // check quanHuyen
+        if (!this.state.quanHuyen.trim()) {
+            this.setState({ errorAdd: { ...this.state.errorAdd, quanHuyen: "Quận/Huyện không được bỏ trống!" } });
+            return;
+        } else {
+            this.setState({ errorAdd: { ...this.state.errorAdd, quanHuyen: "" } });
+        }
+        // check xaPhuongThiTran
+        if (!this.state.xaPhuongThiTran.trim()) {
+            this.setState({ errorAdd: { ...this.state.errorAdd, xaPhuongThiTran: "Xã/Phường/Thị trấn không được bỏ trống!" } });
+            return;
+        } else {
+            this.setState({errorAdd: {...this.state.errorAdd, xaPhuongThiTran: ""}});
+        }
+        // check diaChiCuThe
+        if (!nguoiDungAdd.diaChiCuThe.trim()) {
+            this.setState({ errorAdd: { ...this.state.errorAdd, diaChiCuThe: "Địa chỉ cụ thể không được bỏ trống !" } });
+            return;
+        } else {
+            this.setState({ errorAdd: { ...this.state.errorAdd, diaChiCuThe: "" } });
+        }
+        // check sdt
+        const sdtRegex = /^[0-9]{10}$/; // Regex for 10 digits
+
+        if (!nguoiDungAdd.sdt.trim()) {
+            this.setState({ errorAdd: { ...this.state.errorAdd, sdt: "SDT không được bỏ trống!" } });
+            return;
+        } else if (!sdtRegex.test(nguoiDungAdd.sdt.trim())) {
+            this.setState({
+                errorAdd: {
+                    ...this.state.errorAdd,
+                    sdt: "SDT phải là số nguyên, không có kí tự đặc biệt và phải có 10 chữ số!"
+                }
+            });
+            return;
+        } else if (/\s/.test(nguoiDungAdd.sdt.trim())) {
+            this.setState({ errorAdd: { ...this.state.errorAdd, sdt: "SDT không được chứa khoảng trắng!" } });
+            return;
+        } else if (this.state.nhanVienQuyen1.some(user => user.thongTinNguoiDung.sdt === nguoiDungAdd.sdt)) {
+            this.setState({ errorAdd: { ...this.state.errorAdd, sdt: "SDT đã tồn tại trong hệ thống!" } });
+            return;
+        } else {
+            this.setState({ errorAdd: { ...this.state.errorAdd, sdt: "" } });
+        }
+
+        // check email
+        if (!taiKhoanAdd || !taiKhoanAdd.email || !taiKhoanAdd.email.trim()) {
+            this.setState({ errorAdd: { ...this.state.errorAdd, email: "Email không được bỏ trống!" } });
+            return;
+        } else if (!/^\S+@\S+\.\S+$/.test(taiKhoanAdd.email)) {
+            // Check if email is in correct format
+            this.setState({ errorAdd: { ...this.state.errorAdd, email: "Địa chỉ email không đúng định dạng!" } });
+            return;
+        } else if (/\s/.test(taiKhoanAdd.email)) {
+            // Check if email contains whitespace
+            this.setState({ errorAdd: { ...this.state.errorAdd, email: "Email không được chứa khoảng trắng!" } });
+            return;
+        } else if (this.state.nhanVienQuyen1.some(user => user.taiKhoan && user.taiKhoan.email === taiKhoanAdd.email)) {
+            this.setState({ errorAdd: { ...this.state.errorAdd, email: "Email đã tồn tại trong hệ thống!" } });
+            return;
+        } else {
+            this.setState({ errorAdd: { ...this.state.errorAdd, email: "" } });
+        }
+
+        console.log(requestData);
+        // Gọi API để thêm tài khoản
+        taikhoanservice.addNhanVien(requestData)
+            .then((res) => {
+                if (res.status === 200) {
+                    // Xử lý khi thêm thành công
+                    let taiKhoanMoi = res.data.taiKhoan;
+                    let nguoiDungMoi = res.data.thongTinNguoiDung;
+                    let diaChiMoi = res.data.diaChi;
+
+                    this.setState((prevState) => ({
+                        nhanVienQuyen1: [...prevState.nhanVienQuyen1, taiKhoanMoi],
+                        thongTinNguoiDung: [...prevState.thongTinNguoiDung, nguoiDungMoi],
+                        diaChi: [...prevState.diaChi, diaChiMoi],
+                    }));
+
+                    this.sendEmail(
+                        taiKhoanAdd.email,
+                        "Welcome to Our Company",
+                        "Dear " + nguoiDungAdd.ten +
+                        ",\n\nWelcome to our company! Your account has been successfully created."
+                    );
+
+                    setTimeout(() => {
+                        window.location.href = (`/nhanvien`);
+                    }, 20);
+                    toast.success("Thêm thành công!");
+                } else {
+                    // Xử lý khi có lỗi trả về từ API
+                    const errorMessage = res.data.message || "Có lỗi xảy ra khi thêm danh mục.";
+                    toast.error("Lỗi: " + errorMessage);
+                    console.log(res.data.error);
+                }
+            })
+            .catch((error) => {
+                // Xử lý lỗi khi gửi yêu cầu API
+                if (error.message === "Network Error") {
+                    toast.error("Lỗi kết nối mạng. Vui lòng kiểm tra kết nối của bạn.");
+                } else {
+                    toast.error("Lỗi khi gửi yêu cầu API: " + error);
+                }
+            });
+    }
 
     detail(id) {
         window.location.href = (`/nhanviendetail/${id}`);

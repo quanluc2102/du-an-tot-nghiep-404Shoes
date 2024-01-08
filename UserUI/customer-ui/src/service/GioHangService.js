@@ -7,6 +7,7 @@ const DELETE_GIO_HANG_CHI_TIET_ONE = 'http://localhost:8080/gio-hang-chi-tiet/de
 const DELETE_GIO_HANG_CHI_TIET_MULTIPLE = 'http://localhost:8080/gio-hang-chi-tiet/delete-multiple';
 const GET_KMTT = "http://localhost:8080/khuyen_mai/hien-thiKMTT";
 const CREATE_HOA_DON = "http://localhost:8080/payment/sold";
+const THANH_TOAN_HOA_DON = "http://localhost:8080/payment/pay-bill";
 
 
 
@@ -43,6 +44,11 @@ export const GioHangService = {
 
     sold:async (hd) =>{
         const response = await axios.post(`${CREATE_HOA_DON}`,hd);
+        return response.data;
+    },
+
+    pay:async (gia) =>{
+        const response = await axios.get(`${THANH_TOAN_HOA_DON}/${gia}`);
         return response.data;
     }
 };

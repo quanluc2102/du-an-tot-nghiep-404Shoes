@@ -1,0 +1,237 @@
+/* Container styles */
+.account-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #e8e8e8;
+    border-radius: 8px;
+    background-color: #f9f9f9; /* Màu nền cho container */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* User profile styles */
+.user-profile {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.edit-profile {
+    text-decoration: none;
+    color: #ee4d2d;
+}
+
+.avatar-container {
+    position: relative;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin-right: 15px;
+    border: 2px solid #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.avatar-placeholder {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: #ccc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.avatar-svg {
+    width: 70%;
+    height: 70%;
+    fill: #fff;
+}
+
+.avatar-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.user-info {
+    flex-grow: 1;
+}
+
+.username {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #333;
+}
+
+.edit-profile-link {
+    color: #0c63e4;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+}
+
+/* Purchase tabs styles */
+.purchase-tabs {
+    display: flex;
+    margin-top: 20px;
+    overflow: hidden;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.purchase-tab {
+    flex: 1;
+    text-align: center;
+    padding: 10px;
+    background-color: #f2f2f2;
+    border: 1px solid #ccc;
+    color: #555;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.purchase-tab:hover,
+.purchase-tab.active {
+    background-color: #e0e0e0;
+}
+
+.purchase-tab.active {
+    color: #fff;
+    background-color: #007bff;
+}
+
+.purchase-tab:first-child {
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+}
+
+.purchase-tab:last-child {
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+
+/* Purchase tabs styles */
+.purchase-tab {
+    text-decoration: none; /* Bỏ gạch chân cho thẻ a */
+    transition: background-color 0.3s ease, color 0.3s ease, opacity 0.3s ease; /* Thêm hiệu ứng opacity */
+}
+
+.purchase-tab:hover {
+    background-color: #ddd; /* Màu nền khi hover */
+    opacity: 0.8; /* Độ mờ khi hover */
+}
+
+.purchase-tab.active {
+    color: #fff;
+    background-color: #0c63e4; /* Màu chủ đạo cho tab active */
+    opacity: 1; /* Khôi phục độ mờ khi active */
+}
+
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+}
+
+.order-container {
+    max-width: 1000px;
+    margin: 20px auto;
+    background-color: #fff;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.product-item {
+    display: flex;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 10px;
+}
+
+.product-image {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    margin-right: 10px;
+}
+
+.product-details {
+    flex-grow: 1;
+}
+
+.product-title {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.product-variant {
+    color: #555;
+    margin-bottom: 10px;
+}
+
+.product-quantity {
+    font-size: 16px;
+    color: #777;
+}
+
+.product-price {
+    font-size: 18px;
+    color: #333;
+    margin-top: 10px;
+}
+
+.total-price {
+    font-size: 20px;
+    font-weight: bold;
+    margin-top: 20px;
+}
+
+.bill-detail {
+    background-color: #0c63e4; /* Màu nền cho button */
+    color: #fff;
+    border: none;
+    padding: 8px 12px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+    top: 10px;
+    right: 10px;
+}
+
+.bill-detail:hover {
+    background-color: #c1d2ea; /* Màu nền khi hover */
+}
+
+/*!* Thêm các quy tắc CSS để đặt dropdown-container ở góc trái trong account-container *!*/
+/*.account-container {*/
+/*    position: relative;*/
+/*}*/
+
+/*.dropdown-container {*/
+/*    position: absolute;*/
+/*    top: 10px; !* Điều chỉnh giá trị top để cân bằng vị trí *!*/
+/*    left: 10px; !* Điều chỉnh giá trị left để cân bằng vị trí *!*/
+/*}*/
+
+/*!* Định dạng lại nút trong dropdown-container *!*/
+/*.dropdown-container button {*/
+/*    background-color: transparent;*/
+/*    border: none;*/
+/*    cursor: pointer;*/
+/*    display: flex;*/
+/*    align-items: center;*/
+/*    font-size: 14px;*/
+/*    color: #333;*/
+/*}*/
+
+/*!* Định dạng lại biểu tượng SVG *!*/
+/*.dropdown-container svg {*/
+/*    fill: #333;*/
+/*    margin-right: 5px;*/
+/*}*/

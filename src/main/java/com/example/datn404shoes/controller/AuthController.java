@@ -1,9 +1,11 @@
 package com.example.datn404shoes.controller;
 
 import com.example.datn404shoes.DTO.UserCredentials;
+import com.example.datn404shoes.entity.DiaChi;
 import com.example.datn404shoes.entity.PhanQuyen;
 import com.example.datn404shoes.entity.TaiKhoan;
 import com.example.datn404shoes.request.UserInfoResponse;
+import com.example.datn404shoes.service.serviceimpl.DiaChiServiceimpl;
 import com.example.datn404shoes.service.serviceimpl.PhanQuyenServiceimpl;
 import com.example.datn404shoes.service.serviceimpl.TaiKhoanServiceimpl;
 import io.jsonwebtoken.Claims;
@@ -28,7 +30,8 @@ public class AuthController {
     private TaiKhoanServiceimpl taiKhoanServiceimpl;
     @Autowired
     private PhanQuyenServiceimpl phanQuyenServiceimpl;
-
+//    @Autowired
+//    private DiaChiServiceimpl diaChiServiceimpl;
     private static final Key SECRET_KEY = Keys.secretKeyFor(SignatureAlgorithm.HS512); // Key bí mật, nên được lưu trữ an toàn
 
     @PostMapping("/login")
@@ -62,23 +65,25 @@ public class AuthController {
         return false;
     }
 
-    @GetMapping("/info")
+    @GetMapping("/userinfo")
     public ResponseEntity<UserInfoResponse> getUserInfo(HttpServletRequest request) {
         try {
             // Lấy thông tin người dùng từ token hoặc phương thức xác thực của bạn
             String userEmail = extractUserEmailFromToken(request);
-
             // Gọi service để lấy thông tin chi tiết của người dùng
             TaiKhoan userInfo = taiKhoanServiceimpl.getOneByEmail(userEmail);
-
             if (userInfo != null) {
                 UserInfoResponse userInfoResponse = new UserInfoResponse();
                 userInfoResponse.setId(userInfo.getId());
                 userInfoResponse.setMaTaiKhoan(userInfo.getMaTaiKhoan());
                 userInfoResponse.setEmail(userInfo.getEmail());
-
+                userInfoResponse.setTen(userInfo.getThongTinNguoiDung().getTen());
+                userInfoResponse.setAnh(userInfo.getAnh());
+                userInfoResponse.setCccd(userInfo.getThongTinNguoiDung().getCCCD());
+                userInfoResponse.setGioiTinh(userInfo.getThongTinNguoiDung().getGioiTinh());
+                userInfoResponse.setNgaySinh(userInfo.getThongTinNguoiDung().getNgaySinh());
+                userInfoResponse.setSdt(userInfo.getThongTinNguoiDung().getSdt());
                 // Nếu có ThongTinNguoiDung, bạn có thể thêm các thông tin khác vào userInfoResponse
-
                 return ResponseEntity.ok(userInfoResponse);
             } else {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);

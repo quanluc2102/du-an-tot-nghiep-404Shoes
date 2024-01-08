@@ -50,9 +50,9 @@ public class TaiKhoanServiceimpl implements TaiKhoanService {
     public TaiKhoan add(TaiKhoan taiKhoan) {
         taiKhoan.setNgayTao(Date.valueOf(LocalDate.now()));
         taiKhoan.setNgayCapNhat(Date.valueOf(LocalDate.now()));
-        String randomPassword = generateRandomPassword();
-
-        taiKhoan.setPassword(randomPassword);
+//        String randomPassword = generateRandomPassword();
+//
+//        taiKhoan.setPassword(randomPassword);
 
         responsitory.save(taiKhoan);
         return taiKhoan;

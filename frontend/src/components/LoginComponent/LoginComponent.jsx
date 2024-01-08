@@ -1,8 +1,9 @@
 // Trong LoginComponent.js
 import React, { useState } from 'react';
 import AuthService from './AuthService';
-
+import { useHistory } from 'react-router-dom';
 function LoginComponent({ onLogin, onLogout }) {
+    const history = useHistory();
     const [credentials, setCredentials] = useState({
         email: '',
         password: '',
@@ -20,7 +21,8 @@ function LoginComponent({ onLogin, onLogout }) {
             localStorage.setItem('token', token);
 
             // Sau khi đăng nhập thành công, gọi hàm để lấy thông tin người dùng
-            getUserInfo();
+            const user = await getUserInfo();
+            setUserInfo(user);
 
             onLogin();
         } catch (error) {
@@ -32,6 +34,8 @@ function LoginComponent({ onLogin, onLogout }) {
         AuthService.logout();
         onLogout(); // Ensure onLogout is defined before calling
         setUserInfo(null); // Đăng xuất cũng cần xóa thông tin người dùng
+        localStorage.removeItem('token'); // Xóa token khi đăng xuất
+        localStorage.removeItem('currentUser'); // Xóa thông tin người dùng khi đăng xuất
     };
 
     // Hàm để lấy thông tin người dùng từ backend
@@ -81,6 +85,7 @@ function LoginComponent({ onLogin, onLogout }) {
         }
     };
 
+
     return (
         <div className="card mb-3">
             <div className="card-body">
@@ -123,7 +128,7 @@ function LoginComponent({ onLogin, onLogout }) {
                                 <button className="btn btn-danger" onClick={handleLogout}>Logout</button>
                             </div>
                         ) : (
-                            <p className="small mb-0">Don't have account? <a href="pages-register.html">Create an account</a></p>
+                            <p className="small mb-0">Don't have account? <a href='/forgot-password'>Create an account</a></p>
                         )}
                     </div>
                 </form>

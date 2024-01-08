@@ -3,6 +3,7 @@ package com.example.datn404shoes.service;
 import com.example.datn404shoes.DTO.LocDTO;
 import com.example.datn404shoes.entity.SanPham;
 import com.example.datn404shoes.request.SanPhamUserCustom;
+import com.example.datn404shoes.request.SanPhamUserCustom1;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
@@ -27,7 +28,7 @@ public interface SanPhamService {
     List<SanPham> getAll();
 
     SanPham getOne(Long id);
-
+    List<SanPhamUserCustom1> getSL();
     void chuyenSoLuong(SanPham sp);
 
     void importExcel(MultipartFile file);
