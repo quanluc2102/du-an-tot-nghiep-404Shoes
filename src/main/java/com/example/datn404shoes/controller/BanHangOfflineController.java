@@ -191,9 +191,7 @@ public class BanHangOfflineController {
                 hoaDonChiTietimpl.addNewHDCT(newHDCT);
             }
         }
-
         List<HoaDonChiTiet> danhSachHDCT = banHangOfflineService.layDanhSachHDCT(id);
-        System.out.println(danhSachHDCT);
         return ResponseEntity.ok(danhSachHDCT);
     }
 

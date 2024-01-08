@@ -76,8 +76,8 @@ class BanHangOffline extends Component {
     }
 
     componentDidMount() {
-        const { tabProducts, activeTabKey } = this.state;
-        
+        // const { tabProducts, activeTabKey } = this.state;
+
         BanHangService.getSPCT().then((res) => {
             this.setState({ sanPhamChiTiet: res.data })
         }).catch((error) => {
@@ -443,7 +443,7 @@ class BanHangOffline extends Component {
     handleTabChange = (idHoaDon) => {
         this.setState({ activeTabKey: idHoaDon }, () => {
         })
-    }
+    };
 
     handleProductClick = async (productId, idHoaDon) => {
 
@@ -461,6 +461,12 @@ class BanHangOffline extends Component {
                     const response = await axios.post(`http://localhost:8080/ban_hang/update_hdct/${idHoaDon}`, UpdateHoaDonChiTietDTO);
                     this.setState({ tabProducts: response.data }, () => {
                         console.log('Thêm sản phẩm thành công!!!', response.data);
+                        if (response.status === 200) {
+                            this.fetchDanhSachSP();
+                            toast.success('Đã thêm sản phẩm vào giỏ hàng!!!');
+                        }
+
+                        this.handleCloseModal1();
                     });
                 } catch (error) {
                     console.log('Error: ', error);
@@ -479,6 +485,8 @@ class BanHangOffline extends Component {
         this.setState({ ten: userId.ten }, () => { console.log("ten:", this.state.ten) })
         this.setState({ sdt: userId.sdt }, () => { console.log("sdt:", this.state.sdt) })
 
+        console.log('Dữ liệu khách hàng: ', this.state.idKhachHang);
+
         if (isCustomerExist) {
             this.setState({
                 tabCustomers: {
@@ -488,7 +496,7 @@ class BanHangOffline extends Component {
             }, () => {
                 console.log("idKhachHang updated:", this.state.idKhachHang);
                 toast.success("Đã cập nhật khách hàng", { position: toast.POSITION.MID_RIGHT, autoClose: true });
-                this.handleCloseModal1();
+                this.handleCloseModal2();
             });
         } else {
             const newCustomer = { ...userId };
@@ -502,7 +510,7 @@ class BanHangOffline extends Component {
             }), () => {
                 console.log("idKhachHang state updated:", this.state.idKhachHang);
                 toast.success("Đã thêm khách hàng!!!", { position: toast.POSITION.MID_RIGHT });
-                this.handleCloseModal1();
+                this.handleCloseModal2();
             });
         }
     };
@@ -519,7 +527,18 @@ class BanHangOffline extends Component {
         } catch (error) {
             console.log('Lỗi lấy dữ liệu!!!', error);
         }
-    }
+    };
+
+    fetchDanhSachSP = async () => {
+        try {
+            const response = await axios.get(`http://localhost:8080/san_pham_chi_tiet/hien-thi`);
+            this.setState({ sanPhamChiTiet: response.data }, () => {
+                console.log('Du lieu spct: ', response.data);
+            });
+        } catch (error) {
+            console.log('Error: ', error);
+        }
+    };
 
     renderProductsForTab = (idHoaDon) => {
 
@@ -1035,7 +1054,7 @@ class BanHangOffline extends Component {
                                                 onChange={(event) => this.handleCityChange(event)}
                                                 value={this.state.tinhThanhPho}
                                             >
-                                                <option value="">Chọn tỉnh thành</option>
+                                                <option>Chọn tỉnh thành</option>
                                                 {this.state.cities.map(city => (
                                                     <option key={city.code} value={city.name}>
                                                         {city.name}
@@ -1052,7 +1071,7 @@ class BanHangOffline extends Component {
                                                 onChange={(event) => this.handleDistrictChange(event)}
                                                 value={this.state.quanHuyen}
                                             >
-                                                <option value="">Chọn quận huyện</option>
+                                                <option >Chọn quận huyện</option>
                                                 {this.state.districts.map(district => (
                                                     <option key={district.code} value={district.name}>
                                                         {district.name}
@@ -1069,7 +1088,7 @@ class BanHangOffline extends Component {
                                                 onChange={(event) => this.handleWardChange(event)}
                                                 value={this.state.xaPhuongThiTran}
                                             >
-                                                <option value="">Chọn xã/phường/thị trấn</option>
+                                                <option >Chọn xã/phường/thị trấn</option>
                                                 {this.state.wards.map(ward => (
                                                     <option key={ward.code} value={ward.name}>
                                                         {ward.name}
