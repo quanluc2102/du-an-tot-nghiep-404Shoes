@@ -5,10 +5,9 @@ import com.example.datn404shoes.entity.HoaDon;
 import com.example.datn404shoes.entity.HoaDonChiTiet;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-<<<<<<< HEAD
-=======
+
 import org.springframework.data.repository.query.Param;
->>>>>>> origin/DangBranch
+
 
 import java.util.List;
 
@@ -135,5 +134,5 @@ public interface HoaDonRepository extends JpaRepository<HoaDon,Long> {
             "ORDER BY\n" +
             "hd.ngay_tao DESC;", nativeQuery = true)
     List<Object[]> muaTaiQuay(@Param("id")Long id);
-    
+
 }
