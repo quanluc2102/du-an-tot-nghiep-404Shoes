@@ -135,7 +135,7 @@ public class BanHangOfflineController {
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<?> thayDoiTrangThaiHD(@PathVariable("id") Long id){
+    public ResponseEntity<?> thanhToanHoaDon(@PathVariable("id") Long id){
 
 
         return ResponseEntity.ok("okay");

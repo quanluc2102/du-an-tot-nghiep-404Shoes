@@ -412,6 +412,7 @@ class BanHangOffline extends Component {
         const enteredAmount = parseFloat(e.target.value) || 0;
         this.setState({ enteredAmount });
     };
+
     getTotalQuantity = (products) => {
         return products.reduce((total, product) => total + product.quantity, 0);
     };
@@ -1110,7 +1111,7 @@ class BanHangOffline extends Component {
                             <div className="payment_sell">
                                 <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', width: '100%' }}>
                                     <Col>
-                                        {/* <Col style={{ fontSize: '16px', margin: '5px 0px 5px 0px' }}>Tổng tiền: ({this.getTotalQuantity(activeTabProducts)} sản phẩm)</Col> */}
+                                        <Col style={{ fontSize: '16px', margin: '5px 0px 5px 0px' }}>Tổng tiền: ({this.getTotalQuantity(this.state.tabProducts)} sản phẩm)</Col>
                                         <Col style={{ fontSize: '16px' }}>Mã khuyến mãi: </Col>
                                         <Col style={{ fontSize: '16px', marginTop: '5px ' }}>Giảm giá:</Col>
                                         <Col style={{ fontSize: '16px' }}>Tiền khách đưa </Col>

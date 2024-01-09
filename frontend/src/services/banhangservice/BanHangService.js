@@ -38,6 +38,5 @@ class BanHangService{
             throw error;
         }
     }
-
 }
 export default new BanHangService()
