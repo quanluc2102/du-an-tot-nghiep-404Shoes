@@ -131,6 +131,7 @@ function CheckOut({ location }) {
         })
         setCodeQuan(0)
         setCodeXa(0)
+        setPhiShip(0)
         loadQH(tp)
     }
     const chonQH = (event) =>{
@@ -143,6 +144,7 @@ function CheckOut({ location }) {
             }
         })
         setCodeXa(0)
+        setPhiShip(0)
         loadXP(qh)
     }
     const chonXP = (event) =>{
@@ -296,6 +298,15 @@ function CheckOut({ location }) {
         console.log(hd)
         if(phiShip===0){
             alert("Chưa chọn địa chỉ giao , không thanh toán được");
+            return;
+        }if(sdt.length < 10){
+            alert("SĐT nhập sai (SĐT có 10 số) ! ");
+            return;
+        }if(sdt.length > 10){
+            alert("SĐT nhập sai ( SĐT có 10 số) ! ");
+            return;
+        }if(!/^\d+$/.test(sdt)){
+            alert("SĐT có chữ ! ");
             return;
         }else{
             const thongBao = await GioHangService.sold(hd);
