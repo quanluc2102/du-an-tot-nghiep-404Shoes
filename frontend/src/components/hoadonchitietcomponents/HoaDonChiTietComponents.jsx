@@ -673,12 +673,11 @@ class HoaDonChiTietComponents extends Component {
                                             <form>
                                                 <div>
                                                     <h10 className="nav-link">
-                                                        Người mua: {this.state.hoaDon.taiKhoanKhachHang && this.state.hoaDon.taiKhoanKhachHang.thongTinNguoiDung ? this.state.hoaDon.taiKhoanKhachHang.thongTinNguoiDung.ten : "Khách lẻ"}</h10>
+                                                        Người mua: {this.state.hoaDon.ten ? this.state.hoaDon.ten : "Khách lẻ"} </h10>
                                                     <h10 className="nav-link">
-
-                                                        Số điện thoại: {this.state.hoaDon.taiKhoanKhachHang && this.state.hoaDon.taiKhoanKhachHang.thongTinNguoiDung ? this.state.hoaDon.taiKhoanKhachHang.thongTinNguoiDung.sdt : "Khách lẻ"}</h10>
+                                                        Số điện thoại:{this.state.hoaDon.ten ? this.state.hoaDon.sdt : "Khách lẻ"}</h10>
                                                     <h10 className="nav-link">
-                                                        Email: {this.state.hoaDon.taiKhoanKhachHang && this.state.hoaDon.taiKhoanKhachHang ? this.state.hoaDon.taiKhoanKhachHang.email : "Khách lẻ"}</h10>
+                                                        Email: {this.state.hoaDon.email ? this.state.hoaDon.email : "Khách lẻ"}</h10>
                                                     <div>
                                                         {this.state.hoaDon.taiKhoanKhachHang != null ? <Button variant="btn btn-outline-primary" onClick={this.handleShowModal2} >
                                                             Danh sách địa chỉ
