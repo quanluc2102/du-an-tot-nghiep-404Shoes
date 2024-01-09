@@ -18,4 +18,6 @@ public interface ThongTinNguoiDungService {
     void delete(Long id);
     ThongTinNguoiDung getOne(Long id);
     ThongTinNguoiDung update(Long id, ThongTinNguoiDung thongTinNguoiDung);
+    ThongTinNguoiDung saveThongTinNguoiDung(ThongTinNguoiDung thongTinNguoiDung);
+    ThongTinNguoiDung findById(long id);
 }

@@ -11,11 +11,23 @@ import java.util.UUID;
 
 @Repository
 public interface DiaChiResponsitory extends JpaRepository<DiaChi, UUID> {
+    @Query(value = "select * from dia_chi dc where dc.thong_tin_nguoi_dung_id = :id",nativeQuery = true)
+
     Optional<DiaChi> findById(long id);
     List<DiaChi> findDiaChiByThongTinNguoiDungId(long id);
 
     @Query(value = "select dc.* from dia_chi dc \n" +
             "join tai_khoan tk on tk.thong_tin_nguoi_dung_id=dc.thong_tin_nguoi_dung_id\n" +
             "where tk.id=:id",nativeQuery = true)
+
     List<DiaChi> getDiaChiByTaiKhoan(long id);
+
+    // Thêm phương thức để tìm kiếm địa chỉ theo id và thongTinNguoiDungId
+    Optional<DiaChi> findByIdAndThongTinNguoiDungId(long id, long thongTinNguoiDungId);
+
+    // Thêm phương thức để tìm kiếm địa chỉ theo id và taiKhoanId
+//    @Query(value = "select dc.* from dia_chi dc " +
+//            "join tai_khoan tk on tk.thong_tin_nguoi_dung_id=dc.thong_tin_nguoi_dung_id " +
+//            "where dc.id = :id and tk.id = :taiKhoanId", nativeQuery = true)
+//    Optional<DiaChi> findByIdAndTaiKhoanId(@Param("id") long id, @Param("taiKhoanId") long taiKhoanId);
 }
