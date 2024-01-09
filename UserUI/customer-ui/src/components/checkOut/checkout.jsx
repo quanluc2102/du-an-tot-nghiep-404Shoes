@@ -27,6 +27,7 @@ function CheckOut({ location }) {
     const [user,setUser]=useState([]);
     const [phiShip,setPhiShip]=useState(0);
     const [PTTT,setPTTT]=useState(2);
+    const [PTVT,setPTVT]=useState(2);
     const [ghiChu,setGhiChu]=useState("");
     const [dcSelected,setDcSelected]=useState(0);
     const [sdt,setSDT]=useState("");
@@ -92,7 +93,7 @@ function CheckOut({ location }) {
 
         fetchData();
         loadTP();
-    }, [])
+    }, [PTTT])
     function generateCode(length) {
         const charset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
         let randomString = '';
@@ -203,6 +204,9 @@ function CheckOut({ location }) {
         if (newTab) {
             newTab.focus(); // Đảm bảo tab mới được mở và đưa ra trước mặt
         }
+    }
+    const PTTTVietQR = ()=>{
+        setPTTT(1);
     }
     const tinhTongTienHang = () =>{
         let tongTien = SPCT.reduce((total, spct) => {
@@ -668,12 +672,16 @@ function CheckOut({ location }) {
                             <div className="col-12 bg-light pt-3" style={{marginTop:30}}>
                                 <div className="col-12 bg-light pt-3" >
                                     <h5 style={{marginLeft:35}}>Phương thức thanh toán
-                                        <a href="#" className={`btn btn-sm btn-outline-dark size-item ${PTTT===2 ? 'selected' : ''}`} style={{marginLeft:860}} onClick={PTTTCod} >
+                                        <a href="#" className={`btn btn-sm btn-outline-dark size-item ${PTTT===2 ? 'selected' : ''}`} style={{marginLeft:450}} onClick={PTTTCod} >
                                             <div>Thanh toán khi nhận hàng</div>
                                         </a>
                                         <a href="#" className={`btn btn-sm btn-outline-dark size-item ${PTTT===3 ? 'selected' : ''}`} style={{marginLeft:20}} onClick={PTTTVNPay}>
                                             <div>Thanh toán bằng VNPay</div>
                                         </a>
+                                        <a href="#" className={`btn btn-sm btn-outline-dark size-item ${PTTT===1 ? 'selected' : ''}`} style={{marginLeft:20}} onClick={PTTTVietQR}>
+                                            <div>Thanh toán bằng VietQR</div>
+                                        </a>
+                                        <img style={{maxWidth:300,marginLeft:930,marginTop:20}} src={`https://api.vietqr.io/image/970422-0362460679-vE5Br8f.jpg?accountName=BUI%20XUAN%20THIEU&amount=${tinhTongTienHang()}&addInfo=TRA%20TIEN%20HOA%20DON`} hidden={PTTT!=1}/>
                                     </h5>
                                     {/*<a style={{textDecoration:"none",cursor:"pointer",color:"mediumblue",marginLeft:980}}>Đổi</a>*/}
                                     <hr className="dashed-hr" style={{marginTop:30}}/>
@@ -717,7 +725,6 @@ function CheckOut({ location }) {
                 {/*<footer>*/}
                 {/*</footer>*/}
                 </body>
-
         </Fragment>
     )
 }
