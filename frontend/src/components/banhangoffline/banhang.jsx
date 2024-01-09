@@ -23,9 +23,10 @@ class BanHangOffline extends Component {
         super(props);
 
         this.state = {
+            phiShip: 0,
             ten: '',
             sdt: '',
-            kieuHoaDon: '',
+            kieuHoaDon: 2,
             sanPhamChiTietList: [],
             idKhachHang: '',
             searchTerm: '',
@@ -76,8 +77,6 @@ class BanHangOffline extends Component {
     }
 
     componentDidMount() {
-        // const { tabProducts, activeTabKey } = this.state;
-
         BanHangService.getSPCT().then((res) => {
             this.setState({ sanPhamChiTiet: res.data })
         }).catch((error) => {
@@ -99,6 +98,8 @@ class BanHangOffline extends Component {
         this.fetchCities();
 
         this.fetchHoaDonChoDauTien();
+
+        this.fetchHDCT();
     }
 
 
@@ -204,7 +205,7 @@ class BanHangOffline extends Component {
     reloadKM = () => {
         const { tabProducts, activeTabKey } = this.state;
         const selectedProducts = tabProducts[activeTabKey] || [];
-        BanHangService.getKMTT(this.getTotalAmount(selectedProducts)).then((res) => {
+        BanHangService.getKMTT(this.getTotalAmount(this.state.tabProducts)).then((res) => {
             this.setState({ khuyenMai: res.data })
         }).catch((error) => {
             console.error("Error fetching data:", error);
@@ -347,83 +348,138 @@ class BanHangOffline extends Component {
     add = async (e) => {
         e.preventDefault();
 
-        const { tabProducts, activeTabKey, selectedPromotions } = this.state;
-        const selectedProducts = tabProducts[activeTabKey] || [];
+        const { selectedPromotions } = this.state;
         const firstSelectedPromotion = selectedPromotions.length > 0 ? selectedPromotions[0] : null;
-        // const activeTabProducts = tabProducts[activeTabKey] || [];
 
-        // if (this.state.enteredAmount !== null && this.state.enteredAmount > 0 && this.state.enteredAmount - this.getTotalAmount(activeTabProducts) >= 0) {
-        // const confirm = window.confirm('Bạn xác nhận muốn thanh toán hóa đơn này chứ?');
-        // if (!confirm) {
-        //     return;
-        // }
+        if (this.state.enteredAmount !== null && this.state.enteredAmount > 0 && this.state.enteredAmount !== undefined && this.state.enteredAmount - this.getTotalAmount(this.state.tabProducts) >= 0) {
+            const confirm = window.confirm('Bạn xác nhận muốn thanh toán hóa đơn này chứ?');
+            if (!confirm) {
+                return;
+            } else if (this.state.phiShip !== 0 && this.state.phiShip !== undefined && this.state.phiShip !== null && this.state.kieuHoaDon === 0) {
+                const thanhToan = {
 
-        const thanhToan = {
+                    sanPhamChiTietList: this.state.tabProducts,
 
-            sanPhamChiTietList: selectedProducts,
+                    khuyenMai: firstSelectedPromotion ? firstSelectedPromotion : null,
 
-            khuyenMai: firstSelectedPromotion ? firstSelectedPromotion : null,
+                    hoaDon: {
+                        tongTien: this.getTotalAmount(this.state.tabProducts),
+                        ghiChu: document.getElementById("ghiChuDonHang").value,
+                    },
 
-            hoaDon: {
-                tongTien: this.getTotalAmount(selectedProducts),
-                ghiChu: document.getElementById("ghiChuDonHang").value,
-            },
+                    xaPhuongThiTran: this.state.xaPhuongThiTran,
 
-            xaPhuongThiTran: this.state.xaPhuongThiTran,
+                    quanHuyen: this.state.quanHuyen,
 
-            quanHuyen: this.state.quanHuyen,
+                    tinhThanhPho: this.state.tinhThanhPho,
 
-            tinhThanhPho: this.state.tinhThanhPho,
+                    diaChiCuThe: this.state.diaChiCuThe,
 
-            diaChiCuThe: this.state.diaChiCuThe,
+                    kieuHoaDon: this.state.kieuHoaDon,
 
-            kieuHoaDon: this.state.kieuHoaDon,
+                    giaGiam: this.getTotalAmountWithoutPromotions(this.state.tabProducts) - (this.getTotalAmount(this.state.tabProducts) + this.state.phiShip),
 
-            // giaGiam: this.getTotalAmountWithoutPromotions(activeTabProducts) - this.getTotalAmount(activeTabProducts),
+                    sdt: document.getElementById("sdt").value,
 
-            sdt: document.getElementById("sdt").value,
+                    ten: document.getElementById("ten").value,
 
-            ten: document.getElementById("ten").value,
-        };
+                    phiShip: this.state.phiShip,
+                };
 
-        try {
-            const response = await BanHangService.createHoaDon(thanhToan);
-
-            if (response.status === 201) {
-                toast.success("Thanh toán thành công!!!");
-                console.log(response.status);
+                try {
+                    const response = await BanHangService.createHoaDon(thanhToan);
+                    toast.success("Thanh toán thành công!!!");
+                    console.log(response.status);
+                } catch (error) {
+                    if (error.response && error.response.status === 400) {
+                        toast.error('Thanh toán không thành công, vui lòng kiểm tra lại!!!.');
+                        console.log(thanhToan);
+                    } else {
+                        console.error('Error', error);
+                        console.log(thanhToan);
+                        toast.error('Thanh toán không thành công, vui lòng kiểm tra lại!!!');
+                    }
+                }
             } else {
-                toast.success("Thanh toán thành công!!!!");
-                console.log(thanhToan);
-            }
-        } catch (error) {
-            if (error.response && error.response.status === 400) {
-                toast.error('Thanh toán không thành công, vui lòng kiểm tra lại!!!.');
-                console.log(thanhToan);
-            } else {
-                console.error('Error', error);
-                console.log(thanhToan);
-                toast.error('Thanh toán không thành công, vui lòng kiểm tra lại!!!');
+                const thanhToan = {
+
+                    sanPhamChiTietList: this.state.tabProducts,
+
+                    khuyenMai: firstSelectedPromotion ? firstSelectedPromotion : null,
+
+                    hoaDon: {
+                        tongTien: this.getTotalAmount(this.state.tabProducts),
+                        ghiChu: document.getElementById("ghiChuDonHang").value,
+                    },
+
+                    xaPhuongThiTran: this.state.xaPhuongThiTran,
+
+                    quanHuyen: this.state.quanHuyen,
+
+                    tinhThanhPho: this.state.tinhThanhPho,
+
+                    diaChiCuThe: this.state.diaChiCuThe,
+
+                    kieuHoaDon: 2,
+
+                    giaGiam: this.getTotalAmountWithoutPromotions(this.state.tabProducts) - (this.getTotalAmount(this.state.tabProducts) + this.state.phiShip),
+
+                    sdt: document.getElementById("sdt").value,
+
+                    ten: document.getElementById("ten").value,
+
+                    phiShip: 0,
+                };
+
+                try {
+                    const response = await BanHangService.createHoaDon(thanhToan);
+
+                    toast.success("Thanh toán thành công!!!");
+                    console.log(response.status);
+
+                } catch (error) {
+                    if (error.response && error.response.status === 400) {
+                        toast.error('Thanh toán không thành công, vui lòng kiểm tra lại!!!.');
+                        console.log(thanhToan);
+                    } else {
+                        console.error('Error', error);
+                        console.log(thanhToan);
+                        toast.error('Thanh toán không thành công, vui lòng kiểm tra lại!!!');
+                    }
+                }
             }
         }
     };
 
     onChangeEnteredAmount = (e) => {
-        const enteredAmount = parseFloat(e.target.value) || 0;
+        const inputValue = e.target.value;
+        if (!/^[1-9]\d*$/.test(inputValue)) {
+            toast.error('Hãy nhập giá tiền hợp lệ!!!');
+            return;
+        }
+        const enteredAmount = parseFloat(inputValue) || 0;
         this.setState({ enteredAmount });
     };
+
+    onChangeShip = (e) => {
+        const inputValue = e.target.value;
+        if (!/^[1-9]\d*$/.test(inputValue)) {
+            toast.error('Hãy nhập giá tiền hợp lệ!!!');
+            return;
+        }
+        const enteredAmount = parseFloat(inputValue) || 0;
+        this.setState({ enteredAmount });
+    };
+
     getTotalQuantity = (products) => {
-        return products.reduce((total, product) => total + product.quantity, 0);
+        return products.reduce((total, product) => total + product.soLuong, 0);
     };
 
     getTotalAmount = (products) => {
-        let totalAmount = products.reduce((total, product) => total + product.donGia * product.quantity, 0);
-
+        let totalAmount = products.reduce((total, product) => total + product.sanPhamChiTiet.donGia * product.soLuong, 0);
         const { selectedPromotions } = this.state;
-
         selectedPromotions.forEach((promotionId) => {
             const promotion = this.state.khuyenMai.find((promo) => promo.id === promotionId);
-
             if (promotion) {
                 if (promotion.kieuKhuyenMai === 1) {
                     totalAmount *= (100 - promotion.giamGia) / 100;
@@ -437,12 +493,11 @@ class BanHangOffline extends Component {
     };
 
     getTotalAmountWithoutPromotions = (products) => {
-        return products.reduce((total, product) => total + product.donGia * product.quantity, 0);
+        return products.reduce((total, product) => total + product.sanPhamChiTiet.donGia * product.soLuong, 0);
     };
 
     handleTabChange = (idHoaDon) => {
-        this.setState({ activeTabKey: idHoaDon }, () => {
-        })
+        this.setState({ activeTabKey: idHoaDon });
     };
 
     handleProductClick = async (productId, idHoaDon) => {
@@ -459,15 +514,12 @@ class BanHangOffline extends Component {
             } else {
                 try {
                     const response = await axios.post(`http://localhost:8080/ban_hang/update_hdct/${idHoaDon}`, UpdateHoaDonChiTietDTO);
-                    this.setState({ tabProducts: response.data }, () => {
-                        console.log('Thêm sản phẩm thành công!!!', response.data);
-                        if (response.status === 200) {
-                            this.fetchDanhSachSP();
-                            toast.success('Đã thêm sản phẩm vào giỏ hàng!!!');
-                        }
-
+                    if (response.status === 200) {
+                        this.fetchDanhSachSP();
+                        this.setState({ tabProducts: response.data });
+                        toast.success('Đã thêm sản phẩm vào giỏ hàng!!!');
                         this.handleCloseModal1();
-                    });
+                    }
                 } catch (error) {
                     console.log('Error: ', error);
                 }
@@ -571,7 +623,7 @@ class BanHangOffline extends Component {
                                 min="1"
                                 style={{ width: '50px' }}
                                 value={product.soLuong}
-                                onChange={(e) => this.handleQuantityChange(e, product.ma)}
+                                onChange={(e) => this.handleQuantityChange(e, product.soLuong)}
                             />
                         </Col>
                         <Col span={3} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center' }}>{this.formatCurrency(product.sanPhamChiTiet.donGia)}</Col>
@@ -643,10 +695,12 @@ class BanHangOffline extends Component {
     fetchHoaDonChoDauTien = async () => {
         try {
             const response = await axios.get(`http://localhost:8080/ban_hang`);
-            const danhSachHD = response.data;
-            this.setState({ activeTabKey: response.data[0].id })
-            this.setState({ tabList: danhSachHD });
-            this.fetchHDCT(response.data[0].id);
+            if (response.status === 200) {
+                const danhSachHD = response.data;
+                this.setState({ tabList: danhSachHD });
+                // this.setState({ activeTabKey: response.data[0].id })
+                // this.fetchHDCT(response.data[0].id);
+            }
         } catch (error) {
             console.log('Lỗi lấy dữ liệu!!!', error)
         }
@@ -663,17 +717,22 @@ class BanHangOffline extends Component {
     }
 
     deleteHoaDonCho = async (idHoaDon) => {
-
-        const deleteHoaDonDTO = {
-            listHoaDonChiTiet: this.state.tabProducts
-        }
-        console.log(deleteHoaDonDTO);
-        try {
-            const response = await axios.put(`http://localhost:8080/ban_hang/delete/${idHoaDon}`, deleteHoaDonDTO || { listHoaDonChiTiet: [] });
-            this.setState({ tabList: response.data });
-            this.setState({ activeTabKey: response.data[0].id });
-        } catch (error) {
-            console.log('Xóa hóa đơn thất bại!!!', error);
+        if (idHoaDon !== null || idHoaDon !== undefined) {
+            const deleteHoaDonDTO = {
+                listHoaDonChiTiet: this.state.tabProducts
+            }
+            console.log(deleteHoaDonDTO);
+            try {
+                const response = await axios.put(`http://localhost:8080/ban_hang/delete/${idHoaDon}`, deleteHoaDonDTO || { listHoaDonChiTiet: [] });
+                if (response.status === 200) {
+                    this.setState({ tabList: response.data });
+                    // this.setState({ activeTabKey: response.data[0].id });
+                }
+            } catch (error) {
+                console.log('Xóa hóa đơn thất bại!!!', error);
+            }
+        } else {
+            toast.error('Hãy chọn hóa đơn để xóa!!!');
         }
     }
 
@@ -713,8 +772,11 @@ class BanHangOffline extends Component {
             console.log(DeleteHdctDTO);
             try {
                 const response = await axios.put(`http://localhost:8080/ban_hang/delete_hdct/${hdctId}`, DeleteHdctDTO);
-                this.setState({ tabProducts: response.data })
-                console.log('Du lieu sau xoa: ', response.data);
+                if (response.status === 200) {
+                    this.setState({ tabProducts: response.data });
+                    this.fetchDanhSachSP();
+                    console.log('Du lieu sau xoa: ', response.data);
+                }
             } catch (error) {
                 console.log('Error: ', error);
             }
@@ -808,8 +870,6 @@ class BanHangOffline extends Component {
         const { currentPageKH, perPageKH } = this.state;
         const offsetKH = currentPageKH * perPageKH;
         const currentKHList = ListKH.slice(offsetKH, offsetKH + perPageKH);
-        // const activeTabKey = this.state.activeTabKey;
-        // const activeTabProducts = this.state.tabProducts[activeTabKey] || [];
         return (
 
             <div className="wrapper-sell">
@@ -1110,13 +1170,15 @@ class BanHangOffline extends Component {
                             <div className="payment_sell">
                                 <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', width: '100%' }}>
                                     <Col>
-                                        {/* <Col style={{ fontSize: '16px', margin: '5px 0px 5px 0px' }}>Tổng tiền: ({this.getTotalQuantity(activeTabProducts)} sản phẩm)</Col> */}
-                                        <Col style={{ fontSize: '16px' }}>Mã khuyến mãi: </Col>
+                                        <Col style={{ fontSize: '16px', margin: '5px 0px 5px 0px' }}>Tổng tiền:({this.getTotalQuantity(this.state.tabProducts)} sản phẩm)</Col>
+                                        <Col style={{ fontSize: '16px' }}>Mã khuyến mãi:</Col>
                                         <Col style={{ fontSize: '16px', marginTop: '5px ' }}>Giảm giá:</Col>
-                                        <Col style={{ fontSize: '16px' }}>Tiền khách đưa </Col>
+                                        <Col style={{ fontSize: '16px' }}>Tiền khách đưa:</Col>
+                                        <br />
+                                        <Col style={{ fontSize: '16px' }}>Phí ship:</Col>
                                     </Col>
                                     <Col style={{ width: '55%', borderStyle: 'solid', borderTop: 'none', borderRight: 'none', borderLeft: 'none', borderWidth: '1px' }}>
-                                        {/* <Col style={{ fontSize: '16px', textAlign: 'right', margin: '5px 0px 5px 0px' }}><span style={{ color: 'red' }}>{this.formatCurrency(this.getTotalAmountWithoutPromotions(activeTabProducts))}</span></Col> */}
+                                        <Col style={{ fontSize: '16px', textAlign: 'right', margin: '5px 0px 5px 0px' }}><span style={{ color: 'red' }}>{this.formatCurrency(this.getTotalAmountWithoutPromotions(this.state.tabProducts))}</span></Col>
                                         <Col style={{ fontSize: '16px', textAlign: 'left' }}>
                                             <Select
                                                 mode="tags"
@@ -1145,12 +1207,19 @@ class BanHangOffline extends Component {
                                                 }))}
                                             />
                                         </Col>
-                                        {/* <Col style={{ fontSize: '16px', textAlign: 'right', marginTop: '5px' }}>{this.formatCurrency(this.getTotalAmountWithoutPromotions(activeTabProducts) - this.getTotalAmount(activeTabProducts))}</Col> */}
+                                        <Col style={{ fontSize: '16px', textAlign: 'right', marginTop: '5px' }}>{this.formatCurrency(this.getTotalAmountWithoutPromotions(this.state.tabProducts) - this.getTotalAmount(this.state.tabProducts))}</Col>
                                         <Col style={{ fontSize: '16px', textAlign: 'right' }}><Input
                                             type="text"
                                             placeholder="Nhập tiền khách đưa..."
                                             style={{ width: '194px', float: 'left' }}
                                             onChange={this.onChangeEnteredAmount}
+                                        /></Col>
+                                        <br />
+                                        <Col style={{ fontSize: '16px', textAlign: 'right' }}><Input
+                                            type="text"
+                                            placeholder="Nhập phí ship..."
+                                            style={{ width: '194px', float: 'left' }}
+                                            onChange={this.onChangeShip}
                                         /></Col>
                                     </Col>
                                 </div>
@@ -1177,15 +1246,15 @@ class BanHangOffline extends Component {
                             <Flex flex={"row"} align="center" justify="space-between">
                                 <p style={{ fontSize: '16px', fontWeight: 'bold' }}>Tiền thừa trả khách</p>
                                 <p style={{ fontSize: '20px', fontWeight: 'bold' }}>
-                                    {/* {this.state.enteredAmount >= this.getTotalAmount(activeTabProducts) ? (
+                                    {this.state.enteredAmount >= (this.getTotalAmount(this.state.tabProducts) + this.state.phiShip) ? (
                                         <span style={{ color: 'red' }}>
-                                            Dư {this.formatCurrency(this.state.enteredAmount - this.getTotalAmount(activeTabProducts))}
+                                            Dư {this.formatCurrency(this.state.enteredAmount - (this.getTotalAmount(this.state.tabProducts) + this.state.phiShip))}
                                         </span>
                                     ) : (
                                         <span style={{ color: 'red' }}>
-                                            Thiếu {this.formatCurrency(this.getTotalAmount(activeTabProducts) - this.state.enteredAmount)}
+                                            Thiếu {this.formatCurrency((this.getTotalAmount(this.state.tabProducts) + this.state.phiShip) - this.state.enteredAmount)}
                                         </span>
-                                    )} */}
+                                    )}
                                 </p>
                             </Flex>
                         </div>
@@ -1194,8 +1263,30 @@ class BanHangOffline extends Component {
                             <br />
                             <br />
                             <Flex justify="space-between">
-                                <Button icon={<></>} className="customButton" style={{ width: '40%', height: '70px', backgroundColor: 'white', color: 'black', fontWeight: 'bolder', borderColor: 'black', fontSize: '20px' }}>In tạm tính</Button>
-                                <Button className="customButton" style={{ width: '55%', height: '70px', backgroundColor: 'white', color: 'black', fontWeight: 'bolder', borderColor: 'black', fontSize: '20px' }} onClick={this.add}>Thanh toán</Button>
+                                <Button icon={<></>} className="customButton"
+                                    style={{
+                                        width: '40%',
+                                        height: '70px',
+                                        backgroundColor: 'white',
+                                        color: 'black',
+                                        fontWeight: 'bolder',
+                                        borderColor: 'black',
+                                        fontSize: '20px'
+                                    }}>
+                                    In tạm tính
+                                </Button>
+
+                                <Button className="customButton"
+                                    style={{
+                                        width: '55%',
+                                        height: '70px',
+                                        backgroundColor: 'white',
+                                        color: 'black',
+                                        fontWeight: 'bolder',
+                                        borderColor: 'black',
+                                        fontSize: '20px'
+                                    }}
+                                    onClick={this.add}>Thanh toán</Button>
                                 <Button
                                     id="deleteButton"
                                     className="customButton"

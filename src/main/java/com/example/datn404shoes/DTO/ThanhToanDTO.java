@@ -22,4 +22,8 @@ public class ThanhToanDTO {
     private String tinhThanhPho;
 
     private String diaChiCuThe;
+
+    private Integer kieuHoaDon;
+
+    private Float phiShip;
 }
