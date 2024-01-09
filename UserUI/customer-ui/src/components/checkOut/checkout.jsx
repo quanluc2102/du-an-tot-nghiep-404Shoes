@@ -26,7 +26,7 @@ function CheckOut({ location }) {
     const [tongTien1,setTongTien1]=useState("");
     const [user,setUser]=useState([]);
     const [phiShip,setPhiShip]=useState(0);
-    const [PTTT,setPTTT]=useState(1);
+    const [PTTT,setPTTT]=useState(2);
     const [ghiChu,setGhiChu]=useState("");
     const [dcSelected,setDcSelected]=useState(0);
     const [sdt,setSDT]=useState("");
@@ -191,10 +191,10 @@ function CheckOut({ location }) {
         console.log(SPCT)
     }
     const PTTTCod = ()=>{
-        setPTTT(1);
+        setPTTT(2);
     }
     const PTTTVNPay = async () => {
-        setPTTT(2);
+        setPTTT(3);
         let tongTien = tinhTongTienHang();
         const linkTT = await GioHangService.pay(tongTien);
         const newTab = window.open(linkTT, '_blank');
@@ -258,7 +258,7 @@ function CheckOut({ location }) {
 
     const save = async ()=>{
         let confirm;
-        if(PTTT===1){
+        if(PTTT===2){
             confirm = window.confirm("Bạn xác nhận muốn thanh toán hóa đơn này ?");
         }else{
             confirm = window.confirm("Bạn xác nhận đã thanh toán cho hóa đơn này ?");
@@ -280,7 +280,7 @@ function CheckOut({ location }) {
             tienShip:phiShip,
             taiKhoanId:user.length!=0?parseInt(user.id):0,
             diaChiId:3,
-            thanhToanId:2,
+            thanhToanId:PTTT,
             ghiChu: ghiChu,
             //bắt đầu
             // kieuHoaDon:1,
@@ -296,6 +296,7 @@ function CheckOut({ location }) {
         console.log(hd)
         if(phiShip===0){
             alert("Chưa chọn địa chỉ giao , không thanh toán được");
+            return;
         }else{
             const thongBao = await GioHangService.sold(hd);
             alert(thongBao)
@@ -656,10 +657,10 @@ function CheckOut({ location }) {
                             <div className="col-12 bg-light pt-3" style={{marginTop:30}}>
                                 <div className="col-12 bg-light pt-3" >
                                     <h5 style={{marginLeft:35}}>Phương thức thanh toán
-                                        <a href="#" className={`btn btn-sm btn-outline-dark size-item ${PTTT===1 ? 'selected' : ''}`} style={{marginLeft:860}} onClick={PTTTCod} >
+                                        <a href="#" className={`btn btn-sm btn-outline-dark size-item ${PTTT===2 ? 'selected' : ''}`} style={{marginLeft:860}} onClick={PTTTCod} >
                                             <div>Thanh toán khi nhận hàng</div>
                                         </a>
-                                        <a href="#" className={`btn btn-sm btn-outline-dark size-item ${PTTT===2 ? 'selected' : ''}`} style={{marginLeft:20}} onClick={PTTTVNPay}>
+                                        <a href="#" className={`btn btn-sm btn-outline-dark size-item ${PTTT===3 ? 'selected' : ''}`} style={{marginLeft:20}} onClick={PTTTVNPay}>
                                             <div>Thanh toán bằng VNPay</div>
                                         </a>
                                     </h5>
