@@ -5,6 +5,7 @@ const GET_SAN_PHAM_PHAN_TRANG = 'http://localhost:8080/san_pham/index';
 const GET_SAN_PHAM_ANH = 'http://localhost:8080/san_pham/detail_spa';
 const GET_SAN_PHAM_CHI_TIET = 'http://localhost:8080/san_pham/detail_spct';
 const GET_SAN_PHAM_ONE = 'http://localhost:8080/san_pham/detail_user';
+const GET_SAN_PHAM_CHI_TIET_ONE = 'http://localhost:8080/san_pham_chi_tiet/detail';
 const GET_GIO_HANG_FAKE = 'http://localhost:8080/gio-hang-chi-tiet/get-gio-hang';
 const ADD_SPCT_TO_GIO_HANG = 'http://localhost:8080/payment/add_gio_hang';
 
@@ -32,6 +33,11 @@ export const SanPhamService = {
 
     getSPOne: async (id) => {
         const response = await axios.get(`${GET_SAN_PHAM_ONE}/${id}`);
+        return response.data;
+    },
+
+    getSPCTOne: async (id) => {
+        const response = await axios.get(`${GET_SAN_PHAM_CHI_TIET_ONE}/${id}`);
         return response.data;
     },
 

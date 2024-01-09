@@ -4,12 +4,14 @@ import {toast} from "react-toastify";
 import './style.css'
 import { Link } from 'react-router-dom/cjs/react-router-dom'
 import {GioHangService} from "../../service/GioHangService";
+import {SanPhamService} from "../../service/SanPhamService";
 
 function Cart() {
     const [SPCT, setSPCT] = useState([]);
     const [listSPCTSelected,setListSPCTSelected] = useState([]);
     const [user,setUser]=useState([]);
     const [tongTien,setTongTien] = useState(0);
+    const [reload,setReload]=useState(0);
     const history = useHistory();
     const fetchData = async () => {
             const storedDataUser = localStorage.getItem('currentUser');
@@ -17,10 +19,27 @@ function Cart() {
             let data ;
             if(storedDataUser){
                 data = await GioHangService.getGHOne(JSON.parse(storedDataUser).id);
+                data.map(value => {
+                    if(value.soLuong>value.sanPhamChiTietId.soLuong){
+                        thayDoiSoLuong(value.id,value.sanPhamChiTietId.soLuong)
+                        setReload(reload===1?2:1);
+                    }
+                })
                 // setSPCT(dataGioHang);
             }else {
                 data = JSON.parse(localStorage.getItem('listSPCT'));
                 // setSPCT(JSON.parse(dataGioHangGuest));
+                // data.map(value => {
+                //     const sp = SanPhamService.getSPCT(parseInt(value.sanPhamChiTietId.id, 10));
+                //     console.log(sp)
+                //     if(value.soLuong!=sp.soLuong){
+                //         value.sanPhamChiTietId.soLuong=sp.soLuong
+                //         value.soLuong=value.sanPhamChiTietId.soLuong
+                //     }else {
+                //
+                //     }
+                // })
+                localStorage.setItem("listSPCT", JSON.stringify(data));
             }
             setSPCT(data);
             setUser(dataUser)
@@ -51,7 +70,7 @@ function Cart() {
 
         });
         fetchData();
-    }, [SPCT])
+    }, [reload])
     const fetchDataLocal = () =>{
         const storedDataUser = localStorage.getItem('currentUser');
         if(storedDataUser){
@@ -67,10 +86,13 @@ function Cart() {
         history.push(`/product-list`)
     };
     const thayDoiSoLuong = (id, soLuongMoi) =>{
+        if(isNaN(soLuongMoi)){
+            soLuongMoi=1;
+        }
         const updatedProducts = SPCT.map(product => {
             if (product.id === id) {
                 // Nếu là sản phẩm cần thay đổi, cập nhật số lượng mới
-                return { ...product, soLuong: soLuongMoi };
+                return { ...product, soLuong: Math.min(product.sanPhamChiTietId.soLuong, Math.max(1 ,soLuongMoi)) };
             }
             return product;
         });
@@ -87,6 +109,7 @@ function Cart() {
     const xoaDon = async (id,index)=>{
         if(user.length!=0){
             const res = await GioHangService.deleteOne(id);
+            setReload(1)
             // window.location.reload()
         }else {
             console.log("aaaaaaaaaa")
@@ -202,14 +225,14 @@ function Cart() {
                                                 <br/>
                                                 <div className="row ">
                                                     <div className="col-4">
-                                                        <div className="form-floating mb-3 border-1">
+                                                        <div className="form-floating mb-3 border-2">
                                                             <input type="number" className="form-control" min="1"
-                                                                   name="formId1" id="formId1"
+                                                                   name={`formId${spct.id}`} id={`formId${spct.id}`}
                                                                    value={spct.soLuong}
                                                                    onChange={(e) => thayDoiSoLuong(spct.id,parseInt(e.target.value, 10))}
                                                                    placeholder="Số Lượng"/>
-                                                            <label htmlFor="formId1" className="font-monospace"><strong>Số
-                                                                Lượng :</strong></label>
+                                                            <label htmlFor={`formId${spct.id}`} className=""><strong>Số
+                                                                Lượng : {spct.sanPhamChiTietId.soLuong}</strong></label>
                                                         </div>
                                                     </div>
 
