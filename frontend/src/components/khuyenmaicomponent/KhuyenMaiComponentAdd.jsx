@@ -124,9 +124,9 @@ class KhuyenMaiComponent extends Component {
         }
 
 
-        if (kieuKhuyenMai === '1' && giamGia <= 0 || kieuKhuyenMai === '1'&& giamGia > 100) {
-            // errorAdd.giamGia = 'Phần trăm giảm giá phải nằm trong khoảng 1-100!';
-            errorAdd.giamGia = ('Phần trăm giảm giá phải nằm trong khoảng 1-100!');
+        if (kieuKhuyenMai === '1' && giamGia <= 0 || kieuKhuyenMai === '1'&& giamGia > 30) {
+            // errorAdd.giamGia = 'Phần trăm giảm giá phải nằm trong khoảng 1-30!';
+            errorAdd.giamGia = ('Phần trăm giảm giá phải nằm trong khoảng 1-30!');
             console.log("lỗi nè má")
         }
         if (kieuKhuyenMai === '0' && giamGia <= 0) {

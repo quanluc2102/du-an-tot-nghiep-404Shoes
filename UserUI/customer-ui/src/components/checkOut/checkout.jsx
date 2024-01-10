@@ -197,12 +197,6 @@ function CheckOut({ location }) {
     }
     const PTTTVNPay = async () => {
         setPTTT(3);
-        let tongTien = tinhTongTienHang();
-        const linkTT = await GioHangService.pay(tongTien);
-        const newTab = window.open(linkTT, '_blank');
-        if (newTab) {
-            newTab.focus(); // Đảm bảo tab mới được mở và đưa ra trước mặt
-        }
     }
     const tinhTongTienHang = () =>{
         let tongTien = SPCT.reduce((total, spct) => {
@@ -258,66 +252,132 @@ function CheckOut({ location }) {
         setSelectedKM(value)
     }
 
-    const save = async ()=>{
+    const urlParams = new URLSearchParams(window.location.search);
+    const transactionStatus = urlParams.get('vnp_TransactionStatus');
+    const responseCode = urlParams.get('vnp_ResponseCode');
+
+    const save = async () => {
         let confirm;
-        if(PTTT===2){
+        if (PTTT === 2) {
             confirm = window.confirm("Bạn xác nhận muốn thanh toán hóa đơn này ?");
-        }else{
+        } else {
             confirm = window.confirm("Bạn xác nhận đã thanh toán cho hóa đơn này ?");
         }
 
-        if(!confirm){
-            return;
-        }
-        const tong = SPCT.reduce((total, spct) => {
-            return total + spct.sanPhamChiTietId.donGia * spct.soLuong;
-        }, 0);
-        const tongTienSauKhiGiam = tinhTongTienHang();
-        const hd = {
-            gioHang : SPCT,
-            km :selectedKM.length!=0?parseInt(selectedKM):0,
-            tongTien:tong,
-            tongTienSauKhiGiam:tongTienSauKhiGiam+30000,
-            tienGiam:tong-tongTienSauKhiGiam,
-            tienShip:phiShip,
-            taiKhoanId:user.length!=0?parseInt(user.id):0,
-            diaChiId:3,
-            thanhToanId:PTTT,
-            ghiChu: ghiChu,
-            //bắt đầu
-            // kieuHoaDon:1,
-            // trangThai:0,
-            ten:ten,
-            sdt:sdt,
-            // email:"",
-            diaChiCuThe:diaChiCuThe,
-            xaPhuongThiTran:xaPhuongThiTran,
-            quanHuyen:quanHuyen,
-            tinhThanhPho:tinhThanhPho
-        }
-        console.log(hd)
-        if(phiShip===0){
-            alert("Chưa chọn địa chỉ giao , không thanh toán được");
-            return;
-        }if(sdt.length < 10){
-            alert("SĐT nhập sai (SĐT có 10 số) ! ");
-            return;
-        }if(sdt.length > 10){
-            alert("SĐT nhập sai ( SĐT có 10 số) ! ");
-            return;
-        }if(!/^\d+$/.test(sdt)){
-            alert("SĐT có chữ ! ");
-            return;
-        }else{
-            const thongBao = await GioHangService.sold(hd);
-            alert(thongBao)
-            if(user.length!=0){
 
-            }else {
-                localStorage.removeItem('listSPCT')
-            }
-            history.push(`/your-cart`)
+        if (!confirm) {
+            return;
         }
+
+        if (confirm && PTTT === 3) {
+
+
+            const tong = SPCT.reduce((total, spct) => {
+                return total + spct.sanPhamChiTietId.donGia * spct.soLuong;
+            }, 0);
+            const tongTienSauKhiGiam = tinhTongTienHang();
+            const hd = {
+                gioHang: SPCT,
+                km: selectedKM.length != 0 ? parseInt(selectedKM) : 0,
+                tongTien: tong,
+                tongTienSauKhiGiam: tongTienSauKhiGiam,
+                tienGiam: tong - tongTienSauKhiGiam,
+                tienShip: phiShip,
+                taiKhoanId: user.length != 0 ? parseInt(user.id) : 0,
+                diaChiId: 3,
+                thanhToanId: PTTT,
+                ghiChu: ghiChu,
+                //bắt đầu
+                // kieuHoaDon:1,
+                // trangThai:0,
+                ten: ten,
+                sdt: sdt,
+                // email:"",
+                diaChiCuThe: diaChiCuThe,
+                xaPhuongThiTran: xaPhuongThiTran,
+                quanHuyen: quanHuyen,
+                tinhThanhPho: tinhThanhPho
+            }
+            console.log(hd)
+            if(phiShip===0){
+                alert("Chưa chọn địa chỉ giao , không thanh toán được");
+                return;
+            }if(sdt.length < 10){
+                alert("SĐT nhập sai (SĐT có 10 số) ! ");
+                return;
+            }if(sdt.length > 10){
+                alert("SĐT nhập sai ( SĐT có 10 số) ! ");
+                return;
+            }if(!/^\d+$/.test(sdt)){
+                alert("SĐT có chữ ! ");
+                return;
+            }else{
+                let tongTien = tinhTongTienHang();
+                const linkTT = await GioHangService.pay(tongTien);
+                const done = GioHangService.done();
+                const newTab = window.location.href = linkTT;
+                if (done === true) {
+                    // newTab.focus(); // Đảm bảo tab mới được mở và đưa ra trước mặt
+                    let tabOpened = false;
+                    tabOpened = true; // Đặt tabOpened thành true để tránh việc thực hiện lại
+                    const thongBao = GioHangService.sold(hd);
+                    alert(thongBao)
+                }
+
+                if (user.length != 0) {
+
+                } else {
+                    localStorage.removeItem('listSPCT')
+                }
+                history.push(`/thanhcong`)
+            }
+
+        }
+
+
+        if (confirm && PTTT === 2) {
+            const tong = SPCT.reduce((total, spct) => {
+                return total + spct.sanPhamChiTietId.donGia * spct.soLuong;
+            }, 0);
+            const tongTienSauKhiGiam = tinhTongTienHang();
+            const hd = {
+                gioHang: SPCT,
+                km: selectedKM.length != 0 ? parseInt(selectedKM) : 0,
+                tongTien: tong,
+                tongTienSauKhiGiam: tongTienSauKhiGiam,
+                tienGiam: tong - tongTienSauKhiGiam,
+                tienShip: phiShip,
+                taiKhoanId: user.length != 0 ? parseInt(user.id) : 0,
+                diaChiId: 3,
+                thanhToanId: PTTT,
+                ghiChu: ghiChu,
+                //bắt đầu
+                // kieuHoaDon:1,
+                // trangThai:0,
+                ten: ten,
+                sdt: sdt,
+                // email:"",
+                diaChiCuThe: diaChiCuThe,
+                xaPhuongThiTran: xaPhuongThiTran,
+                quanHuyen: quanHuyen,
+                tinhThanhPho: tinhThanhPho
+            }
+            console.log(hd)
+            if (phiShip === 0) {
+                alert("Chưa chọn địa chỉ giao , không thanh toán được");
+                return;
+            } else {
+                const thongBao = await GioHangService.sold(hd);
+                alert(thongBao)
+                if (user.length != 0) {
+
+                } else {
+                    localStorage.removeItem('listSPCT')
+                }
+                history.push(`/thanhcong`)
+            }
+        }
+
     }
 
     const moModal = () => {
@@ -694,7 +754,9 @@ function CheckOut({ location }) {
 
 
                                         <div className="col-12 mt-2">
-                                            <a className="btn btn-danger btn-lg col-4" style={{width: '23%',float:"right",color:"white"}} onClick={save}>THANH TOÁN</a>
+                                            <a className="btn btn-danger btn-lg col-4"
+                                               style={{width: '23%', float: "right", color: "white"}} onClick={save}>THANH
+                                                TOÁN</a>
                                         </div>
                                     </div>
                                 </div>

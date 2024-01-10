@@ -14,15 +14,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 
+import com.example.datn404shoes.controller.MuaHangController;
+import com.example.datn404shoes.request.HoaDonUserRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.websocket.server.PathParam;
 
@@ -30,76 +28,54 @@ import jakarta.websocket.server.PathParam;
 @CrossOrigin(origins = "http://localhost:3006")
 @RequestMapping("api/v1")
 public class VNPayResource {
-//    @Autowired
+    //    @Autowired
 //    private ContractRepository contractRepository;
 //    @Autowired
 //    private RegisterServicesRepository registerServicesRepository;
 //    @Autowired
 //    private BillRepository billRepository;
-//    @GetMapping("payment-callback")
-//    public void paymentCallback(@RequestParam Map<String, String> queryParams,HttpServletResponse response) throws IOException {
-//        String vnp_ResponseCode = queryParams.get("vnp_ResponseCode");
-//        String contractId = queryParams.get("contractId");
-//        String registerServiceId = queryParams.get("registerServiceId");
-//        String billId = queryParams.get("billId");
-//        if(contractId!= null && !contractId.equals("")) {
-//            if ("00".equals(vnp_ResponseCode)) {
-//                // Giao dịch thành công
-//                // Thực hiện các xử lý cần thiết, ví dụ: cập nhật CSDL
-//                Contract contract = contractRepository.findById(Integer.parseInt(queryParams.get("contractId")))
-//                        .orElseThrow(() -> new NotFoundException("Không tồn tại hợp đồng này của sinh viên"));
-//                contract.setStatus(1);
-//                contractRepository.save(contract);
-//                response.sendRedirect("http://localhost:4200/info-student");
-//            } else {
-//                // Giao dịch thất bại
-//                // Thực hiện các xử lý cần thiết, ví dụ: không cập nhật CSDL\
-//                response.sendRedirect("http://localhost:4200/payment-failed");
-//
-//            }
-//        }
-//        if(registerServiceId!= null && !registerServiceId.equals("")) {
-//            if ("00".equals(vnp_ResponseCode)) {
-//                // Giao dịch thành công
-//                // Thực hiện các xử lý cần thiết, ví dụ: cập nhật CSDL
-//                RegisterServices registerServices = registerServicesRepository.findById(Integer.parseInt(queryParams.get("registerServiceId")))
-//                        .orElseThrow(() -> new NotFoundException("Không tồn tại dịch vụ này của sinh viên"));
-//                registerServices.setStatus(1);
-//                registerServicesRepository.save(registerServices);
-//                response.sendRedirect("http://localhost:4200/info-student");
-//            } else {
-//                // Giao dịch thất bại
-//                // Thực hiện các xử lý cần thiết, ví dụ: không cập nhật CSDL\
-//                response.sendRedirect("http://localhost:4200/payment-failed");
-//
-//            }
-//        }
-//        if(billId!= null && !billId.equals("")) {
-//            if ("00".equals(vnp_ResponseCode)) {
-//                // Giao dịch thành công
-//                // Thực hiện các xử lý cần thiết, ví dụ: cập nhật CSDL
-//                Bill bill = billRepository.findById(Integer.parseInt(queryParams.get("billId")))
-//                        .orElseThrow(() -> new NotFoundException("Không tồn tại hóa đơn điện nước này"));
-//                bill.setStatus(true);
-//                billRepository.save(bill);
-//                response.sendRedirect("http://localhost:4200/info-student");
-//            } else {
-//                // Giao dịch thất bại
-//                // Thực hiện các xử lý cần thiết, ví dụ: không cập nhật CSDL\
-//                response.sendRedirect("http://localhost:4200/payment-failed");
-//
-//            }
-//        }
-//
-//
-//    }
+//        public MuaHangController muaHangController;
+//    boolean done = false;
+    @GetMapping("/payment-callback")
+    public boolean paymentCallback(@RequestParam Map<String, String> queryParams,
+                                   HttpServletResponse response) throws IOException {
+
+        String vnp_ResponseCode = queryParams.get("vnp_ResponseCode");
+        String transactionStatus = queryParams.get("vnp_TransactionStatus");
+        String registerServiceId = queryParams.get("registerServiceId");
+
+        if (transactionStatus != null && !transactionStatus.equals("")) {
+            if ("00".equals(vnp_ResponseCode)) {
+                // Xử lý dữ liệu từ queryParams và từ phần thân yêu cầu (body)
+
+                // Chuyển hướng đến trang thành công
+                response.sendRedirect("http://localhost:3006/thanhcong");
+
+                // Đã xử lý thành công
+                return true;
+            } else {
+                // Giao dịch thất bại
+                // Thực hiện các xử lý cần thiết, ví dụ: không cập nhật CSDL
+
+                // Chuyển hướng đến trang giỏ hàng
+                response.sendRedirect("http://localhost:3006/your-cart");
+
+                // Đã xử lý với kết quả thất bại
+                return false;
+            }
+        }
+
+        // Trả về mặc định nếu không có thông tin giao dịch
+        return false;
+    }
+
     @GetMapping("pay")
-    public String getPayTaiQuay(@PathParam("price") long price,@PathParam("id") Integer contractId) throws UnsupportedEncodingException{
+    public String getPayTaiQuay(@PathParam("price") long price, @PathParam("id") Integer contractId) throws UnsupportedEncodingException {
 
         String vnp_Version = "2.1.0";
         String vnp_Command = "pay";
         String orderType = "other";
-        long amount = 100000000*100;
+        long amount = 100000000 * 100;
         String bankCode = "NCB";
 
         String vnp_TxnRef = Config.getRandomNumber(8);
@@ -120,7 +96,7 @@ public class VNPayResource {
         vnp_Params.put("vnp_OrderType", orderType);
 
         vnp_Params.put("vnp_Locale", "vn");
-        vnp_Params.put("vnp_ReturnUrl", Config.vnp_ReturnUrl+"?contractId="+contractId);
+        vnp_Params.put("vnp_ReturnUrl", Config.vnp_ReturnUrl + "?contractId=" + contractId);
         vnp_Params.put("vnp_IpAddr", vnp_IpAddr);
 
         Calendar cld = Calendar.getInstance(TimeZone.getTimeZone("Etc/GMT+7"));
@@ -162,7 +138,8 @@ public class VNPayResource {
 
         return paymentUrl;
     }
-//    @GetMapping("pay-bill")
+
+    //    @GetMapping("pay-bill")
 //    public String getPayWeb(@PathParam("price") long price,@PathParam("id") Integer billId) throws UnsupportedEncodingException{
 //
 //        String vnp_Version = "2.1.0";
@@ -232,12 +209,12 @@ public class VNPayResource {
 //        return paymentUrl;
 //    }
     @GetMapping("pay-service")
-    public String getPayService(@PathParam("price") long price,@PathParam("id") Integer registerServiceId) throws UnsupportedEncodingException{
+    public String getPayService(@PathParam("price") long price, @PathParam("id") Integer registerServiceId) throws UnsupportedEncodingException {
 
         String vnp_Version = "2.1.0";
         String vnp_Command = "pay";
         String orderType = "other";
-        long amount = price*100;
+        long amount = price * 100;
         String bankCode = "NCB";
 
         String vnp_TxnRef = Config.getRandomNumber(8);
@@ -258,7 +235,7 @@ public class VNPayResource {
         vnp_Params.put("vnp_OrderType", orderType);
 
         vnp_Params.put("vnp_Locale", "vn");
-        vnp_Params.put("vnp_ReturnUrl", Config.vnp_ReturnUrl+"?registerServiceId="+registerServiceId);
+        vnp_Params.put("vnp_ReturnUrl", Config.vnp_ReturnUrl + "?registerServiceId=" + registerServiceId);
         vnp_Params.put("vnp_IpAddr", vnp_IpAddr);
 
         Calendar cld = Calendar.getInstance(TimeZone.getTimeZone("Etc/GMT+7"));

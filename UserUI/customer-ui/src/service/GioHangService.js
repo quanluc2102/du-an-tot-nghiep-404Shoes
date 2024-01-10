@@ -50,5 +50,15 @@ export const GioHangService = {
     pay:async (gia) =>{
         const response = await axios.get(`${THANH_TOAN_HOA_DON}/${gia}`);
         return response.data;
+    },
+
+    done:async () =>{
+        const response = await axios.get('http://localhost:8080/api/v1/payment-callback');
+       let a =  response.data;
+       if (a==true){
+           return true;
+       }else{
+           return false;
+       }
     }
 };
