@@ -28,4 +28,5 @@ public class HoaDonUserRequest {
     private String xaPhuongThiTran;
     private String quanHuyen;
     private String tinhThanhPho;
+    private Integer trangThai;
 }

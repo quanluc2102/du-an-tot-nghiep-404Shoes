@@ -50,29 +50,26 @@ public class VNPayResource {
         System.out.println("vnp_TransactionNo: "+vnp_TransactionNo);
         System.out.println("vnp_TransactionStatus: "+vnp_TransactionStatus);
 
-//        if (transactionStatus != null && !transactionStatus.equals("")) {
-//            if ("00".equals(vnp_ResponseCode)) {
-//                // Xử lý dữ liệu từ queryParams và từ phần thân yêu cầu (body)
-//
-//                // Chuyển hướng đến trang thành công
-//                response.sendRedirect("http://localhost:3006/thanhcong");
-//
-//                // Đã xử lý thành công
-//                return true;
-//            } else {
-//                // Giao dịch thất bại
-//                // Thực hiện các xử lý cần thiết, ví dụ: không cập nhật CSDL
-//
-//                // Chuyển hướng đến trang giỏ hàng
-//                response.sendRedirect("http://localhost:3006/your-cart");
-//
-//                // Đã xử lý với kết quả thất bại
-//                return false;
-//            }
-//        }
 
-        // Trả về mặc định nếu không có thông tin giao dịch
-        return false;
+            if ("00".equals(vnp_ResponseCode)) {
+                // Xử lý dữ liệu từ queryParams và từ phần thân yêu cầu (body)
+
+                // Chuyển hướng đến trang thành công
+                response.sendRedirect("http://localhost:3006/thanhtoanthanhcong");
+
+                // Đã xử lý thành công
+                return true;
+            } else {
+                // Giao dịch thất bại
+                // Thực hiện các xử lý cần thiết, ví dụ: không cập nhật CSDL
+
+                // Chuyển hướng đến trang giỏ hàng
+                response.sendRedirect("http://localhost:3006/your-cart");
+
+                // Đã xử lý với kết quả thất bại
+                return false;
+            }
+
     }
 
     @GetMapping("pay")

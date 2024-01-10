@@ -289,7 +289,7 @@ function CheckOut({ location }) {
                 ghiChu: ghiChu,
                 //bắt đầu
                 // kieuHoaDon:1,
-                // trangThai:0,
+                trangThai:4,
                 ten: ten,
                 sdt: sdt,
                 // email:"",
@@ -312,16 +312,18 @@ function CheckOut({ location }) {
                 alert("SĐT có chữ ! ");
                 return;
             }else{
+                localStorage.setItem('hoanDonData', JSON.stringify(hd));
                 let tongTien = tinhTongTienHang();
                 const linkTT = await GioHangService.pay(tongTien);
-                const done = GioHangService.done();
+                // const done = GioHangService.done();
                 const newTab = window.location.href = linkTT;
-                if (done === true) {
+                if (newTab) {
                     // newTab.focus(); // Đảm bảo tab mới được mở và đưa ra trước mặt
                     let tabOpened = false;
                     tabOpened = true; // Đặt tabOpened thành true để tránh việc thực hiện lại
-                    const thongBao = GioHangService.sold(hd);
-                    alert(thongBao)
+                    // const thongBao = GioHangService.sold(hd);
+
+                    // alert(thongBao)
                 }
 
                 if (user.length != 0) {
@@ -329,7 +331,7 @@ function CheckOut({ location }) {
                 } else {
                     localStorage.removeItem('listSPCT')
                 }
-                history.push(`/thanhcong`)
+                // history.push(`/thanhcong`)
             }
 
         }
@@ -353,7 +355,7 @@ function CheckOut({ location }) {
                 ghiChu: ghiChu,
                 //bắt đầu
                 // kieuHoaDon:1,
-                // trangThai:0,
+                trangThai:0,
                 ten: ten,
                 sdt: sdt,
                 // email:"",

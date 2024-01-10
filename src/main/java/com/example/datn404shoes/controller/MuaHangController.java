@@ -166,7 +166,7 @@ public class MuaHangController {
         HoaDon hoaDon = new HoaDon();
         hoaDon.setMaHoaDon("HD00"+countHD);
         hoaDon.setNgayTao(Date.valueOf(LocalDate.now()));
-        hoaDon.setTrangThai(0);
+        hoaDon.setTrangThai(hoaDonUserRequest.getTrangThai());
         hoaDon.setGhiChu(hoaDonUserRequest.getGhiChu());
         if(hoaDonUserRequest.getTaiKhoanId()==0){
 
