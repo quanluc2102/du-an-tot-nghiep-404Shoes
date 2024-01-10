@@ -163,6 +163,11 @@ public class ThongKeController {
         return thongKeRepository.findTop10SanPhamBanChay();
     }
 
+    @GetMapping("/san_pham_sap_het_hang")
+    public List<Object[]> countTopSanPhamSapHet() {
+        return thongKeRepository.sanPhamSapHetHang();
+    }
+
     @GetMapping("/hoa_don_chua_xu_ly")
     public List<Object[]> hoaDonChuaXuLy() {
         return thongKeRepository.hoaDonChuaXuLyhe();

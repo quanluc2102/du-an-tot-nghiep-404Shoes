@@ -20,6 +20,7 @@ class TrangTongQuan extends Component {
             hoaDonChuaXuLy: '',
             listHoaDonChuaXuLy: [],
             topSanPhamBanChay: [],
+            topSanPhamSapHet: [],
         };
 
     }
@@ -57,6 +58,17 @@ class TrangTongQuan extends Component {
                 console.error('Error fetching doanhThuThang:', error);
             });
     };
+
+    fetchDataTopSanPhamSapHet = () => {
+        thongkeservice.countTopSanPhamSapHet()
+            .then(data => {
+                this.setState({topSanPhamSapHet: data});
+            })
+            .catch(error => {
+                console.error('Error fetching doanhThuThang:', error);
+            });
+    };
+
     fetchListHoaDonChuaXuLy = () => {
         thongkeservice.hoaDonChuaXuLy()
             .then(data => {
@@ -310,7 +322,7 @@ class TrangTongQuan extends Component {
                     <div className="col-xxl-6 col-md-6">
                         <div className="card top-selling overflow-auto">
                             <div className="card-body pb-0">
-                                <h5 className="card-title">Top 10 sản phẩm bán chạy</h5>
+                                <h5 className="card-title">Top 5 sản phẩm bán chạy</h5>
 
                                 <table className="table table-borderless">
                                     <thead>
@@ -343,7 +355,7 @@ class TrangTongQuan extends Component {
                     <div className="col-xxl-6 col-md-6">
                         <div className="card top-selling overflow-auto">
                             <div className="card-body pb-0">
-                                <h5 className="card-title">Đơn hàng chưa xử lý</h5>
+                                <h5 className="card-title">10 Đơn hàng chưa xử lý gần đây</h5>
 
                                 <table className="table table-borderless">
                                     <thead>
@@ -363,6 +375,39 @@ class TrangTongQuan extends Component {
                                             <td>{th[3]}</td>
                                             <td>{th[4]==0?"Chờ xác nhận":""||th[4]==1?"Đã xác nhận":""||th[4]==2?"Chuẩn bị giao":""||th[4]==3?"Đang giao":""}</td>
                                             <td><a onClick={() => this.detail(th[0])}><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAAAXNSR0IArs4c6QAAAi1JREFUSEvF10vITVEUwPHflzL0yjvJQBETGRBFpIgJMTEzUEQGyiMywEQpFMUAmRuIGUqEZMDAK0mEMpBXiBGhpX20ne+e795zz823Jve271r7v9djr7Vvn0GSvkHiagceiVmYidEdHvI9HuEePlXZVIEn4hjWdAirUjuLLYjD/COtwDNwBRMaQgvzF1iC+PwrZfBk3MWYpHEOJ3C15iECFJ6uSnYBnZN7XgZfwMqkvB2HawLL6nuxLy2exMZCIQeHt6/SD5GbtQ2hhfklLMN3RLF+ix9y8HqcTtpRyfdrgofjcwubpbic1lfgYhm8GweSwhD8rAGOQryV6uFQyW4UPqS1rThaBkcuIifl9Xb8oXiAaUlxT+ZAYfsrfdlf5DwPdTfgIrybcTxt/hrTi1ymtZ6CY/Mb2IUz2ITwaG75zqJn4IBex9jk0QacwoiKNtkTcOQyoOOy5Edvnp2uTKuaaAyeipsYn+3+BAvxboAqbASegttdQOM8XYMDGp5Oyrx6hvltPG10nSKsd1pAF+BNu0ve5DotwrUM8BLzakC7DnUODmh4Gk2iUxmW9fBtONJpy4y7GUMj5DHedkpMeouzeb4a5zsF1+T0U4/JFBPqRxqLX/8H+CB2pqNEZ4sO90eaDomqaMQrJl4by5PC89TDi/FYCW4a3tz+aQp18brp53FMl3jY9VJiau3Ax/Kmeahjtq5DvBiaSFT9w/R0+lK1Ubt/Ek0OMKDtoIF/AxLsgR+5iHZvAAAAAElFTkSuQmCC" /></a></td>
+                                            {/*<td>{th[4]}</td>*/}
+                                        </tr>
+                                    ))}
+                                    </tbody>
+                                </table>
+
+                            </div>
+
+                        </div>
+                    </div>
+
+
+                    <div className="col-xxl-6 col-md-6">
+                        <div className="card top-selling overflow-auto">
+                            <div className="card-body pb-0">
+                                <h5 className="card-title">Sản phẩm sắp hết hàng</h5>
+
+                                <table className="table table-borderless">
+                                    <thead>
+                                    <tr>
+                                        <th scope="col">Ảnh</th>
+                                        <th scope="col">Tên sản phẩm</th>
+                                        <th scope="col">Số lượng còn</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {this.state.topSanPhamSapHet.map((th, index) => (
+                                        <tr key={index}>
+                                            {/*<td>{th[4]}</td>*/}
+                                            <td><img style={{height: '60px', width: '60px', float: 'left'}}
+                                                     src={`/niceadmin/img/${th[4]}`}/></td>
+                                            <td>{this.formatCurrency(th[2])}</td>
+                                            <td>{th[1]}</td>
                                             {/*<td>{th[4]}</td>*/}
                                         </tr>
                                     ))}
