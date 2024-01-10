@@ -34,7 +34,7 @@ public class DanhMucController {
 
     @GetMapping("index")
     public ResponseEntity<?> index1(Model model) {
-        return ResponseEntity.ok(repository.findAll().stream().filter(danhMuc -> danhMuc.getTrangThai()==1));
+        return ResponseEntity.ok(repository.findAll().stream().filter(danhMuc -> danhMuc.getTrangThai()==0));
     }
 
     @PostMapping("add")

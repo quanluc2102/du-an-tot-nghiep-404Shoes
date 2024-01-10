@@ -40,7 +40,7 @@ public class MauSacController {
     @GetMapping("index")
     public ResponseEntity<?> index1(Model model) {
         List<MauSacValue> list = new ArrayList<>();
-        List<MauSac> listMS = repository.findAll().stream().filter(mauSac -> mauSac.getTrangThai()==1).toList();
+        List<MauSac> listMS = repository.findAll().stream().filter(mauSac -> mauSac.getTrangThai()==0).toList();
         for(MauSac a : listMS){
             MauSacValue b = new MauSacValue(a.getId(),a.getTen());
             list.add(b);
