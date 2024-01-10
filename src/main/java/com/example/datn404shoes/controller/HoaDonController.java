@@ -84,6 +84,8 @@ public class HoaDonController {
 
             String diaChiCuThe = thanhToanDTO.getDiaChiCuThe();
 
+            Integer kieuHoaDon = thanhToanDTO.getKieuHoaDon();
+
             if(xaPhuongThiTran != null){
                 hoaDonMoiNhat.setXaPhuongThiTran(xaPhuongThiTran);
             }
@@ -98,6 +100,12 @@ public class HoaDonController {
 
             if(diaChiCuThe != null){
                 hoaDonMoiNhat.setDiaChiCuThe(diaChiCuThe);
+            }
+
+            if(kieuHoaDon == 0){
+                hoaDonMoiNhat.setTrangThai(0);
+            }else{
+                hoaDonMoiNhat.setTrangThai(4);
             }
 
             if(khuyenMai != null){
