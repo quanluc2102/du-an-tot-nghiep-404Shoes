@@ -41,29 +41,35 @@ public class VNPayResource {
                                    HttpServletResponse response) throws IOException {
 
         String vnp_ResponseCode = queryParams.get("vnp_ResponseCode");
-        String transactionStatus = queryParams.get("vnp_TransactionStatus");
-        String registerServiceId = queryParams.get("registerServiceId");
+        String vnp_TmnCode = queryParams.get("vnp_TmnCode");
+        String vnp_TransactionNo = queryParams.get("vnp_TransactionNo");
+        String vnp_TransactionStatus = queryParams.get("vnp_TransactionStatus");
 
-        if (transactionStatus != null && !transactionStatus.equals("")) {
-            if ("00".equals(vnp_ResponseCode)) {
-                // Xử lý dữ liệu từ queryParams và từ phần thân yêu cầu (body)
+        System.out.println("vnp_ResponseCode: "+vnp_ResponseCode);
+        System.out.println("vnp_TmnCode: "+vnp_TmnCode);
+        System.out.println("vnp_TransactionNo: "+vnp_TransactionNo);
+        System.out.println("vnp_TransactionStatus: "+vnp_TransactionStatus);
 
-                // Chuyển hướng đến trang thành công
-                response.sendRedirect("http://localhost:3006/thanhcong");
-
-                // Đã xử lý thành công
-                return true;
-            } else {
-                // Giao dịch thất bại
-                // Thực hiện các xử lý cần thiết, ví dụ: không cập nhật CSDL
-
-                // Chuyển hướng đến trang giỏ hàng
-                response.sendRedirect("http://localhost:3006/your-cart");
-
-                // Đã xử lý với kết quả thất bại
-                return false;
-            }
-        }
+//        if (transactionStatus != null && !transactionStatus.equals("")) {
+//            if ("00".equals(vnp_ResponseCode)) {
+//                // Xử lý dữ liệu từ queryParams và từ phần thân yêu cầu (body)
+//
+//                // Chuyển hướng đến trang thành công
+//                response.sendRedirect("http://localhost:3006/thanhcong");
+//
+//                // Đã xử lý thành công
+//                return true;
+//            } else {
+//                // Giao dịch thất bại
+//                // Thực hiện các xử lý cần thiết, ví dụ: không cập nhật CSDL
+//
+//                // Chuyển hướng đến trang giỏ hàng
+//                response.sendRedirect("http://localhost:3006/your-cart");
+//
+//                // Đã xử lý với kết quả thất bại
+//                return false;
+//            }
+//        }
 
         // Trả về mặc định nếu không có thông tin giao dịch
         return false;
