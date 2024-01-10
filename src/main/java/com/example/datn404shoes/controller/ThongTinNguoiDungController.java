@@ -9,12 +9,15 @@ import com.example.datn404shoes.service.serviceimpl.TaiKhoanServiceimpl;
 import com.example.datn404shoes.service.serviceimpl.ThongTinNguoiDungServiceimpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.Date;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Optional;
@@ -31,13 +34,30 @@ public class ThongTinNguoiDungController {
     public ResponseEntity<?> index(Pageable pageable) {
         return ResponseEntity.ok(serviceimpl.getAllPhanTrang(pageable));
     }
-    @PostMapping("add")
-    public ResponseEntity<?> add(Model model,
-                                     @RequestBody ThongTinNguoiDung thongTin
-    ) {
-        return ResponseEntity.ok(serviceimpl.add(thongTin));
-    }
+//    @PostMapping("add")
+//    public ResponseEntity<?> add(Model model,
+//                                     @RequestBody ThongTinNguoiDung thongTin
+//    ) {
+//        return ResponseEntity.ok(serviceimpl.add(thongTin));
+//    }
+@PostMapping("/add")
+public ResponseEntity<?> addThongTinNguoiDung(@RequestBody ThongTinNguoiDung thongTinNguoiDung) {
+    try {
+        // Kiểm tra và cung cấp giá trị cho ngaySinh
+        if (thongTinNguoiDung.getNgaySinh() == null) {
+            // Nếu giá trị ngaySinh là null, hãy đặt giá trị mặc định hoặc xử lý nó một cách phù hợp.
+            LocalDate defaultNgaySinh = LocalDate.of(2000, 12, 20);
+                   thongTinNguoiDung.setNgaySinh(Date.valueOf(defaultNgaySinh));
+        }
 
+        // Lưu vào cơ sở dữ liệu
+        serviceimpl.add(thongTinNguoiDung);
+
+        return ResponseEntity.ok("Thêm thông tin người dùng thành công!");
+    } catch (Exception e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Lỗi khi thêm thông tin người dùng.");
+    }
+}
     @PutMapping("update/{id}")
     public ResponseEntity<?> update(Model model,
                                     @PathVariable("id") Long id,
