@@ -155,6 +155,20 @@ function Cart() {
         return tongTien;
     }
 
+    const tinhSoLuongSP = () =>{
+        let sl = 0;
+        SPCT.map(value => {
+            sl+=value.soLuong;
+        })
+        return sl;
+    }
+    const taoHoaDon = () =>{
+        if (tinhSoLuongSP() > 10) {
+            alert("Mỗi hóa đơn chỉ cho mua tối đa 10 sản phẩm !");
+        } else {
+
+        }
+    }
     const chonSPCT = (spct)=>{
         const isSelected = listSPCTSelected.some((selected) => selected.id === spct.id);
 
@@ -292,12 +306,13 @@ function Cart() {
 
                                 <div className={`col-12 mt-2 ${listSPCTSelected.length === 0 ? 'disabled' : ''}`}>
                                     <Link to={{
-                                        pathname: SPCT.length===0 ? `/your-cart` : `/check-out`,
+                                        pathname: tinhSoLuongSP()>10 ? `/your-cart` : `/check-out`,
                                         state: { listSPCTSelected, SPCT },
                                     }}
                                        className={`btn btn-warning btn-lg`}
                                        style={{width: '100%'}}
-                                       disabled={SPCT.length === 0 ? true : false}><strong>TIẾP
+                                       onClick={taoHoaDon}
+                                    ><strong>TIẾP
                                         TỤC THANH
                                         TOÁN</strong></Link>
                                 </div>
