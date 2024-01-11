@@ -9,10 +9,13 @@ import com.example.datn404shoes.repository.TaiKhoanRepository;
 import com.example.datn404shoes.repository.ThanhToanRepository;
 import com.example.datn404shoes.request.SPCTBanHangRequest;
 import com.example.datn404shoes.request.SanPhamChiTietRequest;
+import com.example.datn404shoes.service.XuatHoaDonService;
 import com.example.datn404shoes.service.serviceimpl.HoaDonChiTietimpl;
 import com.example.datn404shoes.service.serviceimpl.HoaDonImpl;
 import com.example.datn404shoes.service.serviceimpl.KhuyenMaiServiceImpl;
 import com.example.datn404shoes.service.serviceimpl.SanPhamChiTietServiceimpl;
+import com.itextpdf.text.Document;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -44,6 +47,8 @@ public class HoaDonController {
     SanPhamChiTietRepository sanPhamChiTietRepository;
     @Autowired
     PhanQuyenRepository phanQuyenRepository;
+    @Autowired
+    XuatHoaDonService xuatHoaDonService;
     @Autowired
     KhuyenMaiServiceImpl khuyenMaiService;
     @Autowired
@@ -169,6 +174,17 @@ public class HoaDonController {
                                    @PathVariable("id") Long id,
                                    @RequestBody HoaDon hoaDon) {
         return ResponseEntity.ok(hoaDonImpl.huyHoaDon(id,hoaDon));
+    }
+
+    @GetMapping("export/{id}")
+    public void getExportPdf(@PathVariable Long id, HttpServletResponse response) {
+        System.out.println("ccccc");
+        response.setContentType("application/pdf");
+        String headerKey = "Content-Disposition";
+        String headerValue = "inline; attachment; filename=file.pdf";
+        response.setHeader(headerKey, headerValue);
+        Document document = xuatHoaDonService.OrderPdfExport(id, response);
+        System.out.println("ccccc");
     }
 
 

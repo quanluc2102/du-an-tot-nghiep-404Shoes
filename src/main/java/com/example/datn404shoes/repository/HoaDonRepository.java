@@ -1,5 +1,6 @@
 package com.example.datn404shoes.repository;
 
+import com.example.datn404shoes.DTO.XuatHoaDonDto;
 import com.example.datn404shoes.entity.HoaDon;
 //import com.poly.duanbangiay.entity.HoaDon;
 import com.example.datn404shoes.entity.HoaDonChiTiet;
@@ -12,6 +13,7 @@ import org.springframework.data.repository.query.Param;
 
 
 import java.util.List;
+import java.util.Optional;
 
 public interface HoaDonRepository extends JpaRepository<HoaDon, Long> {
 
@@ -142,10 +144,16 @@ public interface HoaDonRepository extends JpaRepository<HoaDon, Long> {
     List<Object[]> muaTaiQuay(@Param("id") Long id);
     
 
-    @Query("SELECT hd FROM HoaDon hd order by hd.ngayTao desc")
+    @Query("SELECT hd FROM HoaDon hd order by hd.id desc")
     List<HoaDon> findAllByDescByNgayTao();
 
 
     @Query(value = "SELECT TOP 1 hd.ma_hoa_don AS MaHoaDon FROM hoa_don hd ORDER BY hd.id DESC", nativeQuery = true)
     Object[] thanhToanThanhCong();
+    @Query(value = """
+                    select new com.example.datn404shoes.DTO.XuatHoaDonDto(o.id, o.maHoaDon,o.tongTien, o.sdt, o.ten, o.diaChiCuThe, o.phiShip,o.tienGiam,o.tongTienSauGiam)
+                    from HoaDon o
+                    where o.id = :id
+                    """)
+    Optional<XuatHoaDonDto> getHoaDonByhoaDonId(Long id);
 }

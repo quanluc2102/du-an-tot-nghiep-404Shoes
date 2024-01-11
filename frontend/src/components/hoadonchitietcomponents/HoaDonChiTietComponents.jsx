@@ -340,6 +340,9 @@ class HoaDonChiTietComponents extends Component {
         HoaDonService.updateHoaDon(hoaDon, id).then((res) => {
             window.location.href = `/HoaDonChiTiet/${this.state.hoaDonId.id}`;
         });
+
+        const url = `http://localhost:8080/hoa_don/export/${this.state.hoaDonId.id}`;
+        window.open(url, "_blank");
     };
     updateDC = (e) => {
         e.preventDefault();
