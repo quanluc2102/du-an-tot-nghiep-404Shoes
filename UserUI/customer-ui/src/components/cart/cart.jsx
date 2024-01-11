@@ -39,11 +39,52 @@ function Cart() {
                 //
                 //     }
                 // })
-                localStorage.setItem("listSPCT", JSON.stringify(data));
+                // localStorage.setItem("listSPCT", JSON.stringify(data));
+                const promises = data.map(value => {
+                    return SanPhamService.getSPCTOne(value.sanPhamChiTietId.id)
+                        .then(sp => {
+                            return { ...value, sanPhamChiTietId: sp};
+                        })
+                        .catch(error => {
+                            console.error(error);
+                            return value;
+                        });
+                });
+
+                Promise.all(promises)
+                    .then(updatedProducts => {
+                        let tong = 0;
+                        for(let i = 0 ; i <data.length ; i++){
+                            for(let j = 0 ; j <data.length ; j++){
+                                if(i === j ){
+                                    if(data[i].sanPhamChiTietId.soLuong!=updatedProducts[j].sanPhamChiTietId.soLuong){
+                                        tong++;
+                                    }
+                                }
+
+                            }
+                        }
+                        if(tong===0){
+                            localStorage.setItem('listSPCT', JSON.stringify(updatedProducts));
+                        }else{
+                            localStorage.setItem('listSPCT', JSON.stringify(updatedProducts));
+                            setReload(reload===1?2:1);
+                        }
+
+                        // updatedProducts.map(value => {
+                        //     if(value.sanPhamChiTietId.soLuong<value.soLuong){
+                        //         thayDoiSoLuong(value.id,value.sanPhamChiTietId.soLuong)
+                        //     }
+                        // })
+                        // setReload(reload===1?2:1)
+
+                    })
+                    .catch(error => {
+                        console.error(error);
+                    });
             }
             setSPCT(data);
             setUser(dataUser)
-
     };
     useEffect(() => {
 
