@@ -1,5 +1,6 @@
 package com.example.datn404shoes.service.serviceimpl;
-
+import java.text.NumberFormat;
+import java.util.Locale;
 import com.example.datn404shoes.DTO.HoaDonChiTietDto;
 import com.example.datn404shoes.DTO.XuatHoaDonDto;
 import com.example.datn404shoes.repository.HoaDonRepository;
@@ -85,12 +86,16 @@ public class XuatHoaDonServiceImpl implements XuatHoaDonService {
 //            document.add(logoImage);
 
 
-            Paragraph addressShop = new Paragraph("Địa chỉ shop : Giao Long, Giao Thủy, Nam Định", contentFont);
+            Paragraph addressShop = new Paragraph("Địa chỉ shop : Tòa nhà 404 404 P. Trịnh Văn Bô, Xuân Phương, Nam Từ Liêm, Hà Nội", contentFont);
 
             document.add(addressShop);
-            Paragraph phoneShop = new Paragraph("Số điện thoại shop : 0856572786", contentFont);
+            Paragraph phoneShop = new Paragraph("Số điện thoại shop : 0332041852", contentFont);
 
             document.add(phoneShop);
+
+            Paragraph email = new Paragraph("Email : 404shopshoes@gmail.com", contentFont);
+
+            document.add(email);
 
             Paragraph order = new Paragraph("Hoá đơn thanh toán", subTitleFont);
             order.setAlignment(Element.ALIGN_CENTER);
@@ -135,22 +140,28 @@ public class XuatHoaDonServiceImpl implements XuatHoaDonService {
 
             document.add(table);
 
+            NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
+
             Float shipCost = hoaDonPdf.getPhiShip();
             if (shipCost != null && shipCost != 0) {
-                Paragraph fee = new Paragraph("Phí ship:          " + shipCost, contentFont);
+                String formattedShipCost = currencyFormat.format(shipCost);
+                Paragraph fee = new Paragraph("Phí ship:          " + formattedShipCost, contentFont);
                 fee.setIndentationLeft(150f);
                 document.add(fee);
             }
 
-            Paragraph tiengiam = new Paragraph("Số tiền giảm:        " + hoaDonPdf.getTienGiam(), contentFont);
+            String formattedTienGiam = currencyFormat.format(hoaDonPdf.getTienGiam());
+            Paragraph tiengiam = new Paragraph("Số tiền giảm:        " + formattedTienGiam, contentFont);
             tiengiam.setIndentationLeft(150f);
             document.add(tiengiam);
 
-            Paragraph totalPrice = new Paragraph("Tổng tiền:        " + hoaDonPdf.getTongTienSauGiam(), contentFont);
+            String formattedTongTienSauGiam = currencyFormat.format(hoaDonPdf.getTongTienSauGiam());
+            Paragraph totalPrice = new Paragraph("Tổng tiền:        " + formattedTongTienSauGiam, contentFont);
             totalPrice.setIndentationLeft(150f);
             document.add(totalPrice);
 
-            Paragraph totalPriceAfter = new Paragraph("Tổng thu:          " + (hoaDonPdf.getTongTienSauGiam() + hoaDonPdf.getPhiShip()), contentFont);
+            String formattedTotalPriceAfter = currencyFormat.format(hoaDonPdf.getTongTienSauGiam() + hoaDonPdf.getPhiShip());
+            Paragraph totalPriceAfter = new Paragraph("Tổng thu:          " + formattedTotalPriceAfter, contentFont);
             totalPriceAfter.setIndentationLeft(150f);
             document.add(totalPriceAfter);
 
