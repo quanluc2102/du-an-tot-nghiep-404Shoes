@@ -5,6 +5,7 @@ const HOADON_API_BASE_URL_TK = "http://localhost:8080/hoa_don/hien-thi-taiKhoanK
 const HOADON_API_BASE_URL_UPDATE="http://localhost:8080/hoa_don/update";
 const HOADON_API_BASE_URL_HUYHD="http://localhost:8080/hoa_don/huyHD";
 const HOADON_API_BASE_URL_UPDATEDC="http://localhost:8080/hoa_don/updateDC";
+const HOADON_API_BASE_URL_INHD="http://localhost:8080/hoa_don/export";
 
 class HoaDonService{
     getHoaDon(){
@@ -23,6 +24,10 @@ class HoaDonService{
     updateHoaDonDC( hoaDonId,hoaDon) {
         console.log(hoaDonId)
         return axios.put(HOADON_API_BASE_URL_UPDATEDC + "/" + hoaDonId, hoaDon)
+    }
+    inHD( hoaDonId) {
+        console.log(hoaDonId)
+        return axios.get(HOADON_API_BASE_URL_INHD + "/" + hoaDonId)
     }
     huyHD(hoaDon,Id) {
         console.log(Id)
