@@ -5,21 +5,24 @@ import com.example.datn404shoes.DTO.DeleteHoaDonDTO;
 import com.example.datn404shoes.DTO.UpdateHoaDonChiTietDTO;
 import com.example.datn404shoes.DTO.ThanhToanDTO;
 import com.example.datn404shoes.entity.KhuyenMai;
+import com.example.datn404shoes.entity.ThanhToan;
 import com.example.datn404shoes.request.SanPhamChiTietRequest;
 import com.example.datn404shoes.service.serviceimpl.BanHangOfflineServiceImpl;
 import com.example.datn404shoes.service.serviceimpl.SanPhamChiTietServiceimpl;
+import com.example.datn404shoes.service.serviceimpl.TaiKhoanServiceimpl;
 import com.example.datn404shoes.service.serviceimpl.HoaDonChiTietimpl;
 import com.example.datn404shoes.service.serviceimpl.HoaDonImpl;
-import com.example.datn404shoes.service.serviceimpl.TaiKhoanServiceimpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.example.datn404shoes.repository.SanPhamChiTietRepository;
+import com.example.datn404shoes.repository.KhuyenMaiRepository;
 import com.example.datn404shoes.repository.HoaDonRepository;
 import com.example.datn404shoes.repository.HoaDonChiTietRepository;
-import org.springframework.http.HttpStatus;
+import com.example.datn404shoes.repository.ThanhToanRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.example.datn404shoes.entity.HoaDon;
 import com.example.datn404shoes.entity.SanPhamChiTiet;
+import com.example.datn404shoes.entity.TaiKhoan;
 import com.example.datn404shoes.entity.HoaDonChiTiet;
 
 import java.util.ArrayList;
@@ -30,9 +33,6 @@ import java.util.Optional;
 @CrossOrigin(origins = "http://localhost:3000")
 @RequestMapping("/ban_hang")
 public class BanHangOfflineController {
-
-    @Autowired
-    private TaiKhoanServiceimpl taiKhoanServiceimpl;
 
     private final BanHangOfflineServiceImpl banHangOfflineService;
 
@@ -48,6 +48,12 @@ public class BanHangOfflineController {
 
     private final HoaDonRepository hoaDonRepository;
 
+    private final TaiKhoanServiceimpl taiKhoanServiceimpl;
+
+    private final ThanhToanRepository thanhToanRepository;
+
+    private final KhuyenMaiRepository khuyenMaiRepository;
+
     @Autowired
     public BanHangOfflineController(BanHangOfflineServiceImpl banHangOfflineService,
                                     HoaDonImpl hoaDon,
@@ -55,7 +61,10 @@ public class BanHangOfflineController {
                                     HoaDonChiTietimpl hoaDonChiTietimpl,
                                     SanPhamChiTietRepository sanPhamChiTietRepository,
                                     HoaDonChiTietRepository hoaDonChiTietRepository,
-                                    HoaDonRepository hoaDonRepository){
+                                    HoaDonRepository hoaDonRepository,
+                                    TaiKhoanServiceimpl taiKhoanServiceimpl,
+                                    ThanhToanRepository thanhToanRepository,
+                                    KhuyenMaiRepository khuyenMaiRepository){
         this.banHangOfflineService = banHangOfflineService;
         this.hoaDon = hoaDon;
         this.sanPhamChiTietService = sanPhamChiTietService;
@@ -63,6 +72,9 @@ public class BanHangOfflineController {
         this.sanPhamChiTietRepository = sanPhamChiTietRepository;
         this.hoaDonChiTietRepository = hoaDonChiTietRepository;
         this.hoaDonRepository = hoaDonRepository;
+        this.taiKhoanServiceimpl = taiKhoanServiceimpl;
+        this.thanhToanRepository = thanhToanRepository;
+        this.khuyenMaiRepository = khuyenMaiRepository;
     }
 
     @GetMapping("/danh_sach_km")
@@ -147,40 +159,99 @@ public class BanHangOfflineController {
                                              @RequestBody ThanhToanDTO thanhToanDTO) {
 
         Optional<HoaDon> hoaDonOptional = hoaDonRepository.findById(id);
-        System.out.println(hoaDonOptional.toString());
 
-        if (hoaDonOptional.isPresent()) {
+        if(hoaDonOptional.isPresent()){
             HoaDon hoaDon = hoaDonOptional.get();
-            System.out.println(hoaDon.getMaHoaDon() + "+" + hoaDon.getId() + "+" + hoaDon.getTrangThai() + "+" + hoaDon.getKieuHoaDon());
-            HoaDon hoaDonRequest = thanhToanDTO.getHoaDon();
-            System.out.println(hoaDonRequest.getMaHoaDon());
+            String ten = thanhToanDTO.getTen();
+            String sdt = thanhToanDTO.getSdt();
+            Long idKhachHang = thanhToanDTO.getTaiKhoanKhachHang();
+            Float tongTien = thanhToanDTO.getTongTien();
+            Float tienGiam = thanhToanDTO.getTienGiam();
+            Float tongTienSauGiam = thanhToanDTO.getTongTienSauGiam();
+            Float phiShip = thanhToanDTO.getPhiShip();
+            Integer kieuHoaDon = thanhToanDTO.getKieuHoaDon();
+            String tinhThanhPho = thanhToanDTO.getTinhThanhPho();
+            String quanHuyen = thanhToanDTO.getQuanHuyen();
+            String xaPhuongThiTran = thanhToanDTO.getXaPhuongThiTran();
+            String diaChiCuThe = thanhToanDTO.getDiaChiCuThe();
+            Long khuyenMai = thanhToanDTO.getKhuyenMai();
+            Long thanhToan = thanhToanDTO.getThanhToan();
+            String ghiChu = thanhToanDTO.getGhiChu();
 
-            if (hoaDonRequest != null) {
-                hoaDon.setTongTien(hoaDonRequest.getTongTien());
-                hoaDon.setTen(hoaDonRequest.getTen());
-                hoaDon.setEmail(hoaDonRequest.getEmail());
-                hoaDon.setSdt(hoaDonRequest.getSdt());
-                hoaDon.setPhiShip(hoaDonRequest.getPhiShip());
-                hoaDon.setTongTienSauGiam(hoaDonRequest.getTongTienSauGiam());
-                hoaDon.setTongTien(hoaDonRequest.getTongTien());
-                hoaDon.setThanhToan(hoaDonRequest.getThanhToan());
-                hoaDon.setTienGiam(hoaDonRequest.getTienGiam());
-                hoaDon.setGhiChu(hoaDonRequest.getGhiChu());
-                hoaDon.setKieuHoaDon(hoaDonRequest.getKieuHoaDon());
-                hoaDon.setTinhThanhPho(hoaDonRequest.getTinhThanhPho());
-                hoaDon.setQuanHuyen(hoaDonRequest.getQuanHuyen());
-                hoaDon.setXaPhuongThiTran(hoaDonRequest.getXaPhuongThiTran());
-//              hoaDon.setTaiKhoanKhachHang(hoaDonRequest.getTaiKhoanKhachHang());
-//              hoaDon.setTaiKhoan(hoaDonRequest.getTaiKhoan());
-                hoaDon.setTrangThai(hoaDonRequest.getKieuHoaDon() == 2 ? 4 : 0);
-                
-                hoaDonRepository.save(hoaDon);
-                List<HoaDon> danhSachHoaDonCho = banHangOfflineService.layDanhSachHoaDonCho();
-                return ResponseEntity.ok(danhSachHoaDonCho);
-            } else {
-                return ResponseEntity.badRequest().body("Dữ liệu hoá đơn không hợp lệ.");
+            if(ten != null){
+                hoaDon.setTen(ten);
             }
-        } else {
+
+            if(sdt != null){
+                hoaDon.setSdt(sdt);
+            }
+
+            if(tongTien != null){
+                hoaDon.setTongTien(tongTien);
+            }
+
+            if(tienGiam != null){
+                hoaDon.setTienGiam(tienGiam);
+            }
+
+            if(tongTienSauGiam != null){
+                hoaDon.setTongTienSauGiam(tongTienSauGiam);
+            }
+
+            if(phiShip != null){
+                hoaDon.setPhiShip(phiShip);
+            }
+
+            hoaDon.setKieuHoaDon(kieuHoaDon);
+
+            hoaDon.setTrangThai(kieuHoaDon == 2 ? 4 : 0);
+
+            if(tinhThanhPho != null){
+                hoaDon.setTinhThanhPho(tinhThanhPho);
+            }
+
+            if(quanHuyen != null){
+                hoaDon.setQuanHuyen(quanHuyen);
+            }
+
+            if(xaPhuongThiTran != null){
+                hoaDon.setXaPhuongThiTran(xaPhuongThiTran);
+            }
+
+            if(diaChiCuThe != null){
+                hoaDon.setDiaChiCuThe(diaChiCuThe);
+            }
+
+            if(ghiChu != null){
+                hoaDon.setGhiChu(ghiChu);
+            }
+
+            if(idKhachHang != null){
+                TaiKhoan taiKhoanKhachHang = taiKhoanServiceimpl.getOne(idKhachHang);
+                hoaDon.setTaiKhoanKhachHang(taiKhoanKhachHang);
+            }
+
+            if(thanhToan != null){
+                ThanhToan kieuThanhToan = thanhToanRepository.findById(thanhToan).get();
+                hoaDon.setThanhToan(kieuThanhToan);
+            }
+
+            if(khuyenMai != null){
+                Optional<KhuyenMai> khuyenMaiOptional = khuyenMaiRepository.findById(khuyenMai);
+                if(khuyenMaiOptional.isPresent()){
+                    KhuyenMai km = khuyenMaiOptional.get();
+                    int soLuongKM = km.getSoLuong() - 1;
+                    km.setSoLuong(soLuongKM);
+                    hoaDon.setKhuyenMai(km);
+                    khuyenMaiRepository.saveAndFlush(km);
+                }
+            }
+
+            hoaDonRepository.saveAndFlush(hoaDon);
+
+            List<HoaDon> danhSachHoaDonCho = banHangOfflineService.layDanhSachHoaDonCho();
+            return ResponseEntity.ok(danhSachHoaDonCho);
+        }else{
             return ResponseEntity.notFound().build();
         }
     }
