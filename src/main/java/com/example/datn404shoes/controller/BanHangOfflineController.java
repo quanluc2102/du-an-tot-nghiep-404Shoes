@@ -3,6 +3,7 @@ package com.example.datn404shoes.controller;
 import com.example.datn404shoes.DTO.DeleteHdctDTO;
 import com.example.datn404shoes.DTO.DeleteHoaDonDTO;
 import com.example.datn404shoes.DTO.UpdateHoaDonChiTietDTO;
+import com.example.datn404shoes.DTO.ThanhToanDTO;
 import com.example.datn404shoes.entity.KhuyenMai;
 import com.example.datn404shoes.request.SanPhamChiTietRequest;
 import com.example.datn404shoes.service.serviceimpl.BanHangOfflineServiceImpl;
@@ -12,6 +13,7 @@ import com.example.datn404shoes.service.serviceimpl.HoaDonImpl;
 import com.example.datn404shoes.service.serviceimpl.TaiKhoanServiceimpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.example.datn404shoes.repository.SanPhamChiTietRepository;
+import com.example.datn404shoes.repository.HoaDonRepository;
 import com.example.datn404shoes.repository.HoaDonChiTietRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +24,7 @@ import com.example.datn404shoes.entity.HoaDonChiTiet;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:3000")
@@ -42,19 +45,24 @@ public class BanHangOfflineController {
     private final SanPhamChiTietRepository sanPhamChiTietRepository;
 
     private final HoaDonChiTietRepository hoaDonChiTietRepository;
+
+    private final HoaDonRepository hoaDonRepository;
+
     @Autowired
     public BanHangOfflineController(BanHangOfflineServiceImpl banHangOfflineService,
                                     HoaDonImpl hoaDon,
                                     SanPhamChiTietServiceimpl sanPhamChiTietService,
                                     HoaDonChiTietimpl hoaDonChiTietimpl,
                                     SanPhamChiTietRepository sanPhamChiTietRepository,
-                                    HoaDonChiTietRepository hoaDonChiTietRepository){
+                                    HoaDonChiTietRepository hoaDonChiTietRepository,
+                                    HoaDonRepository hoaDonRepository){
         this.banHangOfflineService = banHangOfflineService;
         this.hoaDon = hoaDon;
         this.sanPhamChiTietService = sanPhamChiTietService;
         this.hoaDonChiTietimpl = hoaDonChiTietimpl;
         this.sanPhamChiTietRepository = sanPhamChiTietRepository;
         this.hoaDonChiTietRepository = hoaDonChiTietRepository;
+        this.hoaDonRepository = hoaDonRepository;
     }
 
     @GetMapping("/danh_sach_km")
@@ -134,12 +142,71 @@ public class BanHangOfflineController {
         return ResponseEntity.ok(danhSachHoaDonCho);
     }
 
-    @PutMapping("/update/{id}")
-    public ResponseEntity<?> thanhToanHoaDon(@PathVariable("id") Long id){
+    @PostMapping("/thanhToan/{id}")
+    public ResponseEntity<?> thanhToanHoaDon(@PathVariable("id") Long id,
+                                             @RequestBody ThanhToanDTO thanhToanDTO) {
 
+        Optional<HoaDon> hoaDonOptional = hoaDonRepository.findById(id);
+        System.out.println(hoaDonOptional.toString());
 
-        return ResponseEntity.ok("okay");
+        if (hoaDonOptional.isPresent()) {
+            HoaDon hoaDon = hoaDonOptional.get();
+            System.out.println(hoaDon.getMaHoaDon() + "+" + hoaDon.getId() + "+" + hoaDon.getTrangThai() + "+" + hoaDon.getKieuHoaDon());
+            HoaDon hoaDonRequest = thanhToanDTO.getHoaDon();
+            System.out.println(hoaDonRequest.getMaHoaDon());
+
+            if (hoaDonRequest != null) {
+                hoaDon.setTongTien(hoaDonRequest.getTongTien());
+                hoaDon.setTen(hoaDonRequest.getTen());
+                hoaDon.setEmail(hoaDonRequest.getEmail());
+                hoaDon.setSdt(hoaDonRequest.getSdt());
+                hoaDon.setPhiShip(hoaDonRequest.getPhiShip());
+                hoaDon.setTongTienSauGiam(hoaDonRequest.getTongTienSauGiam());
+                hoaDon.setTongTien(hoaDonRequest.getTongTien());
+                hoaDon.setThanhToan(hoaDonRequest.getThanhToan());
+                hoaDon.setTienGiam(hoaDonRequest.getTienGiam());
+                hoaDon.setGhiChu(hoaDonRequest.getGhiChu());
+                hoaDon.setKieuHoaDon(hoaDonRequest.getKieuHoaDon());
+                hoaDon.setTinhThanhPho(hoaDonRequest.getTinhThanhPho());
+                hoaDon.setQuanHuyen(hoaDonRequest.getQuanHuyen());
+                hoaDon.setXaPhuongThiTran(hoaDonRequest.getXaPhuongThiTran());
+//              hoaDon.setTaiKhoanKhachHang(hoaDonRequest.getTaiKhoanKhachHang());
+//              hoaDon.setTaiKhoan(hoaDonRequest.getTaiKhoan());
+                hoaDon.setTrangThai(hoaDonRequest.getKieuHoaDon() == 2 ? 4 : 0);
+                
+                hoaDonRepository.save(hoaDon);
+                List<HoaDon> danhSachHoaDonCho = banHangOfflineService.layDanhSachHoaDonCho();
+                return ResponseEntity.ok(danhSachHoaDonCho);
+            } else {
+                return ResponseEntity.badRequest().body("Dữ liệu hoá đơn không hợp lệ.");
+            }
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
+
+    @PostMapping("/update_soluong/{id}") // Phan nay dang sua
+    public ResponseEntity<?> capNhatSoLuongHDCT(@PathVariable("id") Long id,
+                                                @RequestBody Integer soLuong) {
+        Optional<HoaDonChiTiet> hoaDonCT = hoaDonChiTietRepository.findById(id);
+
+        if (hoaDonCT.isPresent()) {
+            HoaDonChiTiet hdct = hoaDonCT.get();
+
+            banHangOfflineService.updateSoLuongSP(soLuong, id);
+
+            SanPhamChiTiet spct = hdct.getSanPhamChiTiet();
+            if (spct != null) {
+                spct.setSoLuong(spct.getSoLuong() - soLuong);
+                sanPhamChiTietRepository.save(spct);
+            }
+            List<HoaDonChiTiet> danhSachHDCT = banHangOfflineService.layDanhSachHDCT(hdct.getHd().getId());
+            return ResponseEntity.ok(danhSachHDCT);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
 
     @PostMapping("/update_hdct/{id}")
     public ResponseEntity<?> capNhatSoLuongSP(@PathVariable("id") Long id,

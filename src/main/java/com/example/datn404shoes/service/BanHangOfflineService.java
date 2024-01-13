@@ -27,4 +27,8 @@ public interface BanHangOfflineService {
     Boolean deleteHoaDon(Long id);
 
     void deleteHDCT(Long id);
+
+    Long layIdHoaDon();
+
+    void updateSoLuongSP(Integer soLuong, Long id);
 }

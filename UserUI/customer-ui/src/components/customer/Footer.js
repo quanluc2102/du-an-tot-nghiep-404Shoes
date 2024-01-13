@@ -49,7 +49,7 @@ function Footer() {
                                             <i className="fas fa-map-marked-alt"></i>
                                         </span>
                   <span className="fw-light">
-                                            Hoàng Quốc Việt - Cầu Giấy - Hà Nội
+                                            Tòa nhà 404 404 P. Trịnh Văn Bô, Xuân Phương, Nam Từ Liêm, Hà Nội
                                         </span>
                 </div>
                 <div className="d-flex justify-content-start align-items-start my-2 text-muted">
@@ -65,7 +65,7 @@ function Footer() {
                                             <i className="fas fa-phone-alt"></i>
                                         </span>
                   <span className="fw-light">
-                                            +84 0819130199
+                                            0332041852
                                         </span>
                 </div>
               </div>
