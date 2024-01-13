@@ -23,23 +23,28 @@ class BanHangOffline extends Component {
         super(props);
 
         this.state = {
-            phiShip: 0,
-            ten: '',
-            sdt: '',
+            phiShip: 0, // state này lưu phí ship để thanh toán
+            ten: '', // state này lưu tên khách hàng để thanh toán
+            sdt: '', // state này lưu sdt khách hàng để thanh toán
+            tinhThanhPho: '',  // state này lưu thành phố để thanh toán
+            quanHuyen: '',  // state này lưu quận huyện để thanh toán
+            xaPhuongThiTran: '',  // state này lưu xã phường thị trấn để thanh toán
+            diaChiCuThe: '',  // state này lưu địa chỉ cụ thể để thanh toán
             kieuHoaDon: 2,
-            sanPhamChiTietList: [],
-            idKhachHang: '',
+            email: '', // state này lưu email để thanh toán
+            thanhToan: '', // state này lưu kiểu thanh toán để thanh toán
+            idKhachHang: '', // đây là 1 object khách hàng (khi chọn một khách hàng thì nó sẽ lưu lại thông tin khách hàng đấy ở đây)
             searchTerm: '',
             searchTermKH: '',
-            selectedPromotions: [],
-            taiKhoan: [],
-            khuyenMai: [],
+            selectedPromotions: [], // state này lưu lại thông tin khuyến mãi đã chọn
+            taiKhoan: [], // state này lưu lại danh sách khách hàng
+            khuyenMai: [], // mảng khuyến mãi
             selectedProducts: [],
-            sanPhamChiTiet: [],
-            activeTabKey: '',
-            tabList: [],
+            sanPhamChiTiet: [], // state này lưu thông tin sản phẩm chi tiết
+            activeTabKey: '', // id hóa đơn
+            tabList: [], // mảng hóa đơn chờ
             diaChi: [],
-            enteredAmount: 0,
+            enteredAmount: 0, // giá tiền nhập
             selectedRowKeys: [],
             showModal: false,
             showModal1: false,
@@ -49,7 +54,7 @@ class BanHangOffline extends Component {
             perPage: 4,
             currentPageKH: 0,
             perPageKH: 4,
-            tabProducts: [],
+            tabProducts: [], // mảng hóa đơn chi tiết
             tabCustomers: {
                 tabKey1: [],
                 tabKey2: [],
@@ -57,15 +62,11 @@ class BanHangOffline extends Component {
                 tabKey4: [],
                 tabKey5: [],
             },
-            checked: false,
-            tinhThanhPho: '',
-            quanHuyen: '',
-            xaPhuongThiTran: '',
-            diaChiCuThe: '',
-            cities: [],
-            districts: [],
-            wards: [],
-            currentSanPhamChiTietList: [],
+            checked: false, // check button giao hàng (có = true, không = false)        
+            cities: [], // state này lưu danh sách thành phố
+            districts: [],  // state này lưu danh sách quận huyện
+            wards: [], // state này lưu danh sách xã phường
+            currentSanPhamChiTietList: [], // state này lưu danh sách spct dựa trên phân trang
         };
         this.onChangeSearchInput = this.onChangeSearchInput.bind(this);
         this.nextTabIndex = 0
@@ -74,6 +75,7 @@ class BanHangOffline extends Component {
         this.handleCityChange = this.handleCityChange.bind(this);
         this.handleDistrictChange = this.handleDistrictChange.bind(this);
         this.handleWardChange = this.handleWardChange.bind(this);
+        this.add = this.add.bind(this);
     }
 
     componentDidMount() {
@@ -104,6 +106,8 @@ class BanHangOffline extends Component {
 
 
     componentDidUpdate(prevProps, prevState) {
+
+        // hiển thị lại danh sách quận huyện nếu state.tinhThanhPho hiện tại khác với state.tinhThanhPho trước
         if (this.state.tinhThanhPho !== prevState.tinhThanhPho) {
             const { cities, tinhThanhPho } = this.state;
             const selectedCity = cities.find(city => city.name === tinhThanhPho);
@@ -113,6 +117,7 @@ class BanHangOffline extends Component {
             }
         }
 
+        // hiển thị lại danh sách xã phường nếu state.quanHuyen hiện tại khác với state.quanHuyen trước
         if (this.state.quanHuyen !== prevState.quanHuyen) {
             const { districts, quanHuyen } = this.state;
             const selectedDistrict = districts.find(district => district.name === quanHuyen);
@@ -122,11 +127,13 @@ class BanHangOffline extends Component {
             }
         }
 
+        // hiển thị lại danh sách hdct nếu state.activeTabKey hiện tại khác với state.activeTabKey trước
         if (this.state.activeTabKey !== prevState.activeTabKey) {
             this.fetchHDCT(this.state.activeTabKey);
         }
     }
 
+    // hàm set lại đối tượng khách hàng vào state.idKhachHang
     getIdKhachHang(id) {
         this.setState({ idKhachHang: id });
     }
@@ -179,6 +186,7 @@ class BanHangOffline extends Component {
         });
     }
 
+    // hàm format lại giá tiền
     formatCurrency = (amount) => {
         return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
     };
@@ -202,9 +210,8 @@ class BanHangOffline extends Component {
         });
     }
 
+    // hàm reload lại khuyến mãi
     reloadKM = () => {
-        const { tabProducts, activeTabKey } = this.state;
-        const selectedProducts = tabProducts[activeTabKey] || [];
         BanHangService.getKMTT(this.getTotalAmount(this.state.tabProducts)).then((res) => {
             this.setState({ khuyenMai: res.data })
         }).catch((error) => {
@@ -212,6 +219,7 @@ class BanHangOffline extends Component {
         });
     }
 
+    // hàm lấy danh sách thành phố từ API
     async fetchCities() {
         try {
             const response = await axios.get('https://provinces.open-api.vn/api/?depth=1');
@@ -221,6 +229,7 @@ class BanHangOffline extends Component {
         }
     }
 
+    // hàm lấy danh sách quận huyện từ API
     async fetchDistricts(selectedCity) {
         try {
             const response = await axios.get(`https://provinces.open-api.vn/api/p/${selectedCity.code}?depth=2`);
@@ -231,6 +240,7 @@ class BanHangOffline extends Component {
         }
     }
 
+    // hàm lấy danh sách xã phường từ API
     async fetchWards(selectedDistrict) {
         try {
             const response = await axios.get(`https://provinces.open-api.vn/api/d/${selectedDistrict.code}?depth=2`);
@@ -241,6 +251,7 @@ class BanHangOffline extends Component {
         }
     }
 
+    // hàm xử lí khi chọn thành phố sẽ hiện ra những quận huyện tương ứng
     handleCityChange(event) {
         const selectedCityName = event.target.value;
         const selectedCity = this.state.cities.find(city => city.name === selectedCityName);
@@ -254,6 +265,7 @@ class BanHangOffline extends Component {
         }
     }
 
+    // hàm xử lí khi chọn quận huyện sẽ hiển thị ra những xã phường tương ứng
     handleDistrictChange(event) {
         const selectedDistrictName = event.target.value;
         const selectedDistrict = this.state.districts.find(district => district.name === selectedDistrictName);
@@ -345,136 +357,109 @@ class BanHangOffline extends Component {
         return sanPhamChiTiet.slice(offset, offset + perPage);
     }
 
+    // hàm validate số điện thoại
+    validatePhoneNumber = (phoneNumber) => {
+        const phoneRegex = /^(84|0[3|5|7|8|9])+([0-9]{8})$/;
+        return phoneRegex.test(phoneNumber);
+    };
+
+
+    // hàm thanh toán
     add = async (e) => {
-        e.preventDefault();
-
         const { selectedPromotions } = this.state;
-        const firstSelectedPromotion = selectedPromotions.length > 0 ? selectedPromotions[0] : null;
+        const firstSelectedPromotion = selectedPromotions.length > 0 ? selectedPromotions[0] : null; // hàm này lấy giá trị đầu tiên của mảng lưu khuyến mãi
 
-        if (this.state.enteredAmount !== null && this.state.enteredAmount > 0 && this.state.enteredAmount !== undefined && this.state.enteredAmount - this.getTotalAmount(this.state.tabProducts) >= 0) {
-            const confirm = window.confirm('Bạn xác nhận muốn thanh toán hóa đơn này chứ?');
-            if (!confirm) {
-                return;
-            } else if (this.state.phiShip !== 0 && this.state.phiShip !== undefined && this.state.phiShip !== null && this.state.kieuHoaDon === 0) {
-                const thanhToan = {
+        const confirm = window.confirm('Bạn xác nhận muốn thanh toán hóa đơn này chứ?');
+        if (!confirm) {
+            return;
+        } else {
 
-                    sanPhamChiTietList: this.state.tabProducts,
-
-                    khuyenMai: firstSelectedPromotion ? firstSelectedPromotion : null,
-
+            try {
+                const thanhToanDTO = {
                     hoaDon: {
-                        tongTien: this.getTotalAmount(this.state.tabProducts),
-                        ghiChu: document.getElementById("ghiChuDonHang").value,
-                    },
-
-                    xaPhuongThiTran: this.state.xaPhuongThiTran,
-
-                    quanHuyen: this.state.quanHuyen,
-
-                    tinhThanhPho: this.state.tinhThanhPho,
-
-                    diaChiCuThe: this.state.diaChiCuThe,
-
-                    kieuHoaDon: this.state.kieuHoaDon,
-
-                    giaGiam: this.getTotalAmountWithoutPromotions(this.state.tabProducts) - (this.getTotalAmount(this.state.tabProducts) + this.state.phiShip),
-
-                    sdt: document.getElementById("sdt").value,
-
-                    ten: document.getElementById("ten").value,
-
-                    phiShip: this.state.phiShip,
-                };
-
-                try {
-                    const response = await BanHangService.createHoaDon(thanhToan);
-                    toast.success("Thanh toán thành công!!!");
-                    console.log(response.status);
-                } catch (error) {
-                    if (error.response && error.response.status === 400) {
-                        toast.error('Thanh toán không thành công, vui lòng kiểm tra lại!!!.');
-                        console.log(thanhToan);
-                    } else {
-                        console.error('Error', error);
-                        console.log(thanhToan);
-                        toast.error('Thanh toán không thành công, vui lòng kiểm tra lại!!!');
+                        ten: this.state.ten,
+                        sdt: this.state.sdt,
+                        taiKhoanKhachHang: this.state.idKhachHang,
+                        tongTien: this.getTotalAmountWithoutPromotions(this.state.tabProducts) + this.state.phiShip,
+                        tienGiam: (this.getTotalAmountWithoutPromotions(this.state.tabProducts) + this.state.phiShip) - this.getTotalAmount(this.state.tabProducts),
+                        tongTienSauGiam: this.getTotalAmount(this.state.tabProducts) + this.state.phiShip,
+                        phiShip: this.state.phiShip,
+                        kieuHoaDon: this.state.kieuHoaDon,
+                        tinhThanhPho: this.state.tinhThanhPho,
+                        quanHuyen: this.state.quanHuyen,
+                        xaPhuongThiTran: this.state.xaPhuongThiTran,
+                        diaChiCuThe: this.state.diaChiCuThe,
+                        email: this.state.email,
+                        khuyenMai: firstSelectedPromotion,
+                        thanhToan: this.state.thanhToan,
+                        ghiChu: document.getElementById('ghiChuDonHang').value || '',
                     }
                 }
-            } else {
-                const thanhToan = {
 
-                    sanPhamChiTietList: this.state.tabProducts,
-
-                    khuyenMai: firstSelectedPromotion ? firstSelectedPromotion : null,
-
-                    hoaDon: {
-                        tongTien: this.getTotalAmount(this.state.tabProducts),
-                        ghiChu: document.getElementById("ghiChuDonHang").value,
-                    },
-
-                    xaPhuongThiTran: this.state.xaPhuongThiTran,
-
-                    quanHuyen: this.state.quanHuyen,
-
-                    tinhThanhPho: this.state.tinhThanhPho,
-
-                    diaChiCuThe: this.state.diaChiCuThe,
-
-                    kieuHoaDon: 2,
-
-                    giaGiam: this.getTotalAmountWithoutPromotions(this.state.tabProducts) - (this.getTotalAmount(this.state.tabProducts) + this.state.phiShip),
-
-                    sdt: document.getElementById("sdt").value,
-
-                    ten: document.getElementById("ten").value,
-
-                    phiShip: 0,
-                };
-
-                try {
-                    const response = await BanHangService.createHoaDon(thanhToan);
-
-                    toast.success("Thanh toán thành công!!!");
-                    console.log(response.status);
-
-                } catch (error) {
-                    if (error.response && error.response.status === 400) {
-                        toast.error('Thanh toán không thành công, vui lòng kiểm tra lại!!!.');
-                        console.log(thanhToan);
-                    } else {
-                        console.error('Error', error);
-                        console.log(thanhToan);
-                        toast.error('Thanh toán không thành công, vui lòng kiểm tra lại!!!');
-                    }
+                const response = await axios.post(`http://localhost:8080/ban_hang/thanhToan/${this.state.activeTabKey}`, thanhToanDTO);
+                if (response.status === 200) {
+                    const danhSachHD = response.data;
+                    this.setState({
+                        tabList: danhSachHD,
+                        tabProducts: [],
+                        activeTabKey: '',
+                        diaChiCuThe: '',
+                        ten: '',
+                        sdt: '',
+                        email: '',
+                        phiShip: 0,
+                        tinhThanhPho: '',
+                        quanHuyen: '',
+                        xaPhuongThiTran: '',
+                        khuyenMai: [],
+                        thanhToan: '',
+                        ghiChu: '',
+                        kieuHoaDon: 2,
+                        idKhachHang: '',
+                    });
+                    this.fetchHoaDonChoDauTien();
+                    console.log('phi ship: ', this.state.phiShip);
+                    toast.success('Thanh toán thành công!!!!');
+                } else {
+                    toast.error('Thanh toán thất bại!!!!');
+                    console.log(thanhToanDTO);
                 }
+
+            } catch (error) {
+                console.log(error);
             }
         }
     };
 
+    // hàm lấy giá tiền nhập
     onChangeEnteredAmount = (e) => {
         const inputValue = e.target.value;
-        if (!/^[1-9]\d*$/.test(inputValue)) {
-            toast.error('Hãy nhập giá tiền hợp lệ!!!');
-            return;
-        }
         const enteredAmount = parseFloat(inputValue) || 0;
         this.setState({ enteredAmount });
     };
 
+    // hàm change phí ship
     onChangeShip = (e) => {
         const inputValue = e.target.value;
-        if (!/^[1-9]\d*$/.test(inputValue)) {
-            toast.error('Hãy nhập giá tiền hợp lệ!!!');
+        if (inputValue === null || inputValue === undefined) {
+            this.setState({ phiShip: 0 });
             return;
         }
+
         const enteredAmount = parseFloat(inputValue) || 0;
         this.setState({ enteredAmount });
+        if (enteredAmount === null || enteredAmount === undefined) {
+            this.setState({ phiShip: 0 });
+        }
     };
 
+
+    // lấy tổng số hdct trong hóa đơn
     getTotalQuantity = (products) => {
         return products.reduce((total, product) => total + product.soLuong, 0);
     };
 
+    // lấy tổng tiền sau khi đã tính cả khuyến mãi
     getTotalAmount = (products) => {
         let totalAmount = products.reduce((total, product) => total + product.sanPhamChiTiet.donGia * product.soLuong, 0);
         const { selectedPromotions } = this.state;
@@ -492,14 +477,17 @@ class BanHangOffline extends Component {
         return totalAmount;
     };
 
+    // lấy tổng tiền không tính khuyến mãi
     getTotalAmountWithoutPromotions = (products) => {
         return products.reduce((total, product) => total + product.sanPhamChiTiet.donGia * product.soLuong, 0);
     };
 
+    // lấy id hóa đơn khi thay đổi tab
     handleTabChange = (idHoaDon) => {
         this.setState({ activeTabKey: idHoaDon });
     };
 
+    // thêm sản phẩm vào hóa đơn chờ
     handleProductClick = async (productId, idHoaDon) => {
 
         if (idHoaDon === null || idHoaDon === undefined) {
@@ -528,6 +516,7 @@ class BanHangOffline extends Component {
 
     };
 
+    // lấy thông tin user
     handleAddUser = (userId, tabKey) => {
         const { tabCustomers } = this.state;
         const customers = tabCustomers[tabKey] || [];
@@ -567,6 +556,7 @@ class BanHangOffline extends Component {
         }
     };
 
+    // lấy thông tin hdct dựa trên id hóa đơn
     fetchHDCT = async (idHoaDon) => {
         try {
             if (idHoaDon === null || idHoaDon === undefined) {
@@ -581,6 +571,7 @@ class BanHangOffline extends Component {
         }
     };
 
+    // lấy danh sách sản phẩm chi tiết
     fetchDanhSachSP = async () => {
         try {
             const response = await axios.get(`http://localhost:8080/san_pham_chi_tiet/hien-thi`);
@@ -592,6 +583,7 @@ class BanHangOffline extends Component {
         }
     };
 
+    // hiển thị danh sách hdct dựa trên id hóa đơn
     renderProductsForTab = (idHoaDon) => {
 
         const products = this.state.tabProducts || [];
@@ -623,7 +615,7 @@ class BanHangOffline extends Component {
                                 min="1"
                                 style={{ width: '50px' }}
                                 value={product.soLuong}
-                                onChange={(e) => this.handleQuantityChange(e, product.soLuong)}
+                                onChange={(e) => this.handleQuantityChange(e, product.sanPhamChiTiet.ma, product.id)}
                             />
                         </Col>
                         <Col span={3} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center' }}>{this.formatCurrency(product.sanPhamChiTiet.donGia)}</Col>
@@ -642,44 +634,51 @@ class BanHangOffline extends Component {
         }
     };
 
-    renderUserForTab = (tabKey) => {
-        const { tabCustomers } = this.state;
-        const customers = tabCustomers[tabKey] || [];
-        return customers.map((customer) => {
-            return (
-                {}
-            )
-        });
-    }
-
-    handleQuantityChange = (e, productId) => {
+    // hàm xử lí số lượng ở ô input trên (chưa hoàn thành)
+    handleQuantityChange = (e, productCode, productId) => {
         const newQuantity = parseInt(e.target.value, 10);
-        const { sanPhamChiTiet } = this.state;
-        console.log('newQuantity:', newQuantity);
 
-        const selectedProduct = sanPhamChiTiet.find(product => product.ma === productId);
+        const { sanPhamChiTiet } = this.state;
+
+        const selectedProduct = sanPhamChiTiet.find(product => product.ma === productCode);
+        console.log('product code: ', productCode);
         console.log('selectedProduct:', selectedProduct);
 
-        const limitedQuantity = Math.min(newQuantity, selectedProduct ? selectedProduct.soLuong : 1);
+        const isValidQuantity = !isNaN(newQuantity) && newQuantity !== null && newQuantity !== undefined;
 
-        this.setState((prevState) => {
-            const { activeTabKey, tabProducts } = prevState;
-            const updatedProducts = tabProducts[activeTabKey].map((product) => {
-                if (product.ma === productId) {
-                    return { ...product, quantity: limitedQuantity };
-                }
-                return product;
-            });
+        // const limitedQuantity = isValidQuantity ? Math.max(newQuantity, 1) : 1;
 
-            return {
-                tabProducts: {
-                    ...tabProducts,
-                    [activeTabKey]: updatedProducts,
-                },
-            };
+        const limitedQuantity = isValidQuantity ? Math.min(newQuantity, selectedProduct ? selectedProduct.soLuong : 1) : 1;
+
+        const updatedProducts = this.state.tabProducts.map(product => {
+            if (product.id === productId) {
+                return { ...product, soLuong: limitedQuantity };
+            }
+            return product;
+        });
+
+        console.log('limit quantity: ', limitedQuantity);
+        console.log("so luong moi: ", newQuantity);
+        console.log("id hdct: ", productId);
+
+        this.setState({
+            tabProducts: updatedProducts
         });
     };
 
+    // hàm update số lượng trong hdct ở ô input (chưa hoàn thành)
+    updateSoLuong = async (soLuong, idHDCT) => {
+        try {
+            const response = await axios.post(`http://localhost:8080/ban_hang/update_soluong/${idHDCT}`, soLuong);
+            const danhSachHDCT = response.data;
+            this.setState({ tabProducts: danhSachHDCT });
+
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    // hàm lấy dữ liệu hóa đơn chờ (hóa đơn hiển thị ở trên phần Tab)
     fetchHoaDonCho = async () => {
         try {
             const response = await axios.get(`http://localhost:8080/ban_hang`);
@@ -692,6 +691,7 @@ class BanHangOffline extends Component {
         }
     }
 
+    // hàm lấy dữ liệu hóa đơn chờ
     fetchHoaDonChoDauTien = async () => {
         try {
             const response = await axios.get(`http://localhost:8080/ban_hang`);
@@ -706,6 +706,7 @@ class BanHangOffline extends Component {
         }
     }
 
+    // hàm tạo mới hóa đơn chờ khi bấm vào +
     addHoaDon = async () => {
         try {
             const response = await axios.post(`http://localhost:8080/ban_hang/create`);
@@ -716,31 +717,40 @@ class BanHangOffline extends Component {
         }
     }
 
+    // hàm xóa hóa đơn chờ khi bấm vào button "Xóa Hóa Đơn"
     deleteHoaDonCho = async (idHoaDon) => {
-        if (idHoaDon !== null || idHoaDon !== undefined) {
-            const deleteHoaDonDTO = {
-                listHoaDonChiTiet: this.state.tabProducts
-            }
-            console.log(deleteHoaDonDTO);
-            try {
-                const response = await axios.put(`http://localhost:8080/ban_hang/delete/${idHoaDon}`, deleteHoaDonDTO || { listHoaDonChiTiet: [] });
-                if (response.status === 200) {
-                    this.setState({ tabList: response.data });
-                    // this.setState({ activeTabKey: response.data[0].id });
+        if (idHoaDon !== null && idHoaDon !== undefined) {
+            const confirm = window.confirm('Bạn muốn xóa hóa đơn này chứ?');
+
+            if (confirm) {
+                const deleteHoaDonDTO = {
+                    listHoaDonChiTiet: this.state.tabProducts
                 }
-            } catch (error) {
-                console.log('Xóa hóa đơn thất bại!!!', error);
+                console.log(deleteHoaDonDTO);
+                try {
+                    const response = await axios.put(`http://localhost:8080/ban_hang/delete/${idHoaDon}`, deleteHoaDonDTO || { listHoaDonChiTiet: [] });
+                    if (response.status === 200) {
+                        this.setState({ tabList: response.data });
+                        this.fetchDanhSachSP();
+                        // this.setState({ activeTabKey: response.data[0].id });
+                        toast.success('Xóa hóa đơn thành công!!!');
+                    }
+                } catch (error) {
+                    console.log('Xóa hóa đơn thất bại!!!', error);
+                }
             }
         } else {
             toast.error('Hãy chọn hóa đơn để xóa!!!');
         }
     }
 
+    // hàm chuyển hướng trang xuống button "Xóa hóa đơn"
     scrollToDeleteButton = () => {
         const deleteButton = document.getElementById('deleteButton');
         deleteButton.scrollIntoView({ behavior: 'smooth' });
     }
 
+    // hàm thêm hóa đơn chờ
     onEdit = (tabKey, action) => {
         if (action === 'add' && this.state.tabList.length < 5) {
 
@@ -763,6 +773,7 @@ class BanHangOffline extends Component {
         }
     };
 
+    // hàm xóa hdct
     onDelete = async (hdctId, activeTabKey) => {
 
         if (activeTabKey !== null || activeTabKey !== undefined) {
@@ -789,6 +800,7 @@ class BanHangOffline extends Component {
         console.log('changed', value);
     };
 
+    // hàm set lại kiểu hóa đơn dựa trên button giao hàng
     onChangeSwitch = () => {
         this.setState(
             (prevState) => ({ checked: !prevState.checked }),
@@ -870,6 +882,11 @@ class BanHangOffline extends Component {
         const { currentPageKH, perPageKH } = this.state;
         const offsetKH = currentPageKH * perPageKH;
         const currentKHList = ListKH.slice(offsetKH, offsetKH + perPageKH);
+
+        const tongTienThanhToan = this.getTotalAmount(this.state.tabProducts) + this.state.phiShip;
+        const giaTienNhap = this.state.enteredAmount;
+        const amountDifference = giaTienNhap - tongTienThanhToan;
+        const isAmountEnough = giaTienNhap >= tongTienThanhToan;
         return (
 
             <div className="wrapper-sell">
@@ -1102,7 +1119,7 @@ class BanHangOffline extends Component {
                             <input type="tel" id="sdt" name="sdt" value={this.state.sdt} placeholder="Nhập số điện thoại" pattern="[0-9]{10}" title="Số điện thoại phải có 10 chữ số" required onChange={this.handleSdtChange} /><br />
                             <br />
 
-
+                            {/* màn hình hiển thị popup địa chỉ */}
                             {this.state.checked === true ?
                                 <div>
                                     <div>
@@ -1246,15 +1263,13 @@ class BanHangOffline extends Component {
                             <Flex flex={"row"} align="center" justify="space-between">
                                 <p style={{ fontSize: '16px', fontWeight: 'bold' }}>Tiền thừa trả khách</p>
                                 <p style={{ fontSize: '20px', fontWeight: 'bold' }}>
-                                    {this.state.enteredAmount >= (this.getTotalAmount(this.state.tabProducts) + this.state.phiShip) ? (
-                                        <span style={{ color: 'red' }}>
-                                            Dư {this.formatCurrency(this.state.enteredAmount - (this.getTotalAmount(this.state.tabProducts) + this.state.phiShip))}
-                                        </span>
-                                    ) : (
-                                        <span style={{ color: 'red' }}>
-                                            Thiếu {this.formatCurrency((this.getTotalAmount(this.state.tabProducts) + this.state.phiShip) - this.state.enteredAmount)}
-                                        </span>
-                                    )}
+                                    <span style={{ color: 'red' }}>
+                                        {isAmountEnough ? (
+                                            <>Dư {this.formatCurrency(amountDifference)}</>
+                                        ) : (
+                                            <>Thiếu {this.formatCurrency(-amountDifference)}</>
+                                        )}
+                                    </span>
                                 </p>
                             </Flex>
                         </div>

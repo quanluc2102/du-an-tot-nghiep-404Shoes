@@ -107,4 +107,17 @@ public class BanHangOfflineServiceImpl implements BanHangOfflineService {
         banHangOfflineRepository.deleteHoaDonChiTiet(id);
     }
 
+    @Override
+    public Long layIdHoaDon() {
+        Long idHD = banHangOfflineRepository.layIdHoaDon();
+        return idHD;
+    }
+
+    @Override
+    public void updateSoLuongSP(Integer soLuong, Long id) {
+        HoaDonChiTiet hdct = hoaDonChiTietRepository.findById(id).get();
+        hdct.setSoLuong(soLuong);
+        hoaDonChiTietRepository.save(hdct);
+    }
+
 }

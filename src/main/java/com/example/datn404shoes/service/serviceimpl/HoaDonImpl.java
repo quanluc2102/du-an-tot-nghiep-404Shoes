@@ -1,6 +1,7 @@
 package com.example.datn404shoes.service.serviceimpl;
 
 import com.example.datn404shoes.entity.*;
+import com.example.datn404shoes.repository.BanHangOfflineRepository;
 import com.example.datn404shoes.repository.HoaDonChiTietRepository;
 import com.example.datn404shoes.repository.HoaDonRepository;
 import com.example.datn404shoes.repository.SanPhamChiTietRepository;
@@ -26,9 +27,13 @@ public class HoaDonImpl implements HoaDonService {
 
     @Autowired
     HoaDonChiTietRepository HDCTRepository;
+
+    @Autowired
+    BanHangOfflineRepository banHangOfflineRepository;
+
     @Override
     public HoaDon add(HoaDon hd) {
-        long count = hoaDonRepository.count() + 2;
+        Long count = banHangOfflineRepository.layIdHoaDon() + 1;
         hd.setKieuHoaDon(0);
         hd.setMaHoaDon("HD00" + count);
         hd.setTen(null);

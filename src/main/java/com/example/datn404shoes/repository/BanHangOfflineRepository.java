@@ -32,4 +32,10 @@ public interface BanHangOfflineRepository extends JpaRepository<HoaDon, Long> {
     @Query(value = "delete from HoaDonChiTiet hdct where hdct.id = :id")
     void deleteHoaDonChiTiet(@Param("id") Long id);
 
+    @Query(value = "SELECT MAX(id) AS max_id FROM hoa_don", nativeQuery = true)
+    Long layIdHoaDon();
+
+    @Modifying
+    @Query(value = "update HoaDonChiTiet hdct set hdct.soLuong = :soLuong where hdct.id =:id")
+    void updateSoLuongSP(@Param("soLuong") Integer soLuong, @Param("id") Long id);
 }
