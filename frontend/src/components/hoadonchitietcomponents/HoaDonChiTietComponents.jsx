@@ -341,6 +341,10 @@ class HoaDonChiTietComponents extends Component {
             window.location.href = `/HoaDonChiTiet/${this.state.hoaDonId.id}`;
         });
 
+        
+    };
+    FCInHD=(e) =>{
+        e.preventDefault();
         const url = `http://localhost:8080/hoa_don/export/${this.state.hoaDonId.id}`;
         window.open(url, "_blank");
     };
@@ -413,7 +417,7 @@ class HoaDonChiTietComponents extends Component {
         const userId = this.getUserNameFromLocalStorage();
         let giam = 0;
         const isHoaDonDaHuy = this.state.hoaDon.trangThai === 5;
-        const isHoaDonKoDcHuy = this.state.hoaDon.trangThai >= 3;
+        const isHoaDonKoDcHuy = this.state.hoaDon.trangThai >= 3 || this.state.hoaDon.thanhToan.id ===3;
         const { validationErrors } = this.state;
         return (
 
@@ -427,7 +431,7 @@ class HoaDonChiTietComponents extends Component {
                             fontWeight: '600',
                             color: '#012970'
                         }}>
-                            ID Nhân viên : {userId[0]}
+                            
                         </h1>
                         <nav>
                             <ol className="breadcrumb"></ol>
@@ -442,14 +446,17 @@ class HoaDonChiTietComponents extends Component {
                         </ol>
                     </nav>
                 </div>
-                {this.state.hoaDon.phiShip}
+             
                 <OrderStatus currentStatus={this.state.hoaDon.trangThai} order={this.state.hoaDon} />
                 <center> {this.state.hoaDon.trangThai === 5 ? <button type="button" class="btn btn-outline-danger" disabled>Lí do đơn hàng bị Hủy : {this.state.hoaDon.ghiChuHuy} </button> : ''}</center>
+                <center> {this.state.hoaDon.thanhToan.id === 3 ? <button type="button" class="btn btn-outline-success" disabled> Đã thanh toán VNPay </button>: ''}</center>
+                <center> {this.state.hoaDon.thanhToan.id === 2 ? <button type="button" class="btn btn-outline-success" disabled> Thanh toán khi nhận hàng  </button>: ''}</center>
+                <center> {this.state.hoaDon.thanhToan.id === 1 ? <button type="button" class="btn btn-outline-success" disabled> Thanh toán VietQR </button>: ''}</center>
                 <div>
                     <div style={{ maxWidth: '960px' }}>
                         <br />
                         <br />
-                        <div>{this.state.hoaDon.trangThai === 6 || this.state.hoaDon.trangThai < 5 ? <Button
+                        <div><button onClick={this.FCInHD}>In đơn hàng</button>{this.state.hoaDon.trangThai === 6 || this.state.hoaDon.trangThai < 5 ? <Button
                             variant="btn btn-outline-primary"
                             onClick={this.handleShowModal1}
                             Visible
@@ -516,7 +523,7 @@ class HoaDonChiTietComponents extends Component {
                 </div>
                 <br />
 
-                <center>{this.state.hoaDon.kieuHoaDon === 0 ? <button type="button" style={isHoaDonKoDcHuy ? { color: 'red', borderColor: 'red', cursor: 'not-allowed' } : {}} disabled={isHoaDonKoDcHuy} class="btn btn-outline-danger" onClick={this.handleShowModal2} >Thôn tin giao hàng :  {this.state.hoaDon.ten}( {this.state.hoaDon.sdt}) |{this.state.hoaDon.diaChiCuThe} - {this.state.hoaDon.xaPhuongThiTran} - {this.state.hoaDon.quanHuyen} - {this.state.hoaDon.tinhThanhPho}</button> : ""}</center>
+                <center>{this.state.hoaDon.kieuHoaDon === 0 || 1 ? <button type="button" style={isHoaDonKoDcHuy ? { color: 'red', borderColor: 'red', cursor: 'not-allowed' } : {}} disabled={isHoaDonKoDcHuy} class="btn btn-outline-danger" onClick={this.handleShowModal2} >Thôn tin giao hàng :  {this.state.hoaDon.ten}( {this.state.hoaDon.sdt}) |{this.state.hoaDon.diaChiCuThe} - {this.state.hoaDon.xaPhuongThiTran} - {this.state.hoaDon.quanHuyen} - {this.state.hoaDon.tinhThanhPho}</button> : ""}</center>
                 <section className="section dashboard">
                     <div className="row">
                         <div className="col-lg-8">

@@ -151,7 +151,7 @@ public interface HoaDonRepository extends JpaRepository<HoaDon, Long> {
     @Query(value = "SELECT TOP 1 hd.ma_hoa_don AS MaHoaDon FROM hoa_don hd ORDER BY hd.id DESC", nativeQuery = true)
     Object[] thanhToanThanhCong();
     @Query(value = """
-                    select new com.example.datn404shoes.DTO.XuatHoaDonDto(o.id, o.maHoaDon,o.tongTien, o.sdt, o.ten, o.diaChiCuThe, o.phiShip,o.tienGiam,o.tongTienSauGiam)
+                    select new com.example.datn404shoes.DTO.XuatHoaDonDto(o.id, o.maHoaDon,o.tongTien, o.sdt, o.ten, o.diaChiCuThe,o.tinhThanhPho,o.quanHuyen,o.xaPhuongThiTran ,o.phiShip,o.tienGiam,o.tongTienSauGiam)
                     from HoaDon o
                     where o.id = :id
                     """)

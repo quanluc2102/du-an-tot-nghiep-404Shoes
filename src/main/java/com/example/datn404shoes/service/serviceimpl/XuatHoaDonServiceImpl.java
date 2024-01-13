@@ -11,10 +11,13 @@ import com.itextpdf.text.pdf.BaseFont;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.Locale;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
+import com.itextpdf.text.Image;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -41,6 +44,7 @@ public class XuatHoaDonServiceImpl implements XuatHoaDonService {
             throw new RuntimeException(e);
         }
     }
+
 
     private static Font titleFont = new Font(times, 16, Font.BOLDITALIC);
     private static Font subTitleFont = new Font(times, 13, Font.BOLDITALIC);
@@ -84,7 +88,14 @@ public class XuatHoaDonServiceImpl implements XuatHoaDonService {
 //            logoImage.scaleToFit(150, 150); // Thay đổi kích thước logo nếu cần thiết
 //            logoImage.setAlignment(Element.ALIGN_CENTER); // Thiết lập vị trí logo trên tra
 //            document.add(logoImage);
+            document.open();
 
+// Thêm hình ảnh logo
+            String logoPath = "src/main/resources/static/logo.jpg";
+            Image logoImage = Image.getInstance(logoPath);
+            logoImage.scaleToFit(150, 150); // Thay đổi kích thước logo nếu cần thiết
+            logoImage.setAlignment(Element.ALIGN_CENTER); // Thiết lập vị trí logo trên trang
+            document.add(logoImage);
 
             Paragraph addressShop = new Paragraph("Địa chỉ shop : Tòa nhà 404 404 P. Trịnh Văn Bô, Xuân Phương, Nam Từ Liêm, Hà Nội", contentFont);
 
@@ -104,7 +115,7 @@ public class XuatHoaDonServiceImpl implements XuatHoaDonService {
             Paragraph customer = new Paragraph("Khách hàng: " + hoaDonPdf.getTen(), contentFont);
             document.add(customer);
 
-            Paragraph customerAddress = new Paragraph("Địa chỉ: " + hoaDonPdf.getDiaChiCuThe(), contentFont);
+            Paragraph customerAddress = new Paragraph("Địa chỉ: " + hoaDonPdf.getDiaChiCuThe()+","+hoaDonPdf.getXaPhuongThiTran()+","+hoaDonPdf.getQuanHuyen()+","+hoaDonPdf.getTinhThanhPho(), contentFont);
             document.add(customerAddress);
 
             String phoneNumber = hoaDonPdf.getSdt();
@@ -126,21 +137,30 @@ public class XuatHoaDonServiceImpl implements XuatHoaDonService {
             table.setWidths(columnWidths);
 
             addDataToTable(table, 0, "Sản phẩm", "Số lượng", "Đơn giá", "Thành tiền");
+
+// Sử dụng NumberFormat để định dạng số tiền theo định dạng tiền tệ Việt Nam
+            NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
+
             for (HoaDonChiTietDto orderDetail : hoaDonChiTietPdf) {
                 double totalPrice = orderDetail.getSoLuong() * orderDetail.getGiaBan();
+
+                // Sử dụng DecimalFormat để định dạng số lượng và giá bán
+                DecimalFormat quantityFormat = new DecimalFormat("#,##0");
+                DecimalFormat priceFormat = new DecimalFormat("#,##0.00");
+
                 addDataToTable(
                         table,
                         1,
                         orderDetail.getTen(),
-                        String.valueOf(orderDetail.getSoLuong()),
-                        String.valueOf(orderDetail.getGiaBan()),
-                        String.valueOf(totalPrice)
+                        quantityFormat.format(orderDetail.getSoLuong()),
+                        priceFormat.format(orderDetail.getGiaBan()),
+                        currencyFormat.format(totalPrice)
                 );
             }
 
             document.add(table);
 
-            NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
+
 
             Float shipCost = hoaDonPdf.getPhiShip();
             if (shipCost != null && shipCost != 0) {
