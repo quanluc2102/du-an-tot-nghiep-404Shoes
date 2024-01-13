@@ -10,6 +10,35 @@ import java.util.List;
 @Data
 public class ThanhToanDTO {
 
-    private HoaDon hoaDon;
+   private String ten;
 
+   private String sdt;
+
+   private Long taiKhoanKhachHang;
+
+   private Float tongTien;
+
+   private Float tienGiam;
+
+   private Float tongTienSauGiam;
+
+   private Float phiShip;
+
+   private Integer kieuHoaDon;
+
+   private String tinhThanhPho;
+
+   private String quanHuyen;
+
+   private String xaPhuongThiTran;
+
+   private String diaChiCuThe;
+
+   private Long khuyenMai;
+
+   private Long thanhToan;
+
+   private String ghiChu;
+
+   private Long taiKhoan;
 }

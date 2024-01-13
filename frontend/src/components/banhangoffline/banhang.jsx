@@ -34,6 +34,7 @@ class BanHangOffline extends Component {
             email: '', // state này lưu email để thanh toán
             thanhToan: '', // state này lưu kiểu thanh toán để thanh toán
             idKhachHang: '', // đây là 1 object khách hàng (khi chọn một khách hàng thì nó sẽ lưu lại thông tin khách hàng đấy ở đây)
+            idNhanVien: 1,
             searchTerm: '',
             searchTermKH: '',
             selectedPromotions: [], // state này lưu lại thông tin khuyến mãi đã chọn
@@ -376,24 +377,22 @@ class BanHangOffline extends Component {
 
             try {
                 const thanhToanDTO = {
-                    hoaDon: {
-                        ten: this.state.ten,
-                        sdt: this.state.sdt,
-                        taiKhoanKhachHang: this.state.idKhachHang,
-                        tongTien: this.getTotalAmountWithoutPromotions(this.state.tabProducts) + this.state.phiShip,
-                        tienGiam: (this.getTotalAmountWithoutPromotions(this.state.tabProducts) + this.state.phiShip) - this.getTotalAmount(this.state.tabProducts),
-                        tongTienSauGiam: this.getTotalAmount(this.state.tabProducts) + this.state.phiShip,
-                        phiShip: this.state.phiShip,
-                        kieuHoaDon: this.state.kieuHoaDon,
-                        tinhThanhPho: this.state.tinhThanhPho,
-                        quanHuyen: this.state.quanHuyen,
-                        xaPhuongThiTran: this.state.xaPhuongThiTran,
-                        diaChiCuThe: this.state.diaChiCuThe,
-                        email: this.state.email,
-                        khuyenMai: firstSelectedPromotion,
-                        thanhToan: this.state.thanhToan,
-                        ghiChu: document.getElementById('ghiChuDonHang').value || '',
-                    }
+                    ten: this.state.ten || '',
+                    sdt: this.state.sdt || '',
+                    taiKhoanKhachHang: this.state.idKhachHang.id || '',
+                    taiKhoan: this.state.idNhanVien,
+                    tongTien: this.getTotalAmountWithoutPromotions(this.state.tabProducts) + this.state.phiShip,
+                    tienGiam: (this.getTotalAmountWithoutPromotions(this.state.tabProducts) + this.state.phiShip) - this.getTotalAmount(this.state.tabProducts),
+                    tongTienSauGiam: this.getTotalAmount(this.state.tabProducts) + this.state.phiShip,
+                    phiShip: this.state.phiShip,
+                    kieuHoaDon: this.state.kieuHoaDon,
+                    tinhThanhPho: this.state.tinhThanhPho || '',
+                    quanHuyen: this.state.quanHuyen || '',
+                    xaPhuongThiTran: this.state.xaPhuongThiTran || '',
+                    diaChiCuThe: this.state.diaChiCuThe || '',
+                    khuyenMai: firstSelectedPromotion,
+                    thanhToan: this.state.thanhToan,
+                    ghiChu: document.getElementById('ghiChuDonHang').value || '',
                 }
 
                 const response = await axios.post(`http://localhost:8080/ban_hang/thanhToan/${this.state.activeTabKey}`, thanhToanDTO);
