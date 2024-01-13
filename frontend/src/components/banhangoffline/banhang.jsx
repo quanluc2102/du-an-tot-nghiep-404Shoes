@@ -68,6 +68,7 @@ class BanHangOffline extends Component {
             districts: [],  // state này lưu danh sách quận huyện
             wards: [], // state này lưu danh sách xã phường
             currentSanPhamChiTietList: [], // state này lưu danh sách spct dựa trên phân trang
+            showImage: false,
         };
         this.onChangeSearchInput = this.onChangeSearchInput.bind(this);
         this.nextTabIndex = 0
@@ -143,6 +144,22 @@ class BanHangOffline extends Component {
         window.location.href = '/addKhachHang';
 
     }
+
+    displayImage = () => {
+        // Logic for displaying the image goes here
+        // For example, you can call this function in response to a button click
+        this.setState({ showImage: true });
+    };
+
+    closedisplayImage = () => {
+        // Logic for displaying the image goes here
+        // For example, you can call this function in response to a button click
+        this.setState({ showImage: false });
+    };
+
+    getTotalAmountWithoutPromotions = (tabProducts) => {
+        // Implement your logic for getting the total amount without promotions
+    };
 
     handleSearch = (event) => {
         const searchTerm = event.target.value;
@@ -1271,7 +1288,15 @@ class BanHangOffline extends Component {
                                     </span>
                                 </p>
                             </Flex>
+                            {this.state.showImage && (
+                                <img
+                                    style={{ maxWidth: 300, marginTop: 20 }}
+                                    src={`https://api.vietqr.io/image/970422-0362460679-vE5Br8f.jpg?accountName=BUI%20XUAN%20THIEU&amount=${this.getTotalAmount(this.state.tabProducts) + this.state.phiShip}&addInfo=TRA%20TIEN%20HOA%20DON`}
+                                    alt="QR Code"
+                                />
+                            )}
                         </div>
+                        <button onClick={this.state.showImage==false?this.displayImage:this.closedisplayImage}>{this.state.showImage==false?'Xuất':'Đóng'} QR</button>
                         <div>
                             <Input id="ghiChuDonHang" placeholder="Nhập ghi chú đơn hàng" />
                             <br />
