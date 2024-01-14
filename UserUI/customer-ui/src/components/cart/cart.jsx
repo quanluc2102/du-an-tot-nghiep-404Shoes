@@ -203,11 +203,39 @@ function Cart() {
         })
         return sl;
     }
+
     const taoHoaDon = () =>{
+        let tong = 0;
+        SPCT.map(value => {
+            if(value.soLuong>value.sanPhamChiTietId.soLuong){
+                tong++;
+            }
+        })
+
+
         if (tinhSoLuongSP() > 10) {
             alert("Mỗi hóa đơn chỉ cho mua tối đa 10 sản phẩm !");
+        } else if (tong>0) {
+            alert("Có sản phẩm trong giỏ lớn hơn số lượng sản phẩm hiện có !");
         } else {
 
+        }
+        console.log(check())
+    }
+    const check = () =>{
+        let tong = 0;
+        SPCT.map(value => {
+            if(value.soLuong>value.sanPhamChiTietId.soLuong){
+                tong++;
+            }
+        })
+
+        if (tinhSoLuongSP() > 10) {
+            return false;
+        } else if (tong>0) {
+            return false;
+        } else {
+            return true;
         }
     }
     const chonSPCT = (spct)=>{
@@ -347,7 +375,7 @@ function Cart() {
 
                                 <div className={`col-12 mt-2 ${listSPCTSelected.length === 0 ? 'disabled' : ''}`}>
                                     <Link to={{
-                                        pathname: tinhSoLuongSP()>10 ? `/your-cart` : `/check-out`,
+                                        pathname: check()===false ? `/your-cart` : `/check-out`,
                                         state: { listSPCTSelected, SPCT },
                                     }}
                                        className={`btn btn-warning btn-lg`}

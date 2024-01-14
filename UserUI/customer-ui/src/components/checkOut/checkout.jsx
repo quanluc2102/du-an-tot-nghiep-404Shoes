@@ -304,7 +304,7 @@ function CheckOut({ location }) {
             }
             console.log(hd)
             if(phiShip===0){
-                alert("Chưa chọn địa chỉ giao , không thanh toán được");
+                alert("Chưa chọn địa chỉ giao , không thể đặt hàng !!!");
                 return;
             }if(sdt.length < 10){
                 alert("SĐT nhập sai (SĐT có 10 số) ! ");
@@ -370,7 +370,7 @@ function CheckOut({ location }) {
             }
             console.log(hd)
             if (phiShip === 0) {
-                alert("Chưa chọn địa chỉ giao , không thanh toán được");
+                alert("Chưa chọn địa chỉ giao , không thể đặt hàng !!!");
                 return;
             } else {
                 const thongBao = await GioHangService.sold(hd);
@@ -743,7 +743,7 @@ function CheckOut({ location }) {
                                         <a href="#" className={`btn btn-sm btn-outline-dark size-item ${PTTT===1 ? 'selected' : ''}`} style={{marginLeft:20}} onClick={PTTTVietQR}>
                                             <div>Thanh toán bằng VietQR</div>
                                         </a>
-                                        <img style={{maxWidth:300,marginLeft:930,marginTop:20}} src={`https://api.vietqr.io/image/970422-0362460679-vE5Br8f.jpg?accountName=BUI%20XUAN%20THIEU&amount=123456&addInfo=TRA%20TIEN%20HOA%20DON`}/>
+                                        <img style={{maxWidth:300,marginLeft:930,marginTop:20}} src={`https://api.vietqr.io/image/970422-0362460679-vE5Br8f.jpg?accountName=BUI%20XUAN%20THIEU&amount=${tinhTongTienHang()}&addInfo=TRA%20TIEN%20HOA%20DON`} hidden={PTTT!=1}/>
                                     </h5>
                                     {/*<a style={{textDecoration:"none",cursor:"pointer",color:"mediumblue",marginLeft:980}}>Đổi</a>*/}
                                     <hr className="dashed-hr" style={{marginTop:30}}/>
