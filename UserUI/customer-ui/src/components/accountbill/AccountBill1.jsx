@@ -425,6 +425,15 @@ class HoaDonChiTietComponents extends Component {
                     <center> {this.state.hoaDon.trangThai === 5 ?
                         <button type="button" class="btn btn-outline-danger" disabled>Lí do đơn hàng bị Hủy
                             : {this.state.hoaDon.ghiChuHuy} </button> : ''}</center>
+                    <center> {this.state.hoaDon.thanhToan.id === 3 ?
+                        <button type="button" className="btn btn-outline-success" disabled> Đã thanh toán
+                            VNPay </button> : ''}</center>
+                    <center> {this.state.hoaDon.thanhToan.id === 2 ?
+                        <button type="button" className="btn btn-outline-success" disabled> Thanh toán khi nhận
+                            hàng </button> : ''}</center>
+                    <center> {this.state.hoaDon.thanhToan.id === 1 ?
+                        <button type="button" className="btn btn-outline-success" disabled> Thanh toán
+                            VietQR </button> : ''}</center>
                     <div>
 
                     </div>

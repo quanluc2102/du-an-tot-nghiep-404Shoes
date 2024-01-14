@@ -15,6 +15,7 @@ import Header from "../../../UserUI/customer-ui/src/components/customer/Header";
 import Footer from "../../../UserUI/customer-ui/src/components/customer/Footer";
 import Payment from "./components/payment/payment";
 import Account from "./components/account/Account";
+import AccountEditCustomer from "./components/account/AccountEditCustomer";
 import TraCuuDonHang from "./components/tracuudonhang/tracuudonhang";
 import ForgotPassword from "./components/forgotpassword/forgotpassword";
 import AccountBill from "./components/accountbill/AccountBill";
@@ -64,6 +65,7 @@ function App() {
                         <Route path='/billdetailguest/:id' component={AccountBill1Guest} />
                         <Route path='/thanhcong' component={Dathangthanhcong} />
                         <Route path='/thanhtoanthanhcong' component={Thanhtoanthanhcongvnpay} />
+                        <Route path='/user/account/profile' component={AccountEditCustomer} />
                     {/*</>*/}
                 {/*) : (*/}
                 {/*    <Route path='/login' component={() => <Login onLogin={handleLogin} onLogout={handleLogout} />} />*/}
