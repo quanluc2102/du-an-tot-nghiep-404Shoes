@@ -10,7 +10,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Repository
-public interface DiaChiResponsitory extends JpaRepository<DiaChi, UUID> {
+public interface DiaChiResponsitory extends JpaRepository<DiaChi, Long> {
     @Query(value = "select * from dia_chi dc where dc.thong_tin_nguoi_dung_id = :id",nativeQuery = true)
 
     Optional<DiaChi> findById(long id);

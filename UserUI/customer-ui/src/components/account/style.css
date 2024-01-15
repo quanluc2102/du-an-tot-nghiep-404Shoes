@@ -235,3 +235,24 @@ body {
 /*    fill: #333;*/
 /*    margin-right: 5px;*/
 /*}*/
+
+
+.address-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.address-table th, .address-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+.address-table th {
+    background-color: #f2f2f2;
+}
+
+.add-address-container {
+    margin-top: 20px;
+}
