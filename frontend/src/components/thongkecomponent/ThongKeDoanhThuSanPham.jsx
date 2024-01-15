@@ -53,6 +53,9 @@ class ThongKeDoanhThuSanPham extends Component {
             thongKeDoanhThuType: 'nam',
             currentPage: 1, // Trang hiện tại
             // pageCount: 0,   // Tổng số trang
+            tongTien: 0, // Biến tổng
+            tongSP: 0, // Biến tổng
+            tongTienThang: 0, // Biến tổng
         };
         this.combinedChartRef = React.createRef();
         this.combinedChartRefDoanhThu = React.createRef();
@@ -89,6 +92,43 @@ class ThongKeDoanhThuSanPham extends Component {
     formatNumberOrZero(value) {
         return typeof value === 'number' ? value : 0;
     }
+
+    componentDidUpdate(prevProps, prevState) {
+        if (prevState.thongKeSanPham !== this.state.thongKeSanPham) {
+            this.calculateTotal();
+            this.calculateTotalSP();
+        }
+        if (prevState.thongKeThangNew !== this.state.thongKeThangNew) {
+            this.calculateTotalThang();
+        }
+    }
+
+    calculateTotalThang() {
+        let total = 0;
+        this.state.thongKeThangNew.forEach((th) => {
+            total += th[2];
+        });
+
+        this.setState({ tongTienThang: total });
+    }
+
+    calculateTotal() {
+        let total = 0;
+        this.state.thongKeSanPham.forEach((th) => {
+            total += th[2];
+        });
+
+        this.setState({ tongTien: total });
+    }
+    calculateTotalSP() {
+        let total = 0;
+        this.state.thongKeSanPham.forEach((th) => {
+            total += th[1];
+        });
+
+        this.setState({ tongSP : total });
+    }
+
 
 
     fetchData = (page = 1) => {
@@ -1280,6 +1320,16 @@ class ThongKeDoanhThuSanPham extends Component {
                                                 ))}
                                                 </tbody>
                                             </table>
+                                            <tr style={{
+                                                fontWeight: 'bold',       // In đậm
+                                                backgroundColor: '#f2f2f2', // Màu nền
+                                                color: '#333'              // Màu chữ
+                                            }}>
+                                                <td colSpan="3"></td>
+                                                <td colSpan="3"></td>
+                                                <td>Tổng phẩm đã bán: {(this.state.tongSP)} Sản phẩm</td>
+                                                <td>Tổng cộng: {this.formatCurrency(this.state.tongTien)} VND</td>
+                                            </tr>
                                         </div>
                                         <ReactPaginate
                                             previousLabel={"<"}
@@ -1392,6 +1442,14 @@ class ThongKeDoanhThuSanPham extends Component {
                                                     </tr>
                                                 ))}
                                                 </tbody>
+                                                <tr style={{
+                                                    fontWeight: 'bold',       // In đậm
+                                                    backgroundColor: '#f2f2f2', // Màu nền
+                                                    color: '#333'              // Màu chữ
+                                                }}>
+                                                    <td colSpan="3"></td>
+                                                    <td>Tổng cộng: {this.formatCurrency(this.state.tongTienThang)} VND</td>
+                                                </tr>
                                             </table>
                                         </div>
                                     </div>

@@ -27,7 +27,7 @@ public class GioHangChiTietController {
 
     @GetMapping("/get-gio-hang")
     public ResponseEntity<?> getGioHang(){
-        return ResponseEntity.ok(gioHangRepository.findById(0L).orElse(new GioHang()));
+        return ResponseEntity.ok(gioHangRepository.findById(1L).orElse(new GioHang()));
     }
 
     @GetMapping("/danh-sach")

@@ -96,24 +96,40 @@ public interface ThongKeRepository extends JpaRepository<HoaDon, Long> {
 
     @Query("SELECT spct.id AS san_pham_chi_tiet_id, " +
             "SUM(hdct.soLuong) AS so_luong_da_ban, " +
-            "CONCAT(sp.ten, ' - ', ms.ten) AS ten_san_pham, " +
+            "CONCAT(sp.ten, ' - ', ms.ten, ' - ', kt.giaTri) AS ten_san_pham, " +
             "spct.donGia, " +
             "spct.anh " +
             "FROM HoaDonChiTiet hdct " +
             "JOIN SanPhamChiTiet spct ON hdct.sanPhamChiTiet.id = spct.id " +
             "JOIN SanPham sp ON spct.sanPham.id = sp.id " +
             "JOIN MauSac ms ON spct.mauSac.id = ms.id " +
-            "GROUP BY spct.id, sp.ten, ms.ten, spct.donGia, spct.anh " +
+            "JOIN KichThuoc kt ON spct.kichThuoc.id = kt.id " +
+            "GROUP BY spct.id, sp.ten, ms.ten,kt.giaTri, spct.donGia, spct.anh " +
             "ORDER BY so_luong_da_ban DESC " +
-            "LIMIT 10")
+            "LIMIT 5")
     List<Object[]> findTop10SanPhamBanChay();
 
+
+    @Query("SELECT spct.id AS san_pham_chi_tiet_id, " +
+            "SUM(hdct.soLuong) AS so_luong_da_ban, " +
+            "CONCAT(sp.ten, ' - ', ms.ten, ' - ', kt.giaTri) AS ten_san_pham, " +
+            "spct.donGia, " +
+            "spct.anh " +
+            "FROM HoaDonChiTiet hdct " +
+            "JOIN SanPhamChiTiet spct ON hdct.sanPhamChiTiet.id = spct.id " +
+            "JOIN SanPham sp ON spct.sanPham.id = sp.id " +
+            "JOIN MauSac ms ON spct.mauSac.id = ms.id " +
+            "JOIN KichThuoc kt ON spct.kichThuoc.id = kt.id " +
+            "GROUP BY spct.id, sp.ten, ms.ten,kt.giaTri, spct.donGia, spct.anh " +
+            "ORDER BY so_luong_da_ban asc ")
+    List<Object[]> sanPhamSapHetHang();
 
     @Query("SELECT hd.id, hd.maHoaDon, tk.thongTinNguoiDung.ten, hd.ngayTao, hd.trangThai " +
             "FROM HoaDon hd " +
             "JOIN TaiKhoan tk ON hd.taiKhoan.id = tk.id " +
             "WHERE hd.trangThai NOT IN (4, 5, 6) " +
-            "ORDER BY hd.ngayTao ASC")
+            "ORDER BY hd.ngayTao desc" +
+            " LIMIT 10")
     List<Object[]> hoaDonChuaXuLyhe();
 
 

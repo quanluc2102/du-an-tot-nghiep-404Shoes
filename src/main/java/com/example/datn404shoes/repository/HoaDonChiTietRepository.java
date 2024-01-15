@@ -1,5 +1,6 @@
 package com.example.datn404shoes.repository;
 
+import com.example.datn404shoes.DTO.HoaDonChiTietDto;
 import com.example.datn404shoes.entity.HoaDonChiTiet;
 //import com.poly.duanbangiay.entity.HoaDonChiTiet;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -18,8 +19,8 @@ public interface HoaDonChiTietRepository extends JpaRepository<HoaDonChiTiet, Lo
     @Query("SELECT hdct.hd.id " +
             "FROM HoaDonChiTiet hdct " +
             "JOIN HoaDon hd ON hdct.hd.id = hd.id " +
-            "WHERE hd.maHoaDon = :maHoaDon AND hd.email = :email ")
-    String findAllByHd_MaHoaDonandEmail(@Param("maHoaDon") String maHoaDon, @Param("email") String email);
+            "WHERE hd.maHoaDon = :maHoaDon AND hd.sdt = :sdt ")
+    String findAllByHd_MaHoaDonandEmail(@Param("maHoaDon") String maHoaDon, @Param("sdt") String sdt);
 
     @Query("SELECT sp.ten AS ten_san_pham, " +
             "SUM(hdct.soLuong) AS so_luong_ban, " +
@@ -68,5 +69,15 @@ public interface HoaDonChiTietRepository extends JpaRepository<HoaDonChiTiet, Lo
             "WHERE FUNCTION('YEAR', hd.ngayTao) = FUNCTION('YEAR', :startDate) AND  hd.trangThai IN (4, 6)" +
             "GROUP BY FUNCTION('MONTH', hd.ngayTao)")
     List<Object[]> thongKeDoanhThuTheoThangNew(@Param("startDate") Date startDate);
+
+    @Query(value = """
+                    select new com.example.datn404shoes.DTO.HoaDonChiTietDto(od.soLuong, p.ten,pd.donGia)  
+                    from HoaDonChiTiet od 
+                    inner join HoaDon o on o.id = od.hd.id
+                    inner join SanPhamChiTiet pd on od.sanPhamChiTiet.id = pd.id 
+                    inner join SanPham p on p.id = pd.sanPham.id 
+                    where o.id = :id
+                    """)
+    List<HoaDonChiTietDto> getListOrderPdf(Long id);
 
 }

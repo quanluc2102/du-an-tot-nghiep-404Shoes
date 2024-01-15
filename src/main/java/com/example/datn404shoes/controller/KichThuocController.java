@@ -42,7 +42,7 @@ public class KichThuocController {
     @GetMapping("index")
     public ResponseEntity<?> index1(Model model) {
         List<KichThuocValue> list = new ArrayList<>();
-        List<KichThuoc> listKT = repository.findAll().stream().filter(kichThuoc -> kichThuoc.getTrangThai()==1).toList();
+        List<KichThuoc> listKT = repository.findAll().stream().filter(kichThuoc -> kichThuoc.getTrangThai()==0).toList();
         for(KichThuoc b : listKT){
             KichThuocValue a = new KichThuocValue(b.getId(),b.getGiaTri());
             list.add(a);

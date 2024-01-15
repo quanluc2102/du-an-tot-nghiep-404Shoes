@@ -31,7 +31,7 @@ public class ThuongHIeuController {
     }
     @GetMapping("index")
     public ResponseEntity<?> index1(Model model) {
-        return ResponseEntity.ok(repository.findAll().stream().filter(thuongHieu -> thuongHieu.getTrangThai()==1).toList());
+        return ResponseEntity.ok(repository.findAll().stream().filter(thuongHieu -> thuongHieu.getTrangThai()==0).toList());
     }
     @PostMapping("add")
     public ResponseEntity<?> add(Model model,

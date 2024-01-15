@@ -26,7 +26,7 @@ public class HoaDonChiTietController {
 
     @PostMapping("hien-thiguest")
     public ResponseEntity<?> hienthitheodoihoadon(@RequestBody TheoDoiHoaDonDTO theoDoiHoaDonDTO) {
-        String listHDCT = hoaDonChiTietimpl.findAllByHd_MaHoaDonandEmail(theoDoiHoaDonDTO.getMaHoaDon(), theoDoiHoaDonDTO.getEmail());
+        String listHDCT = hoaDonChiTietimpl.findAllByHd_MaHoaDonandEmail(theoDoiHoaDonDTO.getMaHoaDon(), theoDoiHoaDonDTO.getSdt());
         return ResponseEntity.ok(listHDCT);
     }
 }

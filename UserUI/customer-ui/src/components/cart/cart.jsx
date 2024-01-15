@@ -4,12 +4,14 @@ import {toast} from "react-toastify";
 import './style.css'
 import { Link } from 'react-router-dom/cjs/react-router-dom'
 import {GioHangService} from "../../service/GioHangService";
+import {SanPhamService} from "../../service/SanPhamService";
 
 function Cart() {
     const [SPCT, setSPCT] = useState([]);
     const [listSPCTSelected,setListSPCTSelected] = useState([]);
     const [user,setUser]=useState([]);
     const [tongTien,setTongTien] = useState(0);
+    const [reload,setReload]=useState(0);
     const history = useHistory();
     const fetchData = async () => {
             const storedDataUser = localStorage.getItem('currentUser');
@@ -17,14 +19,72 @@ function Cart() {
             let data ;
             if(storedDataUser){
                 data = await GioHangService.getGHOne(JSON.parse(storedDataUser).id);
+                data.map(value => {
+                    if(value.soLuong>value.sanPhamChiTietId.soLuong){
+                        thayDoiSoLuong(value.id,value.sanPhamChiTietId.soLuong)
+                        setReload(reload===1?2:1);
+                    }
+                })
                 // setSPCT(dataGioHang);
             }else {
                 data = JSON.parse(localStorage.getItem('listSPCT'));
                 // setSPCT(JSON.parse(dataGioHangGuest));
+                // data.map(value => {
+                //     const sp = SanPhamService.getSPCT(parseInt(value.sanPhamChiTietId.id, 10));
+                //     console.log(sp)
+                //     if(value.soLuong!=sp.soLuong){
+                //         value.sanPhamChiTietId.soLuong=sp.soLuong
+                //         value.soLuong=value.sanPhamChiTietId.soLuong
+                //     }else {
+                //
+                //     }
+                // })
+                // localStorage.setItem("listSPCT", JSON.stringify(data));
+                const promises = data.map(value => {
+                    return SanPhamService.getSPCTOne(value.sanPhamChiTietId.id)
+                        .then(sp => {
+                            return { ...value, sanPhamChiTietId: sp};
+                        })
+                        .catch(error => {
+                            console.error(error);
+                            return value;
+                        });
+                });
+
+                Promise.all(promises)
+                    .then(updatedProducts => {
+                        let tong = 0;
+                        for(let i = 0 ; i <data.length ; i++){
+                            for(let j = 0 ; j <data.length ; j++){
+                                if(i === j ){
+                                    if(data[i].sanPhamChiTietId.soLuong!=updatedProducts[j].sanPhamChiTietId.soLuong){
+                                        tong++;
+                                    }
+                                }
+
+                            }
+                        }
+                        if(tong===0){
+                            localStorage.setItem('listSPCT', JSON.stringify(updatedProducts));
+                        }else{
+                            localStorage.setItem('listSPCT', JSON.stringify(updatedProducts));
+                            setReload(reload===1?2:1);
+                        }
+
+                        // updatedProducts.map(value => {
+                        //     if(value.sanPhamChiTietId.soLuong<value.soLuong){
+                        //         thayDoiSoLuong(value.id,value.sanPhamChiTietId.soLuong)
+                        //     }
+                        // })
+                        // setReload(reload===1?2:1)
+
+                    })
+                    .catch(error => {
+                        console.error(error);
+                    });
             }
             setSPCT(data);
             setUser(dataUser)
-
     };
     useEffect(() => {
 
@@ -51,7 +111,7 @@ function Cart() {
 
         });
         fetchData();
-    }, [SPCT])
+    }, [reload])
     const fetchDataLocal = () =>{
         const storedDataUser = localStorage.getItem('currentUser');
         if(storedDataUser){
@@ -67,10 +127,13 @@ function Cart() {
         history.push(`/product-list`)
     };
     const thayDoiSoLuong = (id, soLuongMoi) =>{
+        if(isNaN(soLuongMoi)){
+            soLuongMoi=1;
+        }
         const updatedProducts = SPCT.map(product => {
             if (product.id === id) {
                 // Nếu là sản phẩm cần thay đổi, cập nhật số lượng mới
-                return { ...product, soLuong: soLuongMoi };
+                return { ...product, soLuong: Math.min(product.sanPhamChiTietId.soLuong, Math.max(1 ,soLuongMoi)) };
             }
             return product;
         });
@@ -87,6 +150,7 @@ function Cart() {
     const xoaDon = async (id,index)=>{
         if(user.length!=0){
             const res = await GioHangService.deleteOne(id);
+            setReload(1)
             // window.location.reload()
         }else {
             console.log("aaaaaaaaaa")
@@ -132,6 +196,48 @@ function Cart() {
         return tongTien;
     }
 
+    const tinhSoLuongSP = () =>{
+        let sl = 0;
+        SPCT.map(value => {
+            sl+=value.soLuong;
+        })
+        return sl;
+    }
+
+    const taoHoaDon = () =>{
+        let tong = 0;
+        SPCT.map(value => {
+            if(value.soLuong>value.sanPhamChiTietId.soLuong){
+                tong++;
+            }
+        })
+
+
+        if (tinhSoLuongSP() > 10) {
+            alert("Mỗi hóa đơn chỉ cho mua tối đa 10 sản phẩm !");
+        } else if (tong>0) {
+            alert("Có sản phẩm trong giỏ lớn hơn số lượng sản phẩm hiện có !");
+        } else {
+
+        }
+        console.log(check())
+    }
+    const check = () =>{
+        let tong = 0;
+        SPCT.map(value => {
+            if(value.soLuong>value.sanPhamChiTietId.soLuong){
+                tong++;
+            }
+        })
+
+        if (tinhSoLuongSP() > 10) {
+            return false;
+        } else if (tong>0) {
+            return false;
+        } else {
+            return true;
+        }
+    }
     const chonSPCT = (spct)=>{
         const isSelected = listSPCTSelected.some((selected) => selected.id === spct.id);
 
@@ -202,14 +308,14 @@ function Cart() {
                                                 <br/>
                                                 <div className="row ">
                                                     <div className="col-4">
-                                                        <div className="form-floating mb-3 border-1">
+                                                        <div className="form-floating mb-3 border-2">
                                                             <input type="number" className="form-control" min="1"
-                                                                   name="formId1" id="formId1"
+                                                                   name={`formId${spct.id}`} id={`formId${spct.id}`}
                                                                    value={spct.soLuong}
                                                                    onChange={(e) => thayDoiSoLuong(spct.id,parseInt(e.target.value, 10))}
                                                                    placeholder="Số Lượng"/>
-                                                            <label htmlFor="formId1" className="font-monospace"><strong>Số
-                                                                Lượng :</strong></label>
+                                                            <label htmlFor={`formId${spct.id}`} className=""><strong>Số
+                                                                Lượng : {spct.sanPhamChiTietId.soLuong}</strong></label>
                                                         </div>
                                                     </div>
 
@@ -269,12 +375,13 @@ function Cart() {
 
                                 <div className={`col-12 mt-2 ${listSPCTSelected.length === 0 ? 'disabled' : ''}`}>
                                     <Link to={{
-                                        pathname: SPCT.length===0 ? `/your-cart` : `/check-out`,
+                                        pathname: check()===false ? `/your-cart` : `/check-out`,
                                         state: { listSPCTSelected, SPCT },
                                     }}
                                        className={`btn btn-warning btn-lg`}
                                        style={{width: '100%'}}
-                                       disabled={SPCT.length === 0 ? true : false}><strong>TIẾP
+                                       onClick={taoHoaDon}
+                                    ><strong>TIẾP
                                         TỤC THANH
                                         TOÁN</strong></Link>
                                 </div>

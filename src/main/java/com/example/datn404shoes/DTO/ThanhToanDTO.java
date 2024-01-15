@@ -9,17 +9,36 @@ import java.util.List;
 
 @Data
 public class ThanhToanDTO {
-    private HoaDon hoaDon;
 
-    private Long khuyenMai;
+   private String ten;
 
-    private List<SPCTBanHangRequest> sanPhamChiTietList;
+   private String sdt;
 
-    private String xaPhuongThiTran;
+   private Long taiKhoanKhachHang;
 
-    private String quanHuyen;
+   private Float tongTien;
 
-    private String tinhThanhPho;
+   private Float tienGiam;
 
-    private String diaChiCuThe;
+   private Float tongTienSauGiam;
+
+   private Float phiShip;
+
+   private Integer kieuHoaDon;
+
+   private String tinhThanhPho;
+
+   private String quanHuyen;
+
+   private String xaPhuongThiTran;
+
+   private String diaChiCuThe;
+
+   private Long khuyenMai;
+
+   private Long thanhToan;
+
+   private String ghiChu;
+
+   private Long taiKhoan;
 }

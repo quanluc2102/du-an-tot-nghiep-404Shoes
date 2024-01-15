@@ -26,7 +26,7 @@ class HoaDonChiTietComponents extends Component {
                 hoanThanh: '',
                 ghiChuHoanThanh: '',
                 phiShip: '',
-                taiKhoan:''
+                taiKhoan: ''
 
 
 
@@ -326,20 +326,27 @@ class HoaDonChiTietComponents extends Component {
         if (!confirmed) {
             return;
         }
-    
+
         const trangThai = this.state.hoaDon.trangThai;
         const updateKey = this.getStatusUpdateKey(trangThai);
-    console.log(this.getUserNameFromLocalStorage() +"đây")
+        console.log(this.getUserNameFromLocalStorage() + "đây")
         const hoaDon = {
             [updateKey]: this.state.hoaDonUpdate[updateKey],
-            phiShip: this.state.hoaDonUpdate.phiShip,
+            phiShip: this.state.hoaDonUpdate.phiShip==""?this.state.hoaDon.phiShip:this.state.hoaDonUpdate.phiShip,
             taiKhoan: this.getUserNameFromLocalStorage(), // G t 
         };
         const id = this.state.hoaDonUpdate.id;
-    
+
         HoaDonService.updateHoaDon(hoaDon, id).then((res) => {
             window.location.href = `/HoaDonChiTiet/${this.state.hoaDonId.id}`;
         });
+
+        
+    };
+    FCInHD=(e) =>{
+        e.preventDefault();
+        const url = `http://localhost:8080/hoa_don/export/${this.state.hoaDonId.id}`;
+        window.open(url, "_blank");
     };
     updateDC = (e) => {
         e.preventDefault();
@@ -404,32 +411,32 @@ class HoaDonChiTietComponents extends Component {
             return {};
         }
     }
-    
+
     render() {
         let total = 0;
         const userId = this.getUserNameFromLocalStorage();
         let giam = 0;
         const isHoaDonDaHuy = this.state.hoaDon.trangThai === 5;
-        const isHoaDonKoDcHuy = this.state.hoaDon.trangThai >= 3;
+        const isHoaDonKoDcHuy = this.state.hoaDon.trangThai >= 3 || this.state.hoaDon.thanhToan.id ===3;
         const { validationErrors } = this.state;
         return (
 
             <div>
                 <div className="pagetitle">
-                <div className="align-center">
-                    <h1 style={{
-                        textAlign: 'center',
-                        fontSize: '24px',
-                        marginBottom: '0',
-                        fontWeight: '600',
-                        color: '#012970'
-                    }}>
-                        ID Nhân viên : {userId[0]}
-                    </h1>
-                    <nav>
-                        <ol className="breadcrumb"></ol>
-                    </nav>
-                </div>
+                    <div className="align-center">
+                        <h1 style={{
+                            textAlign: 'center',
+                            fontSize: '24px',
+                            marginBottom: '0',
+                            fontWeight: '600',
+                            color: '#012970'
+                        }}>
+                            
+                        </h1>
+                        <nav>
+                            <ol className="breadcrumb"></ol>
+                        </nav>
+                    </div>
                     <h1>Hóa đơn</h1>
                     <nav>
                         <ol className="breadcrumb">
@@ -439,14 +446,17 @@ class HoaDonChiTietComponents extends Component {
                         </ol>
                     </nav>
                 </div>
-                {this.state.hoaDon.phiShip}
+             
                 <OrderStatus currentStatus={this.state.hoaDon.trangThai} order={this.state.hoaDon} />
                 <center> {this.state.hoaDon.trangThai === 5 ? <button type="button" class="btn btn-outline-danger" disabled>Lí do đơn hàng bị Hủy : {this.state.hoaDon.ghiChuHuy} </button> : ''}</center>
+                <center> {this.state.hoaDon.thanhToan.id === 3 ? <button type="button" class="btn btn-outline-success" disabled> Đã thanh toán VNPay </button>: ''}</center>
+                <center> {this.state.hoaDon.thanhToan.id === 2 ? <button type="button" class="btn btn-outline-success" disabled> Thanh toán khi nhận hàng  </button>: ''}</center>
+                <center> {this.state.hoaDon.thanhToan.id === 1 ? <button type="button" class="btn btn-outline-success" disabled> Thanh toán VietQR </button>: ''}</center>
                 <div>
                     <div style={{ maxWidth: '960px' }}>
                         <br />
                         <br />
-                        <div>{this.state.hoaDon.trangThai === 6 || this.state.hoaDon.trangThai < 5 ? <Button
+                        <div><button onClick={this.FCInHD}>In đơn hàng</button>{this.state.hoaDon.trangThai === 6 || this.state.hoaDon.trangThai < 5 ? <Button
                             variant="btn btn-outline-primary"
                             onClick={this.handleShowModal1}
                             Visible
@@ -471,7 +481,14 @@ class HoaDonChiTietComponents extends Component {
                                         <div class="input-group mb-3">
                                             {this.state.hoaDon.trangThai === 0 ? <div class="input-group mb-3">
                                                 <span class="input-group-text" id="basic-addon1">Phí vận chuyển </span>
-                                                <input type="text" class="form-control" placeholder="VND" aria-label="Username" aria-describedby="basic-addon1" onChange={this.thayDoiPhiShip} />
+                                                <input
+                                                    type="text"
+                                                    class="form-control"
+                                                    placeholder={this.state.hoaDon.phiShip}                        
+                                                    aria-label="Username"
+                                                    aria-describedby="basic-addon1"
+                                                    onChange={this.thayDoiPhiShip}
+                                                />                                                <span class="input-group-text">VND</span>
                                             </div> : ''}
 
 
@@ -506,7 +523,7 @@ class HoaDonChiTietComponents extends Component {
                 </div>
                 <br />
 
-                <center>{this.state.hoaDon.kieuHoaDon === 0 ? <button type="button" style={isHoaDonKoDcHuy ? { color: 'red', borderColor: 'red', cursor: 'not-allowed' } : {}} disabled={isHoaDonKoDcHuy} class="btn btn-outline-danger" onClick={this.handleShowModal2} >Thôn tin giao hàng :  {this.state.hoaDon.ten}( {this.state.hoaDon.sdt}) |{this.state.hoaDon.diaChiCuThe} - {this.state.hoaDon.xaPhuongThiTran} - {this.state.hoaDon.quanHuyen} - {this.state.hoaDon.tinhThanhPho}</button> : ""}</center>
+                <center>{this.state.hoaDon.kieuHoaDon === 0 || 1 ? <button type="button" style={isHoaDonKoDcHuy ? { color: 'red', borderColor: 'red', cursor: 'not-allowed' } : {}} disabled={isHoaDonKoDcHuy} class="btn btn-outline-danger" onClick={this.handleShowModal2} >Thôn tin giao hàng :  {this.state.hoaDon.ten}( {this.state.hoaDon.sdt}) |{this.state.hoaDon.diaChiCuThe} - {this.state.hoaDon.xaPhuongThiTran} - {this.state.hoaDon.quanHuyen} - {this.state.hoaDon.tinhThanhPho}</button> : ""}</center>
                 <section className="section dashboard">
                     <div className="row">
                         <div className="col-lg-8">
@@ -531,7 +548,7 @@ class HoaDonChiTietComponents extends Component {
                                                     <tbody>
                                                         {this.state.hoaDonChiTiet.map((hoaDonChiTiet, index) => {
                                                             total += hoaDonChiTiet.sanPhamChiTiet.donGia * hoaDonChiTiet.soLuong;
-                                                          
+
 
                                                             return (
                                                                 <tr key={hoaDonChiTiet.id}>
@@ -567,7 +584,7 @@ class HoaDonChiTietComponents extends Component {
                                                                 </tr>
                                                                 <tr>
                                                                     <th scope="row">Voucher từ Shop</th>
-                                                                    <td className="text-left col-4">- {this.state.hoaDon?.tienGiam?.toLocaleString()}đ (Giảm {this.state.hoaDon?.khuyenMai?.giamGia} {this.state.hoaDon?.khuyenMai?.kieuKhuyenMai === 1 ? "%" : this.state.hoaDon?.khuyenMai?.kieuKhuyenMai === 0 ? "VND" : ""})</td>   
+                                                                    <td className="text-left col-4">- {this.state.hoaDon?.tienGiam?.toLocaleString()}đ (Giảm {this.state.hoaDon?.khuyenMai?.giamGia} {this.state.hoaDon?.khuyenMai?.kieuKhuyenMai === 1 ? "%" : this.state.hoaDon?.khuyenMai?.kieuKhuyenMai === 0 ? "VND" : ""})</td>
                                                                 </tr>
                                                                 <tr>
                                                                     <th scope="row">Tổng tiền sau giảm</th>
@@ -585,7 +602,7 @@ class HoaDonChiTietComponents extends Component {
                                                                     <th scope="row">Thành tiền</th>
                                                                     <td>
                                                                         <p style={{ color: 'red', fontSize: '24px' }}>
-                                                                            {(this.state.hoaDon.tongTienSauGiam+ this.state.hoaDon.phiShip).toLocaleString()} VNĐ
+                                                                            {(this.state.hoaDon.tongTienSauGiam + this.state.hoaDon.phiShip).toLocaleString()} VNĐ
                                                                         </p>
                                                                     </td>
                                                                 </tr>
@@ -666,12 +683,11 @@ class HoaDonChiTietComponents extends Component {
                                             <form>
                                                 <div>
                                                     <h10 className="nav-link">
-                                                        Người mua: {this.state.hoaDon.taiKhoanKhachHang && this.state.hoaDon.taiKhoanKhachHang.thongTinNguoiDung ? this.state.hoaDon.taiKhoanKhachHang.thongTinNguoiDung.ten : "Khách lẻ"}</h10>
+                                                        Người mua: {this.state.hoaDon.ten ? this.state.hoaDon.ten : "Khách lẻ"} </h10>
                                                     <h10 className="nav-link">
-
-                                                        Số điện thoại: {this.state.hoaDon.taiKhoanKhachHang && this.state.hoaDon.taiKhoanKhachHang.thongTinNguoiDung ? this.state.hoaDon.taiKhoanKhachHang.thongTinNguoiDung.sdt : "Khách lẻ"}</h10>
+                                                        Số điện thoại:{this.state.hoaDon.ten ? this.state.hoaDon.sdt : "Khách lẻ"}</h10>
                                                     <h10 className="nav-link">
-                                                        Email: {this.state.hoaDon.taiKhoanKhachHang && this.state.hoaDon.taiKhoanKhachHang ? this.state.hoaDon.taiKhoanKhachHang.email : "Khách lẻ"}</h10>
+                                                        Email: {this.state.hoaDon.email ? this.state.hoaDon.email : "Khách lẻ"}</h10>
                                                     <div>
                                                         {this.state.hoaDon.taiKhoanKhachHang != null ? <Button variant="btn btn-outline-primary" onClick={this.handleShowModal2} >
                                                             Danh sách địa chỉ
@@ -734,9 +750,9 @@ class HoaDonChiTietComponents extends Component {
                                                                             onChange={this.thayDoiHuyen}
                                                                             required
                                                                         />
-                                                                         {validationErrors.quanHuyen && (
-                        <span className="invalid-feedback">{validationErrors.quanHuyen}</span>
-                    )}
+                                                                        {validationErrors.quanHuyen && (
+                                                                            <span className="invalid-feedback">{validationErrors.quanHuyen}</span>
+                                                                        )}
                                                                     </div>
 
                                                                     <div class="input-group mb-3">
@@ -753,13 +769,13 @@ class HoaDonChiTietComponents extends Component {
                                                                             onChange={this.thayDoiXaPhuongThiTran}
                                                                             required
                                                                         />
-                                                                         {validationErrors.xaPhuongThiTran && (
-                        <span className="invalid-feedback">{validationErrors.xaPhuongThiTran}</span>
-                    )}
+                                                                        {validationErrors.xaPhuongThiTran && (
+                                                                            <span className="invalid-feedback">{validationErrors.xaPhuongThiTran}</span>
+                                                                        )}
                                                                     </div>
                                                                     <button type="button" class="btn btn-outline-warning" onClick={this.updateDC}>Cập nhật điạ chỉ cho đơn hàng</button>
                                                                 </div>
-<br />
+                                                                <br />
                                                                 <table className="table table-borderless datatable">
                                                                     <thead>
                                                                         <tr>

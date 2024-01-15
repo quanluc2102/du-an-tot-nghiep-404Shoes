@@ -10,12 +10,12 @@ function Tracuudonhang(props) {
 
    const handleSearchOrder = () => {
       const maDonHang = document.getElementById("order-code").value;
-      const email = document.getElementById("input").value;
+      const sdt = document.getElementById("input").value;
 
       axios
           .post("http://localhost:8080/hoa_don_chi_tiet/hien-thiguest", {
              maHoaDon: maDonHang,
-             email: email,
+             sdt: sdt,
           })
           .then((response) => {
              const orderDetails = response.data;
@@ -68,7 +68,7 @@ function Tracuudonhang(props) {
 
              <div className="form-group">
                 <div className="has-feedback">
-                   <input required="" type="text" className="order-input" placeholder="Email" id="input" />
+                   <input required="" type="text" className="order-input" placeholder="Số điện thoại" id="input" />
                    <span></span>
                 </div>
              </div>

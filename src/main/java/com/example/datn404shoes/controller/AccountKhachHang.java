@@ -67,6 +67,9 @@ public class AccountKhachHang {
         return hoaDonRepository.muaTaiQuay(id);
     }
 
-
+    @GetMapping("dat_hang_thanh_cong")
+    public Object[] dat_hang_thanh_cong(Long id) {
+        return hoaDonRepository.thanhToanThanhCong();
+    }
 
 }

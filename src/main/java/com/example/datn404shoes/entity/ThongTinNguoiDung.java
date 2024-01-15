@@ -35,5 +35,6 @@ public class ThongTinNguoiDung {
 
     @Column(name = "ngay_cap_nhat")
     private Date ngayCapNhat;
-
+//    @OneToOne(mappedBy = "thongTinNguoiDung")
+//    private DiaChi diaChi;
 }

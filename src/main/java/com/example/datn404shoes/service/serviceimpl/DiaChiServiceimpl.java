@@ -1,7 +1,9 @@
 package com.example.datn404shoes.service.serviceimpl;
 
 import com.example.datn404shoes.entity.DiaChi;
+import com.example.datn404shoes.entity.ThongTinNguoiDung;
 import com.example.datn404shoes.repository.DiaChiResponsitory;
+import com.example.datn404shoes.repository.ThongTinNguoiDungRespository;
 import com.example.datn404shoes.service.DiaChiService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,6 +18,8 @@ public class DiaChiServiceimpl implements DiaChiService {
 
     @Autowired
     private DiaChiResponsitory responsitory;
+    @Autowired
+    private ThongTinNguoiDungRespository  thongTinNguoiDungRespository;
     @Override
     public void add(DiaChi diaChi) {
         diaChi.setNgayCapNhat(Date.valueOf(LocalDate.now()));
@@ -60,7 +64,46 @@ public class DiaChiServiceimpl implements DiaChiService {
         responsitory.save(diaChi);
     }
 
+//    @Override
+//    public void addDC(DiaChi diaChi, ThongTinNguoiDung thongTinNguoiDung) {
+//        // Thêm địa chỉ mới
+//        DiaChi savedDiaChi = responsitory.save(diaChi);
+//
+//        // Cập nhật thông tin người dùng
+//        thongTinNguoiDungRespository.updateThongTinNguoiDung(diaChi.getId(), thongTinNguoiDung);
+//
+//
+//    }
+
+
+    @Override
+    public void updateDC(DiaChi diaChi, Long thongTinNguoiDungId) {
+        // Cập nhật địa chỉ
+        Optional<DiaChi> existingDiaChi = responsitory.findById(diaChi.getId());
+        if (existingDiaChi.isPresent()) {
+            responsitory.save(diaChi);
+        } else {
+            // Địa chỉ không tồn tại, có thể xử lý tùy thuộc vào yêu cầu của bạn.
+        }
+
+        // Cập nhật thông tin người dùng
+        Optional<ThongTinNguoiDung> existingThongTinNguoiDung = thongTinNguoiDungRespository.findById(thongTinNguoiDungId);
+        if (existingThongTinNguoiDung.isPresent()) {
+            ThongTinNguoiDung thongTinNguoiDung = existingThongTinNguoiDung.get();
+
+            // Không thực hiện cập nhật thông tin người dùng
+
+            thongTinNguoiDungRespository.save(thongTinNguoiDung);
+        } else {
+            // Thông tin người dùng không tồn tại, có thể xử lý tùy thuộc vào yêu cầu của bạn.
+        }
+    }
+
+
+
+
     public Optional<DiaChi> findByThongTinNguoiDungId(long id) {
+
         return responsitory.findById(id);
     }
 }

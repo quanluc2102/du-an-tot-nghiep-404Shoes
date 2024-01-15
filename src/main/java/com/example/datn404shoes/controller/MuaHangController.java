@@ -166,7 +166,7 @@ public class MuaHangController {
         HoaDon hoaDon = new HoaDon();
         hoaDon.setMaHoaDon("HD00"+countHD);
         hoaDon.setNgayTao(Date.valueOf(LocalDate.now()));
-        hoaDon.setTrangThai(0);
+        hoaDon.setTrangThai(hoaDonUserRequest.getTrangThai());
         hoaDon.setGhiChu(hoaDonUserRequest.getGhiChu());
         if(hoaDonUserRequest.getTaiKhoanId()==0){
 
@@ -213,7 +213,11 @@ public class MuaHangController {
             hdct.setSanPhamChiTiet(ghct.getSanPhamChiTietId());
             hdct.setSoLuong(ghct.getSoLuong());
             hoaDonChiTietimpl.addNewHDCT(hdct);
-            ghct.getSanPhamChiTietId().setSoLuong(ghct.getSanPhamChiTietId().getSoLuong()-ghct.getSoLuong());
+            if(hoaDonUserRequest.getTrangThai()==0){
+
+            }else{
+                ghct.getSanPhamChiTietId().setSoLuong(ghct.getSanPhamChiTietId().getSoLuong()-ghct.getSoLuong());
+            }
             if(ghct.getSanPhamChiTietId().getSoLuong()<0){
                 ghct.getSanPhamChiTietId().setSoLuong(0);
             }

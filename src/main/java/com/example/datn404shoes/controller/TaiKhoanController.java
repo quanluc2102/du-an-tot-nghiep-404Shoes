@@ -21,7 +21,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.sql.Date;
 import java.text.Normalizer;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.regex.Pattern;
 
@@ -43,6 +45,8 @@ public class TaiKhoanController {
     private TaiKhoanResponsitory taiKhoanRepository;
     @Autowired
     private DiaChiServiceimpl diaChiServiceimpl;
+    @Autowired
+    private GioHangServiceImpl gioHangService;
     @Autowired
     private JavaMailSender javaMailSender;
     private final Path root = Paths.get("frontend/src/img");
@@ -235,6 +239,9 @@ public class TaiKhoanController {
         var b = thongTinNguoiDungServiceimpl.add(thongTinNguoiDung);
         taiKhoan.setTrangThai(true);
         String employeeName = thongTinNguoiDung.getTen(); // Replace this with the actual name
+        String generatedPassword = generatePasswordFromName(employeeName);
+        taiKhoan.setPassword(generatedPassword);
+        String matKhau = generatedPassword;
         taiKhoan.setThongTinNguoiDung(b);
         taiKhoan.setAnh(taiKhoanVaThongTin.getFiles().get(0));
         serviceimpl.add(taiKhoan);
@@ -254,11 +261,9 @@ public class TaiKhoanController {
 //        phanQuyen.setQuyen(Quyen.builder().id(3).build());
         phanQuyenServiceimpl.add(phanQuyen);
 
-        // Lưu mật khẩu vào một biến tạm thời
-        String matKhau = taiKhoan.getPassword();
 
 // Xóa mật khẩu ngẫu nhiên
-        taiKhoan.setPassword("");
+
 
 // Gửi email
         sendEmail(taiKhoan.getEmail(), "Chào mừng bạn gia nhập gia đình 404Shoes", "Dear " + b.getTen() +
@@ -269,8 +274,17 @@ public class TaiKhoanController {
                 ".\n\nTrân trọng !" );
 
 // Tiếp tục xử lý và trả về kết quả
-        taiKhoan.setPassword("");
-        return ResponseEntity.ok(serviceimpl.add(taiKhoan));
+        GioHang gioHang = new GioHang();
+        gioHang.setTaiKhoan(taiKhoan);
+        gioHang.setTrangThai(1);
+        LocalDateTime now = LocalDateTime.now();
+        gioHang.setNgayTao(java.sql.Date.valueOf(now.toLocalDate()));
+        gioHang.setNgayCapNhat(Date.valueOf(now.toLocalDate()));
+
+        gioHang.setTongTien(0);
+        gioHang.setGhiChu("Giỏ hàng của khách");
+        gioHangService.add(gioHang);
+        return ResponseEntity.ok("ResponseEntity.ok()");
     }
 
 
