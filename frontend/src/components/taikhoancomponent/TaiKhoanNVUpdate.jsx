@@ -3,8 +3,8 @@ import taikhoanservice from "../../services/taikhoanservice/taikhoanservice";
 import {toast} from "react-toastify";
 import axios from "axios";
 import "./nhanvien.css";
-import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+// import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import $ from 'jquery';
 
@@ -842,7 +842,7 @@ class TaiKhoanNVUpdate extends Component {
                                                         onClick={this.toggleShowPassword}
                                                         style={{marginLeft: '10px', marginTop:'10px'}}
                                                     >
-                                                        <FontAwesomeIcon icon={this.state.showPassword ? faEye : faEyeSlash} />
+                                                        {/*<FontAwesomeIcon icon={this.state.showPassword ? faEye : faEyeSlash} />*/}
                                                     </button>
                                                 </div>
                                             </div>
