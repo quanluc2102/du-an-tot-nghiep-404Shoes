@@ -115,6 +115,10 @@ class NhanVienComponent extends Component {
     }
 
     toggleTaiKhoan(id, currentTaiKhoan) {
+        const confirmed = window.confirm('Bạn có chắc chắn muốn thay đổi trạng thái ?');
+        if (!confirmed) {
+            return; // Người dùng bấm "Cancel", không thực hiện thêm
+        }
         const newTrangThai = currentTaiKhoan === true ? false : true; // Chuyển đổi trạng thái
         taikhoanservice.updateTaiKhoanTrangThai({ trangThai: newTrangThai }, id).then((res) => {
             let taiKhoanCapNhat = res.data;

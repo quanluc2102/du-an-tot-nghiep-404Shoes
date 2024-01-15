@@ -20,13 +20,28 @@ function LoginComponent({ onLogin, onLogout }) {
             const token = await AuthService.login(credentials);
             localStorage.setItem('token', token);
 
-            // Sau khi đăng nhập thành công, gọi hàm để lấy thông tin người dùng
+            // After successful login, get user information
             const user = await getUserInfo();
-            setUserInfo(user);
 
-            onLogin();
+            // Check if the user is active before allowing login
+            if (user && user.status === 'active') {
+                // Check if the account status is 'active' before allowing login
+                if (user.trangThai === true) {
+                    setUserInfo(user);
+                    onLogin();
+                } else {
+                    // If the account status is not 'active', prevent login
+                    console.error('User account is not active. Login is not allowed.');
+                    handleLogout(); // Log out immediately if login is not allowed
+                }
+            } else {
+                // If user status is not 'active', prevent login
+                console.error('User is not active. Login is not allowed.');
+                handleLogout(); // Log out immediately if login is not allowed
+            }
         } catch (error) {
-            // Xử lý lỗi, hiển thị thông báo, vv.
+            // Handle login error, display a message, etc.
+            console.error('Login error:', error);
         }
     };
 

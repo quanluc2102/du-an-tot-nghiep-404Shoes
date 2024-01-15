@@ -44,7 +44,7 @@ public interface TaiKhoanResponsitory extends JpaRepository<TaiKhoan,Long> {
 //    @Query(value = "SELECT * FROM tai_khoan WHERE thong_tin_nguoi_dung_id = id;",nativeQuery = true)
 //    public List<TaiKhoan> getAllTaiKhoan(@Param("id") long id);
 
-    @Query("SELECT tk.anh,ttn.CCCD,ttn.ten,ttn.ngaySinh,ttn.gioiTinh,dc.tinhThanhPho,dc.quanHuyen,dc.xaPhuongThiTran,dc.diaChiCuThe,ttn.sdt,tk.email " +
+    @Query("SELECT tk.anh,ttn.CCCD,ttn.ten,ttn.ngaySinh,ttn.gioiTinh,dc.tinhThanhPho,dc.quanHuyen,dc.xaPhuongThiTran,dc.diaChiCuThe,ttn.sdt,tk.email,tk.password " +
             "FROM ThongTinNguoiDung ttn " +
             "JOIN DiaChi dc ON ttn.id = dc.thongTinNguoiDung.id " +
             "JOIN TaiKhoan tk ON ttn.id = tk.thongTinNguoiDung.id " +
