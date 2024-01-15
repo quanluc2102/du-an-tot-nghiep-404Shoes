@@ -30,6 +30,12 @@ class BanHangOffline extends Component {
             quanHuyen: '',  // state này lưu quận huyện để thanh toán
             xaPhuongThiTran: '',  // state này lưu xã phường thị trấn để thanh toán
             diaChiCuThe: '',  // state này lưu địa chỉ cụ thể để thanh toán
+            listTP:[],
+            listQH:[],
+            listXP:[],
+            codeTP:0,
+            codeQH:0,
+            codeXP:"",
             kieuHoaDon: 2,
             email: '', // state này lưu email để thanh toán
             thanhToan: '', // state này lưu kiểu thanh toán để thanh toán
@@ -98,7 +104,7 @@ class BanHangOffline extends Component {
         }).catch((error) => {
             console.error("Error fetching data:", error);
         });
-
+        this.loadTP();
         this.fetchCities();
 
         this.fetchHoaDonChoDauTien();
@@ -299,6 +305,10 @@ class BanHangOffline extends Component {
 
     handleTenChange = (event) => {
         this.setState({ ten: event.target.value });
+        console.log(this.state.codeTP)
+        console.log(this.state.codeQH)
+        console.log(this.state.codeXP)
+        console.log(this.state.phiShip)
     };
 
     handleSdtChange = (event) => {
@@ -886,6 +896,125 @@ class BanHangOffline extends Component {
         return statusCounts;
     }
 
+    loadTP = async () =>{
+        const responseTp = await axios.get('https://online-gateway.ghn.vn/shiip/public-api/master-data/province', {
+            headers: {
+                'token': '93254e5e-a301-11ee-b394-8ac29577e80e', // Thay YOUR_API_KEY bằng API key thực tế của bạn
+            },
+        });
+        const provincesData = responseTp.data.data;
+        this.setState({listTP:provincesData})
+        // setListThanhPho(provincesData)
+    }
+
+    loadQH = async (tp) =>{
+        const responseQH = await axios.get(`https://online-gateway.ghn.vn/shiip/public-api/master-data/district?province_id=${tp}`, {
+            headers: {
+                'token': '93254e5e-a301-11ee-b394-8ac29577e80e', // Thay YOUR_API_KEY bằng API key thực tế của bạn
+            },
+        });
+        const districtData = responseQH.data.data;
+        this.setState({listQH:districtData})
+
+    }
+
+    loadXP = async (qh) =>{
+        const responseXP = await axios.get(`https://online-gateway.ghn.vn/shiip/public-api/master-data/ward?district_id=${qh}`, {
+            headers: {
+                'token': '93254e5e-a301-11ee-b394-8ac29577e80e', // Thay YOUR_API_KEY bằng API key thực tế của bạn
+            },
+        });
+        const wardData = responseXP.data.data;
+        this.setState({listXP:wardData})
+    }
+
+    chonTP = (event) =>{
+        const tp = parseInt(event.target.value)
+        this.setState({codeTP:tp})
+        // setCodeTP(tp)
+        this.state.listTP.map(value => {
+            if(value.ProvinceID===tp){
+                // setTinhThanhPhoNew(value.ProvinceName)
+                this.setState({tinhThanhPho:value.ProvinceName})
+                // setTinhThanhPho(value.ProvinceName)
+            }
+        })
+        this.setState({codeQH:0,codeXP:"",phiShip:0})
+        // setCodeQuan(0)
+        // setCodeXa(0)
+        // setPhiShip(0)
+        this.loadQH(tp);
+    }
+
+    chonQH = (event) =>{
+        const qh = parseInt(event.target.value)
+        this.setState({codeQH:qh})
+        this.state.listQH.map(value => {
+            if(value.DistrictID===qh){
+                // setQuanHuyenNew(value.DistrictName)
+                // setQuanHuyen(value.DistrictName)
+                this.setState({quanHuyen:value.DistrictName})
+
+            }
+        })
+        this.setState({codeXP:"",phiShip:0})
+        this.loadXP(qh);
+    }
+
+    chonXP = (event) =>{
+        const xp = String(event.target.value)
+        this.setState({codeXP:xp})
+        this.state.listXP.map(value => {
+            if(value.WardCode===xp){
+                // setXaPhuongThiTranNew(value.WardName)
+                // setXaPhuongThiTran(value.WardName)
+                this.setState({xaPhuongThiTran:value.WardName})
+
+            }
+        })
+    }
+    tinhTienShip = async () => {
+
+        let tongTien = this.getTotalAmountWithoutPromotions(this.state.tabProducts);
+        // let tongKL = SPCT.length * 100;
+        try {
+            const requestBody = {
+                "service_type_id": 2,
+                "insurance_value": tongTien,
+                "coupon": null,
+                "from_district_id": 1582,
+                "from_ward_code": "1A1319",
+                "to_district_id": this.state.codeQH,
+                "to_ward_code": `${this.state.codeXP}`,
+                "height": 15,
+                "length": 15,
+                "weight": 1000,
+                "width": 15
+            };
+
+            const response = await axios.post('https://online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/fee', requestBody, {
+                headers: {
+                    'token': '93254e5e-a301-11ee-b394-8ac29577e80e', // Thay YOUR_API_KEY bằng API key thực tế của bạn
+                },
+            });
+            this.setState({phiShip:response.data.data.service_fee})
+            // return response.data.data.service_fee;
+        } catch (error) {
+            // Xử lý lỗi tại đây
+            if (error.response) {
+                // Nếu có phản hồi từ server
+                console.error('Server Error:', error.response.data);
+            } else if (error.request) {
+                // Nếu yêu cầu được gửi đi nhưng không nhận được phản hồi
+                console.error('No response received');
+            } else {
+                // Lỗi trong quá trình thiết lập yêu cầu
+                console.error('Error setting up the request:', error.message);
+            }
+            throw error;
+        }
+    };
+
     render() {
         const searchTerm = localStorage.getItem('searchTerm') || this.state.searchTerm;
         const statusCounts = this.getStatusCounts();
@@ -1144,14 +1273,12 @@ class BanHangOffline extends Component {
                                             <select
                                                 className="form-control"
                                                 name="tinhThanhPho"
-                                                onChange={(event) => this.handleCityChange(event)}
-                                                value={this.state.tinhThanhPho}
+                                                onChange={(event) => this.chonTP(event)}
+                                                value={this.state.codeTP}
                                             >
                                                 <option>Chọn tỉnh thành</option>
-                                                {this.state.cities.map(city => (
-                                                    <option key={city.code} value={city.name}>
-                                                        {city.name}
-                                                    </option>
+                                                {this.state.listTP.map(tp=>(
+                                                    <option value={tp.ProvinceID}>{tp.ProvinceName}</option>
                                                 ))}
                                             </select>
                                         </div>
@@ -1161,14 +1288,12 @@ class BanHangOffline extends Component {
                                             <select
                                                 className="form-control"
                                                 name="quanHuyen"
-                                                onChange={(event) => this.handleDistrictChange(event)}
-                                                value={this.state.quanHuyen}
+                                                onChange={(event) => this.chonQH(event)}
+                                                value={this.state.codeQH}
                                             >
                                                 <option >Chọn quận huyện</option>
-                                                {this.state.districts.map(district => (
-                                                    <option key={district.code} value={district.name}>
-                                                        {district.name}
-                                                    </option>
+                                                {this.state.listQH.map(tp=>(
+                                                    <option value={tp.DistrictID}>{tp.DistrictName}</option>
                                                 ))}
                                             </select>
                                         </div>
@@ -1178,14 +1303,12 @@ class BanHangOffline extends Component {
                                             <select
                                                 className="form-control"
                                                 name="xaPhuongThiTran"
-                                                onChange={(event) => this.handleWardChange(event)}
-                                                value={this.state.xaPhuongThiTran}
+                                                onChange={(event) => this.chonXP(event)}
+                                                value={this.state.codeXP}
                                             >
                                                 <option >Chọn xã/phường/thị trấn</option>
-                                                {this.state.wards.map(ward => (
-                                                    <option key={ward.code} value={ward.name}>
-                                                        {ward.name}
-                                                    </option>
+                                                {this.state.listXP.map(tp=>(
+                                                    <option value={tp.WardCode}>{tp.WardName}</option>
                                                 ))}
                                             </select>
                                         </div>
@@ -1252,6 +1375,7 @@ class BanHangOffline extends Component {
                                             type="text"
                                             placeholder="Nhập phí ship..."
                                             style={{ width: '194px', float: 'left' }}
+                                            value={this.state.phiShip}
                                             onChange={this.onChangeShip}
                                         /></Col>
                                     </Col>
@@ -1296,6 +1420,7 @@ class BanHangOffline extends Component {
                                 />
                             )}
                         </div>
+                        {this.state.codeXP===""?(<h7 style={{display: 'none',marginTop:8,float:"right"}}>Phí ship : {this.formatCurrency(this.state.phiShip)}</h7>) : (<h7 style={{display: 'none', marginTop:8,float:"right"}}>Phí ship : {this.formatCurrency(this.tinhTienShip())}</h7>)}
                         <button onClick={this.state.showImage==false?this.displayImage:this.closedisplayImage}>{this.state.showImage==false?'Xuất':'Đóng'} QR</button>
                         <div>
                             <Input id="ghiChuDonHang" placeholder="Nhập ghi chú đơn hàng" />
