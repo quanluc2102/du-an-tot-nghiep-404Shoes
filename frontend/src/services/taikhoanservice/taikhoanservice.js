@@ -16,15 +16,21 @@ const API_BASE_URL_DELETE = "http://localhost:8080/tai_khoan/delete";
 const API_BASE_URL_UPDATE = "http://localhost:8080/tai_khoan/update";
 const API_BASE_URL_UPDATE_QUAN_LY = "http://localhost:8080/tai_khoan/updateQuanLy";
 const API_BASE_URL_UPDATE_NHAN_VIEN = "http://localhost:8080/tai_khoan/updateNhanVien";
+const API_BASE_URL_UPDATE_KHACH_HANG = "http://localhost:8080/tai_khoan/updateKhachHang";
 const API_UPDATE_URL = "http://localhost:8080/tai_khoan/updateKhachHang";
 const TAIKHOAN_API_UPDATEtt_URL = "http://localhost:8080/tai_khoan/updatett";
+const API_BASE_URL_NO_PAGE = "http://localhost:8080/tai_khoan/indexAll";
+
 class taikhoanservice {
 
 
     getTaiKhoan(pageNumber) {
         return axios.get(API_BASE_URL + `?page=${pageNumber}&size=5`);
     }
-
+    getTaiKhoanAll() {
+        // Thực hiện cuộc gọi đến API endpoint mới trả về toàn bộ dữ liệu khuyenMai
+        return axios.get(API_BASE_URL_NO_PAGE);
+    }
     // getThongTin(pageNumber) {
     //     return axios.get(API_BASE_URL_THONG_TIN+`?page=${pageNumber}&size=5`);
     // }
@@ -96,14 +102,14 @@ class taikhoanservice {
         return axios.put(API_BASE_URL_UPDATE_QUAN_LY + "/" + id, taiKhoan)
     }
 
-    updateNhanVien(taiKhoan, id) {
-        console.log(id)
-        return axios.put(API_BASE_URL_UPDATE_NHAN_VIEN + "/" + id, taiKhoan)
+    updateNhanVien(id, taiKhoan) {
+        console.log(id);
+        return axios.put(`${API_BASE_URL_UPDATE_NHAN_VIEN}/${id}`, taiKhoan);
     }
 
     updateKhachHang(id,taiKhoan) {
         console.log(id)
-        return axios.put(API_UPDATE_URL + "/" + id, taiKhoan)
+        return axios.put(`${API_BASE_URL_UPDATE_KHACH_HANG}/${id}`, taiKhoan);
     }
 
     updateTaiKhoan(taiKhoan, id) {

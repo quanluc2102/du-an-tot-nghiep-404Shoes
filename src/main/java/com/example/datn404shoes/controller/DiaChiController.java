@@ -69,7 +69,7 @@ public class DiaChiController {
     }
 
     @PutMapping("/editDC/{id}")
-    public ResponseEntity<?> updateDiaChi(@PathVariable("id") UUID id, @RequestBody DiaChi diaChiDetails) {
+    public ResponseEntity<?> updateDiaChi(@PathVariable("id") Long id, @RequestBody DiaChi diaChiDetails) {
         try {
             Optional<DiaChi> diaChiOptional = diaChiResponsitory.findById(id);
 

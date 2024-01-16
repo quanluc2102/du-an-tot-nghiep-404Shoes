@@ -61,7 +61,10 @@ public class TaiKhoanController {
     }
 
 
-
+    @GetMapping("indexAll")
+    public ResponseEntity<?> indexAll(Model model) {
+        return ResponseEntity.ok(serviceimpl.getAllNoPage());
+    }
     @PostMapping("addQuanLy")
     public ResponseEntity<?> addQuanLy(Model model,
                                        @RequestBody TaiKhoanVaThongTin taiKhoanVaThongTin) {
@@ -82,7 +85,8 @@ public class TaiKhoanController {
     }
 
     @PutMapping("updateQuanLy/{id}")
-    public ResponseEntity<?> updateQuanLy(@RequestBody TaiKhoanVaThongTin taiKhoanVaThongTin,
+    public ResponseEntity<?> updateQuanLy(
+            @RequestBody TaiKhoanVaThongTin taiKhoanVaThongTin,
                                           @PathVariable("id") Long id) {
         ThongTinNguoiDung thongTinNguoiDung = taiKhoanVaThongTin.getThongTinNguoiDung();
         TaiKhoan taiKhoan = taiKhoanVaThongTin.getTaiKhoan();
@@ -197,35 +201,33 @@ public class TaiKhoanController {
     }
 
     @PutMapping("updateNhanVien/{id}")
-    public ResponseEntity<?> updateNhanVien(@PathVariable Long id,
-                                            @RequestBody TaiKhoanVaThongTin taiKhoanVaThongTin) {
+    public ResponseEntity<?> updateNhanVien(@PathVariable Long id, @RequestBody TaiKhoanVaThongTin taiKhoanVaThongTin) {
         ThongTinNguoiDung thongTinNguoiDung = taiKhoanVaThongTin.getThongTinNguoiDung();
         TaiKhoan taiKhoan = taiKhoanVaThongTin.getTaiKhoan();
 
-        Optional<ThongTinNguoiDung> optionalThongTinNguoiDung = Optional.ofNullable(thongTinNguoiDungServiceimpl.add(thongTinNguoiDung));
+        Optional<ThongTinNguoiDung> optionalThongTinNguoiDung = Optional.ofNullable(thongTinNguoiDungServiceimpl.update(id, thongTinNguoiDung));
 
         if (optionalThongTinNguoiDung.isPresent()) {
-            ThongTinNguoiDung b = optionalThongTinNguoiDung.get();
+            ThongTinNguoiDung updatedThongTinNguoiDung = optionalThongTinNguoiDung.get();
 
-            taiKhoan.setThongTinNguoiDung(b);
+            // Update ThongTinNguoiDung entity
+            taiKhoan.setThongTinNguoiDung(updatedThongTinNguoiDung);
             taiKhoan.setTrangThai(true);
 
-            // Kiểm tra xem có file được chọn hay không
+            // Preserve the existing maTaiKhoan value
+            TaiKhoan existingTaiKhoan = serviceimpl.getOne(id);
+            taiKhoan.setMaTaiKhoan(existingTaiKhoan.getMaTaiKhoan());
+            // Check if the file exists
             if (taiKhoanVaThongTin.getFiles() != null && !taiKhoanVaThongTin.getFiles().isEmpty()) {
                 taiKhoan.setAnh(taiKhoanVaThongTin.getFiles().get(0));
             } else {
-                // Xử lý khi không có file mới được chọn
-                // Lấy ảnh từ tài khoản người dùng hiện tại (có thể cần thay đổi tùy theo cấu trúc dữ liệu của bạn)
-                TaiKhoan existingTaiKhoan = serviceimpl.getOne(id);
                 taiKhoan.setAnh(existingTaiKhoan.getAnh());
             }
-
             serviceimpl.update(id, taiKhoan);
-
-            DiaChi diaChi = new DiaChi();
-            diaChi.setTen(b.getTen());
-            diaChi.setSdt(b.getSdt());
-            diaChi.setThongTinNguoiDung(b);
+            DiaChi diaChi = diaChiServiceimpl.getOne(id);
+            diaChi.setTen(updatedThongTinNguoiDung.getTen());
+            diaChi.setSdt(updatedThongTinNguoiDung.getSdt());
+            diaChi.setThongTinNguoiDung(updatedThongTinNguoiDung);
             diaChi.setTrangThai(0);
             diaChi.setDiaChiCuThe(taiKhoanVaThongTin.getDiaChiCuThe());
             diaChi.setTinhThanhPho(taiKhoanVaThongTin.getTinhThanhPho());
@@ -233,16 +235,15 @@ public class TaiKhoanController {
             diaChi.setXaPhuongThiTran(taiKhoanVaThongTin.getXaPhuongThiTran());
             diaChiServiceimpl.update(diaChi);
 
-            PhanQuyen phanQuyen = new PhanQuyen();
-            phanQuyen.setTaiKhoan(TaiKhoan.builder().id(taiKhoan.getId()).build());
-            phanQuyen.setQuyen(Quyen.builder().id(1).build());
-            phanQuyenServiceimpl.update(id, phanQuyen);
-
-            return ResponseEntity.ok(serviceimpl.update(id, taiKhoan));
+//            return ResponseEntity.ok(serviceimpl.update(id, taiKhoan));
+            return ResponseEntity.ok("Cập nhật thành công");
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Không tìm thấy thông tin người dùng");
         }
     }
+
+
+
 
 
 
@@ -283,8 +284,6 @@ public class TaiKhoanController {
         phanQuyenServiceimpl.add(phanQuyen);
 
 
-// Xóa mật khẩu ngẫu nhiên
-
 
 // Gửi email
         sendEmail(taiKhoan.getEmail(), "Chào mừng bạn gia nhập gia đình 404Shoes", "Dear " + b.getTen() +
@@ -311,39 +310,27 @@ public class TaiKhoanController {
 
     @PutMapping("updateKhachHang/{id}")
     public ResponseEntity<?> updateKhachHang(@PathVariable Long id, @RequestBody TaiKhoanVaThongTin taiKhoanVaThongTin) {
-
         ThongTinNguoiDung thongTinNguoiDung = taiKhoanVaThongTin.getThongTinNguoiDung();
         TaiKhoan taiKhoan = taiKhoanVaThongTin.getTaiKhoan();
 
-        Optional<ThongTinNguoiDung> optionalThongTinNguoiDung = Optional.ofNullable(thongTinNguoiDungServiceimpl.add(thongTinNguoiDung));
+        if (thongTinNguoiDung != null) {
+            Optional<ThongTinNguoiDung> optionalThongTinNguoiDung = Optional.ofNullable(thongTinNguoiDungServiceimpl.update(id, thongTinNguoiDung));
 
-        if (optionalThongTinNguoiDung.isPresent()) {
-            ThongTinNguoiDung b = optionalThongTinNguoiDung.get();
+            if (optionalThongTinNguoiDung.isPresent()) {
+                ThongTinNguoiDung b = optionalThongTinNguoiDung.get();
 
-            taiKhoan.setThongTinNguoiDung(b);
-            taiKhoan.setTrangThai(true);
-//            taiKhoan.setAnh(taiKhoanVaThongTin.getFiles().get(0));
-            serviceimpl.update(id, taiKhoan);
-
-            DiaChi diaChi = new DiaChi();
-            diaChi.setTen(b.getTen());
-            diaChi.setSdt(b.getSdt());
-            diaChi.setThongTinNguoiDung(b);
-            diaChi.setTrangThai(0);
-            diaChi.setDiaChiCuThe(taiKhoanVaThongTin.getDiaChiCuThe());
-            diaChi.setTinhThanhPho(taiKhoanVaThongTin.getTinhThanhPho());
-            diaChi.setQuanHuyen(taiKhoanVaThongTin.getQuanHuyen());
-            diaChi.setXaPhuongThiTran(taiKhoanVaThongTin.getXaPhuongThiTran());
-            diaChiServiceimpl.update(diaChi);
-
-            PhanQuyen phanQuyen = new PhanQuyen();
-            phanQuyen.setTaiKhoan(TaiKhoan.builder().id(taiKhoan.getId()).build());
-            phanQuyen.setQuyen(Quyen.builder().id(1).build());
-            phanQuyenServiceimpl.add(phanQuyen);
-            taiKhoan.setPassword("");
-            return ResponseEntity.ok(serviceimpl.update(id, taiKhoan));
+                if (b != null) {
+                    taiKhoan.setThongTinNguoiDung(b);
+                    taiKhoan.setTrangThai(true);
+                    return ResponseEntity.ok(serviceimpl.update(id, taiKhoan));
+                } else {
+                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Update failed");
+                }
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Không tìm thấy thông tin người dùng");
+            }
         } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Không tìm thấy thông tin người dùng");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("ThongTinNguoiDung is null");
         }
     }
 
@@ -388,6 +375,11 @@ public class TaiKhoanController {
     public List<Object[]> getDesiredInformation(@PathVariable("id") Long id) {
 
         return taiKhoanRepository.findUserDetailsById(id);
+    }
+    @GetMapping("khachhangdetail/{id}")
+    public List<Object[]> getDesiredInformation1(@PathVariable("id") Long id) {
+
+        return taiKhoanRepository.findUserDetailsKHById(id);
     }
     @GetMapping("/nhan-vien-quyen-3")
     public List<TaiKhoan> getNhanVienByQuyenId3() {

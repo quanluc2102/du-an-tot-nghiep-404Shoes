@@ -359,8 +359,10 @@ class TaiKhoanNVComponent extends Component {
 
                     setTimeout(() => {
                         window.location.href = (`/nhanvien`);
-                    }, 20);
+                    }, 10);
                     toast.success("Thêm thành công!");
+                    this.handleAddSuccess(res.data);
+
                 } else {
                     // Xử lý khi có lỗi trả về từ API
                     const errorMessage = res.data.message || "Có lỗi xảy ra khi thêm danh mục.";
@@ -377,6 +379,28 @@ class TaiKhoanNVComponent extends Component {
                 }
             });
     }
+    handleAddSuccess = (responseData) => {
+        // Fetch the updated list of employees from the server
+        taikhoanservice.getNhanVien(this.state.currentPage)
+            .then(response => {
+                this.setState((prevState) => {
+                    // Add the new employee information to the top of the list
+                    const updatedNhanVien = [responseData.taiKhoan, ...prevState.nhanVienQuyen1];
+                    const updatedThongTinNguoiDung = [responseData.thongTinNguoiDung, ...prevState.thongTinNguoiDung];
+                    const updatedDiaChi = [responseData.diaChi, ...prevState.diaChi];
+
+                    return {
+                        nhanVienQuyen1: updatedNhanVien,
+                        thongTinNguoiDung: updatedThongTinNguoiDung,
+                        diaChi: updatedDiaChi,
+                        pageCount: response.data.totalPages,
+                    };
+                });
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    };
 
     detail(id) {
         window.location.href = (`/nhanviendetail/${id}`);
