@@ -14,7 +14,7 @@ public interface ThongTinNguoiDungService {
 
     Page<ThongTinNguoiDung> getAllPhanTrang(Pageable pageable);
     ThongTinNguoiDung add(ThongTinNguoiDung thongTinNguoiDung);
-
+    ThongTinNguoiDung addKHNhanh(ThongTinNguoiDung thongTinNguoiDung);
     void delete(Long id);
     ThongTinNguoiDung getOne(Long id);
     ThongTinNguoiDung update(Long id, ThongTinNguoiDung thongTinNguoiDung);

@@ -141,7 +141,35 @@ public class TaiKhoanController {
                 ".\n\nTrân trọng !" );
         return ResponseEntity.ok(serviceimpl.add(taiKhoan));
     }
+    @PostMapping("addKHNhanh")
+    public ResponseEntity<?> addKHNhanh(Model model, @RequestBody TaiKhoanVaThongTin taiKhoanVaThongTin) {
+        ThongTinNguoiDung thongTinNguoiDung = taiKhoanVaThongTin.getThongTinNguoiDung();
+        TaiKhoan taiKhoan = taiKhoanVaThongTin.getTaiKhoan();
+        Long list = taiKhoanRepository.count();
+        taiKhoan.setMaTaiKhoan("KH" + (list + 1));
+        taiKhoan.setTrangThai(true);
 
+        String employeeName = thongTinNguoiDung.getTen();
+        String generatedPassword = generatePasswordFromName(employeeName);
+        taiKhoan.setPassword(generatedPassword);
+        var b = thongTinNguoiDungServiceimpl.addKHNhanh(thongTinNguoiDung);
+        taiKhoan.setThongTinNguoiDung(b);
+        serviceimpl.add(taiKhoan);
+        PhanQuyen phanQuyen = new PhanQuyen();
+        phanQuyen.setTaiKhoan(TaiKhoan.builder().id(taiKhoan.getId()).build());
+        phanQuyen.setQuyen(Quyen.builder().id(3).build());
+        phanQuyenServiceimpl.add(phanQuyen);
+
+        // Send an email to the newly added employee
+        sendEmail(taiKhoan.getEmail(), "Chào mừng bạn gia nhập gia đình 404Shoes", "Dear " + b.getTen() +
+                ".\n\nTôi hy vọng bạn đang có một ngày tốt lành. Chúng tôi muốn thông báo với bạn về việc thêm một thành viên mới vào đội ngũ của chúng tôi."+
+                ".\n\nTên nhân viên : " + b.getTen()+
+                ".\n\nChức vụ : Nhân viên bán hàng" +
+                ".\n\nChúng tôi đã tạo một tài khoản cho bạn , mật khẩu là : " + taiKhoan.getPassword()+
+                ".\n\nNếu bạn có bất kỳ câu hỏi hoặc thắc mắc gì , đừng ngần ngại liên hệ với chúng tôi theo Hotline: 0257xxxxx."+
+                ".\n\nTrân trọng !" );
+        return ResponseEntity.ok(serviceimpl.add(taiKhoan));
+    }
     private void sendEmail(String to, String subject, String text) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(to);

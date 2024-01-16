@@ -11,6 +11,7 @@ const API_API_BASE_URL_SAVE = "http://localhost:8080/tai_khoan/add";
 const API_API_BASE_URL_SAVE_QUAN_LY = "http://localhost:8080/tai_khoan/addQuanLy";
 const API_API_BASE_URL_SAVE_NHAN_VIEN = "http://localhost:8080/tai_khoan/addNhanVien";
 const API_API_BASE_URL_SAVE_KHACH_HANG = "http://localhost:8080/tai_khoan/addKhachHang";
+const API_API_BASE_URL_SAVE_KHACH_HANG_NHANH = "http://localhost:8080/tai_khoan/addKHNhanh";
 const API_BASE_URL_DELETE = "http://localhost:8080/tai_khoan/delete";
 const API_BASE_URL_UPDATE = "http://localhost:8080/tai_khoan/update";
 const API_BASE_URL_UPDATE_QUAN_LY = "http://localhost:8080/tai_khoan/updateQuanLy";
@@ -42,6 +43,9 @@ class taikhoanservice {
 
     addKhachHang(data) {
         return axios.post(API_API_BASE_URL_SAVE_KHACH_HANG, data)
+    }
+    addKhachHangNhanh(data) {
+        return axios.post(API_API_BASE_URL_SAVE_KHACH_HANG_NHANH, data)
     }
 
     deleteTaiKhoan(id) {
