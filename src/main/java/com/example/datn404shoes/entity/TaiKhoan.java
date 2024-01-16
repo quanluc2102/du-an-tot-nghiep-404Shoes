@@ -119,4 +119,5 @@ public class TaiKhoan {
     public void setThongTinNguoiDung(ThongTinNguoiDung thongTinNguoiDung) {
         this.thongTinNguoiDung = thongTinNguoiDung;
     }
+
 }

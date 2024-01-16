@@ -92,9 +92,9 @@ class taikhoanservice {
         return axios.put(API_BASE_URL_UPDATE_QUAN_LY + "/" + id, taiKhoan)
     }
 
-    updateNhanVien(taiKhoan, id) {
-        console.log(id)
-        return axios.put(API_BASE_URL_UPDATE_NHAN_VIEN + "/" + id, taiKhoan)
+    updateNhanVien(id, taiKhoan) {
+        console.log(id);
+        return axios.put(`${API_BASE_URL_UPDATE_NHAN_VIEN}/${id}`, taiKhoan);
     }
 
     updateKhachHang(id,taiKhoan) {

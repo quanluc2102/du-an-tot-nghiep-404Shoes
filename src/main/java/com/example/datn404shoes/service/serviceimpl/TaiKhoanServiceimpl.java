@@ -82,7 +82,7 @@ public class TaiKhoanServiceimpl implements TaiKhoanService {
         tk.setAnh(taiKhoan.getAnh());
         tk.setTrangThai(taiKhoan.isTrangThai());
         tk.setThongTinNguoiDung(taiKhoan.getThongTinNguoiDung());
-        responsitory.save(taiKhoan);
+        responsitory.save(tk);
         return tk;
     }
     @Override
@@ -171,6 +171,8 @@ public class TaiKhoanServiceimpl implements TaiKhoanService {
     public TaiKhoan getOneBySDT(String sdt) {
         return taiKhoanResponsitory.findByThongTinNguoiDung_Sdt(sdt);
     }
+
+
 
 
     public Optional<TaiKhoan> findById(Long id) {

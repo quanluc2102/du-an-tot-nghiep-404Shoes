@@ -78,6 +78,45 @@ const accountservice = {
                 throw error;
             });
     },
+
+    getDiaChiByKhachHang: () => {
+        return axios.get(`${API_URL}/get_dia_chi_by_khach_hang?id=${savedUser.thongTinNguoiDung.id}`)
+            .then(response => response.data)
+            .catch(error => {
+                console.error('Error fetching data:', error);
+                throw error;
+            });
+    },
+
+    addDiaChi: (diaChi) => {
+        console.log("hehehe",diaChi)
+        return axios.post(`${API_URL}/addDC`, diaChi)
+            .then(response => response.data)
+            .catch(error => {
+                console.error('Error adding data:', error);
+                throw error;
+            });
+    },
+
+    updateDiaChi: (id, updatedDiaChi) => {
+        console.log("adu",updatedDiaChi)
+        return axios.put(`${API_URL}/updateDiaChi/${id}`, updatedDiaChi)
+            .then(response => response.data)
+            .catch(error => {
+                console.error('Error updating data:', error);
+                throw error;
+            });
+    },
+
+    delete: (id, updatedDiaChi) => {
+        console.log("adu",updatedDiaChi)
+        return axios.delete(`${API_URL}/delete/${id}`,)
+            .then(response => response.data)
+            .catch(error => {
+                console.error('Error updating data:', error);
+                throw error;
+            });
+    },
 };
 
 export default accountservice;

@@ -174,30 +174,37 @@ public class TaiKhoanController {
         ThongTinNguoiDung thongTinNguoiDung = taiKhoanVaThongTin.getThongTinNguoiDung();
         TaiKhoan taiKhoan = taiKhoanVaThongTin.getTaiKhoan();
 
-        Optional<ThongTinNguoiDung> optionalThongTinNguoiDung = Optional.ofNullable(thongTinNguoiDungServiceimpl.add(thongTinNguoiDung));
+        Optional<ThongTinNguoiDung> optionalThongTinNguoiDung =
+                Optional.ofNullable(thongTinNguoiDungServiceimpl.update(id, thongTinNguoiDung));
 
         if (optionalThongTinNguoiDung.isPresent()) {
-            ThongTinNguoiDung b = optionalThongTinNguoiDung.get();
+            ThongTinNguoiDung updatedThongTinNguoiDung = optionalThongTinNguoiDung.get();
 
-            taiKhoan.setThongTinNguoiDung(b);
+            // Update the ThongTinNguoiDung entity
+
+            taiKhoan.setThongTinNguoiDung(updatedThongTinNguoiDung);
             taiKhoan.setTrangThai(true);
 
-            // Kiểm tra xem có file được chọn hay không
+            // Preserve the existing maTaiKhoan value
+            TaiKhoan existingTaiKhoan = serviceimpl.getOne(id);
+            taiKhoan.setMaTaiKhoan(existingTaiKhoan.getMaTaiKhoan());
+
+            // Check if files are present
             if (taiKhoanVaThongTin.getFiles() != null && !taiKhoanVaThongTin.getFiles().isEmpty()) {
                 taiKhoan.setAnh(taiKhoanVaThongTin.getFiles().get(0));
             } else {
-                // Xử lý khi không có file mới được chọn
-                // Lấy ảnh từ tài khoản người dùng hiện tại (có thể cần thay đổi tùy theo cấu trúc dữ liệu của bạn)
-                TaiKhoan existingTaiKhoan = serviceimpl.getOne(id);
+                // Preserve the existing image
                 taiKhoan.setAnh(existingTaiKhoan.getAnh());
             }
 
+            // Update the TaiKhoan entity
             serviceimpl.update(id, taiKhoan);
 
-            DiaChi diaChi = new DiaChi();
-            diaChi.setTen(b.getTen());
-            diaChi.setSdt(b.getSdt());
-            diaChi.setThongTinNguoiDung(b);
+            // Create or update DiaChi entity
+            DiaChi diaChi = diaChiServiceimpl.getOne(id);
+            diaChi.setTen(updatedThongTinNguoiDung.getTen());
+            diaChi.setSdt(updatedThongTinNguoiDung.getSdt());
+            diaChi.setThongTinNguoiDung(updatedThongTinNguoiDung);
             diaChi.setTrangThai(0);
             diaChi.setDiaChiCuThe(taiKhoanVaThongTin.getDiaChiCuThe());
             diaChi.setTinhThanhPho(taiKhoanVaThongTin.getTinhThanhPho());
@@ -205,16 +212,16 @@ public class TaiKhoanController {
             diaChi.setXaPhuongThiTran(taiKhoanVaThongTin.getXaPhuongThiTran());
             diaChiServiceimpl.update(diaChi);
 
-            PhanQuyen phanQuyen = new PhanQuyen();
-            phanQuyen.setTaiKhoan(TaiKhoan.builder().id(taiKhoan.getId()).build());
-            phanQuyen.setQuyen(Quyen.builder().id(1).build());
-            phanQuyenServiceimpl.update(id, phanQuyen);
+            // Assuming you have a PhanQuyen update logic here
 
-            return ResponseEntity.ok(serviceimpl.update(id, taiKhoan));
+            return ResponseEntity.ok("Update successful");
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Không tìm thấy thông tin người dùng");
         }
     }
+
+
+
 
 
 

@@ -285,10 +285,10 @@ function CheckOut({ location }) {
                 taiKhoanId: user.length != 0 ? parseInt(user.id) : 0,
                 diaChiId: 3,
                 thanhToanId: PTTT,
-                ghiChu: ghiChu,
+                ghiChu: `"Đã thanh toán VNPay"`,
                 //bắt đầu
                 // kieuHoaDon:1,
-                trangThai:4,
+                trangThai:0,
                 ten: ten,
                 sdt: sdt,
                 // email:"",
