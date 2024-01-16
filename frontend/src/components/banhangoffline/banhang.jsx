@@ -121,7 +121,7 @@ class BanHangOffline extends Component {
      
         this.thayDoiCCCDAdd = this.thayDoiCCCDAdd.bind(this);
         this.thayDoiEmailAdd = this.thayDoiEmailAdd.bind(this);
-        
+
         this.debouncedUpdateSoLuong = _debounce(this.updateSoLuong, 300).bind(this);
 
     }
