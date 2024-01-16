@@ -51,6 +51,12 @@ public interface TaiKhoanResponsitory extends JpaRepository<TaiKhoan,Long> {
             "WHERE tk.id = :id")
     List<Object[]> findUserDetailsById(@Param("id") Long id);
 
+    @Query("SELECT ttn.ten,ttn.ngaySinh,ttn.sdt,tk.email,tk.password " +
+            "FROM ThongTinNguoiDung ttn " +
+            "JOIN TaiKhoan tk ON ttn.id = tk.thongTinNguoiDung.id " +
+            "WHERE tk.id = :id")
+    List<Object[]> findUserDetailsKHById(@Param("id") Long id);
+
 
 
 }
