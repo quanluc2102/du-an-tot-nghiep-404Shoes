@@ -107,7 +107,15 @@ const accountservice = {
                 throw error;
             });
     },
-
+    updateThongTin: (id, requestData) => {
+        console.log("adu",requestData)
+        return axios.put(`${API_URL}/updateKhachHang/${id}`, requestData)
+            .then(response => response.data)
+            .catch(error => {
+                console.error('Error updating data:', error);
+                throw error;
+            });
+    },
     delete: (id, updatedDiaChi) => {
         console.log("adu",updatedDiaChi)
         return axios.delete(`${API_URL}/delete/${id}`,)
@@ -117,6 +125,7 @@ const accountservice = {
                 throw error;
             });
     },
+
 };
 
 export default accountservice;
