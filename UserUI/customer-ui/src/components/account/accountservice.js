@@ -116,7 +116,7 @@ const accountservice = {
             });
     },
     updateThongTin: (id, updatedThongTin) => {
-        console.log("adu",updatedThongTin)
+        console.log("adu duma",updatedThongTin)
         return axios.put(`${API_URL}/updateKhachHang/${id}`, updatedThongTin)
             .then(response => response.data)
             .catch(error => {

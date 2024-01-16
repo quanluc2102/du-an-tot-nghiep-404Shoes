@@ -38,7 +38,11 @@ function Account() {
     const [quanHuyenNew, setQuanHuyenNew] = useState("");
     const [tinhThanhPhoNew, setTinhThanhPhoNew] = useState("");
     const [code, setCode] = useState("");
+    const [tenNguoiDung, settenNguoiDung] = useState("");
+    const [sdtND, setSDTND] = useState("");
     const [sdt, setSDT] = useState("");
+    const [passwordND, setpasswordND] = useState("");
+    const [ngaySinhND, setngaySinhND] = useState("");
     const [ten, setTen] = useState("");
     const [codeTP, setCodeTP] = useState(0);
     const [codeQuan, setCodeQuan] = useState(0);
@@ -52,14 +56,15 @@ function Account() {
     const [id, setId] = useState('');
     const [showPassword, setShowPassword] = useState(false);
 
-    const [taiKhoanUpdate, setTaiKhoanUpdate] = useState({
-        email: '', // Initial email value
-        password: '' // Initial password value
-    });
+    // const [nguoiDungUpdate, setNguoiDungUpdate] = useState({
+    //
+    // });
     const [nguoiDungUpdate, setNguoiDungUpdate] = useState({
         ten: '', // Initial ten value
         sdt: '', // Initial sdt value
-        ngaySinh: '' // Initial ngaySinh value
+        ngaySinh: '', // Initial ngaySinh value
+        // email: '', // Initial email value
+        password: '' // Initial password value
         // Add other properties as needed
     });
 
@@ -80,7 +85,7 @@ function Account() {
                 const id = getIdFromLocalStorage();
                 console.log("User Account Id Data:", id);
 
-                const response = await fetch(`http://localhost:8080/tai_khoan/khachhangdetail/${id}`, {
+                const response = await fetch(`http://localhost:8080/khach_hang_page/get_khach_hang/${id}`, {
                     method: "GET",
                     headers: {
                         "Content-Type": "application/json",
@@ -94,28 +99,11 @@ function Account() {
 
                 const responseData = await response.json();
                 console.log("Response Data:", responseData);
+                settenNguoiDung(responseData.thongTinNguoiDung.ten)
+                setSDTND(responseData.thongTinNguoiDung.sdt)
+                setpasswordND(responseData.password)
+                setngaySinhND(responseData.thongTinNguoiDung.ngaySinh)
 
-                if (Array.isArray(responseData) && responseData.length > 0) {
-                    const [
-                        ten,
-                        ngaySinh,
-                        sdt,
-                        email,
-                        password
-                    ] = responseData[0];
-                    setTaiKhoanUpdate({
-                        email,
-                        password
-                    });
-                    setNguoiDungUpdate({
-                        ten,
-                        ngaySinh,
-                        sdt
-                    });
-
-                } else {
-                    console.error("Invalid user account data format");
-                }
             } catch (error) {
                 console.error("Detail request error:", error);
             }
@@ -190,18 +178,16 @@ function Account() {
 
         // Nếu các trường đều hợp lệ, tiến hành thêm địa chỉ
         const responseData = {
-            taiKhoanUpdate: {
-                email,
-                password,
-            },
             nguoiDungUpdate: {
                 ten,
                 sdt,
                 ngaySinh,
+                email,
+                password,
             },
         }
         const id = getIdFromLocalStorage();
-        accountservice.updateThongTin(id,responseData)
+        accountservice.updateThongTin(id,nguoiDungUpdate)
             .then(responseData => {
                 console.log('Added Thông tin:', responseData);
                 accountservice.getDiaChiByKhachHang()
@@ -245,7 +231,7 @@ function Account() {
     }
 
     const thayDoiEmailUpdate = (event) => {
-        setTaiKhoanUpdate((prevState) => ({
+        setNguoiDungUpdate((prevState) => ({
             ...prevState,
             email: event.target.value
         }));
@@ -254,7 +240,7 @@ function Account() {
     }
 
     const thayDoiPassUpdate = (event) => {
-        setTaiKhoanUpdate((prevState) => ({
+        setNguoiDungUpdate((prevState) => ({
             ...prevState,
             password: event.target.value
         }));
@@ -478,6 +464,16 @@ function Account() {
         }
     };
 
+    const getEmailFromLocalStorage = () => {
+        try {
+            const savedUser = JSON.parse(localStorage.getItem('currentUser'));
+            return savedUser.email || '';
+        } catch (error) {
+            console.error('Error while retrieving user name from local storage:', error);
+            return '';
+        }
+    };
+
     const getUserAvatarFromLocalStorage = () => {
         try {
             const savedUser = JSON.parse(localStorage.getItem('currentUser'));
@@ -602,7 +598,7 @@ function Account() {
                                         type="text"
                                         className="form-control"
                                         id="ten"
-                                        value={nguoiDungUpdate.ten}
+                                        // value={tenNguoiDung}
                                         onChange={thayDoiTenUpdate}
                                     />
                                 </div>
@@ -613,7 +609,7 @@ function Account() {
                                         type="date"
                                         className={`form-control`}
                                         id="ngaySinh"
-                                        value={nguoiDungUpdate.ngaySinh}
+                                        // value={ngaySinh}
                                         onChange={thayDoiNGaySinhUpdate}
                                     />
                                 </div>
@@ -624,22 +620,23 @@ function Account() {
                                         type="text"
                                         className={`form-control `}
                                         id="sdt"
-                                        value={nguoiDungUpdate.sdt}
+                                        // value={sdtND}
                                         onChange={thayDoiSdtUpdate}
                                     />
                                 </div>
 
                                 {/* Email */}
-                                <div className="form-group">
-                                    <label htmlFor="email">Email: <span style={{color: 'red'}}>*</span></label>
-                                    <input
-                                        type="email"
-                                        className={`form-control `}
-                                        id="email"
-                                        value={taiKhoanUpdate.email}
-                                        onChange={thayDoiEmailUpdate}
-                                    />
-                                </div>
+                                {/*<div className="form-group">*/}
+                                {/*    <label htmlFor="email">Email: <span style={{color: 'red'}}>*</span></label>*/}
+                                {/*    <input*/}
+                                {/*        disabled*/}
+                                {/*        type="email"*/}
+                                {/*        className={`form-control `}*/}
+                                {/*        id="email"*/}
+                                // {/*        value={nguoiDungUpdate.email}*/}
+                                {/*        onChange={thayDoiEmailUpdate}*/}
+                                {/*    />*/}
+                                {/*</div>*/}
                                 {/* Email */}
                                 <div className="form-group">
                                     <label htmlFor="password">
@@ -650,7 +647,7 @@ function Account() {
                                             type={showPassword ? 'text' : 'password'}
                                             className={`form-control`}
                                             id="password"
-                                            value={taiKhoanUpdate.password}
+                                            // value={nguoiDungUpdate.password}
                                             onChange={thayDoiPassUpdate}
                                         />
                                         <div className="input-group-append">
@@ -794,7 +791,8 @@ function Account() {
                     </div>
                 </a>
                 <div className="user-info">
-                    <div className="username">{getUserNameFromLocalStorage()}</div>
+                    <div className="username">{getUserNameFromLocalStorage()} ({getEmailFromLocalStorage()})</div>
+                    {/*<div className="username">{getEmailFromLocalStorage()}</div>*/}
                     <div>
                         <a className="edit-profile-link" href="/user/account/profile">
                             <svg width="12" height="12" viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg">

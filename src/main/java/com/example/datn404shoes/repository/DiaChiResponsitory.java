@@ -16,6 +16,10 @@ public interface DiaChiResponsitory extends JpaRepository<DiaChi, Long> {
     Optional<DiaChi> findById(long id);
     List<DiaChi> findDiaChiByThongTinNguoiDungId(long id);
 
+
+    @Query("select DiaChi from DiaChi  where id = :id")
+    DiaChi findOneDiaChiByThongTinNguoiDungId(long id);
+
     @Query(value = "select dc.* from dia_chi dc \n" +
             "join tai_khoan tk on tk.thong_tin_nguoi_dung_id=dc.thong_tin_nguoi_dung_id\n" +
             "where tk.id=:id",nativeQuery = true)

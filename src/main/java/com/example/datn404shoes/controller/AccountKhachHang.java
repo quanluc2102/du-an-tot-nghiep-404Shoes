@@ -24,6 +24,8 @@ public class AccountKhachHang {
     @Autowired
     private TaiKhoanResponsitory taiKhoanResponsitory;
     @Autowired
+    private ThongTinNguoiDungRespository thongTinNguoiDungRespository;
+    @Autowired
     private HoaDonChiTietRepository hoaDonChiTietRepository;
     @Autowired
     DiaChiResponsitory diaChiResponsitory;
@@ -84,9 +86,9 @@ public class AccountKhachHang {
     public ResponseEntity<?> get_dia_chi_by_khach_hang(Long id) {
         return ResponseEntity.ok(diaChiServiceimpl.getAllByIdTTND(id));
     }
-    @GetMapping("get_khach_hang")
-    public ResponseEntity<?> get_khach_hang(Long id) {
-        return ResponseEntity.ok(taiKhoanServiceimpl.getAllByIdTTND(id));
+    @GetMapping("get_khach_hang/{id}")
+    public ResponseEntity<?> get_khach_hang(@PathVariable Long id) {
+        return ResponseEntity.ok(taiKhoanServiceimpl.getOne(id));
     }
 
     @PostMapping("addDC")
@@ -171,23 +173,28 @@ public class AccountKhachHang {
     @PutMapping("updateKhachHang/{id}")
     public ResponseEntity<?> updateKhachHang(@PathVariable Long id, @RequestBody TaiKhoanDTO updateThongTin) {
         System.out.println("id" + id);
+//        System.out.println("meo moe"+updateThongTin.getEmail());
         // Bước 1: Xác định địa chỉ cần cập nhật
         TaiKhoan existingTaiKhoan = taiKhoanResponsitory.getById(id);
+        ThongTinNguoiDung existingTTND = thongTinNguoiDungServiceimpl.getOne(existingTaiKhoan.getThongTinNguoiDung().getId());
 
         // Bước 2: Cập nhật thông tin địa chỉ với dữ liệu mới từ updatedDiaChi
-        existingTaiKhoan.setEmail(updateThongTin.getEmail());
+//        existingTaiKhoan.setEmail(updateThongTin.getEmail());
         existingTaiKhoan.setPassword(updateThongTin.getPassword());
         existingTaiKhoan.setTrangThai(true);
-
+        existingTTND.setTen(updateThongTin.getTen());
+        existingTTND.setNgaySinh(updateThongTin.getNgaySinh());
+        existingTTND.setSdt(updateThongTin.getSdt());
         // Lấy ngày và giờ hiện tại
         java.util.Date currentDate = new java.util.Date();
         java.sql.Date ngayCapNhat = new java.sql.Date(currentDate.getTime());
         existingTaiKhoan.setNgayCapNhat(ngayCapNhat);
 
-        existingTaiKhoan.setThongTinNguoiDung(thongTinNguoiDungServiceimpl.findById(updateThongTin.getThongTinNguoiDungId()));
+//        existingTaiKhoan.setThongTinNguoiDung(thongTinNguoiDungServiceimpl.findById(updateThongTin.getThongTinNguoiDungId()));
 
         // Bước 3: Lưu trữ đối tượng địa chỉ đã cập nhật vào cơ sở dữ liệu
         TaiKhoan updatedEntity = taiKhoanResponsitory.save(existingTaiKhoan);
+        ThongTinNguoiDung updatedEntityTTND = thongTinNguoiDungRespository.save(existingTTND);
         return ResponseEntity.ok(updatedEntity);
 
     }
