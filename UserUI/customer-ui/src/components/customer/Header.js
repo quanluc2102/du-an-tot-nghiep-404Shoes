@@ -1,8 +1,12 @@
-import React from 'react'
+import React, {useEffect, useState} from 'react'
 import {Link} from "react-router-dom/cjs/react-router-dom";
 import {useHistory} from 'react-router-dom';
+import {GioHangService} from "../../service/GioHangService";
+import {da} from "date-fns/locale";
+import {SanPhamService} from "../../service/SanPhamService";
 
 function Header() {
+    const [SPCT, setSPCT] = useState([]);
     const handleLogout = () => {
         // Thực hiện các thao tác đăng xuất, ví dụ: xóa token từ localStorage
         localStorage.removeItem('token');
@@ -11,7 +15,26 @@ function Header() {
         // Chuyển hướng người dùng về trang đăng nhập
         window.location.href = (`/login`);
     };
+
     const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+
+    useEffect(() => {
+        const fetchData = async () => {
+            const storedDataUser = localStorage.getItem('currentUser');
+            const dataUser = storedDataUser ? JSON.parse(storedDataUser) : [];
+            let data;
+
+            if (storedDataUser) {
+                data = await GioHangService.getGHOne(dataUser.id);
+            } else {
+                data = JSON.parse(localStorage.getItem('listSPCT'));
+            }
+
+            setSPCT(data);
+        };
+
+        fetchData();
+    }, [SPCT]);
 
     return (
         <header>
@@ -42,7 +65,8 @@ function Header() {
                     <Link to='/your-cart/6' style={{textDecoration: 'none'}}>
                         <a className="navbar-brand" href="/your-cart/2" style={{fontSize: '13px'}}
                            >
-                            <i className='bx bxs-cart'></i>Giỏ hàng {'(0)'}
+                            <i className='bx bxs-cart'></i>Giỏ hàng {`(${SPCT.length})`}
+                            {/*<i className='bx bxs-cart' style={{display:"none"}}>{soLuongSPTrongGio()}</i>*/}
                         </a>
                     </Link>
                 </div>

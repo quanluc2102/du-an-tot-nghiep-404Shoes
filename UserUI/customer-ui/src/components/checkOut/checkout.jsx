@@ -262,13 +262,8 @@ function CheckOut({ location }) {
 
     const save = async () => {
         let confirm;
-        if (PTTT === 2) {
-            confirm = window.confirm("Bạn xác nhận muốn thanh toán hóa đơn này ?");
-        } else {
-            confirm = window.confirm("Bạn xác nhận đã thanh toán cho hóa đơn này ?");
-        }
 
-
+        confirm = window.confirm("Bạn xác nhận muốn đặt hóa đơn này ?");
         if (!confirm) {
             return;
         }
@@ -306,14 +301,25 @@ function CheckOut({ location }) {
             if(phiShip===0){
                 alert("Chưa chọn địa chỉ giao , không thể đặt hàng !!!");
                 return;
-            }if(sdt.length < 10){
+            }
+            if(ten.length===0){
+                alert("Chưa nhập họ tên ! ");
+                return;
+            }
+            if(sdt.length < 10){
                 alert("SĐT nhập sai (SĐT có 10 số) ! ");
                 return;
-            }if(sdt.length > 10){
+            }
+            if(sdt.length > 10){
                 alert("SĐT nhập sai ( SĐT có 10 số) ! ");
                 return;
-            }if(!/^\d+$/.test(sdt)){
+            }
+            if(!/^\d+$/.test(sdt)){
                 alert("SĐT có chữ ! ");
+                return;
+            }
+            if(diaChiCuThe.length===0){
+                alert("Chưa nhập địa chỉ nhận cụ thể ! ");
                 return;
             }else{
                 localStorage.setItem('hoanDonData', JSON.stringify(hd));
@@ -339,7 +345,6 @@ function CheckOut({ location }) {
             }
 
         }
-
 
         if (confirm && PTTT === 2) {
             const tong = SPCT.reduce((total, spct) => {
@@ -369,8 +374,28 @@ function CheckOut({ location }) {
                 tinhThanhPho: tinhThanhPho
             }
             console.log(hd)
-            if (phiShip === 0) {
+            if(phiShip===0){
                 alert("Chưa chọn địa chỉ giao , không thể đặt hàng !!!");
+                return;
+            }
+            if(ten.length===0){
+                alert("Chưa nhập họ tên ! ");
+                return;
+            }
+            if(sdt.length < 10){
+                alert("SĐT nhập sai (SĐT có 10 số) ! ");
+                return;
+            }
+            if(sdt.length > 10){
+                alert("SĐT nhập sai ( SĐT có 10 số) ! ");
+                return;
+            }
+            if(!/^\d+$/.test(sdt)){
+                alert("SĐT có chữ ! ");
+                return;
+            }
+            if(diaChiCuThe.length===0){
+                alert("Chưa nhập địa chỉ nhận cụ thể ! ");
                 return;
             } else {
                 const thongBao = await GioHangService.sold(hd);
@@ -384,6 +409,68 @@ function CheckOut({ location }) {
             }
         }
 
+        if (confirm && PTTT === 1) {
+            const tong = SPCT.reduce((total, spct) => {
+                return total + spct.sanPhamChiTietId.donGia * spct.soLuong;
+            }, 0);
+            const tongTienSauKhiGiam = tinhTongTienHang();
+            const hd = {
+                gioHang: SPCT,
+                km: selectedKM.length != 0 ? parseInt(selectedKM) : 0,
+                tongTien: tong,
+                tongTienSauKhiGiam: tongTienSauKhiGiam,
+                tienGiam: tong - tongTienSauKhiGiam,
+                tienShip: phiShip,
+                taiKhoanId: user.length != 0 ? parseInt(user.id) : 0,
+                diaChiId: 3,
+                thanhToanId: PTTT,
+                ghiChu: ghiChu,
+                //bắt đầu
+                // kieuHoaDon:1,
+                trangThai:0,
+                ten: ten,
+                sdt: sdt,
+                // email:"",
+                diaChiCuThe: diaChiCuThe,
+                xaPhuongThiTran: xaPhuongThiTran,
+                quanHuyen: quanHuyen,
+                tinhThanhPho: tinhThanhPho
+            }
+            console.log(hd)
+            if(phiShip===0){
+                alert("Chưa chọn địa chỉ giao , không thể đặt hàng !!!");
+                return;
+            }
+            if(ten.length===0){
+                alert("Chưa nhập họ tên ! ");
+                return;
+            }
+            if(sdt.length < 10){
+                alert("SĐT nhập sai (SĐT có 10 số) ! ");
+                return;
+            }
+            if(sdt.length > 10){
+                alert("SĐT nhập sai ( SĐT có 10 số) ! ");
+                return;
+            }
+            if(!/^\d+$/.test(sdt)){
+                alert("SĐT có chữ ! ");
+                return;
+            }
+            if(diaChiCuThe.length===0){
+                alert("Chưa nhập địa chỉ nhận cụ thể ! ");
+                return;
+            } else {
+                const thongBao = await GioHangService.sold(hd);
+                alert(thongBao)
+                if (user.length != 0) {
+
+                } else {
+                    localStorage.removeItem('listSPCT')
+                }
+                history.push(`/thanhcong`)
+            }
+        }
     }
 
     const moModal = () => {
@@ -734,12 +821,13 @@ function CheckOut({ location }) {
                             <div className="col-12 bg-light pt-3" style={{marginTop:30}}>
                                 <div className="col-12 bg-light pt-3" >
                                     <h5 style={{marginLeft:35}}>Phương thức thanh toán
-                                        <a href="#" className={`btn btn-sm btn-outline-dark size-item ${PTTT===2 ? 'selected' : ''}`} style={{marginLeft:450}} onClick={PTTTCod} >
+                                        <a href="#" className={`btn btn-sm btn-outline-dark size-item ${PTTT===2 ? 'selected' : ''}`} style={user!=0?{marginLeft:450}:{marginLeft:640}}  onClick={PTTTCod} >
                                             <div>Thanh toán khi nhận hàng</div>
                                         </a>
-                                        <a href="#" className={`btn btn-sm btn-outline-dark size-item ${PTTT===3 ? 'selected' : ''}`} style={{marginLeft:20}} onClick={PTTTVNPay}>
+                                        {user!=0?(<a href="#" className={`btn btn-sm btn-outline-dark size-item ${PTTT===3 ? 'selected' : ''}`} style={{marginLeft:20}} onClick={PTTTVNPay}>
                                             <div>Thanh toán bằng VNPay</div>
-                                        </a>
+                                        </a>):(<a></a>)}
+
                                         <a href="#" className={`btn btn-sm btn-outline-dark size-item ${PTTT===1 ? 'selected' : ''}`} style={{marginLeft:20}} onClick={PTTTVietQR}>
                                             <div>Thanh toán bằng VietQR</div>
                                         </a>

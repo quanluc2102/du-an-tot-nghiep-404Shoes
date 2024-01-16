@@ -24,6 +24,7 @@ public interface SanPhamRespository extends JpaRepository<SanPham, Long> {
             "LEFT join danh_muc dm on dm.id=sp.danh_muc\n" +
             "LEFT join xuat_xu xx on xx.id=sp.xuat_xu\n" +
             "LEFT join thuong_hieu th on th.id=sp.thuong_hieu\n" +
+            "WHERE sp.trang_thai = 1 \n" +
             "GROUP BY sp.id,sp.ma_san_pham,sp.anh_bia,sp.danh_muc,sp.mo_ta,sp.ten,sp.thuong_hieu,sp.trang_thai,sp.xuat_xu,dm.ten,xx.ten,th.ten\n" +
             "order by SUM(hdct.so_luong) desc", nativeQuery = true)
     Page<SanPhamUserCustom> findAllKhoangGia(Pageable pageable);
