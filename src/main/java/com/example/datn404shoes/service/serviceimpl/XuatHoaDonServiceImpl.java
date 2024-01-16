@@ -93,7 +93,7 @@ public class XuatHoaDonServiceImpl implements XuatHoaDonService {
 // Thêm hình ảnh logo
             String logoPath = "src/main/resources/static/logo.jpg";
             Image logoImage = Image.getInstance(logoPath);
-            logoImage.scaleToFit(150, 150); // Thay đổi kích thước logo nếu cần thiết
+            logoImage.scaleToFit(150,150 ); // Thay đổi kích thước logo nếu cần thiết
             logoImage.setAlignment(Element.ALIGN_CENTER); // Thiết lập vị trí logo trên trang
             document.add(logoImage);
 
