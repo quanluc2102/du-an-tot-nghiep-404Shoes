@@ -87,6 +87,14 @@ const accountservice = {
                 throw error;
             });
     },
+    getKhachHang: () => {
+        return axios.get(`${API_URL}/get_khach_hang?id=${savedUser.thongTinNguoiDung.id}`)
+            .then(response => response.data)
+            .catch(error => {
+                console.error('Error fetching data:', error);
+                throw error;
+            });
+    },
 
     addDiaChi: (diaChi) => {
         console.log("hehehe",diaChi)
@@ -107,9 +115,9 @@ const accountservice = {
                 throw error;
             });
     },
-    updateThongTin: (id, requestData) => {
-        console.log("adu",requestData)
-        return axios.put(`${API_URL}/updateKhachHang/${id}`, requestData)
+    updateThongTin: (id, updatedThongTin) => {
+        console.log("adu",updatedThongTin)
+        return axios.put(`${API_URL}/updateKhachHang/${id}`, updatedThongTin)
             .then(response => response.data)
             .catch(error => {
                 console.error('Error updating data:', error);
