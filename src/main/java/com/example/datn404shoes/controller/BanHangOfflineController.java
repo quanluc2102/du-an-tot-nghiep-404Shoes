@@ -1,9 +1,6 @@
 package com.example.datn404shoes.controller;
 
-import com.example.datn404shoes.DTO.DeleteHdctDTO;
-import com.example.datn404shoes.DTO.DeleteHoaDonDTO;
-import com.example.datn404shoes.DTO.UpdateHoaDonChiTietDTO;
-import com.example.datn404shoes.DTO.ThanhToanDTO;
+import com.example.datn404shoes.DTO.*;
 import com.example.datn404shoes.entity.KhuyenMai;
 import com.example.datn404shoes.entity.ThanhToan;
 import com.example.datn404shoes.request.SanPhamChiTietRequest;
@@ -256,24 +253,35 @@ public class BanHangOfflineController {
         }
     }
 
-    @PostMapping("/update_soluong/{id}") // Phan nay dang sua
+    @PostMapping("/update_soluong/{id}")
     public ResponseEntity<?> capNhatSoLuongHDCT(@PathVariable("id") Long id,
-                                                @RequestBody Integer soLuong) {
-        Optional<HoaDonChiTiet> hoaDonCT = hoaDonChiTietRepository.findById(id);
+                                                @RequestBody UpdateSoLuongHdctDTO updateSoLuongHdctDTO) {
+        Optional<HoaDonChiTiet> hoaDonChiTietOptional = hoaDonChiTietRepository.findById(id);
 
-        if (hoaDonCT.isPresent()) {
-            HoaDonChiTiet hdct = hoaDonCT.get();
+        if(hoaDonChiTietOptional.isPresent()){
+            HoaDonChiTiet hoaDonChiTiet = hoaDonChiTietOptional.get();
+            SanPhamChiTiet sanPhamChiTiet = sanPhamChiTietRepository.findById(hoaDonChiTiet.getSanPhamChiTiet().getId()).get();
 
-            banHangOfflineService.updateSoLuongSP(soLuong, id);
+            Integer soLuongTrongSPCT = sanPhamChiTiet.getSoLuong();
+            Integer soLuongTrongHDCT = hoaDonChiTiet.getSoLuong();
 
-            SanPhamChiTiet spct = hdct.getSanPhamChiTiet();
-            if (spct != null) {
-                spct.setSoLuong(spct.getSoLuong() - soLuong);
-                sanPhamChiTietRepository.save(spct);
+            if(soLuongTrongHDCT >= updateSoLuongHdctDTO.getSoLuongNhap()){
+                int soLuongMoi = soLuongTrongHDCT - updateSoLuongHdctDTO.getSoLuongNhap();
+                hoaDonChiTiet.setSoLuong(updateSoLuongHdctDTO.getSoLuongNhap());
+                sanPhamChiTiet.setSoLuong(soLuongTrongSPCT + soLuongMoi);
+                hoaDonChiTietRepository.save(hoaDonChiTiet);
+                sanPhamChiTietRepository.save(sanPhamChiTiet);
+            }else{
+                int soLuongMoi = updateSoLuongHdctDTO.getSoLuongNhap() - soLuongTrongHDCT;
+                hoaDonChiTiet.setSoLuong(updateSoLuongHdctDTO.getSoLuongNhap());
+                sanPhamChiTiet.setSoLuong(soLuongTrongSPCT - soLuongMoi);
+                hoaDonChiTietRepository.save(hoaDonChiTiet);
+                sanPhamChiTietRepository.save(sanPhamChiTiet);
             }
-            List<HoaDonChiTiet> danhSachHDCT = banHangOfflineService.layDanhSachHDCT(hdct.getHd().getId());
+
+            List<HoaDonChiTiet> danhSachHDCT = banHangOfflineService.layDanhSachHDCT(hoaDonChiTiet.getHd().getId());
             return ResponseEntity.ok(danhSachHDCT);
-        } else {
+        }else{
             return ResponseEntity.notFound().build();
         }
     }
