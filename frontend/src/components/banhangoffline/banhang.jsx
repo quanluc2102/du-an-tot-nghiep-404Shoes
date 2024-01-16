@@ -6,7 +6,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import ReactPaginate from 'react-paginate';
 import _ from 'lodash';
 import taikhoanservice from "../../services/taikhoanservice/taikhoanservice";
-
+import _debounce from 'lodash/debounce';
 import {
     Col,
     Tabs,
@@ -34,15 +34,15 @@ class BanHangOffline extends Component {
             quanHuyen: '',  // state này lưu quận huyện để thanh toán
             xaPhuongThiTran: '',  // state này lưu xã phường thị trấn để thanh toán
             diaChiCuThe: '',  // state này lưu địa chỉ cụ thể để thanh toán
-            listTP:[],
-            listQH:[],
-            listXP:[],
-            codeTP:0,
-            codeQH:0,
-            codeXP:"",
+            listTP: [],
+            listQH: [],
+            listXP: [],
+            codeTP: 0,
+            codeQH: 0,
+            codeXP: "",
             kieuHoaDon: 2,
             email: '', // state này lưu email để thanh toán
-            thanhToan: '', // state này lưu kiểu thanh toán để thanh toán
+            thanhToan: 4, // state này lưu kiểu thanh toán để thanh toán
             idKhachHang: '', // đây là 1 object khách hàng (khi chọn một khách hàng thì nó sẽ lưu lại thông tin khách hàng đấy ở đây)
             idNhanVien: 1,
             searchTerm: '',
@@ -109,6 +109,7 @@ class BanHangOffline extends Component {
         this.handleDistrictChange = this.handleDistrictChange.bind(this);
         this.handleWardChange = this.handleWardChange.bind(this);
         this.add = this.add.bind(this);
+
         this.thayDoiTenAdd = this.thayDoiTenAdd.bind(this);
    
         this.thayDoiSdtAdd = this.thayDoiSdtAdd.bind(this);
@@ -119,6 +120,9 @@ class BanHangOffline extends Component {
      
         this.thayDoiCCCDAdd = this.thayDoiCCCDAdd.bind(this);
         this.thayDoiEmailAdd = this.thayDoiEmailAdd.bind(this);
+
+
+        this.debouncedUpdateSoLuong = _debounce(this.updateSoLuong, 300).bind(this);
 
     }
 
@@ -140,7 +144,9 @@ class BanHangOffline extends Component {
         }).catch((error) => {
             console.error("Error fetching data:", error);
         });
+
         this.loadTP();
+
         this.fetchCities();
 
         this.fetchHoaDonChoDauTien();
@@ -184,23 +190,24 @@ class BanHangOffline extends Component {
 
     addKH(id) {
         window.location.href = '/addKhachHang';
-
     }
 
     displayImage = () => {
-        // Logic for displaying the image goes here
-        // For example, you can call this function in response to a button click
-        this.setState({ showImage: true });
+        this.setState({
+            showImage: true,
+            thanhToan: 1
+        }, () => {
+            console.log('kieu thanh toan: ', this.state.thanhToan);
+        });
     };
 
     closedisplayImage = () => {
-        // Logic for displaying the image goes here
-        // For example, you can call this function in response to a button click
-        this.setState({ showImage: false });
-    };
-
-    getTotalAmountWithoutPromotions = (tabProducts) => {
-        // Implement your logic for getting the total amount without promotions
+        this.setState({
+            showImage: false,
+            thanhToan: 4
+        }, () => {
+            console.log('kieu thanh toan: ', this.state.thanhToan);
+        });
     };
 
     handleSearch = (event) => {
@@ -720,7 +727,7 @@ class BanHangOffline extends Component {
                         quanHuyen: '',
                         xaPhuongThiTran: '',
                         khuyenMai: [],
-                        thanhToan: '',
+                        thanhToan: 4,
                         ghiChu: '',
                         kieuHoaDon: 2,
                         idKhachHang: '',
@@ -943,20 +950,22 @@ class BanHangOffline extends Component {
     };
 
     // hàm xử lí số lượng ở ô input trên (chưa hoàn thành)
-    handleQuantityChange = (e, productCode, productId) => {
+    handleQuantityChange = async (e, productCode, productId) => {
         const newQuantity = parseInt(e.target.value, 10);
 
         const { sanPhamChiTiet } = this.state;
 
         const selectedProduct = sanPhamChiTiet.find(product => product.ma === productCode);
-        console.log('product code: ', productCode);
-        console.log('selectedProduct:', selectedProduct);
 
         const isValidQuantity = !isNaN(newQuantity) && newQuantity !== null && newQuantity !== undefined;
 
-        // const limitedQuantity = isValidQuantity ? Math.max(newQuantity, 1) : 1;
+        const limitedQuantity = isValidQuantity ? Math.max(1, Math.min(newQuantity, selectedProduct ? selectedProduct.soLuong : 1)) : 1;
 
-        const limitedQuantity = isValidQuantity ? Math.min(newQuantity, selectedProduct ? selectedProduct.soLuong : 1) : 1;
+
+        console.log('id ctsp: ', selectedProduct.id);
+        console.log('limit quantity: ', limitedQuantity);
+        console.log("so luong moi: ", newQuantity);
+        console.log("id hdct: ", productId);
 
         const updatedProducts = this.state.tabProducts.map(product => {
             if (product.id === productId) {
@@ -965,26 +974,44 @@ class BanHangOffline extends Component {
             return product;
         });
 
-        console.log('limit quantity: ', limitedQuantity);
-        console.log("so luong moi: ", newQuantity);
-        console.log("id hdct: ", productId);
+        this.handleUpdateSoLuong(limitedQuantity, productId);
+        this.fetchDanhSachSP();
 
-        this.setState({
-            tabProducts: updatedProducts
-        });
+        // this.updateSoLuong(limitedQuantity, this.state.activeTabKey);
+        // this.fetchHDCT();
+
+        // this.setState({
+        //     tabProducts: updatedProducts
+        // });
+
+       
     };
 
-    // hàm update số lượng trong hdct ở ô input (chưa hoàn thành)
-    updateSoLuong = async (soLuong, idHDCT) => {
-        try {
-            const response = await axios.post(`http://localhost:8080/ban_hang/update_soluong/${idHDCT}`, soLuong);
-            const danhSachHDCT = response.data;
-            this.setState({ tabProducts: danhSachHDCT });
 
+    // hàm update số lượng trong hdct ở ô input
+    updateSoLuong = async (soLuong, idHDCT) => {
+
+        const UpdateSoLuongHdctDTO = {
+            soLuongNhap: soLuong,
+        }
+
+        try {
+            const response = await axios.post(`http://localhost:8080/ban_hang/update_soluong/${idHDCT}`, UpdateSoLuongHdctDTO);
+            if (response.status === 200) {
+                const danhSachHDCT = response.data;
+                this.setState({ tabProducts: danhSachHDCT });
+                this.fetchDanhSachSP();
+            }
         } catch (error) {
             console.log(error);
         }
     }
+
+    // hàm debounce update số lượng ô input
+    handleUpdateSoLuong = (soLuong, idHDCT) => {
+        this.debouncedUpdateSoLuong(soLuong, idHDCT);
+    };
+
 
     // hàm lấy dữ liệu hóa đơn chờ (hóa đơn hiển thị ở trên phần Tab)
     fetchHoaDonCho = async () => {
@@ -1178,83 +1205,84 @@ class BanHangOffline extends Component {
         return statusCounts;
     }
 
-    loadTP = async () =>{
+    loadTP = async () => {
         const responseTp = await axios.get('https://online-gateway.ghn.vn/shiip/public-api/master-data/province', {
             headers: {
-                'token': '93254e5e-a301-11ee-b394-8ac29577e80e', // Thay YOUR_API_KEY bằng API key thực tế của bạn
+                'token': '93254e5e-a301-11ee-b394-8ac29577e80e',
             },
         });
         const provincesData = responseTp.data.data;
-        this.setState({listTP:provincesData})
+        this.setState({ listTP: provincesData })
         // setListThanhPho(provincesData)
     }
 
-    loadQH = async (tp) =>{
+    loadQH = async (tp) => {
         const responseQH = await axios.get(`https://online-gateway.ghn.vn/shiip/public-api/master-data/district?province_id=${tp}`, {
             headers: {
-                'token': '93254e5e-a301-11ee-b394-8ac29577e80e', // Thay YOUR_API_KEY bằng API key thực tế của bạn
+                'token': '93254e5e-a301-11ee-b394-8ac29577e80e',
             },
         });
         const districtData = responseQH.data.data;
-        this.setState({listQH:districtData})
+        this.setState({ listQH: districtData })
 
     }
 
-    loadXP = async (qh) =>{
+    loadXP = async (qh) => {
         const responseXP = await axios.get(`https://online-gateway.ghn.vn/shiip/public-api/master-data/ward?district_id=${qh}`, {
             headers: {
-                'token': '93254e5e-a301-11ee-b394-8ac29577e80e', // Thay YOUR_API_KEY bằng API key thực tế của bạn
+                'token': '93254e5e-a301-11ee-b394-8ac29577e80e',
             },
         });
         const wardData = responseXP.data.data;
-        this.setState({listXP:wardData})
+        this.setState({ listXP: wardData })
     }
 
-    chonTP = (event) =>{
+    chonTP = (event) => {
         const tp = parseInt(event.target.value)
-        this.setState({codeTP:tp})
+        this.setState({ codeTP: tp })
         // setCodeTP(tp)
         this.state.listTP.map(value => {
-            if(value.ProvinceID===tp){
+            if (value.ProvinceID === tp) {
                 // setTinhThanhPhoNew(value.ProvinceName)
-                this.setState({tinhThanhPho:value.ProvinceName})
+                this.setState({ tinhThanhPho: value.ProvinceName })
                 // setTinhThanhPho(value.ProvinceName)
             }
         })
-        this.setState({codeQH:0,codeXP:"",phiShip:0})
+        this.setState({ codeQH: 0, codeXP: "", phiShip: 0 })
         // setCodeQuan(0)
         // setCodeXa(0)
         // setPhiShip(0)
         this.loadQH(tp);
     }
 
-    chonQH = (event) =>{
+    chonQH = (event) => {
         const qh = parseInt(event.target.value)
-        this.setState({codeQH:qh})
+        this.setState({ codeQH: qh })
         this.state.listQH.map(value => {
-            if(value.DistrictID===qh){
+            if (value.DistrictID === qh) {
                 // setQuanHuyenNew(value.DistrictName)
                 // setQuanHuyen(value.DistrictName)
-                this.setState({quanHuyen:value.DistrictName})
+                this.setState({ quanHuyen: value.DistrictName })
 
             }
         })
-        this.setState({codeXP:"",phiShip:0})
+        this.setState({ codeXP: "", phiShip: 0 })
         this.loadXP(qh);
     }
 
-    chonXP = (event) =>{
+    chonXP = (event) => {
         const xp = String(event.target.value)
-        this.setState({codeXP:xp})
+        this.setState({ codeXP: xp })
         this.state.listXP.map(value => {
-            if(value.WardCode===xp){
+            if (value.WardCode === xp) {
                 // setXaPhuongThiTranNew(value.WardName)
                 // setXaPhuongThiTran(value.WardName)
-                this.setState({xaPhuongThiTran:value.WardName})
+                this.setState({ xaPhuongThiTran: value.WardName })
 
             }
         })
     }
+
     tinhTienShip = async () => {
 
         let tongTien = this.getTotalAmountWithoutPromotions(this.state.tabProducts);
@@ -1276,10 +1304,10 @@ class BanHangOffline extends Component {
 
             const response = await axios.post('https://online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/fee', requestBody, {
                 headers: {
-                    'token': '93254e5e-a301-11ee-b394-8ac29577e80e', // Thay YOUR_API_KEY bằng API key thực tế của bạn
+                    'token': '93254e5e-a301-11ee-b394-8ac29577e80e',
                 },
             });
-            this.setState({phiShip:response.data.data.service_fee})
+            this.setState({ phiShip: response.data.data.service_fee })
             // return response.data.data.service_fee;
         } catch (error) {
             // Xử lý lỗi tại đây
@@ -1619,7 +1647,7 @@ class BanHangOffline extends Component {
                                                 value={this.state.codeTP}
                                             >
                                                 <option>Chọn tỉnh thành</option>
-                                                {this.state.listTP.map(tp=>(
+                                                {this.state.listTP.map(tp => (
                                                     <option value={tp.ProvinceID}>{tp.ProvinceName}</option>
                                                 ))}
                                             </select>
@@ -1634,7 +1662,7 @@ class BanHangOffline extends Component {
                                                 value={this.state.codeQH}
                                             >
                                                 <option >Chọn quận huyện</option>
-                                                {this.state.listQH.map(tp=>(
+                                                {this.state.listQH.map(tp => (
                                                     <option value={tp.DistrictID}>{tp.DistrictName}</option>
                                                 ))}
                                             </select>
@@ -1649,7 +1677,7 @@ class BanHangOffline extends Component {
                                                 value={this.state.codeXP}
                                             >
                                                 <option >Chọn xã/phường/thị trấn</option>
-                                                {this.state.listXP.map(tp=>(
+                                                {this.state.listXP.map(tp => (
                                                     <option value={tp.WardCode}>{tp.WardName}</option>
                                                 ))}
                                             </select>
@@ -1762,8 +1790,8 @@ class BanHangOffline extends Component {
                                 />
                             )}
                         </div>
-                        {this.state.codeXP===""?(<h7 style={{display: 'none',marginTop:8,float:"right"}}>Phí ship : {this.formatCurrency(this.state.phiShip)}</h7>) : (<h7 style={{display: 'none', marginTop:8,float:"right"}}>Phí ship : {this.formatCurrency(this.tinhTienShip())}</h7>)}
-                        <button onClick={this.state.showImage==false?this.displayImage:this.closedisplayImage}>{this.state.showImage==false?'Xuất':'Đóng'} QR</button>
+                        {this.state.codeXP === "" ? (<h6 style={{ display: 'none', marginTop: 8, float: "right" }}>Phí ship : {this.formatCurrency(this.state.phiShip)}</h6>) : (<h6 style={{ display: 'none', marginTop: 8, float: "right" }}>Phí ship : {this.formatCurrency(this.tinhTienShip())}</h6>)}
+                        <button onClick={this.state.showImage === false ? this.displayImage : this.closedisplayImage}>{this.state.showImage === false ? 'Xuất' : 'Đóng'} QR</button>
                         <div>
                             <Input id="ghiChuDonHang" placeholder="Nhập ghi chú đơn hàng" />
                             <br />

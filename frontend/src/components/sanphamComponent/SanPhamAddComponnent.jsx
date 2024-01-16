@@ -48,7 +48,7 @@ class SanPhamAddComponnent extends Component {
         this.thayDoiDanhMucAdd=this.thayDoiDanhMucAdd.bind(this);
     }
     home = ()=>{
-        window.location.href = (`/`);
+        window.location.href = (`/index`);
     }
     add = (e)=>{
         e.preventDefault();
@@ -84,7 +84,11 @@ class SanPhamAddComponnent extends Component {
 
         if (listFile.length === 0) {
             this.setState({error: {...this.state.error, files: "Chọn ít nhất 1 ảnh !"}});
-            console.log('nsx' + JSON.stringify(sanPham));
+            alert("Mời bạn chọn lại ảnh của sản phẩm chi tiết (nếu có) !");
+            return;
+        } else if (listFile.length >3 ) {
+            this.setState({error: {...this.state.error, files: "Chọn tối đa 3 ảnh !"}});
+            alert("Mời bạn chọn lại ảnh của sản phẩm chi tiết (nếu có) !");
             return;
         } else {
             this.setState({ error: { ...this.state.error, files: "" } });
@@ -351,7 +355,7 @@ class SanPhamAddComponnent extends Component {
                     kichThuoc: kt,
                     mauSac: ms,
                     soLuong: 1,
-                    gia: 0,
+                    gia: 1000000,
                     error:''
                 }))
             ).flat();

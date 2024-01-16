@@ -156,11 +156,15 @@ class ChiTietComponent extends Component {
     deleteAnh = (id,index)=>{
         const { listSPA } = this.state;
         const updatedListSPA = [...listSPA];
-        updatedListSPA.splice(index, 1);
-        this.setState({ listSPA: updatedListSPA });
-        SanPhamService.deleteAnh(id).then((res)=>{
+        if(listSPA.length===1){
+            alert("Không thể xóa hết ảnh !");
+        }else {
+            updatedListSPA.splice(index, 1);
+            this.setState({ listSPA: updatedListSPA });
+            SanPhamService.deleteAnh(id).then((res)=>{
 
-        })
+            })
+        }
     }
 
     changeSL = ()=>{
@@ -223,7 +227,7 @@ class ChiTietComponent extends Component {
                 kichThuoc: kt,
                 mauSac: ms,
                 soLuong: 1,
-                gia: 0,
+                gia: 1000000,
                 error:''
             }))
         ).flat();
@@ -272,6 +276,7 @@ class ChiTietComponent extends Component {
         if(!confirm){
             return;
         }
+        const  slAnh = this.state.listSPA.length + this.state.files.length;
         let listFile = []
         for(let i=0;i<this.state.files.length;i++){
             listFile.push(this.state.files[i].file.name);
@@ -284,6 +289,10 @@ class ChiTietComponent extends Component {
             danhMucId:this.state.sanPham.danhMuc,
             listMauSac: this.state.selectedOptionMS,
             listKichThuoc :this.state.selectedOptionKT
+        }
+        if (slAnh > 3) {
+            alert(`Mỗi sản phẩm chỉ được có tối đa 3 sản phẩm (Thừa ${slAnh - 3 } ảnh ) !`)
+            return;
         }
         if (!this.state.sanPham.ten.trim()) {
             this.setState({error: {...this.state.error, ten: "Tên không được bỏ trống !"}});
