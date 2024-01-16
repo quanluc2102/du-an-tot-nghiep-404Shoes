@@ -1,36 +1,28 @@
 package com.example.datn404shoes.controller;
 
-import com.example.datn404shoes.DTO.ChiTietHoaDonDTO;
 import com.example.datn404shoes.DTO.DiaChiDTO;
-import com.example.datn404shoes.DTO.HoaDonKhachDTO;
-import com.example.datn404shoes.entity.DiaChi;
-import com.example.datn404shoes.entity.HoaDon;
-import com.example.datn404shoes.entity.HoaDonChiTiet;
-import com.example.datn404shoes.entity.ThongTinNguoiDung;
-import com.example.datn404shoes.repository.DiaChiResponsitory;
-import com.example.datn404shoes.repository.HoaDonChiTietRepository;
-import com.example.datn404shoes.repository.HoaDonRepository;
-import com.example.datn404shoes.repository.ThongKeRepository;
+import com.example.datn404shoes.DTO.TaiKhoanDTO;
+import com.example.datn404shoes.entity.*;
+import com.example.datn404shoes.repository.*;
 import com.example.datn404shoes.service.serviceimpl.DiaChiServiceimpl;
 import com.example.datn404shoes.service.serviceimpl.TaiKhoanServiceimpl;
 import com.example.datn404shoes.service.serviceimpl.ThongTinNguoiDungServiceimpl;
-import io.micrometer.common.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.sql.Date;
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:3006")
 @RequestMapping("khach_hang_page")
 public class AccountKhachHang {
     @Autowired
+    private TaiKhoanServiceimpl serviceimpl;
+    @Autowired
     private HoaDonRepository hoaDonRepository;
+    @Autowired
+    private TaiKhoanResponsitory taiKhoanResponsitory;
     @Autowired
     private HoaDonChiTietRepository hoaDonChiTietRepository;
     @Autowired
@@ -39,6 +31,9 @@ public class AccountKhachHang {
     private ThongTinNguoiDungServiceimpl thongTinNguoiDungServiceimpl;
     @Autowired
     DiaChiServiceimpl diaChiServiceimpl;
+    @Autowired
+    TaiKhoanServiceimpl taiKhoanServiceimpl;
+
     @GetMapping("all")
     public List<Object[]> all(Long id) {
         return hoaDonRepository.all(id);
@@ -89,6 +84,10 @@ public class AccountKhachHang {
     public ResponseEntity<?> get_dia_chi_by_khach_hang(Long id) {
         return ResponseEntity.ok(diaChiServiceimpl.getAllByIdTTND(id));
     }
+    @GetMapping("get_khach_hang")
+    public ResponseEntity<?> get_khach_hang(Long id) {
+        return ResponseEntity.ok(taiKhoanServiceimpl.getAllByIdTTND(id));
+    }
 
     @PostMapping("addDC")
     public ResponseEntity<?> addDC(@RequestBody DiaChiDTO diaChi) {
@@ -117,46 +116,46 @@ public class AccountKhachHang {
 
         // Kiểm tra xem có ID được cung cấp hay không để xác định hành động là thêm mới hay cập nhật
 
-            DiaChi addedDiaChi = diaChiResponsitory.save(newDiaChi);
-            return ResponseEntity.ok(addedDiaChi);
+        DiaChi addedDiaChi = diaChiResponsitory.save(newDiaChi);
+        return ResponseEntity.ok(addedDiaChi);
 
 
     }
 
     @PutMapping("/updateDiaChi/{id}")
     public ResponseEntity<?> updateDiaChi(@PathVariable Long id, @RequestBody DiaChiDTO updatedDiaChi) {
-        System.out.println("id"+id);
-            // Bước 1: Xác định địa chỉ cần cập nhật
-            DiaChi existingDiaChi = diaChiResponsitory.getById(id);
-        System.out.println("exasfdas"+existingDiaChi.getDiaChiCuThe());
+        System.out.println("id" + id);
+        // Bước 1: Xác định địa chỉ cần cập nhật
+        DiaChi existingDiaChi = diaChiResponsitory.getById(id);
+        System.out.println("exasfdas" + existingDiaChi.getDiaChiCuThe());
 
         // Bước 2: Cập nhật thông tin địa chỉ với dữ liệu mới từ updatedDiaChi
-            existingDiaChi.setTen(updatedDiaChi.getTen());
-            existingDiaChi.setSdt(updatedDiaChi.getSdt());
-            existingDiaChi.setDiaChiCuThe(updatedDiaChi.getDiaChiCuThe());
-            existingDiaChi.setXaPhuongThiTran(updatedDiaChi.getXaPhuongThiTran());
-            existingDiaChi.setQuanHuyen(updatedDiaChi.getQuanHuyen());
-            existingDiaChi.setTinhThanhPho(updatedDiaChi.getTinhThanhPho());
-            existingDiaChi.setTrangThai(1);
+        existingDiaChi.setTen(updatedDiaChi.getTen());
+        existingDiaChi.setSdt(updatedDiaChi.getSdt());
+        existingDiaChi.setDiaChiCuThe(updatedDiaChi.getDiaChiCuThe());
+        existingDiaChi.setXaPhuongThiTran(updatedDiaChi.getXaPhuongThiTran());
+        existingDiaChi.setQuanHuyen(updatedDiaChi.getQuanHuyen());
+        existingDiaChi.setTinhThanhPho(updatedDiaChi.getTinhThanhPho());
+        existingDiaChi.setTrangThai(1);
 
-            // Lấy ngày và giờ hiện tại
-            java.util.Date currentDate = new java.util.Date();
-            java.sql.Date ngayCapNhat = new java.sql.Date(currentDate.getTime());
-            existingDiaChi.setNgayCapNhat(ngayCapNhat);
+        // Lấy ngày và giờ hiện tại
+        java.util.Date currentDate = new java.util.Date();
+        java.sql.Date ngayCapNhat = new java.sql.Date(currentDate.getTime());
+        existingDiaChi.setNgayCapNhat(ngayCapNhat);
 
-            existingDiaChi.setThongTinNguoiDung(thongTinNguoiDungServiceimpl.findById(updatedDiaChi.getThongTinNguoiDungId()));
-            System.out.println(existingDiaChi.getId());
-            System.out.println(existingDiaChi.getTen());
-            System.out.println(existingDiaChi.getSdt());
-            System.out.println(existingDiaChi.getDiaChiCuThe());
-            System.out.println(existingDiaChi.getXaPhuongThiTran());
-            System.out.println(existingDiaChi.getQuanHuyen());
-            System.out.println(existingDiaChi.getTinhThanhPho());
-            System.out.println(existingDiaChi.getTrangThai());
-            System.out.println(existingDiaChi.getNgayCapNhat());
-            // Bước 3: Lưu trữ đối tượng địa chỉ đã cập nhật vào cơ sở dữ liệu
-            DiaChi updatedEntity = diaChiResponsitory.save(existingDiaChi);
-            return ResponseEntity.ok(updatedEntity);
+        existingDiaChi.setThongTinNguoiDung(thongTinNguoiDungServiceimpl.findById(updatedDiaChi.getThongTinNguoiDungId()));
+        System.out.println(existingDiaChi.getId());
+        System.out.println(existingDiaChi.getTen());
+        System.out.println(existingDiaChi.getSdt());
+        System.out.println(existingDiaChi.getDiaChiCuThe());
+        System.out.println(existingDiaChi.getXaPhuongThiTran());
+        System.out.println(existingDiaChi.getQuanHuyen());
+        System.out.println(existingDiaChi.getTinhThanhPho());
+        System.out.println(existingDiaChi.getTrangThai());
+        System.out.println(existingDiaChi.getNgayCapNhat());
+        // Bước 3: Lưu trữ đối tượng địa chỉ đã cập nhật vào cơ sở dữ liệu
+        DiaChi updatedEntity = diaChiResponsitory.save(existingDiaChi);
+        return ResponseEntity.ok(updatedEntity);
 
     }
 
@@ -169,4 +168,27 @@ public class AccountKhachHang {
     }
 
 
+    @PutMapping("updateKhachHang/{id}")
+    public ResponseEntity<?> updateKhachHang(@PathVariable Long id, @RequestBody TaiKhoanDTO updateThongTin) {
+        System.out.println("id" + id);
+        // Bước 1: Xác định địa chỉ cần cập nhật
+        TaiKhoan existingTaiKhoan = taiKhoanResponsitory.getById(id);
+
+        // Bước 2: Cập nhật thông tin địa chỉ với dữ liệu mới từ updatedDiaChi
+        existingTaiKhoan.setEmail(updateThongTin.getEmail());
+        existingTaiKhoan.setPassword(updateThongTin.getPassword());
+        existingTaiKhoan.setTrangThai(true);
+
+        // Lấy ngày và giờ hiện tại
+        java.util.Date currentDate = new java.util.Date();
+        java.sql.Date ngayCapNhat = new java.sql.Date(currentDate.getTime());
+        existingTaiKhoan.setNgayCapNhat(ngayCapNhat);
+
+        existingTaiKhoan.setThongTinNguoiDung(thongTinNguoiDungServiceimpl.findById(updateThongTin.getThongTinNguoiDungId()));
+
+        // Bước 3: Lưu trữ đối tượng địa chỉ đã cập nhật vào cơ sở dữ liệu
+        TaiKhoan updatedEntity = taiKhoanResponsitory.save(existingTaiKhoan);
+        return ResponseEntity.ok(updatedEntity);
+
+    }
 }

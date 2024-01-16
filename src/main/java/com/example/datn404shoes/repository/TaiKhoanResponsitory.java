@@ -2,6 +2,7 @@ package com.example.datn404shoes.repository;
 
 
 //import com.poly.duanbangiay.entity.TaiKhoan;
+import com.example.datn404shoes.entity.DiaChi;
 import com.example.datn404shoes.entity.TaiKhoan;
 //import com.example.datn404shoes.request.TaiKhoanCustome;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -57,6 +58,6 @@ public interface TaiKhoanResponsitory extends JpaRepository<TaiKhoan,Long> {
             "WHERE tk.id = :id")
     List<Object[]> findUserDetailsKHById(@Param("id") Long id);
 
-
+    List<TaiKhoan> findTaiKhoanByThongTinNguoiDungId(long id);
 
 }
