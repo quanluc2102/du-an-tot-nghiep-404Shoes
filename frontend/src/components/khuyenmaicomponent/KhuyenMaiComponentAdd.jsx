@@ -129,8 +129,14 @@ class KhuyenMaiComponent extends Component {
             errorAdd.giamGia = ('Phần trăm giảm giá phải nằm trong khoảng 1-30!');
             console.log("lỗi nè má")
         }
+
         if (kieuKhuyenMai === '0' && giamGia <= 0) {
             errorAdd.giamGia = 'Số tiền giảm giá phải lớn hơn 0 !!';
+
+        }
+
+        if (kieuKhuyenMai === '0' && giamGia > 300000) {
+            errorAdd.giamGia = 'Số tiền giảm giá quá lớn !!';
 
         }
 

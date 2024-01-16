@@ -6,6 +6,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import ReactPaginate from 'react-paginate';
 import _ from 'lodash';
 import taikhoanservice from "../../services/taikhoanservice/taikhoanservice";
+import _debounce from 'lodash/debounce';
 
 import {
     Col,
@@ -109,6 +110,7 @@ class BanHangOffline extends Component {
         this.handleDistrictChange = this.handleDistrictChange.bind(this);
         this.handleWardChange = this.handleWardChange.bind(this);
         this.add = this.add.bind(this);
+
         this.thayDoiTenAdd = this.thayDoiTenAdd.bind(this);
    
         this.thayDoiSdtAdd = this.thayDoiSdtAdd.bind(this);
@@ -119,6 +121,8 @@ class BanHangOffline extends Component {
      
         this.thayDoiCCCDAdd = this.thayDoiCCCDAdd.bind(this);
         this.thayDoiEmailAdd = this.thayDoiEmailAdd.bind(this);
+        
+        this.debouncedUpdateSoLuong = _debounce(this.updateSoLuong, 300).bind(this);
 
     }
 
@@ -192,6 +196,8 @@ class BanHangOffline extends Component {
         this.setState({
             showImage: true,
             thanhToan: 1
+        }, () => {
+            console.log('kieu thanh toan: ', this.state.thanhToan);
         });
     };
 
@@ -199,6 +205,8 @@ class BanHangOffline extends Component {
         this.setState({
             showImage: false,
             thanhToan: 4
+        }, () => {
+            console.log('kieu thanh toan: ', this.state.thanhToan);
         });
     };
 
@@ -942,20 +950,22 @@ class BanHangOffline extends Component {
     };
 
     // hàm xử lí số lượng ở ô input trên (chưa hoàn thành)
-    handleQuantityChange = (e, productCode, productId) => {
+    handleQuantityChange = async (e, productCode, productId) => {
         const newQuantity = parseInt(e.target.value, 10);
 
         const { sanPhamChiTiet } = this.state;
 
         const selectedProduct = sanPhamChiTiet.find(product => product.ma === productCode);
-        console.log('product code: ', productCode);
-        console.log('selectedProduct:', selectedProduct);
 
         const isValidQuantity = !isNaN(newQuantity) && newQuantity !== null && newQuantity !== undefined;
 
-        // const limitedQuantity = isValidQuantity ? Math.max(newQuantity, 1) : 1;
+        const limitedQuantity = isValidQuantity ? Math.max(1, Math.min(newQuantity, selectedProduct ? selectedProduct.soLuong : 1)) : 1;
 
-        const limitedQuantity = isValidQuantity ? Math.min(newQuantity, selectedProduct ? selectedProduct.soLuong : 1) : 1;
+
+        console.log('id ctsp: ', selectedProduct.id);
+        console.log('limit quantity: ', limitedQuantity);
+        console.log("so luong moi: ", newQuantity);
+        console.log("id hdct: ", productId);
 
         const updatedProducts = this.state.tabProducts.map(product => {
             if (product.id === productId) {
@@ -964,26 +974,44 @@ class BanHangOffline extends Component {
             return product;
         });
 
-        console.log('limit quantity: ', limitedQuantity);
-        console.log("so luong moi: ", newQuantity);
-        console.log("id hdct: ", productId);
+        this.handleUpdateSoLuong(limitedQuantity, productId);
+        this.fetchDanhSachSP();
 
-        this.setState({
-            tabProducts: updatedProducts
-        });
+        // this.updateSoLuong(limitedQuantity, this.state.activeTabKey);
+        // this.fetchHDCT();
+
+        // this.setState({
+        //     tabProducts: updatedProducts
+        // });
+
+       
     };
 
-    // hàm update số lượng trong hdct ở ô input (chưa hoàn thành)
-    updateSoLuong = async (soLuong, idHDCT) => {
-        try {
-            const response = await axios.post(`http://localhost:8080/ban_hang/update_soluong/${idHDCT}`, soLuong);
-            const danhSachHDCT = response.data;
-            this.setState({ tabProducts: danhSachHDCT });
 
+    // hàm update số lượng trong hdct ở ô input
+    updateSoLuong = async (soLuong, idHDCT) => {
+
+        const UpdateSoLuongHdctDTO = {
+            soLuongNhap: soLuong,
+        }
+
+        try {
+            const response = await axios.post(`http://localhost:8080/ban_hang/update_soluong/${idHDCT}`, UpdateSoLuongHdctDTO);
+            if (response.status === 200) {
+                const danhSachHDCT = response.data;
+                this.setState({ tabProducts: danhSachHDCT });
+                this.fetchDanhSachSP();
+            }
         } catch (error) {
             console.log(error);
         }
     }
+
+    // hàm debounce update số lượng ô input
+    handleUpdateSoLuong = (soLuong, idHDCT) => {
+        this.debouncedUpdateSoLuong(soLuong, idHDCT);
+    };
+
 
     // hàm lấy dữ liệu hóa đơn chờ (hóa đơn hiển thị ở trên phần Tab)
     fetchHoaDonCho = async () => {
@@ -1762,8 +1790,8 @@ class BanHangOffline extends Component {
                                 />
                             )}
                         </div>
-                        {this.state.codeXP === "" ? (<h7 style={{ display: 'none', marginTop: 8, float: "right" }}>Phí ship : {this.formatCurrency(this.state.phiShip)}</h7>) : (<h7 style={{ display: 'none', marginTop: 8, float: "right" }}>Phí ship : {this.formatCurrency(this.tinhTienShip())}</h7>)}
-                        <button onClick={this.state.showImage == false ? this.displayImage : this.closedisplayImage}>{this.state.showImage == false ? 'Xuất' : 'Đóng'} QR</button>
+                        {this.state.codeXP === "" ? (<h6 style={{ display: 'none', marginTop: 8, float: "right" }}>Phí ship : {this.formatCurrency(this.state.phiShip)}</h6>) : (<h6 style={{ display: 'none', marginTop: 8, float: "right" }}>Phí ship : {this.formatCurrency(this.tinhTienShip())}</h6>)}
+                        <button onClick={this.state.showImage === false ? this.displayImage : this.closedisplayImage}>{this.state.showImage === false ? 'Xuất' : 'Đóng'} QR</button>
                         <div>
                             <Input id="ghiChuDonHang" placeholder="Nhập ghi chú đơn hàng" />
                             <br />
