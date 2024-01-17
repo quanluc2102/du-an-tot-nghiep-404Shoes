@@ -21,9 +21,11 @@ function LoginComponent({ onLogin, onLogout }) {
             localStorage.setItem('token', token);
 
             // After successful login, get user information
-            // const user = await getUserInfo();
-            // console.log(user)
-            // // Check if the user is active before allowing login
+            const user = await getUserInfo();
+            console.log("Cái này là local nè:"+user)
+            window.location.href = (`/`);
+
+            // Check if the user is active before allowing login
             // if (user && user.trangThai === 1) {
             //     // Check if the account status is 'active' before allowing login
             //     if (user.trangThai === 1) {
@@ -76,7 +78,7 @@ function LoginComponent({ onLogin, onLogout }) {
             console.log("credentials"+credentials.email)
             if (userResponse.ok) {
                 const allUsers = await userResponse.json();
-
+                console.log(allUsers)
                 // Example: Assuming each user in allUsers has an 'email' field
                 const desiredEmail = credentials.email; // Replace with the desired email
 

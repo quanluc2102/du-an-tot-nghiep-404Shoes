@@ -449,6 +449,7 @@ class HoaDonChiTietComponents extends Component {
              
                 <OrderStatus currentStatus={this.state.hoaDon.trangThai} order={this.state.hoaDon} />
                 <center> {this.state.hoaDon.trangThai === 5 ? <button type="button" class="btn btn-outline-danger" disabled>Lí do đơn hàng bị Hủy : {this.state.hoaDon.ghiChuHuy} </button> : ''}</center>
+                <br />
                 <center> {this.state.hoaDon.thanhToan.id === 3 ? <button type="button" class="btn btn-outline-success" disabled> Đã thanh toán VNPay </button>: ''}</center>
                 <center> {this.state.hoaDon.thanhToan.id === 2 ? <button type="button" class="btn btn-outline-success" disabled> Thanh toán khi nhận hàng  </button>: ''}</center>
                 <center> {this.state.hoaDon.thanhToan.id === 1 ? <button type="button" class="btn btn-outline-success" disabled> Thanh toán VietQR </button>: ''}</center>
@@ -695,9 +696,7 @@ class HoaDonChiTietComponents extends Component {
                                                     <h10 className="nav-link">
                                                         Email: {this.state.hoaDon.email ? this.state.hoaDon.email : "Khách lẻ"}</h10>
                                                     <div>
-                                                        {this.state.hoaDon.taiKhoanKhachHang != null ? <Button variant="btn btn-outline-primary" onClick={this.handleShowModal2} >
-                                                            Danh sách địa chỉ
-                                                        </Button> : ''}
+                                                        
 
                                                         <Modal show={this.state.showModal2} onHide={this.handleCloseModal2} backdrop="static">
                                                             <Modal.Header closeButton>
