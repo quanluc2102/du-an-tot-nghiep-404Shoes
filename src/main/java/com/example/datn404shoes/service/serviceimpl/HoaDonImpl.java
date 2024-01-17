@@ -60,7 +60,7 @@ public class HoaDonImpl implements HoaDonService {
     public HoaDon update(Long id,HoaDon hoaDon) {
 
         HoaDon hoaDon1 = hoaDonRepository.findById(id).get();
-        if(hoaDon1.getTrangThai()==0) {
+        if(hoaDon1.getTrangThai()==0 && hoaDon1.getKieuHoaDon()==1) {
             LocalDate currentDate = LocalDate.now();
             LocalTime currentTime = LocalTime.now();
 
@@ -75,8 +75,28 @@ public class HoaDonImpl implements HoaDonService {
             hoaDon1.setGhiChuChoXacNhan(hoaDon.getGhiChuChoXacNhan());
             hoaDon1.setPhiShip(hoaDon.getPhiShip());
             hoaDon1.setTaiKhoan(TaiKhoan.builder().id(hoaDon.getTaiKhoan().getId()).build());
-        }else
-        if(hoaDon1.getTrangThai()==1) {
+            List<HoaDonChiTiet> hoaDonChiTietList = HDCTRepository.findAllByHd_Id(hoaDon1.getId()) ;
+            for(HoaDonChiTiet a :hoaDonChiTietList){
+                a.getSanPhamChiTiet().setSoLuong(a.getSanPhamChiTiet().getSoLuong()-a.getSoLuong());
+                SPCTRepository.save(a.getSanPhamChiTiet());
+            }
+        }else if(hoaDon1.getTrangThai()==0) {
+            LocalDate currentDate = LocalDate.now();
+            LocalTime currentTime = LocalTime.now();
+
+// Combine date and time
+            LocalDateTime currentDateTime = LocalDateTime.of(currentDate, currentTime);
+
+// Convert LocalDateTime to Timestamp
+            Timestamp timeChoXacNhan = Timestamp.valueOf(currentDateTime);
+            hoaDon1.setChoXacNhan(timeChoXacNhan);
+
+            hoaDon1.setTrangThai(hoaDon1.getTrangThai()+1);
+            hoaDon1.setGhiChuChoXacNhan(hoaDon.getGhiChuChoXacNhan());
+            hoaDon1.setPhiShip(hoaDon.getPhiShip());
+            hoaDon1.setTaiKhoan(TaiKhoan.builder().id(hoaDon.getTaiKhoan().getId()).build());
+
+        }else if(hoaDon1.getTrangThai()==1) {
             LocalDate currentDate = LocalDate.now();
             LocalTime currentTime = LocalTime.now();
 

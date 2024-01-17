@@ -98,6 +98,13 @@ class KichThuocComponent extends Component {
             this.setState({ errorsAdd: { ...this.state.errorsAdd, giaTri: "" } });
         }
 
+        if (this.state.kichThuocAdd.giaTri<35||this.state.kichThuocAdd.giaTri>49) {
+            this.setState({ errorsAdd: { ...this.state.errorsAdd, giaTri: "Giá trị của kích thước phải trong khoảng từ 35 đến 49" } });
+            return;
+        } else {
+            this.setState({ errorsAdd: { ...this.state.errorsAdd, giaTri: "" } });
+        }
+
         if (/^[a-zA-Z\sàáảãạăắằẳẵặâấầẩẫậèéẹêềếểễệđìíỉĩịòóỏõọôồốổỗộơờớởỡợùúủũụưừứửữựỳýỷỹỵÀÁẢÃẠĂẮẰẲẴẶÂẤẦẨẪẬÈÉẺẼẸÊỀẾỂỄỆĐÌÍỈĨỊÒÓỎÕỌÔỒỐỔỖỘƠỜỚỞỠỢÙÚỦŨỤƯỪỨỬỮỰỲÝỶỸỴ]+$/.test(this.state.kichThuocAdd.giaTri)) {
             this.setState({ errorsAdd: { ...this.state.errorsAdd, giaTri: "Giá trị phải là số!" } });
             return;
@@ -157,6 +164,12 @@ class KichThuocComponent extends Component {
         }
 
 
+        if (this.state.kichThuocUpdate.giaTri<35||this.state.kichThuocUpdate.giaTri>49) {
+            this.setState({ errorsUpdate: { ...this.state.errorsUpdate, giaTri: "Giá trị của kích thước phải trong khoảng từ 35 đến 49" } });
+            return;
+        } else {
+            this.setState({ errorsUpdate: { ...this.state.errorsUpdate, giaTri: "" } });
+        }
 
         if (!this.state.kichThuocUpdate.trangThai) {
             this.setState({ errorsUpdate: { ...this.state.errorsUpdate, trangThai: "Trạng thái không được bỏ trống!" } });

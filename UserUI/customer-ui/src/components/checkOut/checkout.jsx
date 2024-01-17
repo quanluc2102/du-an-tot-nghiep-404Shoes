@@ -299,6 +299,7 @@ function CheckOut({ location }) {
                 diaChiId: 3,
                 thanhToanId: PTTT,
                 ghiChu: `"Đã thanh toán VNPay"`,
+                ghiChuChoXacNhan: `"Đã thanh toán VNPay"`,
                 //bắt đầu
                 // kieuHoaDon:1,
                 trangThai:0,
@@ -375,6 +376,7 @@ function CheckOut({ location }) {
                 diaChiId: 3,
                 thanhToanId: PTTT,
                 ghiChu: ghiChu,
+                ghiChuChoXacNhan: `"Thanh toán khi nhận hàng"`,
                 //bắt đầu
                 // kieuHoaDon:1,
                 trangThai:0,
@@ -438,6 +440,7 @@ function CheckOut({ location }) {
                 diaChiId: 3,
                 thanhToanId: PTTT,
                 ghiChu: ghiChu,
+                ghiChuChoXacNhan: `"Thanh toán VietQR với Số điện thoại ${sdt}"`,
                 //bắt đầu
                 // kieuHoaDon:1,
                 trangThai:0,
