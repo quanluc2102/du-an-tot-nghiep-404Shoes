@@ -76,7 +76,7 @@ class BanHangOffline extends Component {
                 tabKey5: [],
             },
             nguoiDungAdd: {
-                cccd: '',
+                // cccd: '',
                 ten: '',
                 sdt: '',
             },
@@ -89,7 +89,7 @@ class BanHangOffline extends Component {
             errorAdd: {
                 sdt: '',
                 ten: '',
-                cccd: '',
+                // cccd: '',
                 maTaiKhoan: '',
                 email: '',
                 password: '',
@@ -120,7 +120,7 @@ class BanHangOffline extends Component {
 
         this.thayDoiMaNVAdd = this.thayDoiMaNVAdd.bind(this);
 
-        this.thayDoiCCCDAdd = this.thayDoiCCCDAdd.bind(this);
+        // this.thayDoiCCCDAdd = this.thayDoiCCCDAdd.bind(this);
 
         this.thayDoiEmailAdd = this.thayDoiEmailAdd.bind(this);
 
@@ -400,18 +400,18 @@ class BanHangOffline extends Component {
         let errorAdd = { ...this.state.errorAdd, maTaiKhoan: "" };
         this.setState({ errorAdd: errorAdd });
     }
-    thayDoiCCCDAdd = (event) => {
-        this.setState(
-            prevState => ({
-                nguoiDungAdd: {
-                    ...prevState.nguoiDungAdd,
-                    cccd: event.target.value
-                }
-            })
-        );
-        let errorAdd = { ...this.state.errorAdd, cccd: "" };
-        this.setState({ errorAdd: errorAdd });
-    }
+    // thayDoiCCCDAdd = (event) => {
+    //     this.setState(
+    //         prevState => ({
+    //             nguoiDungAdd: {
+    //                 ...prevState.nguoiDungAdd,
+    //                 cccd: event.target.value
+    //             }
+    //         })
+    //     );
+    //     let errorAdd = { ...this.state.errorAdd, cccd: "" };
+    //     this.setState({ errorAdd: errorAdd });
+    // }
     thayDoiEmailAdd = (event) => {
         this.setState(
             prevState => ({
@@ -449,7 +449,7 @@ class BanHangOffline extends Component {
             },
             thongTinNguoiDung: {
                 ten: nguoiDungAdd.ten,
-                cccd: nguoiDungAdd.cccd,
+                // cccd: nguoiDungAdd.cccd,
                 sdt: nguoiDungAdd.sdt,
 
             },
@@ -458,24 +458,24 @@ class BanHangOffline extends Component {
 
 
         // Kiểm tra không được để trống
-        if (!nguoiDungAdd.cccd.trim()) {
-            this.setState({ errorAdd: { ...this.state.errorAdd, cccd: "CCCD không được bỏ trống!" } });
-            return;
-        } else if (!/^\d+$/.test(nguoiDungAdd.cccd)) {
-            // Kiểm tra là số nguyên
-            this.setState({ errorAdd: { ...this.state.errorAdd, cccd: "CCCD phải là số nguyên và không được chứa khoảng trắng !" } });
-            return;
-        } else if (nguoiDungAdd.cccd.length !== 12) {
-            // Kiểm tra có đủ 12 số
-            this.setState({ errorAdd: { ...this.state.errorAdd, cccd: "CCCD phải có đủ 12 số!" } });
-            return;
-        } else if (this.state.nhanVienQuyen1.some(user => user.thongTinNguoiDung.cccd === nguoiDungAdd.cccd)) {
-            // Kiểm tra trùng căn cước
-            this.setState({ errorAdd: { ...this.state.errorAdd, cccd: "CCCD đã tồn tại trong hệ thống!" } });
-            return;
-        } else {
-            this.setState({ errorAdd: { ...this.state.errorAdd, cccd: "" } });
-        }
+        // if (!nguoiDungAdd.cccd.trim()) {
+        //     this.setState({ errorAdd: { ...this.state.errorAdd, cccd: "CCCD không được bỏ trống!" } });
+        //     return;
+        // } else if (!/^\d+$/.test(nguoiDungAdd.cccd)) {
+        //     // Kiểm tra là số nguyên
+        //     this.setState({ errorAdd: { ...this.state.errorAdd, cccd: "CCCD phải là số nguyên và không được chứa khoảng trắng !" } });
+        //     return;
+        // } else if (nguoiDungAdd.cccd.length !== 12) {
+        //     // Kiểm tra có đủ 12 số
+        //     this.setState({ errorAdd: { ...this.state.errorAdd, cccd: "CCCD phải có đủ 12 số!" } });
+        //     return;
+        // } else if (this.state.nhanVienQuyen1.some(user => user.thongTinNguoiDung.cccd === nguoiDungAdd.cccd)) {
+        //     // Kiểm tra trùng căn cước
+        //     this.setState({ errorAdd: { ...this.state.errorAdd, cccd: "CCCD đã tồn tại trong hệ thống!" } });
+        //     return;
+        // } else {
+        //     this.setState({ errorAdd: { ...this.state.errorAdd, cccd: "" } });
+        // }
 
 
         //check ten
@@ -697,14 +697,15 @@ class BanHangOffline extends Component {
                 return;
             }
             try {
+                console.log("Tiền giảm"+(this.getTotalAmountWithoutPromotions(this.state.tabProducts) - this.getTotalAmount(this.state.tabProducts)))
                 const thanhToanDTO = {
                     ten: this.state.ten || '',
                     sdt: this.state.sdt || '',
                     taiKhoanKhachHang: this.state.idKhachHang.id || '',
                     taiKhoan: this.state.idNhanVien,
                     tongTien: this.getTotalAmountWithoutPromotions(this.state.tabProducts) + this.state.phiShip,
-                    tienGiam: (this.getTotalAmountWithoutPromotions(this.state.tabProducts) + this.state.phiShip) - this.getTotalAmount(this.state.tabProducts),
-                    tongTienSauGiam: this.getTotalAmount(this.state.tabProducts) + this.state.phiShip,
+                    tienGiam: (this.getTotalAmountWithoutPromotions(this.state.tabProducts) - this.getTotalAmount(this.state.tabProducts)),
+                    tongTienSauGiam: this.getTotalAmount(this.state.tabProducts),
                     phiShip: this.state.phiShip,
                     kieuHoaDon: this.state.kieuHoaDon,
                     tinhThanhPho: this.state.tinhThanhPho || '',
@@ -1532,7 +1533,7 @@ class BanHangOffline extends Component {
                                                 <Modal.Body>
                                                     <form onSubmit={this.addKH}>
                                                         {/* CCCD */}
-                                                        <div className="form-group">
+                                                        {/* <div className="form-group">
                                                             <label htmlFor="cccd">CCCD:<span style={{ color: 'red' }}>*</span></label>
                                                             <input
                                                                 type="text"
@@ -1542,7 +1543,7 @@ class BanHangOffline extends Component {
                                                                 value={this.state.nguoiDungAdd.cccd}
                                                             />
                                                             {this.state.errorAdd.cccd && <div className="invalid-feedback">{this.state.errorAdd.cccd}</div>}
-                                                        </div>
+                                                        </div> */}
                                                         {/* Họ và tên */}
                                                         <div className="form-group">
                                                             <label htmlFor="ten">Họ và tên: <span style={{ color: 'red' }}>*</span></label>
@@ -1797,7 +1798,7 @@ class BanHangOffline extends Component {
                             )}
                         </div>
                         {this.state.codeXP === "" ? (<h6 style={{ display: 'none', marginTop: 8, float: "right" }}>Phí ship : {this.formatCurrency(this.state.phiShip)}</h6>) : (<h6 style={{ display: 'none', marginTop: 8, float: "right" }}>Phí ship : {this.formatCurrency(this.tinhTienShip())}</h6>)}
-                        <button onClick={this.state.showImage === false ? this.displayImage : this.closedisplayImage}>{this.state.showImage === false ? 'Xuất' : 'Đóng'} QR</button>
+                        <button  class="btn btn-outline-danger" onClick={this.state.showImage === false ? this.displayImage : this.closedisplayImage}>{this.state.showImage === false ? 'Xuất' : 'Đóng'} QR</button>
                         <div>
                             <Input id="ghiChuDonHang" placeholder="Nhập ghi chú đơn hàng" />
                             <br />

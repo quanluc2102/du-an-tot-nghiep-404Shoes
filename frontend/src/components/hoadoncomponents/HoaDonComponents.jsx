@@ -334,8 +334,8 @@ class HoaDonComponents extends Component {
                                                                     <td>{index + 1}</td>
                                                                     <td>{hoaDon.maHoaDon}</td>
                                                                     <td>{hoaDon.taiKhoan && hoaDon.taiKhoan.maTaiKhoan ? hoaDon.taiKhoan.maTaiKhoan : "Tạm"}</td>
-                                                                    <td>{hoaDon.taiKhoanKhachHang && hoaDon.taiKhoanKhachHang.thongTinNguoiDung ? hoaDon.taiKhoanKhachHang.thongTinNguoiDung.ten : "Khách lẻ"}</td>
-                                                                    <td>{hoaDon.taiKhoanKhachHang && hoaDon.taiKhoanKhachHang.thongTinNguoiDung ? hoaDon.taiKhoanKhachHang.thongTinNguoiDung.ten : "Khách lẻ"}</td>
+                                                                    <td>{hoaDon.ten && hoaDon.ten ? hoaDon.ten : "Khách lẻ"}</td>
+                                                                    <td>{hoaDon.sdt && hoaDon.sdt ? hoaDon.sdt : "--|--"}</td>
                                                                     <td>{hoaDon.ngayTao}</td>
                                                                     <td>{hoaDon.ngayCapNhat}</td>
                                                                     <td>{hoaDon.kieuHoaDon=== 0 ?"Tại quầy":hoaDon.kieuHoaDon=== 1?"Online":""}</td>

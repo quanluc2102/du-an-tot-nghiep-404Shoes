@@ -150,23 +150,29 @@ function Account() {
             return;
         }
 
-        // Kiểm tra trường Số điện thoại
         if (!sdtNew || !/^\d{10}$/.test(sdtNew)) {
-            alert('Số điện thoại không được để trống và phải có đúng 10 số.');
+            alert('Số điện thoại không được để trống và phải có đúng 10 số , không được chứa kí tự và chữ cái .');
             return;
         }
 
-        // Kiểm tra trường Password
         if (!passwordNew) {
             alert('Password không được để trống.');
             return;
         }
 
-        // Kiểm tra trường Ngày sinh
         if (!ngaySinhNew) {
             alert('Ngày sinh không được để trống.');
             return;
         }
+
+        const currentDate = new Date();
+        const ngaySinh = new Date(ngaySinhNew);
+
+        if (isNaN(ngaySinh.getTime()) || ngaySinh > currentDate) {
+            alert('Ngày sinh không hợp lệ hoặc vượt quá ngày hiện tại.');
+            return;
+        }
+
 
 
         const handleLogout = () => {
