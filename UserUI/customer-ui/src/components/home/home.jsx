@@ -1,14 +1,7 @@
 import React, { Fragment, useEffect } from "react"
 import './style.css'
-import './bootstrap.min.css'
-import './tiny-slider.css'
 import { Link } from "react-router-dom/cjs/react-router-dom";
 import { styled } from '@mui/material/styles';
-import { MdOutlineLocalShipping } from "react-icons/md";
-import { GiReturnArrow} from "react-icons/gi";
-import { FiShoppingBag } from "react-icons/fi";
-import { TiSupport } from "react-icons/ti";
-import { IoMdAddCircle } from "react-icons/io";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import ButtonBase from "@mui/material/ButtonBase";
@@ -16,36 +9,32 @@ import ButtonBase from "@mui/material/ButtonBase";
 
 function Home() {
 
-    // const  bagImg = require('../../img/bag.svg')
-    // const  truckImg = require('../../img/truck.svg')
-    // const  supportImg = require('../../img/support.svg')
-    // const  returnImg = require('../../img/return.svg')
-    // const crossImg = require('../../img/cross.svg')
-
-    const handlePrice = (price) => {
-        return price.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })
-    }
-
     const images = [
         {
             url: 'https://assets.adidas.com/images/h_840,f_auto,q_auto,fl_lossy,c_fill,g_auto/aeb405a727294b148ee7af9c00a32c92_9366/Ultra_4DFWD_Running_Shoes_Pink_GV9063_04_standard.jpg',
             title: 'Sales-off',
             width: '25%',
-            price: '500000',
+            linked: '',
         },
         {
             url: 'https://assets.adidas.com/images/h_840,f_auto,q_auto,fl_lossy,c_fill,g_auto/c7e1459db45d46259b14af3b008c9966_9366/adidas_4DFWD_Running_Shoes_White_HP7668_04_standard.jpg',
             title: 'New Arrivals',
             width: '25%',
-            price: '500000',
+            linked: '',
         },
         {
             url: 'https://assets.adidas.com/images/h_840,f_auto,q_auto,fl_lossy,c_fill,g_auto/ed9ac57ecbd34b188b10af47017b50c2_9366/4DFWD_2_Running_Shoes_Red_IF9933_04_standard.jpg',
             title: 'Best Seller',
             width: '25%',
-            price: '500000',
+            linked: '',
         },
-    ]
+        {
+            url: 'https://assets.adidas.com/images/h_840,f_auto,q_auto,fl_lossy,c_fill,g_auto/2fcc3a85fa4445ccb9f5afc400f68f34_9366/4DFWD_2_Running_Shoes_Blue_HP7654_04_standard.jpg',
+            title: 'Suggest',
+            width: '25%',
+            linked: '',
+        },
+    ];
 
     const ImageButton = styled(ButtonBase)(({ theme }) => ({
         position: 'relative',
@@ -137,10 +126,10 @@ function Home() {
     return (
         <body>
             {/*<header>*/}
-            {/*    <nav className="navbar navbar-light bg-light">*/}
-            {/*        <div className="container-fluid justify-content-end">*/}
-            {/*            <Link to='/login' style={{ textDecoration: 'none' }}><a className="navbar-brand" href="#" style={{ fontSize: '13px' }}> <i className='bx bxs-user'></i> Đăng nhập</a></Link>*/}
-            {/*            <Link to='your-cart' style={{ textDecoration: 'none' }}><a className="navbar-brand" href="#" style={{ fontSize: '13px' }}> <i className='bx bxs-cart'></i>Giỏ hàng {'(0)'}</a></Link>*/}
+            {/*    <nav class="navbar navbar-light bg-light">*/}
+            {/*        <div class="container-fluid justify-content-end">*/}
+            {/*            <Link to='/login' style={{ textDecoration: 'none' }}><a class="navbar-brand" href="#" style={{ fontSize: '13px' }}> <i className='bx bxs-user'></i> Đăng nhập</a></Link>*/}
+            {/*            <Link to='your-cart' style={{ textDecoration: 'none' }}><a class="navbar-brand" href="#" style={{ fontSize: '13px' }}> <i className='bx bxs-cart'></i>Giỏ hàng {'(0)'}</a></Link>*/}
             {/*        </div>*/}
             {/*    </nav>*/}
 
@@ -151,7 +140,7 @@ function Home() {
             {/*                    <img style={{ width: '90px' }}*/}
             {/*                        src="https://t3.ftcdn.net/jpg/00/71/53/56/360_F_71535683_03OP8nG0N3YRVDTasetbEfT2BpucFmo5.jpg"*/}
             {/*                        alt="site icon" />*/}
-            {/*                    <a className="text-uppercase text-decoration-none brand text-black" style={{ fontWeight: 'bold', fontSize: '26px' }}>404SHOES</a>*/}
+            {/*                    <a class="text-uppercase text-decoration-none brand text-black" style={{ fontWeight: 'bold', fontSize: '26px' }}>404SHOES</a>*/}
             {/*                </a>*/}
             {/*                </Link>*/}
             {/*            </div>*/}
@@ -202,7 +191,8 @@ function Home() {
             {/*    </nav>*/}
             {/*</header>*/}
 
-            {/* <main style={{ minHeight: '100vh', backgroundColor: 'aquamarine' }} data-bs-spy="scroll" data-bs-target="#nav-example"
+
+            <main style={{ minHeight: '100vh', backgroundColor: 'aquamarine' }} data-bs-spy="scroll" data-bs-target="#nav-example"
                 data-bs-smooth-scroll="true" tabindex="0">
                 <div className="contentHome trang1-home">
                     <p className="description"> <span style={{ fontSize: '40px' }}> <span>Giày thể thao mùa đông 2023</span> </span><br /> với nhiều ưu đãi hấp dẫn 💥 </p>
@@ -211,6 +201,7 @@ function Home() {
                         <h1 className="text-center" id="x1">👉 Mua Ngay</h1>
                     </a>
                 </div>
+
 
                 <div className="showCase" id="div1" style={{ backgroundColor: 'rgba(255, 255, 255, 1)' }}>
                     <div className="row">
@@ -398,446 +389,91 @@ function Home() {
 
                     </div>
                 </div>
-            </main> */}
-            <div className="hero">
-                <div className="container">
-                    <div className="row justify-content-between">
-                        <div className="col-lg-5">
-                            <div className="intro-excerpt">
-                                <h1>Giày thể thao mùa đông 2023 <span clsas="d-block">với nhiều ưu đãi hấp dẫn 💥</span></h1>
-                                <p className="mb-4">404Shoes là một trong những thương hiệu giày thể thao hàng đầu trên thế giới và có một lịch sử dài với nhiều đóng góp quan trọng trong ngành công nghiệp thể thao và thời trang.</p>
-                                <p><a href="" className="btn btn-secondary me-2">Shop Now</a><a href="#" className="btn btn-white-outline">Explore</a></p>
-                            </div>
-                        </div>
-                        <div className="col-lg-7">
-
-                            <div className="hero-img-wrap">
-                                <img src={require('../../img/giay-nike-court-vision-mid-smoke-grey-dn3577-002-3-1020x680-removebg-preview.png')} className="img-fluid" />
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div className="product-section">
-                <div className="container">
-                    <div className="row">
-
-                        <div className="col-md-12 col-lg-3 mb-5 mb-lg-0">
-                            <h2 className="mb-4 section-title">Đa dạng mẫu mã</h2>
-                            <p className="mb-4">Chúng tôi cung cấp nhiều loại giày với nhiều mẫu mã khác nhau, đáp ứng nhu cầu của người tiêu dùng từ các hoạt động thể thao đến phong cách hàng ngày.</p>
-                            <p><a href="shop.html" className="btn">Explore</a></p>
-                        </div>
-
-                        {images.map((item, index) => (
-                            <div className="col-12 col-md-4 col-lg-3 mb-5 mb-md-0">
-                            <a className="product-item" href="cart.html">
-                                <img src={item.url} className="img-fluid product-thumbnail" />
-                                <h3 className="product-title">{item.name}</h3>
-                                <strong className="product-price">{handlePrice(item.price)}</strong>
-                                {/* <span className="icon-cross"> */}
-                                    {/* <img src={require('../../img/cross.svg')} className="img-fluid" /> */}
-                                    <IoMdAddCircle className="add_cart" />
-                                {/* </span> */}
-                            </a>
-                        </div>
-                        ))}
-
-                        {/* <div className="col-12 col-md-4 col-lg-3 mb-5 mb-md-0">
-                            <a className="product-item" href="cart.html">
-                                <img src={require('../../img/product-2.png')} className="img-fluid product-thumbnail" />
-                                <h3 className="product-title">Kruzo Aero Chair</h3>
-                                <strong className="product-price">$78.00</strong>
-
-                                <span className="icon-cross">
-                                    <img src={require('../../img/cross.svg')} className="img-fluid" />
-                                </span>
-                            </a>
-                        </div>
-
-                        <div className="col-12 col-md-4 col-lg-3 mb-5 mb-md-0">
-                            <a className="product-item" href="cart.html">
-                                <img src={require('../../img/product-3.png')} className="img-fluid product-thumbnail" />
-                                <h3 className="product-title">Ergonomic Chair</h3>
-                                <strong className="product-price">$43.00</strong>
-
-                                <span className="icon-cross">
-                                    <img src={require('../../img/cross.svg')} className="img-fluid" />
-                                </span>
-                            </a>
-                        </div> */}
-
-                    </div>
-                </div>
-            </div>
-
-            <div className="why-choose-section">
-                <div className="container">
-                    <div className="row justify-content-between">
-                        <div className="col-lg-6">
-                            <h2 className="section-title">Lý do nên chọn chúng tôi</h2>
-                            <p>404Shoes là một trong những công ty hàng đầu thế giới trong lĩnh vực thiết kế, sản xuất và kinh doanh các sản phẩm thể thao và đồng phục.</p>
-
-                            <div className="row my-5">
-                                <div className="col-6 col-md-6">
-                                    <div className="feature">
-                                        <div className="icon">
-                                            <MdOutlineLocalShipping className="imf-fluid" />
-                                        </div>
-                                        <h3>Nhanh chóng &amp; Thuận tiện </h3>
-                                        <p>Với giao diện trực tuyến tiện lợi, người mua có thể dễ dàng duyệt qua một loạt các sản phẩm thể thao và giày dép đa dạng. 
-                                            Quá trình đặt hàng trở nên đơn giản với các tùy chọn thanh toán linh hoạt và giao hàng nhanh chóng.</p>
-                                    </div>
-                                </div>
-
-                                <div className="col-6 col-md-6">
-                                    <div className="feature">
-                                        <div className="icon">
-                                            <FiShoppingBag className="imf-fluid" />
-                                        </div>
-                                        <h3>Dễ dàng mua sắm</h3>
-                                        <p>Nike sản xuất và phân phối nhiều dòng giày thể thao nổi tiếng như Air Max, Air Jordan, Nike SB, Roshe Run, và nhiều dòng sản phẩm khác.
-                                        Mỗi dòng sản phẩm thường mang đến những đặc điểm độc đáo và công nghệ tiên tiến.</p>
-                                    </div>
-                                </div>
-
-                                <div className="col-6 col-md-6">
-                                    <div className="feature">
-                                        <div className="icon">
-                                            <TiSupport className="imf-fluid" />
-                                        </div>
-                                        <h3>Hỗ trợ 24/7</h3>
-                                        <p>Nike có một đội ngũ chăm sóc khách hàng chuyên nghiệp để giải quyết các vấn đề và câu hỏi của khách hàng.
-                                        Nếu có vấn đề kỹ thuật liên quan đến sản phẩm, Nike có thể cung cấp hỗ trợ kỹ thuật thông qua đội ngũ chuyên gia.
-                                        </p>
-                                    </div>
-                                </div>
-
-                                <div className="col-6 col-md-6">
-                                    <div className="feature">
-                                        <div className="icon">
-                                            <GiReturnArrow className="imf-fluid" />
-                                        </div>
-                                        <h3>Hoàn trả miễn phí</h3>
-                                        <p>Nếu có bất kỳ lý do gì khiến bạn không hài lòng với sản phẩm nhận được, chính sách hoàn trả miễn phí của Nike sẽ giúp bạn dễ dàng trở lại và đổi trả mà không phải chịu thêm bất kỳ chi phí nào. </p>
-                                    </div>
-                                </div>
-
-                            </div>
-                        </div>
-
-                        <div className="col-lg-5">
-                            <div className="img-wrap">
-                                <img style={{height: '700px', width: '500px'}} src={require('../../img/52da8066a1ee3049322082a2f4d9f214.jpg')} alt="Image" className="img-fluid" />
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-            </div>
-
-            <div className="we-help-section">
-                <div className="container">
-                    <div className="row justify-content-between">
-                        <div className="col-lg-7 mb-5 mb-lg-0">
-                            <div className="imgs-grid">
-                                <div className="grid grid-1"><img src={require('../../img/pexels-melvin-buezo-2529148.jpg')} alt="Untree.co" /></div>
-                                <div className="grid grid-2"><img src={require('../../img/pexels-sadegh-abdollahi-13600672.jpg')} alt="Untree.co" /></div>
-                                <div className="grid grid-3"><img src={require('../../img/pexels-ray-piedra-1464624.jpg')} alt="Untree.co" /></div>
-                            </div>
-                        </div>
-                        <div className="col-lg-5 ps-lg-5">
-                            <h2 className="section-title mb-4">Chúng tôi sẽ giúp bạn có những trải nghiệm tuyệt vời</h2>
-                            <p>Thương hiệu chúng tôi nổi tiếng với chất lượng và độ bền của sản phẩm, giúp giày được sử dụng trong thời gian dài mà vẫn giữ được hiệu suất.</p>
-
-                            <ul className="list-unstyled custom-list my-4">
-                                <li>Giày chúng tôi thường được thiết kế với các công nghệ thoải mái, giúp giảm áp lực lên chân và tăng cường sự thoải mái khi di chuyển.</li>
-                                <li>Công nghệ đệm trong giày giúp giảm sóc lực khi chân đặt chấm trên mặt đất, giảm thiểu va chạm và giúp bảo vệ khớp và cơ bắp.</li>
-                                <li>Với việc sử dụng các chất liệu nhẹ và linh hoạt như Flyknit, giày mang lại cảm giác nhẹ nhàng và dễ dàng di chuyển.</li>
-                                <li>Chúng tôi cung cấp nhiều dòng giày phù hợp cho nhiều hoạt động khác nhau, từ chạy bộ đến đá bóng, và các môn thể thao khác.</li>
-                            </ul>
-                            <p><a herf="#" className="btn">Explore</a></p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div className="popular-product">
-                <div className="container">
-                    <div className="row">
-
-                        <div className="col-12 col-md-6 col-lg-4 mb-4 mb-lg-0">
-                            <div className="product-item-sm d-flex">
-                                <div className="thumbnail">
-                                    <img src={require('../../img/giay-nike-air-max-systm-nam-den-trang-01-removebg-preview.png')} alt="Image" className="img-fluid" />
-                                </div>
-                                <div className="pt-3">
-                                    <h3>Air Max</h3>
-                                    <p>Dòng Air Max nổi tiếng với việc sử dụng công nghệ đệm khí Air Max ở đế giày, tạo ra sự thoải mái và đàn hồi đặc biệt. </p>
-                                    <p><a href="#">Read More</a></p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="col-12 col-md-6 col-lg-4 mb-4 mb-lg-0">
-                            <div className="product-item-sm d-flex">
-                                <div className="thumbnail">
-                                    <img src={require('../../img/air-jordan-1-mid-shoes-86f1ZW-removebg-preview.png')} alt="Image" className="img-fluid" />
-                                </div>
-                                <div className="pt-3">
-                                    <h3>Air Jordan</h3>
-                                    <p>Dòng giày Air Jordan được thiết kế đặc biệt cho đối tác đặc biệt của Nike, cầu thủ bóng rổ huyền thoại Michael Jordan. </p>
-                                    <p><a href="#">Read More</a></p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="col-12 col-md-6 col-lg-4 mb-4 mb-lg-0">
-                            <div className="product-item-sm d-flex">
-                                <div className="thumbnail">
-                                    <img src={require('../../img/free-run-5-road-running-shoes-m8L9mr-removebg-preview.png')} alt="Image" className="img-fluid" />
-                                </div>
-                                <div className="pt-3">
-                                    <h3>Nike Free</h3>
-                                    <p>Dòng giày Nike Free được thiết kế để tạo cảm giác tự nhiên, như là chân không mặc giày </p>
-                                    <p><a href="#">Read More</a></p>
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-            </div>
-
-            <div className="testimonial-section">
-                <div className="container">
-                    <div className="row">
-                        <div className="col-lg-7 mx-auto text-center">
-                            <h2 className="section-title">Testimonials</h2>
-                        </div>
-                    </div>
-
-                    <div className="row justify-content-center">
-                        <div className="col-lg-12">
-                            <div className="testimonial-slider-wrap text-center">
-
-                                <div id="testimonial-nav">
-                                    <span className="prev" data-controls="prev"><span className="fa fa-chevron-left"></span></span>
-                                    <span className="next" data-controls="next"><span className="fa fa-chevron-right"></span></span>
-                                </div>
-
-                                <div className="testimonial-slider">
-
-                                    <div className="item">
-                                        <div className="row justify-content-center">
-                                            <div className="col-lg-8 mx-auto">
-
-                                                <div className="testimonial-block text-center">
-                                                    <blockquote className="mb-5">
-                                                        <p>&ldquo;Donec facilisis quam ut purus rutrum lobortis. Donec vitae odio quis nisl dapibus malesuada. Nullam ac aliquet velit. Aliquam vulputate velit imperdiet dolor tempor tristique. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Integer convallis volutpat dui quis scelerisque.&rdquo;</p>
-                                                    </blockquote>
-
-                                                    <div className="author-info">
-                                                        <div className="author-pic">
-                                                            <img src={require('../../img/person-1.png')} alt="Maria Jones" className="img-fluid" />
-                                                        </div>
-                                                        <h3 className="font-weight-bold">Maria Jones</h3>
-                                                        <span className="position d-block mb-3">CEO, Co-Founder, XYZ Inc.</span>
-                                                    </div>
-                                                </div>
-
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div className="item">
-                                        <div className="row justify-content-center">
-                                            <div className="col-lg-8 mx-auto">
-
-                                                <div className="testimonial-block text-center">
-                                                    <blockquote className="mb-5">
-                                                        <p>&ldquo;Donec facilisis quam ut purus rutrum lobortis. Donec vitae odio quis nisl dapibus malesuada. Nullam ac aliquet velit. Aliquam vulputate velit imperdiet dolor tempor tristique. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Integer convallis volutpat dui quis scelerisque.&rdquo;</p>
-                                                    </blockquote>
-
-                                                    <div className="author-info">
-                                                        <div className="author-pic">
-                                                            <img src={require('../../img/person-1.png')} alt="Maria Jones" className="img-fluid" />
-                                                        </div>
-                                                        <h3 className="font-weight-bold">Maria Jones</h3>
-                                                        <span className="position d-block mb-3">CEO, Co-Founder, XYZ Inc.</span>
-                                                    </div>
-                                                </div>
-
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div className="item">
-                                        <div className="row justify-content-center">
-                                            <div className="col-lg-8 mx-auto">
-
-                                                <div className="testimonial-block text-center">
-                                                    <blockquote className="mb-5">
-                                                        <p>&ldquo;Donec facilisis quam ut purus rutrum lobortis. Donec vitae odio quis nisl dapibus malesuada. Nullam ac aliquet velit. Aliquam vulputate velit imperdiet dolor tempor tristique. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Integer convallis volutpat dui quis scelerisque.&rdquo;</p>
-                                                    </blockquote>
-
-                                                    <div className="author-info">
-                                                        <div className="author-pic">
-                                                            <img src={require('../../img/person-1.png')} alt="Maria Jones" className="img-fluid" />
-                                                        </div>
-                                                        <h3 className="font-weight-bold">Maria Jones</h3>
-                                                        <span className="position d-block mb-3">CEO, Co-Founder, XYZ Inc.</span>
-                                                    </div>
-                                                </div>
-
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                </div>
-
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div className="blog-section">
-                <div className="container">
-                    <div className="row mb-5">
-                        <div className="col-md-6">
-                            <h2 className="section-title">Recent Blog</h2>
-                        </div>
-                        <div className="col-md-6 text-start text-md-end">
-                            <a href="#" className="more">View All Posts</a>
-                        </div>
-                    </div>
-
-                    <div className="row">
-
-                        <div className="col-12 col-sm-6 col-md-4 mb-4 mb-md-0">
-                            <div className="post-entry">
-                                <a href="#" className="post-thumbnail"><img src={require('../../img/pexels-ray-piedra-1478442.jpg')} alt="Image" className="img-fluid" /></a>
-                                <div className="post-content-entry">
-                                    <h3><a href="#">First Time Home Owner Ideas</a></h3>
-                                    <div className="meta">
-                                        <span>by <a href="#">Kristin Watson</a></span> <span>on <a href="#">Dec 19, 2021</a></span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="col-12 col-sm-6 col-md-4 mb-4 mb-md-0">
-                            <div className="post-entry">
-                                <a href="#" className="post-thumbnail"><img src={require('../../img/pexels-photo-2385477.jpeg')} alt="Image" className="img-fluid" /></a>
-                                <div className="post-content-entry">
-                                    <h3><a href="#">How To Keep Your Furniture Clean</a></h3>
-                                    <div className="meta">
-                                        <span>by <a href="#">Robert Fox</a></span> <span>on <a href="#">Dec 15, 2021</a></span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="col-12 col-sm-6 col-md-4 mb-4 mb-md-0">
-                            <div className="post-entry">
-                                <a href="#" className="post-thumbnail"><img src={require('../../img/pexels-rafa-de-345415.jpg')} alt="Image" className="img-fluid" /></a>
-                                <div className="post-content-entry">
-                                    <h3><a href="#">Small Space Furniture Apartment Ideas</a></h3>
-                                    <div className="meta">
-                                        <span>by <a href="#">Kristin Watson</a></span> <span>on <a href="#">Dec 12, 2021</a></span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-            </div>
+            </main>
 
             {/*<footer>*/}
-            {/*    <footer className="bg-gray py-5" style={{ backgroundColor: 'rgba(0,0,0,0.03)' }}>*/}
-            {/*        <div className="container">*/}
-            {/*            <div className="row text-black g-4">*/}
-            {/*                <div className="col-md-6 col-lg-3">*/}
-            {/*                    <a className="text-uppercase text-decoration-none brand text-black" style={{ fontWeight: 'bold', fontSize: '26px' }}>404SHOES</a>*/}
-            {/*                    <p className="text-black text-muted mt-3"> <strong>Giày thể thao chính hãng </strong><br />*/}
+            {/*    <footer class="bg-gray py-5" style={{ backgroundColor: 'rgba(0,0,0,0.03)' }}>*/}
+            {/*        <div class="container">*/}
+            {/*            <div class="row text-black g-4">*/}
+            {/*                <div class="col-md-6 col-lg-3">*/}
+            {/*                    <a class="text-uppercase text-decoration-none brand text-black" style={{ fontWeight: 'bold', fontSize: '26px' }}>404SHOES</a>*/}
+            {/*                    <p class="text-black text-muted mt-3"> <strong>Giày thể thao chính hãng </strong><br />*/}
             {/*                        Hoàn trả 100% nếu sản phẩm bị lỗi hoặc hỏng khi vận chuyển <br />*/}
             {/*                        Đội ngũ hỗ trợ khách hàng luôn luôn 24/7*/}
             {/*                    </p>*/}
             {/*                </div>*/}
 
-            {/*                <div className="col-md-6 col-lg-3">*/}
-            {/*                    <h5 className="fw-dark">Liên Kết</h5>*/}
-            {/*                    <ul className="list-unstyled">*/}
-            {/*                        <li className="my-3">*/}
-            {/*                            <a href="#" className="text-black text-decoration-none text-muted">*/}
+            {/*                <div class="col-md-6 col-lg-3">*/}
+            {/*                    <h5 class="fw-dark">Liên Kết</h5>*/}
+            {/*                    <ul class="list-unstyled">*/}
+            {/*                        <li class="my-3">*/}
+            {/*                            <a href="#" class="text-black text-decoration-none text-muted">*/}
             {/*                                Home*/}
             {/*                            </a>*/}
             {/*                        </li>*/}
-            {/*                        <li className="my-3">*/}
-            {/*                            <a href="#" className="text-black text-decoration-none text-muted">*/}
+            {/*                        <li class="my-3">*/}
+            {/*                            <a href="#" class="text-black text-decoration-none text-muted">*/}
             {/*                                Bộ sưu tập*/}
             {/*                            </a>*/}
             {/*                        </li>*/}
-            {/*                        <li className="my-3">*/}
-            {/*                            <a href="#" className="text-black text-decoration-none text-muted">*/}
+            {/*                        <li class="my-3">*/}
+            {/*                            <a href="#" class="text-black text-decoration-none text-muted">*/}
             {/*                                Blogs*/}
             {/*                            </a>*/}
             {/*                        </li>*/}
-            {/*                        <li className="my-3">*/}
-            {/*                            <a href="#" className="text-black text-decoration-none text-muted">*/}
+            {/*                        <li class="my-3">*/}
+            {/*                            <a href="#" class="text-black text-decoration-none text-muted">*/}
             {/*                                Về chúng tôi*/}
             {/*                            </a>*/}
             {/*                        </li>*/}
             {/*                    </ul>*/}
             {/*                </div>*/}
 
-            {/*                <div className="col-md-6 col-lg-3">*/}
-            {/*                    <h5 className="fw-light mb-4">Liên Hệ</h5>*/}
-            {/*                    <div className="d-flex justify-content-start align-items-start my-2 text-muted">*/}
-            {/*                        <span className="me-0">*/}
-            {/*                            <i className="fas fa-map-marked-alt"></i>*/}
+            {/*                <div class="col-md-6 col-lg-3">*/}
+            {/*                    <h5 class="fw-light mb-4">Liên Hệ</h5>*/}
+            {/*                    <div class="d-flex justify-content-start align-items-start my-2 text-muted">*/}
+            {/*                        <span class="me-0">*/}
+            {/*                            <i class="fas fa-map-marked-alt"></i>*/}
             {/*                        </span>*/}
-            {/*                        <span className="fw-light">*/}
+            {/*                        <span class="fw-light">*/}
             {/*                            Hoàng Quốc Việt - Cầu Giấy - Hà Nội*/}
             {/*                        </span>*/}
             {/*                    </div>*/}
-            {/*                    <div className="d-flex justify-content-start align-items-start my-2 text-muted">*/}
-            {/*                        <span className="me-0">*/}
-            {/*                            <i className="fas fa-envelope"></i>*/}
+            {/*                    <div class="d-flex justify-content-start align-items-start my-2 text-muted">*/}
+            {/*                        <span class="me-0">*/}
+            {/*                            <i class="fas fa-envelope"></i>*/}
             {/*                        </span>*/}
-            {/*                        <span className="fw-light">*/}
+            {/*                        <span class="fw-light">*/}
             {/*                            404shopshoes@gmail.com*/}
             {/*                        </span>*/}
             {/*                    </div>*/}
-            {/*                    <div className="d-flex justify-content-start align-items-start my-2 text-muted">*/}
-            {/*                        <span className="me-0">*/}
-            {/*                            <i className="fas fa-phone-alt"></i>*/}
+            {/*                    <div class="d-flex justify-content-start align-items-start my-2 text-muted">*/}
+            {/*                        <span class="me-0">*/}
+            {/*                            <i class="fas fa-phone-alt"></i>*/}
             {/*                        </span>*/}
-            {/*                        <span className="fw-light">*/}
+            {/*                        <span class="fw-light">*/}
             {/*                            +84 0819130199*/}
             {/*                        </span>*/}
             {/*                    </div>*/}
             {/*                </div>*/}
 
-            {/*                <div className="col-md-6 col-lg-3">*/}
-            {/*                    <h5 className="fw-light mb-3">Theo Dõi</h5>*/}
+            {/*                <div class="col-md-6 col-lg-3">*/}
+            {/*                    <h5 class="fw-light mb-3">Theo Dõi</h5>*/}
             {/*                    <div>*/}
-            {/*                        <ul className="list-unstyled d-flex flex-column">*/}
+            {/*                        <ul class="list-unstyled d-flex flex-column">*/}
             {/*                            <li>*/}
-            {/*                                <a href="#" className="text-black text-decoration-none text-muted fs-4 me-4">*/}
-            {/*                                    <i className="fab fa-facebook-f"> Facebook</i>*/}
+            {/*                                <a href="#" class="text-black text-decoration-none text-muted fs-4 me-4">*/}
+            {/*                                    <i class="fab fa-facebook-f"> Facebook</i>*/}
             {/*                                </a>*/}
             {/*                            </li>*/}
             {/*                            <li>*/}
-            {/*                                <a href="#" className="text-black text-decoration-none text-muted fs-4 me-4">*/}
-            {/*                                    <i className="fab fa-twitter"> Twitter</i>*/}
+            {/*                                <a href="#" class="text-black text-decoration-none text-muted fs-4 me-4">*/}
+            {/*                                    <i class="fab fa-twitter"> Twitter</i>*/}
             {/*                                </a>*/}
             {/*                            </li>*/}
             {/*                            <li>*/}
-            {/*                                <a href="#" className="text-black text-decoration-none text-muted fs-4 me-4">*/}
-            {/*                                    <i className="fab fa-instagram"> Instagram</i>*/}
+            {/*                                <a href="#" class="text-black text-decoration-none text-muted fs-4 me-4">*/}
+            {/*                                    <i class="fab fa-instagram"> Instagram</i>*/}
             {/*                                </a>*/}
             {/*                            </li>*/}
             {/*                        </ul>*/}
@@ -852,4 +488,3 @@ function Home() {
 }
 
 export default Home;
-     
