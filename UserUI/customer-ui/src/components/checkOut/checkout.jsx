@@ -8,6 +8,7 @@ import {Select} from "antd";
 import {GioHangService} from "../../service/GioHangService";
 import axios from "axios";
 import TextArea from "antd/es/input/TextArea";
+import {da} from "date-fns/locale";
 
 function CheckOut({ location }) {
     const [SPCT, setSPCT] = useState([]);
@@ -54,11 +55,23 @@ function CheckOut({ location }) {
                 // setListHD(response.data);
                 setCode(generateCode(10))
                 const storedData = localStorage.getItem('currentUser');
-                if(storedData){
-                    setUser(JSON.parse(storedData))
-                }
+
                 const dataDC = await GioHangService.getDCByTaiKhoan(JSON.parse(storedData).id);
                 setListDC(dataDC)
+                if(storedData){
+                    setUser(JSON.parse(storedData))
+                    if(dataDC.length===0){
+
+                    }else {
+                        setTen(dataDC[0].ten)
+                        setSDT(dataDC[0].sdt)
+                        setDiaChiCuThe(dataDC[0].diaChiCuThe)
+                        setXaPhuongThiTran(dataDC[0].xaPhuongThiTran)
+                        setQuanHuyen(dataDC[0].quanHuyen)
+                        setTinhThanhPho(dataDC[0].tinhThanhPho)
+                        layIdXP(dataDC[0].tinhThanhPho,dataDC[0].quanHuyen,dataDC[0].xaPhuongThiTran)
+                    }
+                }
             } catch (error) {
             }
         };
@@ -831,7 +844,7 @@ function CheckOut({ location }) {
                                         <a href="#" className={`btn btn-sm btn-outline-dark size-item ${PTTT===1 ? 'selected' : ''}`} style={{marginLeft:20}} onClick={PTTTVietQR}>
                                             <div>Thanh toán bằng VietQR</div>
                                         </a>
-                                        <img style={{maxWidth:300,marginLeft:930,marginTop:20}} src={`https://api.vietqr.io/image/970422-0362460679-vE5Br8f.jpg?accountName=BUI%20XUAN%20THIEU&amount=${tinhTongTienHang()}&addInfo=TRA%20TIEN%20HOA%20DON`} hidden={PTTT!=1}/>
+                                        {phiShip===0?(<p style={{color:"red",textAlign:"right"}} hidden={PTTT!=1}>Chưa nhập địa chỉ giao , chưa thể quét VietQR</p>):(<img style={{maxWidth:300,marginLeft:930,marginTop:20}} src={`https://api.vietqr.io/image/970422-0362460679-vE5Br8f.jpg?accountName=BUI%20XUAN%20THIEU&amount=${tinhTongTienHang()+phiShip}&addInfo=TRA%20TIEN%20HOA%20DON`} hidden={PTTT!=1}/>)}
                                     </h5>
                                     {/*<a style={{textDecoration:"none",cursor:"pointer",color:"mediumblue",marginLeft:980}}>Đổi</a>*/}
                                     <hr className="dashed-hr" style={{marginTop:30}}/>

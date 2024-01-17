@@ -5,7 +5,9 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import ReactPaginate from 'react-paginate';
 import _ from 'lodash';
+import taikhoanservice from "../../services/taikhoanservice/taikhoanservice";
 import _debounce from 'lodash/debounce';
+
 import {
     Col,
     Tabs,
@@ -24,6 +26,8 @@ class BanHangOffline extends Component {
         super(props);
 
         this.state = {
+            thongTinNguoiDung: [],
+            nhanVienQuyen1: [],
             phiShip: 0, // state này lưu phí ship để thanh toán
             ten: '', // state này lưu tên khách hàng để thanh toán
             sdt: '', // state này lưu sdt khách hàng để thanh toán
@@ -58,6 +62,7 @@ class BanHangOffline extends Component {
             showModal1: false,
             showModal2: false,
             showModal3: false,
+            showModal4: false,
             currentPage: 0,
             perPage: 4,
             currentPageKH: 0,
@@ -70,6 +75,25 @@ class BanHangOffline extends Component {
                 tabKey4: [],
                 tabKey5: [],
             },
+            nguoiDungAdd: {
+                cccd: '',
+                ten: '',
+                sdt: '',
+            },
+            taiKhoanAdd: {
+                maTaiKhoan: '',
+                email: '',
+                password: '',
+                anh: ''
+            },
+            errorAdd: {       
+                sdt: '',
+                ten: '',
+                cccd: '',
+                maTaiKhoan: '',
+                email: '',
+                password: '',
+                       },
             checked: false, // check button giao hàng (có = true, không = false)        
             cities: [], // state này lưu danh sách thành phố
             districts: [],  // state này lưu danh sách quận huyện
@@ -79,6 +103,7 @@ class BanHangOffline extends Component {
         };
         this.onChangeSearchInput = this.onChangeSearchInput.bind(this);
         this.nextTabIndex = 0
+        this.addKH = this.addKH.bind(this);
         this.handleQuantityChange = this.handleQuantityChange.bind(this);
         this.onChangeSwitch = this.onChangeSwitch.bind(this);
         this.handleCityChange = this.handleCityChange.bind(this);
@@ -86,6 +111,20 @@ class BanHangOffline extends Component {
         this.handleWardChange = this.handleWardChange.bind(this);
         this.add = this.add.bind(this);
         this.debouncedUpdateSoLuong = _debounce(this.updateSoLuong, 150).bind(this);
+
+        this.thayDoiTenAdd = this.thayDoiTenAdd.bind(this);
+   
+        this.thayDoiSdtAdd = this.thayDoiSdtAdd.bind(this);
+        
+        this.thayDoiPassAdd = this.thayDoiPassAdd.bind(this);
+      
+        this.thayDoiMaNVAdd = this.thayDoiMaNVAdd.bind(this);
+     
+        this.thayDoiCCCDAdd = this.thayDoiCCCDAdd.bind(this);
+        this.thayDoiEmailAdd = this.thayDoiEmailAdd.bind(this);
+
+        this.debouncedUpdateSoLuong = _debounce(this.updateSoLuong, 300).bind(this);
+
     }
 
     componentDidMount() {
@@ -307,6 +346,239 @@ class BanHangOffline extends Component {
             this.fetchWards(selectedDistrict);
         }
     }
+    sendEmail = (recipientEmail) => {
+        const emailData = {
+            to: recipientEmail,
+            subject: 'Subject of the email',
+            text: 'Body of the email',
+        };
+
+        axios.post('http://localhost:3000/tai_khoan/addKHNhanh', emailData)
+            .then(response => {
+                console.log('Email sent successfully:', response.data);
+                // Handle success, e.g., show a success message to the user
+            })
+            .catch(error => {
+                console.error('Error sending email:', error);
+                // Handle error, e.g., show an error message to the user
+            });
+    };
+    thayDoiTenAdd = (event) => {
+        this.setState(
+            prevState => ({
+                nguoiDungAdd: {
+                    ...prevState.nguoiDungAdd,
+                    ten: event.target.value
+                }
+            })
+        );
+        let errorAdd = {...this.state.errorAdd, ten: ""};
+        this.setState({errorAdd: errorAdd});
+    }
+    thayDoiSdtAdd = (event) => {
+        this.setState(
+            prevState => ({
+                nguoiDungAdd: {
+                    ...prevState.nguoiDungAdd,
+                    sdt: event.target.value
+                }
+            })
+        );
+        let errorAdd = {...this.state.errorAdd, sdt: ""};
+        this.setState({errorAdd: errorAdd});
+    }
+    thayDoiMaNVAdd = (event) => {
+        this.setState(
+            prevState => ({
+                taiKhoanAdd: {
+                    ...prevState.taiKhoanAdd,
+                    maTaiKhoan: event.target.value
+                }
+            })
+        );
+        let errorAdd = {...this.state.errorAdd, maTaiKhoan: ""};
+        this.setState({errorAdd: errorAdd});
+    }
+    thayDoiCCCDAdd = (event) => {
+        this.setState(
+            prevState => ({
+                nguoiDungAdd: {
+                    ...prevState.nguoiDungAdd,
+                    cccd: event.target.value
+                }
+            })
+        );
+        let errorAdd = {...this.state.errorAdd, cccd: ""};
+        this.setState({errorAdd: errorAdd});
+    }
+    thayDoiEmailAdd = (event) => {
+        this.setState(
+            prevState => ({
+                taiKhoanAdd: {
+                    ...prevState.taiKhoanAdd,
+                    email: event.target.value
+                }
+            })
+        );
+        let errorAdd = {...this.state.errorAdd, email: ""};
+        this.setState({errorAdd: errorAdd});
+    }
+    thayDoiPassAdd = (event) => {
+        this.setState(
+            prevState => ({
+                taiKhoanAdd: {
+                    ...prevState.taiKhoanAdd,
+                    password: event.target.value
+                }
+            })
+        );
+        let errorAdd = {...this.state.errorAdd, password: ""};
+        this.setState({errorAdd: errorAdd});
+    }
+    addKH = (e) => {
+        e.preventDefault();
+
+    
+
+
+        const {taiKhoanAdd, nguoiDungAdd} = this.state;
+        const requestData = {
+            taiKhoan: {
+                email : taiKhoanAdd.email,
+            },
+            thongTinNguoiDung: {
+                ten: nguoiDungAdd.ten,
+                cccd: nguoiDungAdd.cccd,
+                sdt: nguoiDungAdd.sdt,
+            
+            },
+        };
+        console.log('nsx' + JSON.stringify(requestData));
+
+  
+        // Kiểm tra không được để trống
+        if (!nguoiDungAdd.cccd.trim()) {
+            this.setState({ errorAdd: { ...this.state.errorAdd, cccd: "CCCD không được bỏ trống!" } });
+            return;
+        } else if (!/^\d+$/.test(nguoiDungAdd.cccd)) {
+            // Kiểm tra là số nguyên
+            this.setState({ errorAdd: { ...this.state.errorAdd, cccd: "CCCD phải là số nguyên và không được chứa khoảng trắng !" } });
+            return;
+        } else if (nguoiDungAdd.cccd.length !== 12) {
+            // Kiểm tra có đủ 12 số
+            this.setState({ errorAdd: { ...this.state.errorAdd, cccd: "CCCD phải có đủ 12 số!" } });
+            return;
+        } else if (this.state.nhanVienQuyen1.some(user => user.thongTinNguoiDung.cccd === nguoiDungAdd.cccd)) {
+            // Kiểm tra trùng căn cước
+            this.setState({ errorAdd: { ...this.state.errorAdd, cccd: "CCCD đã tồn tại trong hệ thống!" } });
+            return;
+        } else {
+            this.setState({ errorAdd: { ...this.state.errorAdd, cccd: "" } });
+        }
+
+
+        //check ten
+        if (!nguoiDungAdd.ten.trim()) {
+            this.setState({ errorAdd: { ...this.state.errorAdd, ten: "Tên không được bỏ trống!" } });
+            return;
+        } else if (!/^[\p{L}\s]+$/u.test(nguoiDungAdd.ten)) {
+            this.setState({ errorAdd: { ...this.state.errorAdd, ten: "Tên chỉ được chứa chữ cái và không có kí tự đặc biệt!" } });
+            return;
+            // } else if (/\s/.test(nguoiDungAdd.ten)) {
+            //     this.setState({ errorAdd: { ...this.state.errorAdd, ten: "Tên không được chứa khoảng trắng!" } });
+            //     return;
+        } else {
+            this.setState({ errorAdd: { ...this.state.errorAdd, ten: "" } });
+        }
+
+        //check ngaySinh
+       
+        // check thanhPho
+      
+        // check sdt
+        const sdtRegex = /^[0-9]{10}$/; // Regex for 10 digits
+
+        if (!nguoiDungAdd.sdt.trim()) {
+            this.setState({ errorAdd: { ...this.state.errorAdd, sdt: "SDT không được bỏ trống!" } });
+            return;
+        } else if (!sdtRegex.test(nguoiDungAdd.sdt.trim())) {
+            this.setState({
+                errorAdd: {
+                    ...this.state.errorAdd,
+                    sdt: "SDT phải là số nguyên, không có kí tự đặc biệt và phải có 10 chữ số!"
+                }
+            });
+            return;
+        } else if (/\s/.test(nguoiDungAdd.sdt.trim())) {
+            this.setState({ errorAdd: { ...this.state.errorAdd, sdt: "SDT không được chứa khoảng trắng!" } });
+            return;
+        } else if (this.state.nhanVienQuyen1.some(user => user.thongTinNguoiDung.sdt === nguoiDungAdd.sdt)) {
+            this.setState({ errorAdd: { ...this.state.errorAdd, sdt: "SDT đã tồn tại trong hệ thống!" } });
+            return;
+        } else {
+            this.setState({ errorAdd: { ...this.state.errorAdd, sdt: "" } });
+        }
+
+        // check email
+        if (!taiKhoanAdd || !taiKhoanAdd.email || !taiKhoanAdd.email.trim()) {
+            this.setState({ errorAdd: { ...this.state.errorAdd, email: "Email không được bỏ trống!" } });
+            return;
+        } else if (!/^\S+@\S+\.\S+$/.test(taiKhoanAdd.email)) {
+            // Check if email is in correct format
+            this.setState({ errorAdd: { ...this.state.errorAdd, email: "Địa chỉ email không đúng định dạng!" } });
+            return;
+        } else if (/\s/.test(taiKhoanAdd.email)) {
+            // Check if email contains whitespace
+            this.setState({ errorAdd: { ...this.state.errorAdd, email: "Email không được chứa khoảng trắng!" } });
+            return;
+        } else if (this.state.nhanVienQuyen1.some(user => user.taiKhoan && user.taiKhoan.email === taiKhoanAdd.email)) {
+            this.setState({ errorAdd: { ...this.state.errorAdd, email: "Email đã tồn tại trong hệ thống!" } });
+            return;
+        } else {
+            this.setState({ errorAdd: { ...this.state.errorAdd, email: "" } });
+        }
+
+        console.log(requestData);
+        // Gọi API để thêm tài khoản
+        taikhoanservice.addKhachHangNhanh(requestData)
+            .then((res) => {
+                if (res.status === 200) {
+                    // Xử lý khi thêm thành công
+                    let taiKhoanMoi = res.data.taiKhoan;
+                    let nguoiDungMoi = res.data.thongTinNguoiDung;
+
+                    this.setState((prevState) => ({
+                        nhanVienQuyen1: [...prevState.nhanVienQuyen1, taiKhoanMoi],
+                        thongTinNguoiDung: [...prevState.thongTinNguoiDung, nguoiDungMoi],
+                    }));
+
+                    this.sendEmail(
+                        taiKhoanAdd.email,
+                        "Welcome to Our Company",
+                        "Dear " + nguoiDungAdd.ten +
+                        ",\n\nWelcome to our company! Your account has been successfully created."
+                    );
+
+                    setTimeout(() => {
+                        window.location.href = (`/nhanvien`);
+                    }, 20);
+                    toast.success("Thêm thành công!");
+                } else {
+                    // Xử lý khi có lỗi trả về từ API
+                    const errorMessage = res.data.message || "Có lỗi xảy ra khi thêm danh mục.";
+                    toast.error("Lỗi: " + errorMessage);
+                    console.log(res.data.error);
+                }
+            })
+            .catch((error) => {
+                // Xử lý lỗi khi gửi yêu cầu API
+                if (error.message === "Network Error") {
+                    toast.error("Lỗi kết nối mạng. Vui lòng kiểm tra kết nối của bạn.");
+                } else {
+                    toast.error("Lỗi khi gửi yêu cầu API: " + error);
+                }
+            });
+    }
 
     handleTenChange = (event) => {
         this.setState({ ten: event.target.value });
@@ -367,7 +639,13 @@ class BanHangOffline extends Component {
     handleShowModal3 = () => {
         this.setState({ showModal3: true });
     };
-
+    handleCloseModal4 = () => {
+        this.setState({ showModal4: false });
+    };
+    handleShowModal4 = () => {
+        this.setState({ showModal3: false });
+        this.setState({ showModal4: true });
+    };
     handleSearchFocus = () => {
         this.setState({ currentPage: 0 });
     }
@@ -399,6 +677,13 @@ class BanHangOffline extends Component {
 
     // hàm thanh toán
     add = async (e) => {
+        const tongTienThanhToan = this.getTotalAmount(this.state.tabProducts) + this.state.phiShip;
+        const giaTienNhap = this.state.enteredAmount;
+        const isAmountEnough = giaTienNhap >= tongTienThanhToan;
+        if (!(giaTienNhap >= tongTienThanhToan)) {
+            window.alert('Nhập đủ tiền khách đưa!');
+            return;
+        }
         const { selectedPromotions } = this.state;
         const firstSelectedPromotion = selectedPromotions.length > 0 ? selectedPromotions[0] : null; // hàm này lấy giá trị đầu tiên của mảng lưu khuyến mãi
 
@@ -1223,7 +1508,67 @@ class BanHangOffline extends Component {
                                 <Modal.Body>
                                     <div className="row">
                                         <div className="col-2 container">
-                                            <button className="btn btn-primary " style={{ margin: 10 }} onClick={this.addKH}> Thêm khách hàng  </button>
+                                        <Button variant="btn btn-primary " style={{ margin: 10 }} onClick={this.handleShowModal4}> Thêm khách hàng  </Button>
+                                            <Modal show={this.state.showModal4} onHide={this.handleCloseModal4} backdrop="static" dialogClassName="custom-modal-size">
+                                <Modal.Header closeButton>
+                                    <Modal.Title>Thông tin KH</Modal.Title>
+                                </Modal.Header>
+                                <Modal.Body>
+                                <form onSubmit={this.addKH}>
+                                             {/* CCCD */}
+                                        <div className="form-group">
+                                            <label htmlFor="cccd">CCCD:<span style={{ color: 'red' }}>*</span></label>
+                                            <input
+                                                type="text"
+                                                className={`form-control ${this.state.errorAdd.cccd ? 'is-invalid' : ''}`}
+                                                id="cccd"
+                                                onChange={this.thayDoiCCCDAdd}
+                                                value={this.state.nguoiDungAdd.cccd }
+                                            />
+                                            {this.state.errorAdd.cccd && <div className="invalid-feedback">{this.state.errorAdd.cccd}</div>}
+                                        </div>
+                                        {/* Họ và tên */}
+                                        <div className="form-group">
+                                            <label htmlFor="ten">Họ và tên: <span style={{ color: 'red' }}>*</span></label>
+                                            <input
+                                                type="text"
+                                                className={`form-control ${this.state.errorAdd.ten ? 'is-invalid' : ''}`}
+                                                id="ten"
+                                                value={this.state.nguoiDungAdd.ten}
+                                                onChange={this.thayDoiTenAdd}
+                                            />
+                                            {this.state.errorAdd.ten && <div className="invalid-feedback">{this.state.errorAdd.ten}</div>}
+                                        </div>
+                                        {/* SDT */}
+                                        <div className="form-group">
+                                            <label htmlFor="sdt">SDT: <span style={{ color: 'red' }}>*</span></label>
+                                            <input
+                                                type="text"
+                                                className={`form-control ${this.state.errorAdd.sdt ? 'is-invalid' : ''}`}
+                                                id="sdt"
+                                                onChange={this.thayDoiSdtAdd}
+                                                value={this.state.nguoiDungAdd.sdt}
+                                            />
+                                            {this.state.errorAdd.sdt && <div className="invalid-feedback">{this.state.errorAdd.sdt}</div>}
+                                        </div>
+
+                                        {/* Email */}
+                                        <div className="form-group">
+                                            <label htmlFor="email">Email: <span style={{ color: 'red' }}>*</span></label>
+                                            <input
+                                                type="email"
+                                                className={`form-control ${this.state.errorAdd.email ? 'is-invalid' : ''}`}
+                                                id="email"
+                                                value={this.state.taiKhoanAdd.email}
+                                                onChange={this.thayDoiEmailAdd}
+                                            />
+                                            {this.state.errorAdd.email && <div className="invalid-feedback">{this.state.errorAdd.email}</div>}
+                                        </div>
+                                        <input type="submit" className="btn btn-primary" value="Add" style={{ marginTop: '10px' }} />
+                                       </form>
+                                             </Modal.Body>
+                                {this.popupContent}
+                            </Modal>
                                             <input
                                                 type="text"
                                                 name="query"

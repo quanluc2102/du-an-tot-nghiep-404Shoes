@@ -172,7 +172,10 @@ public class TaiKhoanServiceimpl implements TaiKhoanService {
         return taiKhoanResponsitory.findByThongTinNguoiDung_Sdt(sdt);
     }
 
-
+    @Override
+    public List<TaiKhoan> getAllByIdTTND(Long id) {
+        return responsitory.findTaiKhoanByThongTinNguoiDungId(id);
+    }
 
 
     public Optional<TaiKhoan> findById(Long id) {

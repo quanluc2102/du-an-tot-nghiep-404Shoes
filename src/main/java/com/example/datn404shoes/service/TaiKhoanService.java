@@ -1,9 +1,6 @@
 package com.example.datn404shoes.service;
 
-import com.example.datn404shoes.entity.KichThuoc;
-import com.example.datn404shoes.entity.TaiKhoan;
-import com.example.datn404shoes.entity.ThuongHieu;
-import com.example.datn404shoes.entity.XuatXu;
+import com.example.datn404shoes.entity.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
@@ -43,5 +40,6 @@ public interface TaiKhoanService {
     List<TaiKhoan>getAllNoPage();
 
     TaiKhoan getOneBySDT(String sdt);
+    List<TaiKhoan> getAllByIdTTND(Long id);
 
 }

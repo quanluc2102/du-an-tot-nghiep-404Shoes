@@ -22,23 +22,25 @@ function LoginComponent({ onLogin, onLogout }) {
 
             // After successful login, get user information
             const user = await getUserInfo();
+            console.log("Cái này là local nè:"+user)
+            window.location.href = (`/`);
 
             // Check if the user is active before allowing login
-            if (user && user.status === 'active') {
-                // Check if the account status is 'active' before allowing login
-                if (user.trangThai === true) {
-                    setUserInfo(user);
-                    onLogin();
-                } else {
-                    // If the account status is not 'active', prevent login
-                    console.error('User account is not active. Login is not allowed.');
-                    handleLogout(); // Log out immediately if login is not allowed
-                }
-            } else {
-                // If user status is not 'active', prevent login
-                console.error('User is not active. Login is not allowed.');
-                handleLogout(); // Log out immediately if login is not allowed
-            }
+            // if (user && user.trangThai === 1) {
+            //     // Check if the account status is 'active' before allowing login
+            //     if (user.trangThai === 1) {
+            //         setUserInfo(user);
+            //         onLogin();
+            //     } else {
+            //         // If the account status is not 'active', prevent login
+            //         console.error('User account is not active. Login is not allowed.');
+            //         handleLogout(); // Log out immediately if login is not allowed
+            //     }
+            // } else {
+            //     // If user status is not 'active', prevent login
+            //     console.error('User is not active. Login is not allowed.');
+            //     handleLogout(); // Log out immediately if login is not allowed
+            // }
         } catch (error) {
             // Handle login error, display a message, etc.
             console.error('Login error:', error);
@@ -76,7 +78,7 @@ function LoginComponent({ onLogin, onLogout }) {
             console.log("credentials"+credentials.email)
             if (userResponse.ok) {
                 const allUsers = await userResponse.json();
-
+                console.log(allUsers)
                 // Example: Assuming each user in allUsers has an 'email' field
                 const desiredEmail = credentials.email; // Replace with the desired email
 

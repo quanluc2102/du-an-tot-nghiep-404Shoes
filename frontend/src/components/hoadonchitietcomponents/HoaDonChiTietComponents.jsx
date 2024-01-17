@@ -456,7 +456,13 @@ class HoaDonChiTietComponents extends Component {
                     <div style={{ maxWidth: '960px' }}>
                         <br />
                         <br />
-                        <div><button onClick={this.FCInHD}>In đơn hàng</button>{this.state.hoaDon.trangThai === 6 || this.state.hoaDon.trangThai < 5 ? <Button
+                        <div>  <button
+        className='btn btn-warning btn-lg' // Thêm lớp 'btn-lg' để làm nút lớn hơn
+        onClick={this.FCInHD}
+        style={{ borderRadius: '10px' }} // Thêm border-radius để làm cho góc nút cong
+      >
+        In đơn hàng
+      </button>{this.state.hoaDon.trangThai === 6 || this.state.hoaDon.trangThai < 5 ? <Button
                             variant="btn btn-outline-primary"
                             onClick={this.handleShowModal1}
                             Visible

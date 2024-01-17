@@ -37,6 +37,13 @@ public class ThongTinNguoiDungServiceimpl implements ThongTinNguoiDungService {
     }
 
     @Override
+    public ThongTinNguoiDung addKHNhanh(ThongTinNguoiDung thongTinNguoiDung) {
+        thongTinNguoiDung.setNgayCapNhat(Date.valueOf(LocalDate.now()));
+        thongTinNguoiDung.setNgaySinh(Date.valueOf(LocalDate.now()));
+        return respository.saveAndFlush(thongTinNguoiDung);
+    }
+
+    @Override
     public void delete(Long id) {
            respository.deleteById(id);
     }
