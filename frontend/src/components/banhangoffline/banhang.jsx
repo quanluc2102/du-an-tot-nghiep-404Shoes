@@ -124,6 +124,9 @@ class BanHangOffline extends Component {
 
         this.debouncedUpdateSoLuong = _debounce(this.updateSoLuong, 300).bind(this);
 
+
+        this.debouncedUpdateSoLuong = _debounce(this.updateSoLuong, 150).bind(this);
+
     }
 
     componentDidMount() {
@@ -930,7 +933,7 @@ class BanHangOffline extends Component {
                                 min="1"
                                 style={{ width: '50px' }}
                                 value={product.soLuong}
-                                onChange={(e) => this.handleQuantityChange(e, product.sanPhamChiTiet.ma, product.id)}
+                                onChange={(e) => this.handleQuantityChange(e, product.sanPhamChiTiet.ma, product.id, product)}
                             />
                         </Col>
                         <Col span={3} style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center' }}>{this.formatCurrency(product.sanPhamChiTiet.donGia)}</Col>
@@ -950,41 +953,24 @@ class BanHangOffline extends Component {
     };
 
     // hàm xử lí số lượng ở ô input trên (chưa hoàn thành)
-    handleQuantityChange = async (e, productCode, productId) => {
+    handleQuantityChange = async (e, productCode, productId, product) => {
         const newQuantity = parseInt(e.target.value, 10);
 
         const { sanPhamChiTiet } = this.state;
 
         const selectedProduct = sanPhamChiTiet.find(product => product.ma === productCode);
 
-        const isValidQuantity = !isNaN(newQuantity) && newQuantity !== null && newQuantity !== undefined;
+        const isValidQuantity = !isNaN(newQuantity) && newQuantity !== null && newQuantity !== undefined && newQuantity > 0;
 
-        const limitedQuantity = isValidQuantity ? Math.max(1, Math.min(newQuantity, selectedProduct ? selectedProduct.soLuong : 1)) : 1;
-
+        const limitedQuantity = isValidQuantity ? Math.min(newQuantity, selectedProduct ? selectedProduct.soLuong + product.soLuong : 1) : 1;
 
         console.log('id ctsp: ', selectedProduct.id);
         console.log('limit quantity: ', limitedQuantity);
         console.log("so luong moi: ", newQuantity);
         console.log("id hdct: ", productId);
 
-        const updatedProducts = this.state.tabProducts.map(product => {
-            if (product.id === productId) {
-                return { ...product, soLuong: limitedQuantity };
-            }
-            return product;
-        });
-
         this.handleUpdateSoLuong(limitedQuantity, productId);
         this.fetchDanhSachSP();
-
-        // this.updateSoLuong(limitedQuantity, this.state.activeTabKey);
-        // this.fetchHDCT();
-
-        // this.setState({
-        //     tabProducts: updatedProducts
-        // });
-
-       
     };
 
 
@@ -1307,8 +1293,14 @@ class BanHangOffline extends Component {
                     'token': '93254e5e-a301-11ee-b394-8ac29577e80e',
                 },
             });
+            if (response.status === 200) {
+                console.log(this.state.codeTP);
+                console.log(this.state.codeQH);
+                console.log(this.state.codeXP);
+                return response.data.data.service_fee;
+            }
             this.setState({ phiShip: response.data.data.service_fee })
-            // return response.data.data.service_fee;
+
         } catch (error) {
             // Xử lý lỗi tại đây
             if (error.response) {
