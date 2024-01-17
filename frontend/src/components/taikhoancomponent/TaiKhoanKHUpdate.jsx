@@ -78,29 +78,96 @@ class TaiKhoanKHUpdate extends Component {
     }
 
     componentDidMount() {
-        // Lấy id từ URL
         const id = this.props.match.params.id;
 
-        // Gọi API để lấy thông tin tài khoản dựa trên id
         taikhoanservice.getTaiKhoanById(id)
             .then((response) => {
-                // Lấy dữ liệu từ phản hồi của API
-                const taiKhoanData = response.data;
+                const taiKhoanDataArray = response.data;
+                if (Array.isArray(taiKhoanDataArray) && taiKhoanDataArray.length > 0) {
+                    const taiKhoanData = taiKhoanDataArray[0];
+                    console.log("User Account Data:", taiKhoanData);
 
-                // Log thông tin tài khoản ra console
-                console.log("User Account Data:", taiKhoanData);
+                    // Extract values from the array
+                    const [
+                        anh,
+                        cccd,
+                        ten,
+                        ngaySinh,
+                        gioiTinh,
+                        tinhThanhPho,
+                        quanHuyen,
+                        xaPhuongThiTran,
+                        diaChiCuThe,
+                        sdt,
+                        email,
+                        password,
+                    ] = taiKhoanData;
 
-                // Cập nhật state với dữ liệu tài khoản mới
-                this.setState({ taiKhoanUpdate: taiKhoanData });
+                    // Update quanHuyen and xaPhuongThiTran in the array
+                    const updatedTaiKhoanData = [...taiKhoanData];
+                    updatedTaiKhoanData[6] = quanHuyen;
+                    updatedTaiKhoanData[7] = xaPhuongThiTran;
 
-                // Tiếp tục lấy thông tin người dùng sau khi có thông tin tài khoản
-                this.fetchUserInfo(taiKhoanData);
+                    // Update state with extracted values
+                    this.setState({
+                        taiKhoanUpdate: {
+                            anh,
+                            email,
+                            password,
+                        },
+                        nguoiDungUpdate: {
+                            cccd,
+                            ten,
+                            ngaySinh,
+
+                            gioiTinh,
+                            tinhThanhPho,
+                            quanHuyen,
+                            xaPhuongThiTran,
+
+                            diaChiCuThe,
+
+                            sdt,
+                        },
+
+                    });
+
+
+                } else {
+                    console.error("Invalid user account data format");
+                }
             })
             .catch((error) => {
-                // Xử lý lỗi nếu có
-                console.error("Error fetching user account:", error);
+                console.error("Error fetching user account information:", error);
             });
+
+        this.fetchCities();
+
     }
+    // componentDidMount() {
+    //     // Lấy id từ URL
+    //     const id = this.props.match.params.id;
+    //
+    //     // Gọi API để lấy thông tin tài khoản dựa trên id
+    //     taikhoanservice.getTaiKhoanById(id)
+    //         .then((response) => {
+    //             // Lấy dữ liệu từ phản hồi của API
+    //             const taiKhoanData = response.data;
+    //
+    //             // Log thông tin tài khoản ra console
+    //             console.log("User Account Data:", taiKhoanData);
+    //
+    //             // Cập nhật state với dữ liệu tài khoản mới
+    //             this.setState({ taiKhoanUpdate: taiKhoanData });
+    //
+    //             // Tiếp tục lấy thông tin người dùng sau khi có thông tin tài khoản
+    //             this.fetchUserInfo(taiKhoanData);
+    //         })
+    //         .catch((error) => {
+    //             // Xử lý lỗi nếu có
+    //             console.error("Error fetching user account:", error);
+    //         });
+    // }
 
     fetchUserInfo(taiKhoanData) {
         // Gọi API để lấy thông tin người dùng dựa trên dữ liệu tài khoản
@@ -119,6 +186,7 @@ class TaiKhoanKHUpdate extends Component {
                     quanHuyen: thongTinData.quanHuyen || '',
                     xaPhuongThiTran: thongTinData.xaPhuongThiTran || '',
                     diaChiCuThe: thongTinData.diaChiCuThe || '',
+
                 });
             })
             .catch((error) => {
@@ -126,7 +194,6 @@ class TaiKhoanKHUpdate extends Component {
                 console.error("Error fetching user information:", error);
             });
     }
-
     update = async (e) => {
         e.preventDefault();
 
@@ -181,8 +248,8 @@ class TaiKhoanKHUpdate extends Component {
             taiKhoan: taiKhoanUpdate,
             thongTinNguoiDung: nguoiDungUpdate,
         };
-
-        taikhoanservice.updateKhachHang(this.state.taiKhoanUpdate.id, requestData)
+        let id =this.props.match.params.id;
+        taikhoanservice.updateKhachHang(id, requestData)
             .then((response) => {
                 const { taiKhoan, thongTinNguoiDung } = response.data;
                 this.setState({

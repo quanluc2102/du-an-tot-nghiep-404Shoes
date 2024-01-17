@@ -823,9 +823,9 @@ class KhachHangComponent extends Component {
                                                         </td>
                                                         <td>
                                                             <button onClick={() => this.detail(tk.id)} className='btn btn-primary'>Detail</button>
-                                                            <button onClick={() => {console.log('Button clicked!'); this.handleUserSelect(tk.id);}} className='btn btn-success'>
-                                                                Thêm Địa Chỉ Mới
-                                                            </button>
+                                                            {/*<button onClick={() => {console.log('Button clicked!'); this.handleUserSelect(tk.id);}} className='btn btn-success'>*/}
+                                                            {/*    Thêm Địa Chỉ Mới*/}
+                                                            {/*</button>*/}
                                                         </td>
                                                     </tr>
                                                 ))}
