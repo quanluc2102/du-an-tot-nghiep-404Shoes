@@ -689,10 +689,13 @@ class BanHangOffline extends Component {
         const firstSelectedPromotion = selectedPromotions.length > 0 ? selectedPromotions[0] : null; // hàm này lấy giá trị đầu tiên của mảng lưu khuyến mãi
 
         const confirm = window.confirm('Bạn xác nhận muốn thanh toán hóa đơn này chứ?');
-        if (!confirm) {
+        
+        if (!confirm) { 
             return;
         } else {
-
+            if(!this.validateAddress()){
+                return;
+            }
             try {
                 const thanhToanDTO = {
                     ten: this.state.ten || '',
@@ -733,8 +736,10 @@ class BanHangOffline extends Component {
                         ghiChu: '',
                         kieuHoaDon: 2,
                         idKhachHang: '',
+                        checked : false,
                     });
                     this.fetchHoaDonChoDauTien();
+                   
                     console.log('phi ship: ', this.state.phiShip);
                     toast.success('Thanh toán thành công!!!!');
                 } else {
@@ -996,8 +1001,23 @@ class BanHangOffline extends Component {
     handleUpdateSoLuong = (soLuong, idHDCT) => {
         this.debouncedUpdateSoLuong(soLuong, idHDCT);
     };
+    // hàm validate địa chỉ
+    validateAddress = () => {
+    const { checked, tinhThanhPho, quanHuyen, xaPhuongThiTran, diaChiCuThe } = this.state;
 
-
+    if (checked) {
+        // Delivery option selected
+        if (tinhThanhPho === '' || quanHuyen === '' || xaPhuongThiTran === '' || diaChiCuThe === '') {
+            toast.error('Vui lòng nhập đầy đủ thông tin địa chỉ!', {
+                position: 'top-right',
+                autoClose: 2000,
+            });
+            return false;
+        }
+    }
+    // No Delivery option or delivery information is complete
+    return true;
+};
     // hàm lấy dữ liệu hóa đơn chờ (hóa đơn hiển thị ở trên phần Tab)
     fetchHoaDonCho = async () => {
         try {
@@ -1292,12 +1312,7 @@ class BanHangOffline extends Component {
                     'token': '93254e5e-a301-11ee-b394-8ac29577e80e',
                 },
             });
-            if (response.status === 200) {
-                console.log(this.state.codeTP);
-                console.log(this.state.codeQH);
-                console.log(this.state.codeXP);
-                return response.data.data.service_fee;
-            }
+         
             this.setState({ phiShip: response.data.data.service_fee })
 
         } catch (error) {
