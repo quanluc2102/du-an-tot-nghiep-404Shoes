@@ -12,4 +12,5 @@ public class TaiKhoanDTO {
     private Date ngaySinh;
 //    private String email;
     private String password;
+ private Long thongTinNguoiDungId;
 }

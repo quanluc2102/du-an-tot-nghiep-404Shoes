@@ -47,23 +47,19 @@ function Account() {
     const [codeTP, setCodeTP] = useState(0);
     const [codeQuan, setCodeQuan] = useState(0);
     const [codeXa, setCodeXa] = useState(0);
-    const [ngaySinh, setNgaySinh] = useState([]);
+    const [ngaySinh, setNgaySinh] = useState("");
     const [ngaySinhNew, setNgaySinhNew] = useState("");
     const [emailNew, setEmailNew] = useState("");
     const [email, setEmail] = useState([]);
-    const [password, setPassword] = useState([]);
+    const [password, setPassword] = useState("");
     const [passwordNew, setPasswordNew] = useState("");
     const [id, setId] = useState('');
     const [showPassword, setShowPassword] = useState(false);
 
-    // const [nguoiDungUpdate, setNguoiDungUpdate] = useState({
-    //
-    // });
     const [nguoiDungUpdate, setNguoiDungUpdate] = useState({
         ten: '', // Initial ten value
         sdt: '', // Initial sdt value
         ngaySinh: '', // Initial ngaySinh value
-        // email: '', // Initial email value
         password: '' // Initial password value
         // Add other properties as needed
     });
@@ -97,12 +93,12 @@ function Account() {
                     return;
                 }
 
-                const responseData = await response.json();
-                console.log("Response Data:", responseData);
-                settenNguoiDung(responseData.thongTinNguoiDung.ten)
-                setSDTND(responseData.thongTinNguoiDung.sdt)
-                setpasswordND(responseData.password)
-                setngaySinhND(responseData.thongTinNguoiDung.ngaySinh)
+                const nguoiDungUpdate = await response.json();
+                console.log("Response Data:", nguoiDungUpdate);
+                setTenNew(nguoiDungUpdate.thongTinNguoiDung.ten)
+                setSDTNew(nguoiDungUpdate.thongTinNguoiDung.sdt)
+                setPasswordNew(nguoiDungUpdate.password)
+                setNgaySinhNew(nguoiDungUpdate.thongTinNguoiDung.ngaySinh)
 
             } catch (error) {
                 console.error("Detail request error:", error);
@@ -141,109 +137,93 @@ function Account() {
             })
             .catch(error => {
                 console.error('Error adding Dia Chi:', error);
-                alert('Đã xảy ra lỗi khi thêm địa chỉ.');
+                alert('Đã xảy ra lỗi .');
             });
     };
 
     const handleEditThongTin = (e) => {
         e.preventDefault();
 
-        // Kiểm tra trường Họ và Tên
-        // if (!tenNew || /\d/.test(tenNew)) {
-        //     alert('Họ và Tên không được để trống và không chứa số.');
-        //     return;
-        // }
-        //
-        // // Kiểm tra trường Số điện thoại
-        // if (!sdtNew || !/^\d{10}$/.test(sdtNew)) {
-        //     alert('Số điện thoại không được để trống và phải có đúng 10 số.');
-        //     return;
-        // }
-        // // Kiểm tra trường Số điện thoại
-        // if (!emailNew || /\d/.test(emailNew)) {
-        //     alert('Số điện thoại không được để trống và phải có đúng 10 số.');
-        //     return;
-        // }
-        // // Kiểm tra trường Số điện thoại
-        // if (!passwordNew || /\d/.test(passwordNew)) {
-        //     alert('Số điện thoại không được để trống và phải có đúng 10 số.');
-        //     return;
-        // }
-        // // Kiểm tra trường Số điện thoại
-        // if (!ngaySinhNew || /\d/.test(ngaySinhNew)) {
-        //     alert('Số điện thoại không được để trống và phải có đúng 10 số.');
-        //     return;
-        // }
-
-
-        // Nếu các trường đều hợp lệ, tiến hành thêm địa chỉ
-        const responseData = {
-            nguoiDungUpdate: {
-                ten,
-                sdt,
-                ngaySinh,
-                email,
-                password,
-            },
+       // Kiểm tra trường Họ và Tên
+        if (!tenNew || /\d/.test(tenNew)) {
+            alert('Họ và Tên không được để trống và không chứa số.');
+            return;
         }
-        const id = getIdFromLocalStorage();
-        accountservice.updateThongTin(id,nguoiDungUpdate)
-            .then(responseData => {
-                console.log('Added Thông tin:', responseData);
+
+        // Kiểm tra trường Số điện thoại
+        if (!sdtNew || !/^\d{10}$/.test(sdtNew)) {
+            alert('Số điện thoại không được để trống và phải có đúng 10 số.');
+            return;
+        }
+
+        // Kiểm tra trường Password
+        if (!passwordNew) {
+            alert('Password không được để trống.');
+            return;
+        }
+
+        // Kiểm tra trường Ngày sinh
+        if (!ngaySinhNew) {
+            alert('Ngày sinh không được để trống.');
+            return;
+        }
+
+
+        const handleLogout = () => {
+            // Thực hiện các thao tác đăng xuất, ví dụ: xóa token từ localStorage
+            localStorage.removeItem('token');
+            localStorage.removeItem('currentUser');
+
+            // Chuyển hướng người dùng về trang đăng nhập
+            window.location.href = (`/login`);
+        };
+        // Nếu các trường đều hợp lệ, tiến hành thêm địa chỉ
+
+            const id = getIdFromLocalStorage();
+            const nguoiDungUpdate = {
+                    ten : tenNew,
+                    sdt : sdtNew,
+                    ngaySinh: ngaySinhNew,
+                    password : passwordNew,
+                thongTinNguoiDungId: savedUser.thongTinNguoiDung.id,
+            };
+
+             accountservice.updateThongTin(id,nguoiDungUpdate)
+            .then(nguoiDungUpdate => {
+                console.log('Added Dia Chi:', nguoiDungUpdate);
                 accountservice.getDiaChiByKhachHang()
                     .then(data => {
-                        setThongTinKhachHang(data);
+                        setDiaChiKhachHang(data);
                         alert('Thông tin đã được sửa thành công!');
+                        handleLogout();
+                        alert('Thông tin đã được cập nhật thành công. Vui lòng đăng nhập lại !');
                     })
                     .catch(error => console.error('Error:', error));
             })
-            .catch(error => {
-                console.error('Error adding Thông tini:', error);
-                alert('Đã xảy ra lỗi khi thêm Thông tin.');
-            });
-    };
-    const thayDoiTenUpdate = (event) => {
-        setNguoiDungUpdate((prevState) => ({
-            ...prevState,
-            ten: event.target.value
-        }));
+                .catch(error => {
+                    console.error('Error adding Dia Chi:', error);
+                    alert('Đã xảy ra lỗi .');
+                });
+        };
+
+
+        const thayDoiTenUpdate = (event) => {
         setTen(event.target.value)
         setTenNew(event.target.value)
     }
-
     const thayDoiSdtUpdate = (event) => {
-        setNguoiDungUpdate((prevState) => ({
-            ...prevState,
-            sdt: event.target.value
-        }));
         setSDT(event.target.value)
         setSDTNew(event.target.value)
 
     }
 
     const thayDoiNGaySinhUpdate = (event) => {
-        setNguoiDungUpdate((prevState) => ({
-            ...prevState,
-            ngaySinh: event.target.value
-        }));
         setNgaySinh(event.target.value)
         setNgaySinhNew(event.target.value)
     }
 
-    const thayDoiEmailUpdate = (event) => {
-        setNguoiDungUpdate((prevState) => ({
-            ...prevState,
-            email: event.target.value
-        }));
-        setEmail(event.target.value)
-        setEmailNew(event.target.value)
-    }
 
     const thayDoiPassUpdate = (event) => {
-        setNguoiDungUpdate((prevState) => ({
-            ...prevState,
-            password: event.target.value
-        }));
         setPassword(event.target.value)
         setPasswordNew(event.target.value)
     }
@@ -598,7 +578,7 @@ function Account() {
                                         type="text"
                                         className="form-control"
                                         id="ten"
-                                        // value={tenNguoiDung}
+                                        value={tenNew}
                                         onChange={thayDoiTenUpdate}
                                     />
                                 </div>
@@ -609,7 +589,7 @@ function Account() {
                                         type="date"
                                         className={`form-control`}
                                         id="ngaySinh"
-                                        // value={ngaySinh}
+                                        value={ngaySinhNew}
                                         onChange={thayDoiNGaySinhUpdate}
                                     />
                                 </div>
@@ -620,24 +600,10 @@ function Account() {
                                         type="text"
                                         className={`form-control `}
                                         id="sdt"
-                                        // value={sdtND}
+                                        value={sdtNew}
                                         onChange={thayDoiSdtUpdate}
                                     />
                                 </div>
-
-                                {/* Email */}
-                                {/*<div className="form-group">*/}
-                                {/*    <label htmlFor="email">Email: <span style={{color: 'red'}}>*</span></label>*/}
-                                {/*    <input*/}
-                                {/*        disabled*/}
-                                {/*        type="email"*/}
-                                {/*        className={`form-control `}*/}
-                                {/*        id="email"*/}
-                                // {/*        value={nguoiDungUpdate.email}*/}
-                                {/*        onChange={thayDoiEmailUpdate}*/}
-                                {/*    />*/}
-                                {/*</div>*/}
-                                {/* Email */}
                                 <div className="form-group">
                                     <label htmlFor="password">
                                         Password: <span style={{color: 'red'}}>*</span>
@@ -647,7 +613,7 @@ function Account() {
                                             type={showPassword ? 'text' : 'password'}
                                             className={`form-control`}
                                             id="password"
-                                            // value={nguoiDungUpdate.password}
+                                            value={passwordNew}
                                             onChange={thayDoiPassUpdate}
                                         />
                                         <div className="input-group-append">

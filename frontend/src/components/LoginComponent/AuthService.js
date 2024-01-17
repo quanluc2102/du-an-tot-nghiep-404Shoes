@@ -82,8 +82,8 @@ class AuthService {
                 throw new Error('Token not found');
             }
 
-            // Fetch the specific user using the provided endpoint
-            const userEndpoint = 'http://localhost:8080/tai_khoan/nhan-vien-quyen-1';
+            // Update the endpoint to fetch user information
+            const userEndpoint = 'http://localhost:8080/api/auth/userinfo';
 
             const userResponse = await fetch(userEndpoint, {
                 method: 'GET',
@@ -92,21 +92,11 @@ class AuthService {
                 },
             });
 
-            console.log(userResponse)
-            console.log("credentials"+credentials)
             if (userResponse.ok) {
                 const userInfo = await userResponse.json();
-                console.log(userInfo)
-                // Example: Assuming each user has an 'email' field
-                const desiredEmail = credentials; // Replace with the desired email
-                console.log(desiredEmail)
-                console.log(userInfo)
-                // Check if the user's email matches the desired email
-                if (userInfo.email === desiredEmail) {
-                    localStorage.setItem('currentUser', JSON.stringify(userInfo));
-                } else {
-                    console.error('User not found with the specified email');
-                }
+
+                // Save user information to local storage
+                localStorage.setItem('currentUser', JSON.stringify(userInfo));
             } else {
                 const errorResponse = await userResponse.json();
                 throw new Error(errorResponse.message || 'Failed to get user info');
@@ -116,6 +106,7 @@ class AuthService {
             throw error;
         }
     }
+
 
 
 
@@ -138,50 +129,27 @@ class AuthService {
         const token = localStorage.getItem('token');
         return !!token;
     }
-    async forgotPassword(email) {
-        try {
-            const response = await fetch('http://localhost:8080/api/auth/forgot-password', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ email }),
-            });
 
-            if (response.ok) {
-                toast.success('Password reset email sent. Check your inbox for further instructions.');
-            } else {
-                const errorResponse = await response.json();
-                throw new Error(errorResponse.message || 'Failed to initiate password reset');
-            }
-        } catch (error) {
-            console.error('Error initiating password reset:', error);
-            throw error;
-        }
-    }
     async getUserInfo() {
         const token = localStorage.getItem('token');
         if (!token) {
             throw new Error('Token not found');
         }
-
         try {
-            const response = await fetch('http://localhost:8080/api/user/info', {
+            const response = await fetch('http://localhost:8080/api/auth/userinfo', { // Change the endpoint
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`,
                 },
             });
-
             if (!response.ok) {
-                // Log thông điệp lỗi từ server
+                // Log error message from the server
                 const errorText = await response.text();
                 console.error('Server error:', errorText);
 
                 throw new Error('Failed to fetch user info');
             }
-
             const user = await response.json();
             return user;
         } catch (error) {
@@ -191,5 +159,4 @@ class AuthService {
     }
 
 }
-
 export default new AuthService();

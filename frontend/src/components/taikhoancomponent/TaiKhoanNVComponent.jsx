@@ -336,6 +336,10 @@ class TaiKhoanNVComponent extends Component {
 
         console.log(requestData);
         // Gọi API để thêm tài khoản
+        const confirmed = window.confirm('Bạn có chắc chắn muốn Thêm nhân viên ?');
+        if (!confirmed) {
+            return; // Người dùng bấm "Cancel", không thực hiện thêm
+        }
         taikhoanservice.addNhanVien(requestData)
             .then((res) => {
                 if (res.status === 200) {
@@ -359,7 +363,7 @@ class TaiKhoanNVComponent extends Component {
 
                     setTimeout(() => {
                         window.location.href = (`/nhanvien`);
-                    }, 10);
+                    }, 2000);
                     toast.success("Thêm thành công!");
                     this.handleAddSuccess(res.data);
 

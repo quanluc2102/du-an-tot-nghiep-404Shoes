@@ -30,7 +30,7 @@ class TaiKhoanNVUpdate extends Component {
             taiKhoanUpdate: {
                 email: '',
                 password: '',
-                anh: ''
+                anh: null,
             },
             nguoiDungUpdate: {
                 cccd: '',
@@ -47,6 +47,7 @@ class TaiKhoanNVUpdate extends Component {
                 diaChi: '',
                 sdt: '',
                 ten: '',
+                anh: '',
                 cccd: '',
                 gioiTinh: '',
                 ngaySinh: '',
@@ -56,6 +57,7 @@ class TaiKhoanNVUpdate extends Component {
                 tinhThanhPho: '',
                 quanHuyen: '',
                 xaPhuongThiTran: '',
+
             },
         }
         this.update = this.update.bind(this);
@@ -157,11 +159,11 @@ class TaiKhoanNVUpdate extends Component {
         const requestData = {
             taiKhoan: {
                 email : taiKhoanUpdate.email,
+                anh : taiKhoanUpdate.anh,
                 password : taiKhoanUpdate.password,
             },
             thongTinNguoiDung: {
                 ten: nguoiDungUpdate.ten,
-                cccd: nguoiDungUpdate.cccd,
                 sdt: nguoiDungUpdate.sdt,
                 gioiTinh: nguoiDungUpdate.gioiTinh,
                 ngaySinh: nguoiDungUpdate.ngaySinh,
@@ -183,25 +185,6 @@ class TaiKhoanNVUpdate extends Component {
             this.setState({ error: { ...this.state.errorUpdate, files: "" } });
         }
 
-        // Kiểm tra không được để trống
-        if (!nguoiDungUpdate.cccd.trim()) {
-            this.setState({ errorUpdate: { ...this.state.errorUpdate, cccd: "CCCD không được bỏ trống!" } });
-            return;
-        } else if (!/^\d+$/.test(nguoiDungUpdate.cccd)) {
-            // Kiểm tra là số nguyên
-            this.setState({ errorUpdate: { ...this.state.errorUpdate, cccd: "CCCD phải là số nguyên và không được chứa khoảng trắng !" } });
-            return;
-        } else if (nguoiDungUpdate.cccd.length !== 12) {
-            // Kiểm tra có đủ 12 số
-            this.setState({ errorUpdate: { ...this.state.errorUpdate, cccd: "CCCD phải có đủ 12 số!" } });
-            return;
-        } else if (this.state.nhanVienQuyen1.some(user => user.thongTinNguoiDung.cccd === nguoiDungUpdate.cccd)) {
-            // Kiểm tra trùng căn cước
-            this.setState({ errorUpdate: { ...this.state.errorUpdate, cccd: "CCCD đã tồn tại trong hệ thống!" } });
-            return;
-        } else {
-            this.setState({ errorUpdate: { ...this.state.errorUpdate, cccd: "" } });
-        }
 
 
         //check ten
@@ -317,6 +300,10 @@ class TaiKhoanNVUpdate extends Component {
         console.log('Request Data: ' + JSON.stringify(requestData));
         const id = this.props.match.params.id;
         console.log(id)
+        const confirmed = window.confirm('Bạn có chắc chắn muốn thay đổi thông tin ?');
+        if (!confirmed) {
+            return; // Người dùng bấm "Cancel", không thực hiện thêm
+        }
         taikhoanservice.updateNhanVien(id,requestData)
             .then((response) => {
                 const {taiKhoan, thongTinNguoiDung} = response.data;
@@ -324,15 +311,18 @@ class TaiKhoanNVUpdate extends Component {
                     taiKhoanUpdate: taiKhoan,
                     nguoiDungUpdate: thongTinNguoiDung,
                 });
+
+
                 setTimeout(() => {
-                    window.location.href = (`/nhanvien`);
+                    window.location.reload();
                 }, 2000);
+
                 toast.success("Sửa thành công!");
             })
-            .catch((error) => {
-                console.error("Update request error:", error);
-                toast.error("Lỗi khi cập nhật");
-            });
+            // .catch((error) => {
+            //     console.error("Update request error:", error);
+            //     toast.error("Lỗi khi cập nhật");
+            // });
     }
     ;
 
@@ -631,10 +621,11 @@ class TaiKhoanNVUpdate extends Component {
                                                     className="file-input"
                                                 />
                                                 <div className="avatar-preview">
-                                                    {this.state.taiKhoanUpdate.anh ? (
+                                                    {this.state.taiKhoanUpdate && this.state.taiKhoanUpdate.anh ? (
                                                         <img
                                                             src={`/niceadmin/img/${this.state.taiKhoanUpdate.anh}`}
                                                             className="avatar-img"
+                                                            alt="User Avatar"
                                                         />
                                                     ) : (
                                                         <div className="avatar-placeholder">
@@ -643,8 +634,8 @@ class TaiKhoanNVUpdate extends Component {
                                                     )}
                                                 </div>
                                             </label>
-                                            {this.state.errorUpdate.files && (
-                                                <div className="invalid-feedback">{this.state.errorUpdate.files}</div>
+                                            {this.state.errorUpdate.anh && (
+                                                <div className="invalid-feedback">{this.state.errorUpdate.anh}</div>
                                             )}
                                         </div>
                                         {/* CCCD */}
@@ -654,12 +645,13 @@ class TaiKhoanNVUpdate extends Component {
                                                 type="text"
                                                 className={`form-control ${this.state.errorUpdate.cccd ? 'is-invalid' : ''}`}
                                                 id="cccd"
-                                                value={this.state.nguoiDungUpdate.cccd}
+                                                value={this.state.nguoiDungUpdate ? this.state.nguoiDungUpdate.cccd : ''}
                                                 readOnly
                                                 style={{ backgroundColor: '#f0f0f0' }}
                                             />
-                                            {this.state.errorUpdate.cccd && <div className="invalid-feedback">{this.state.errorUpdate.cccd}</div>}
+                                            {/*{this.state.errorUpdate.cccd && <div className="invalid-feedback">{this.state.errorUpdate.cccd}</div>}*/}
                                         </div>
+
 
                                         {/* Họ và tên */}
                                         <div className="form-group">
@@ -668,7 +660,7 @@ class TaiKhoanNVUpdate extends Component {
                                                 type="text"
                                                 className={`form-control ${this.state.errorUpdate.ten ? 'is-invalid' : ''}`}
                                                 id="ten"
-                                                value={this.state.nguoiDungUpdate.ten}
+                                                value={this.state.nguoiDungUpdate ? this.state.nguoiDungUpdate.ten : ''}
                                                 onChange={this.thayDoiTenUpdate}
                                             />
                                             {this.state.errorUpdate.ten && <div className="invalid-feedback">{this.state.errorUpdate.ten}</div>}
@@ -680,7 +672,7 @@ class TaiKhoanNVUpdate extends Component {
                                                 type="date"
                                                 className={`form-control ${this.state.errorUpdate.ngaySinh ? 'is-invalid' : ''}`}
                                                 id="ngaySinh"
-                                                value={this.state.nguoiDungUpdate.ngaySinh}
+                                                value={this.state.nguoiDungUpdate ? this.state.nguoiDungUpdate.ngaySinh : ''}
                                                 onChange={this.thayDoiNGaySinhUpdate}
                                             />
                                             {this.state.errorUpdate.ngaySinh && <div className="invalid-feedback">{this.state.errorUpdate.ngaySinh}</div>}
@@ -719,9 +711,11 @@ class TaiKhoanNVUpdate extends Component {
                                             )}
                                         </div>
                                         {/* Địa chỉ */}
-                                        <label>Địa chỉ hiện tại: <span style={{ color: 'red' }}>*</span>
-                                            {this.state.nguoiDungUpdate.diaChiCuThe} - {this.state.nguoiDungUpdate.xaPhuongThiTran} - {this.state.nguoiDungUpdate.quanHuyen} - {this.state.nguoiDungUpdate.tinhThanhPho}
+                                        <label>
+                                            Địa chỉ hiện tại: <span style={{ color: 'red' }}>*</span>
+                                            {this.state.nguoiDungUpdate && this.state.nguoiDungUpdate.diaChiCuThe} - {this.state.nguoiDungUpdate && this.state.nguoiDungUpdate.xaPhuongThiTran} - {this.state.nguoiDungUpdate && this.state.nguoiDungUpdate.quanHuyen} - {this.state.nguoiDungUpdate && this.state.nguoiDungUpdate.tinhThanhPho}
                                         </label>
+
                                         <div>
                                         <label>Địa chỉ: <span style={{ color: 'red' }}>*</span></label>
                                         <div className="row">
@@ -749,7 +743,7 @@ class TaiKhoanNVUpdate extends Component {
                                                     className="form-control"
                                                     name="quanHuyen"
                                                     onChange={(event) => this.handleDistrictChange(event)}
-                                                    value={this.state.nguoiDungUpdate.quanHuyen}
+                                                    // value={this.state.nguoiDungUpdate.quanHuyen}
                                                 >
                                                     <option value="">Chọn quận huyện</option>
                                                     {this.state.districts.map(district => (
@@ -768,7 +762,7 @@ class TaiKhoanNVUpdate extends Component {
                                                     className="form-control"
                                                     name="xaPhuongThiTran"
                                                     onChange={(event) => this.handleWardChange(event)}
-                                                    value={this.state.nguoiDungUpdate.xaPhuongThiTran}
+                                                    // value={this.state.nguoiDungUpdate.xaPhuongThiTran}
                                                 >
                                                     <option value="">Chọn phường xã</option>
                                                     {this.state.wards.map(ward => (
@@ -783,20 +777,20 @@ class TaiKhoanNVUpdate extends Component {
                                             </div>
                                         </div>
                                         {/* Số nhà/Thôn */}
-                                        <div className="form-group">
-                                            <label htmlFor="diaChiCuThe">Địa chỉ cụ thể : <span style={{ color: 'red' }}>*</span></label>
-                                            <input
-                                                type="text"
-                                                className={`form-control ${this.state.errorUpdate.diaChiCuThe ? 'is-invalid' : ''}`}
-                                                id="diaChiCuThe"
-                                                onChange={this.thayDoiDiaChiUpdate}
-                                                value={this.state.nguoiDungUpdate.diaChiCuThe}
-                                            />
-                                            {this.state.errorUpdate.diaChiCuThe && <div className="invalid-feedback">{this.state.errorUpdate.diaChiCuThe}</div>}
-                                        </div>
-                                        </div>
+                                            <div className="form-group">
+                                                <label htmlFor="diaChiCuThe">Địa chỉ cụ thể : <span style={{ color: 'red' }}>*</span></label>
+                                                <input
+                                                    type="text"
+                                                    className={`form-control ${this.state.errorUpdate.diaChiCuThe ? 'is-invalid' : ''}`}
+                                                    id="diaChiCuThe"
+                                                    onChange={this.thayDoiDiaChiUpdate}
+                                                    value={(this.state.nguoiDungUpdate && this.state.nguoiDungUpdate.diaChiCuThe) || ''}
+                                                />
+                                                {this.state.errorUpdate.diaChiCuThe && <div className="invalid-feedback">{this.state.errorUpdate.diaChiCuThe}</div>}
+                                            </div>
 
 
+                                        </div>
                                         {/* SDT */}
                                         <div className="form-group">
                                             <label htmlFor="sdt">SDT: <span style={{ color: 'red' }}>*</span></label>
@@ -805,23 +799,23 @@ class TaiKhoanNVUpdate extends Component {
                                                 className={`form-control ${this.state.errorUpdate.sdt ? 'is-invalid' : ''}`}
                                                 id="sdt"
                                                 onChange={this.thayDoiSdtUpdate}
-                                                value={this.state.nguoiDungUpdate.sdt}
+                                                value={this.state.nguoiDungUpdate ? this.state.nguoiDungUpdate.sdt : ''}
                                             />
                                             {this.state.errorUpdate.sdt && <div className="invalid-feedback">{this.state.errorUpdate.sdt}</div>}
                                         </div>
 
                                         {/* Email */}
-                                        <div className="form-group">
-                                            <label htmlFor="email">Email: <span style={{ color: 'red' }}>*</span></label>
-                                            <input
-                                                type="email"
-                                                className={`form-control ${this.state.errorUpdate.email ? 'is-invalid' : ''}`}
-                                                id="email"
-                                                value={this.state.taiKhoanUpdate.email}
-                                                onChange={this.thayDoiEmailUpdate}
-                                            />
-                                            {this.state.errorUpdate.email && <div className="invalid-feedback">{this.state.errorUpdate.email}</div>}
-                                        </div>
+                                        {/*<div className="form-group">*/}
+                                        {/*    <label htmlFor="email">Email: <span style={{ color: 'red' }}>*</span></label>*/}
+                                        {/*    <input*/}
+                                        {/*        type="email"*/}
+                                        {/*        className={`form-control ${this.state.errorUpdate.email ? 'is-invalid' : ''}`}*/}
+                                        {/*        id="email"*/}
+                                        {/*        value={this.state.nguoiDungUpdate ? this.state.nguoiDungUpdate.email : ''}*/}
+                                        {/*        onChange={this.thayDoiEmailUpdate}*/}
+                                        {/*    />*/}
+                                        {/*    {this.state.errorUpdate.email && <div className="invalid-feedback">{this.state.errorUpdate.email}</div>}*/}
+                                        {/*</div>*/}
                                         {/* Email */}
                                         <div className="form-group">
                                             <label htmlFor="password">
@@ -832,7 +826,7 @@ class TaiKhoanNVUpdate extends Component {
                                                     type={this.state.showPassword ? 'text' : 'password'}
                                                     className={`form-control ${this.state.errorUpdate.password ? 'is-invalid' : ''}`}
                                                     id="password"
-                                                    value={this.state.taiKhoanUpdate.password}
+                                                    value={this.state.taiKhoanUpdate ? this.state.taiKhoanUpdate.password : ''}
                                                     onChange={this.thayDoiPassUpdate}
                                                 />
                                                 <div className="input-group-append">

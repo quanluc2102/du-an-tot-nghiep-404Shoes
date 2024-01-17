@@ -104,7 +104,6 @@ public class AuthController {
         return claims.getSubject();
     }
 
-
     @PostMapping("/loginKH")
     public ResponseEntity<String> loginKH(@RequestBody UserCredentials credentials) {
         // Kiểm tra tài khoản và mật khẩu, trả về token nếu đúng

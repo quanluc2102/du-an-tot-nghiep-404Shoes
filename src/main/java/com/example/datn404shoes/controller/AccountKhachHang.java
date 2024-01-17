@@ -11,7 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:3006")
@@ -191,11 +193,18 @@ public class AccountKhachHang {
         existingTaiKhoan.setNgayCapNhat(ngayCapNhat);
 
 //        existingTaiKhoan.setThongTinNguoiDung(thongTinNguoiDungServiceimpl.findById(updateThongTin.getThongTinNguoiDungId()));
-
+        System.out.println(existingTaiKhoan.getId());
+        System.out.println(existingTaiKhoan.getPassword());
+        System.out.println(existingTTND.getSdt());
+        System.out.println(existingTTND.getNgaySinh());
+        System.out.println(existingTTND.getTen());
+        System.out.println(existingTTND.getSdt());
         // Bước 3: Lưu trữ đối tượng địa chỉ đã cập nhật vào cơ sở dữ liệu
         TaiKhoan updatedEntity = taiKhoanResponsitory.save(existingTaiKhoan);
         ThongTinNguoiDung updatedEntityTTND = thongTinNguoiDungRespository.save(existingTTND);
-        return ResponseEntity.ok(updatedEntity);
-
+        Map<String, Object> response = new HashMap<>();
+        response.put("taiKhoan", updatedEntity);
+        response.put("thongTinNguoiDung", updatedEntityTTND);
+        return ResponseEntity.ok(response);
     }
 }

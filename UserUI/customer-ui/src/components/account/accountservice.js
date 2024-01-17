@@ -115,9 +115,9 @@ const accountservice = {
                 throw error;
             });
     },
-    updateThongTin: (id, updatedThongTin) => {
-        console.log("adu duma",updatedThongTin)
-        return axios.put(`${API_URL}/updateKhachHang/${id}`, updatedThongTin)
+    updateThongTin: (id, nguoiDungUpdate) => {
+        console.log("adu duma",nguoiDungUpdate)
+        return axios.put(`${API_URL}/updateKhachHang/${id}`, nguoiDungUpdate)
             .then(response => response.data)
             .catch(error => {
                 console.error('Error updating data:', error);
@@ -133,6 +133,18 @@ const accountservice = {
                 throw error;
             });
     },
+    logout() {
+        try {
+            // Xóa token khỏi localStorage
+            // localStorage.removeItem('token');
+
+            // Hoặc xóa tất cả dữ liệu trong localStorage
+            localStorage.clear();
+        } catch (error) {
+            console.error('Logout failed', error);
+            throw error;
+        }
+    }
 
 };
 

@@ -5,6 +5,7 @@ import com.example.datn404shoes.DTO.ForgotPasswordDTO;
 import com.example.datn404shoes.custom.TaiKhoanVaThongTin;
 import com.example.datn404shoes.entity.*;
 //import com.example.datn404shoes.helper.TaiKhoanExport;
+import com.example.datn404shoes.repository.DiaChiResponsitory;
 import com.example.datn404shoes.repository.TaiKhoanResponsitory;
 import com.example.datn404shoes.repository.ThongTinNguoiDungRespository;
 //import com.example.datn404shoes.request.TaiKhoanCustome;
@@ -23,6 +24,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Date;
 import java.text.Normalizer;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.regex.Pattern;
@@ -41,6 +43,8 @@ public class TaiKhoanController {
     private ThongTinNguoiDungServiceimpl thongTinNguoiDungServiceimpl;
     @Autowired
     private ThongTinNguoiDungRespository thongTinNguoiDungRespository;
+    @Autowired
+    private DiaChiResponsitory diaChiResponsitory;
     @Autowired
     private TaiKhoanResponsitory taiKhoanRepository;
     @Autowired
@@ -201,11 +205,11 @@ public class TaiKhoanController {
     }
 
     @PutMapping("updateNhanVien/{id}")
-    public ResponseEntity<?> updateNhanVien(@PathVariable Long id, @RequestBody TaiKhoanVaThongTin taiKhoanVaThongTin) {
+    public ResponseEntity<?> updateNhanVien(@PathVariable(name = "id") Long id, @RequestBody TaiKhoanVaThongTin taiKhoanVaThongTin) {
         ThongTinNguoiDung thongTinNguoiDung = taiKhoanVaThongTin.getThongTinNguoiDung();
         TaiKhoan taiKhoan = taiKhoanVaThongTin.getTaiKhoan();
-
-        Optional<ThongTinNguoiDung> optionalThongTinNguoiDung = Optional.ofNullable(thongTinNguoiDungServiceimpl.update(id, thongTinNguoiDung));
+        TaiKhoan taiKhoanLayID = taiKhoanRepository.findById(id).get();
+        Optional<ThongTinNguoiDung> optionalThongTinNguoiDung = Optional.ofNullable(thongTinNguoiDungServiceimpl.update(taiKhoanLayID.getThongTinNguoiDung().getId(), thongTinNguoiDung));
 
         if (optionalThongTinNguoiDung.isPresent()) {
             ThongTinNguoiDung updatedThongTinNguoiDung = optionalThongTinNguoiDung.get();
@@ -218,22 +222,34 @@ public class TaiKhoanController {
             TaiKhoan existingTaiKhoan = serviceimpl.getOne(id);
             taiKhoan.setMaTaiKhoan(existingTaiKhoan.getMaTaiKhoan());
             // Check if the file exists
-            if (taiKhoanVaThongTin.getFiles() != null && !taiKhoanVaThongTin.getFiles().isEmpty()) {
-                taiKhoan.setAnh(taiKhoanVaThongTin.getFiles().get(0));
-            } else {
-                taiKhoan.setAnh(existingTaiKhoan.getAnh());
+            try {
+                // Your existing code that might cause the error
+                if (taiKhoanVaThongTin.getFiles() != null && !taiKhoanVaThongTin.getFiles().isEmpty()) {
+                    taiKhoan.setAnh(taiKhoanVaThongTin.getFiles().get(0));
+                } else {
+                    taiKhoan.setAnh(existingTaiKhoan.getAnh());
+                }
+            } catch (NullPointerException e) {
+                // Handle the exception and display a custom message
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Chưa chọn ảnh");
             }
             serviceimpl.update(id, taiKhoan);
-            DiaChi diaChi = diaChiServiceimpl.getOne(id);
-            diaChi.setTen(updatedThongTinNguoiDung.getTen());
-            diaChi.setSdt(updatedThongTinNguoiDung.getSdt());
-            diaChi.setThongTinNguoiDung(updatedThongTinNguoiDung);
-            diaChi.setTrangThai(0);
-            diaChi.setDiaChiCuThe(taiKhoanVaThongTin.getDiaChiCuThe());
-            diaChi.setTinhThanhPho(taiKhoanVaThongTin.getTinhThanhPho());
-            diaChi.setQuanHuyen(taiKhoanVaThongTin.getQuanHuyen());
-            diaChi.setXaPhuongThiTran(taiKhoanVaThongTin.getXaPhuongThiTran());
-            diaChiServiceimpl.update(diaChi);
+            List<DiaChi> listDC = diaChiServiceimpl.getAll();
+            DiaChi diaChi = new DiaChi();
+            for (DiaChi dc : listDC) {
+                if (dc.getThongTinNguoiDung() != null && dc.getThongTinNguoiDung().getId() == taiKhoanLayID.getThongTinNguoiDung().getId()) {
+                    diaChi = dc;
+                }
+                diaChi.setTen(updatedThongTinNguoiDung.getTen());
+                diaChi.setSdt(updatedThongTinNguoiDung.getSdt());
+                diaChi.setTrangThai(0);
+                diaChi.setDiaChiCuThe(taiKhoanVaThongTin.getDiaChiCuThe());
+                diaChi.setTinhThanhPho(taiKhoanVaThongTin.getTinhThanhPho());
+                diaChi.setQuanHuyen(taiKhoanVaThongTin.getQuanHuyen());
+                diaChi.setXaPhuongThiTran(taiKhoanVaThongTin.getXaPhuongThiTran());
+                diaChi.setNgayCapNhat(Date.valueOf(LocalDate.now()));
+                diaChiResponsitory.save(diaChi);
+            }
 
 //            return ResponseEntity.ok(serviceimpl.update(id, taiKhoan));
             return ResponseEntity.ok("Cập nhật thành công");
