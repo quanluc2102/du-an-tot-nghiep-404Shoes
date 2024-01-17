@@ -548,6 +548,8 @@ class HoaDonChiTietComponents extends Component {
                                                             <th>Số Lượng</th>
                                                             <th>Ảnh</th>
                                                             <th>Tên sản phẩm</th>
+                                                            <th>Màu</th>
+                                                            <th>Kích thước</th>
                                                             <th>Đơn giá</th>
                                                             <th>Thành tiền</th>
                                                         </tr>
@@ -568,6 +570,8 @@ class HoaDonChiTietComponents extends Component {
                                                                         />
                                                                     </td>
                                                                     <td>{hoaDonChiTiet.sanPhamChiTiet.sanPham.ten}</td>
+                                                                    <td> {hoaDonChiTiet.sanPhamChiTiet.mauSac.ten} </td>
+                                                                    <td> {hoaDonChiTiet.sanPhamChiTiet.kichThuoc.giaTri} </td>
                                                                     <td>{hoaDonChiTiet.sanPhamChiTiet.donGia.toLocaleString()} VNĐ</td>
                                                                     <td>{(hoaDonChiTiet.sanPhamChiTiet.donGia * hoaDonChiTiet.soLuong).toLocaleString()} VNĐ</td>
                                                                 </tr>
@@ -690,11 +694,11 @@ class HoaDonChiTietComponents extends Component {
                                             <form>
                                                 <div>
                                                     <h10 className="nav-link">
-                                                        Người mua: {this.state.hoaDon.ten ? this.state.hoaDon.ten : "Khách lẻ"} </h10>
+                                                        Người mua: {this.state.hoaDon.taiKhoanKhachHang?.thongTinNguoiDung.ten ? this.state.hoaDon.taiKhoanKhachHang?.thongTinNguoiDung.ten : "--|--"} </h10>
                                                     <h10 className="nav-link">
-                                                        Số điện thoại:{this.state.hoaDon.ten ? this.state.hoaDon.sdt : "Khách lẻ"}</h10>
+                                                        Số điện thoại:{this.state.hoaDon.taiKhoanKhachHang?.thongTinNguoiDung.sdt ? this.state.hoaDon.taiKhoanKhachHang?.thongTinNguoiDung.sdt : "--|--"}</h10>
                                                     <h10 className="nav-link">
-                                                        Email: {this.state.hoaDon.email ? this.state.hoaDon.email : "Khách lẻ"}</h10>
+                                                        Email: {this.state.hoaDon.taiKhoanKhachHang?.email ? this.state.hoaDon.taiKhoanKhachHang?.email : "--|--"}</h10>
                                                     <div>
                                                         
 
