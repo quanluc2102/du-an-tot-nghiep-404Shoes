@@ -286,7 +286,6 @@ public class BanHangOfflineController {
         }
     }
 
-
     @PostMapping("/update_hdct/{id}")
     public ResponseEntity<?> capNhatSoLuongSP(@PathVariable("id") Long id,
                                               @RequestBody UpdateHoaDonChiTietDTO updateHoaDonChiTietDTO) {
