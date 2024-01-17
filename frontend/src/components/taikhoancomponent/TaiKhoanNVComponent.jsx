@@ -315,7 +315,9 @@ class TaiKhoanNVComponent extends Component {
             this.setState({ errorAdd: { ...this.state.errorAdd, sdt: "" } });
         }
 
-        // check email
+        const isDuplicateEmail = this.state.nhanVienQuyen1.some(user =>
+            user.taiKhoan && user.taiKhoan.email.toLowerCase() === taiKhoanAdd.email.toLowerCase()
+        );
         if (!taiKhoanAdd || !taiKhoanAdd.email || !taiKhoanAdd.email.trim()) {
             this.setState({ errorAdd: { ...this.state.errorAdd, email: "Email không được bỏ trống!" } });
             return;
@@ -327,12 +329,13 @@ class TaiKhoanNVComponent extends Component {
             // Check if email contains whitespace
             this.setState({ errorAdd: { ...this.state.errorAdd, email: "Email không được chứa khoảng trắng!" } });
             return;
-        } else if (this.state.nhanVienQuyen1.some(user => user.taiKhoan && user.taiKhoan.email === taiKhoanAdd.email)) {
+        } else if (isDuplicateEmail) {
             this.setState({ errorAdd: { ...this.state.errorAdd, email: "Email đã tồn tại trong hệ thống!" } });
             return;
         } else {
             this.setState({ errorAdd: { ...this.state.errorAdd, email: "" } });
         }
+
 
         console.log(requestData);
         // Gọi API để thêm tài khoản
@@ -363,7 +366,7 @@ class TaiKhoanNVComponent extends Component {
 
                     setTimeout(() => {
                         window.location.href = (`/nhanvien`);
-                    }, 2000);
+                    }, 1000);
                     toast.success("Thêm thành công!");
                     this.handleAddSuccess(res.data);
 
