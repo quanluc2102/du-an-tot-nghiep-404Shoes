@@ -145,7 +145,7 @@ public interface HoaDonRepository extends JpaRepository<HoaDon, Long> {
 
 
 
-    @Query("SELECT hd FROM HoaDon hd order by hd.id desc")
+    @Query("SELECT hd FROM HoaDon hd WHERE hd.tongTienSauGiam > 0 ORDER BY hd.id DESC")
     List<HoaDon> findAllByDescByNgayTao();
 
     @Query(value = "SELECT TOP 1 hd.ma_hoa_don AS MaHoaDon FROM hoa_don hd ORDER BY hd.id DESC", nativeQuery = true)
@@ -156,4 +156,7 @@ public interface HoaDonRepository extends JpaRepository<HoaDon, Long> {
                     where o.id = :id
                     """)
     Optional<XuatHoaDonDto> getHoaDonByhoaDonId(Long id);
+
+    @Query("SELECT hd FROM HoaDon hd WHERE hd.tongTienSauGiam > 0")
+    List<HoaDon> getALlHD();
 }

@@ -86,14 +86,14 @@ class BanHangOffline extends Component {
                 password: '',
                 anh: ''
             },
-            errorAdd: {       
+            errorAdd: {
                 sdt: '',
                 ten: '',
                 cccd: '',
                 maTaiKhoan: '',
                 email: '',
                 password: '',
-                       },
+            },
             checked: false, // check button giao hàng (có = true, không = false)        
             cities: [], // state này lưu danh sách thành phố
             districts: [],  // state này lưu danh sách quận huyện
@@ -110,22 +110,21 @@ class BanHangOffline extends Component {
         this.handleDistrictChange = this.handleDistrictChange.bind(this);
         this.handleWardChange = this.handleWardChange.bind(this);
         this.add = this.add.bind(this);
+        this.debouncedUpdateSoLuong = _debounce(this.updateSoLuong, 150).bind(this);
 
         this.thayDoiTenAdd = this.thayDoiTenAdd.bind(this);
-   
+
         this.thayDoiSdtAdd = this.thayDoiSdtAdd.bind(this);
-        
+
         this.thayDoiPassAdd = this.thayDoiPassAdd.bind(this);
-      
+
         this.thayDoiMaNVAdd = this.thayDoiMaNVAdd.bind(this);
-     
+
         this.thayDoiCCCDAdd = this.thayDoiCCCDAdd.bind(this);
+
         this.thayDoiEmailAdd = this.thayDoiEmailAdd.bind(this);
 
         this.debouncedUpdateSoLuong = _debounce(this.updateSoLuong, 300).bind(this);
-
-
-        this.debouncedUpdateSoLuong = _debounce(this.updateSoLuong, 150).bind(this);
 
     }
 
@@ -374,8 +373,8 @@ class BanHangOffline extends Component {
                 }
             })
         );
-        let errorAdd = {...this.state.errorAdd, ten: ""};
-        this.setState({errorAdd: errorAdd});
+        let errorAdd = { ...this.state.errorAdd, ten: "" };
+        this.setState({ errorAdd: errorAdd });
     }
     thayDoiSdtAdd = (event) => {
         this.setState(
@@ -386,8 +385,8 @@ class BanHangOffline extends Component {
                 }
             })
         );
-        let errorAdd = {...this.state.errorAdd, sdt: ""};
-        this.setState({errorAdd: errorAdd});
+        let errorAdd = { ...this.state.errorAdd, sdt: "" };
+        this.setState({ errorAdd: errorAdd });
     }
     thayDoiMaNVAdd = (event) => {
         this.setState(
@@ -398,8 +397,8 @@ class BanHangOffline extends Component {
                 }
             })
         );
-        let errorAdd = {...this.state.errorAdd, maTaiKhoan: ""};
-        this.setState({errorAdd: errorAdd});
+        let errorAdd = { ...this.state.errorAdd, maTaiKhoan: "" };
+        this.setState({ errorAdd: errorAdd });
     }
     thayDoiCCCDAdd = (event) => {
         this.setState(
@@ -410,8 +409,8 @@ class BanHangOffline extends Component {
                 }
             })
         );
-        let errorAdd = {...this.state.errorAdd, cccd: ""};
-        this.setState({errorAdd: errorAdd});
+        let errorAdd = { ...this.state.errorAdd, cccd: "" };
+        this.setState({ errorAdd: errorAdd });
     }
     thayDoiEmailAdd = (event) => {
         this.setState(
@@ -422,8 +421,8 @@ class BanHangOffline extends Component {
                 }
             })
         );
-        let errorAdd = {...this.state.errorAdd, email: ""};
-        this.setState({errorAdd: errorAdd});
+        let errorAdd = { ...this.state.errorAdd, email: "" };
+        this.setState({ errorAdd: errorAdd });
     }
     thayDoiPassAdd = (event) => {
         this.setState(
@@ -434,30 +433,30 @@ class BanHangOffline extends Component {
                 }
             })
         );
-        let errorAdd = {...this.state.errorAdd, password: ""};
-        this.setState({errorAdd: errorAdd});
+        let errorAdd = { ...this.state.errorAdd, password: "" };
+        this.setState({ errorAdd: errorAdd });
     }
     addKH = (e) => {
         e.preventDefault();
 
-    
 
 
-        const {taiKhoanAdd, nguoiDungAdd} = this.state;
+
+        const { taiKhoanAdd, nguoiDungAdd } = this.state;
         const requestData = {
             taiKhoan: {
-                email : taiKhoanAdd.email,
+                email: taiKhoanAdd.email,
             },
             thongTinNguoiDung: {
                 ten: nguoiDungAdd.ten,
                 cccd: nguoiDungAdd.cccd,
                 sdt: nguoiDungAdd.sdt,
-            
+
             },
         };
         console.log('nsx' + JSON.stringify(requestData));
 
-  
+
         // Kiểm tra không được để trống
         if (!nguoiDungAdd.cccd.trim()) {
             this.setState({ errorAdd: { ...this.state.errorAdd, cccd: "CCCD không được bỏ trống!" } });
@@ -494,9 +493,9 @@ class BanHangOffline extends Component {
         }
 
         //check ngaySinh
-       
+
         // check thanhPho
-      
+
         // check sdt
         const sdtRegex = /^[0-9]{10}$/; // Regex for 10 digits
 
@@ -690,10 +689,13 @@ class BanHangOffline extends Component {
         const firstSelectedPromotion = selectedPromotions.length > 0 ? selectedPromotions[0] : null; // hàm này lấy giá trị đầu tiên của mảng lưu khuyến mãi
 
         const confirm = window.confirm('Bạn xác nhận muốn thanh toán hóa đơn này chứ?');
-        if (!confirm) {
+        
+        if (!confirm) { 
             return;
         } else {
-
+            if(!this.validateAddress()){
+                return;
+            }
             try {
                 const thanhToanDTO = {
                     ten: this.state.ten || '',
@@ -734,8 +736,10 @@ class BanHangOffline extends Component {
                         ghiChu: '',
                         kieuHoaDon: 2,
                         idKhachHang: '',
+                        checked : false,
                     });
                     this.fetchHoaDonChoDauTien();
+                   
                     console.log('phi ship: ', this.state.phiShip);
                     toast.success('Thanh toán thành công!!!!');
                 } else {
@@ -997,8 +1001,23 @@ class BanHangOffline extends Component {
     handleUpdateSoLuong = (soLuong, idHDCT) => {
         this.debouncedUpdateSoLuong(soLuong, idHDCT);
     };
+    // hàm validate địa chỉ
+    validateAddress = () => {
+    const { checked, tinhThanhPho, quanHuyen, xaPhuongThiTran, diaChiCuThe } = this.state;
 
-
+    if (checked) {
+        // Delivery option selected
+        if (tinhThanhPho === '' || quanHuyen === '' || xaPhuongThiTran === '' || diaChiCuThe === '') {
+            toast.error('Vui lòng nhập đầy đủ thông tin địa chỉ!', {
+                position: 'top-right',
+                autoClose: 2000,
+            });
+            return false;
+        }
+    }
+    // No Delivery option or delivery information is complete
+    return true;
+};
     // hàm lấy dữ liệu hóa đơn chờ (hóa đơn hiển thị ở trên phần Tab)
     fetchHoaDonCho = async () => {
         try {
@@ -1293,12 +1312,7 @@ class BanHangOffline extends Component {
                     'token': '93254e5e-a301-11ee-b394-8ac29577e80e',
                 },
             });
-            if (response.status === 200) {
-                console.log(this.state.codeTP);
-                console.log(this.state.codeQH);
-                console.log(this.state.codeXP);
-                return response.data.data.service_fee;
-            }
+         
             this.setState({ phiShip: response.data.data.service_fee })
 
         } catch (error) {
@@ -1510,67 +1524,67 @@ class BanHangOffline extends Component {
                                 <Modal.Body>
                                     <div className="row">
                                         <div className="col-2 container">
-                                        <Button variant="btn btn-primary " style={{ margin: 10 }} onClick={this.handleShowModal4}> Thêm khách hàng  </Button>
+                                            <Button variant="btn btn-primary " style={{ margin: 10 }} onClick={this.handleShowModal4}> Thêm khách hàng  </Button>
                                             <Modal show={this.state.showModal4} onHide={this.handleCloseModal4} backdrop="static" dialogClassName="custom-modal-size">
-                                <Modal.Header closeButton>
-                                    <Modal.Title>Thông tin KH</Modal.Title>
-                                </Modal.Header>
-                                <Modal.Body>
-                                <form onSubmit={this.addKH}>
-                                             {/* CCCD */}
-                                        <div className="form-group">
-                                            <label htmlFor="cccd">CCCD:<span style={{ color: 'red' }}>*</span></label>
-                                            <input
-                                                type="text"
-                                                className={`form-control ${this.state.errorAdd.cccd ? 'is-invalid' : ''}`}
-                                                id="cccd"
-                                                onChange={this.thayDoiCCCDAdd}
-                                                value={this.state.nguoiDungAdd.cccd }
-                                            />
-                                            {this.state.errorAdd.cccd && <div className="invalid-feedback">{this.state.errorAdd.cccd}</div>}
-                                        </div>
-                                        {/* Họ và tên */}
-                                        <div className="form-group">
-                                            <label htmlFor="ten">Họ và tên: <span style={{ color: 'red' }}>*</span></label>
-                                            <input
-                                                type="text"
-                                                className={`form-control ${this.state.errorAdd.ten ? 'is-invalid' : ''}`}
-                                                id="ten"
-                                                value={this.state.nguoiDungAdd.ten}
-                                                onChange={this.thayDoiTenAdd}
-                                            />
-                                            {this.state.errorAdd.ten && <div className="invalid-feedback">{this.state.errorAdd.ten}</div>}
-                                        </div>
-                                        {/* SDT */}
-                                        <div className="form-group">
-                                            <label htmlFor="sdt">SDT: <span style={{ color: 'red' }}>*</span></label>
-                                            <input
-                                                type="text"
-                                                className={`form-control ${this.state.errorAdd.sdt ? 'is-invalid' : ''}`}
-                                                id="sdt"
-                                                onChange={this.thayDoiSdtAdd}
-                                                value={this.state.nguoiDungAdd.sdt}
-                                            />
-                                            {this.state.errorAdd.sdt && <div className="invalid-feedback">{this.state.errorAdd.sdt}</div>}
-                                        </div>
+                                                <Modal.Header closeButton>
+                                                    <Modal.Title>Thông tin KH</Modal.Title>
+                                                </Modal.Header>
+                                                <Modal.Body>
+                                                    <form onSubmit={this.addKH}>
+                                                        {/* CCCD */}
+                                                        <div className="form-group">
+                                                            <label htmlFor="cccd">CCCD:<span style={{ color: 'red' }}>*</span></label>
+                                                            <input
+                                                                type="text"
+                                                                className={`form-control ${this.state.errorAdd.cccd ? 'is-invalid' : ''}`}
+                                                                id="cccd"
+                                                                onChange={this.thayDoiCCCDAdd}
+                                                                value={this.state.nguoiDungAdd.cccd}
+                                                            />
+                                                            {this.state.errorAdd.cccd && <div className="invalid-feedback">{this.state.errorAdd.cccd}</div>}
+                                                        </div>
+                                                        {/* Họ và tên */}
+                                                        <div className="form-group">
+                                                            <label htmlFor="ten">Họ và tên: <span style={{ color: 'red' }}>*</span></label>
+                                                            <input
+                                                                type="text"
+                                                                className={`form-control ${this.state.errorAdd.ten ? 'is-invalid' : ''}`}
+                                                                id="ten"
+                                                                value={this.state.nguoiDungAdd.ten}
+                                                                onChange={this.thayDoiTenAdd}
+                                                            />
+                                                            {this.state.errorAdd.ten && <div className="invalid-feedback">{this.state.errorAdd.ten}</div>}
+                                                        </div>
+                                                        {/* SDT */}
+                                                        <div className="form-group">
+                                                            <label htmlFor="sdt">SDT: <span style={{ color: 'red' }}>*</span></label>
+                                                            <input
+                                                                type="text"
+                                                                className={`form-control ${this.state.errorAdd.sdt ? 'is-invalid' : ''}`}
+                                                                id="sdt"
+                                                                onChange={this.thayDoiSdtAdd}
+                                                                value={this.state.nguoiDungAdd.sdt}
+                                                            />
+                                                            {this.state.errorAdd.sdt && <div className="invalid-feedback">{this.state.errorAdd.sdt}</div>}
+                                                        </div>
 
-                                        {/* Email */}
-                                        <div className="form-group">
-                                            <label htmlFor="email">Email: <span style={{ color: 'red' }}>*</span></label>
-                                            <input
-                                                type="email"
-                                                className={`form-control ${this.state.errorAdd.email ? 'is-invalid' : ''}`}
-                                                id="email"
-                                                value={this.state.taiKhoanAdd.email}
-                                                onChange={this.thayDoiEmailAdd}
-                                            />
-                                            {this.state.errorAdd.email && <div className="invalid-feedback">{this.state.errorAdd.email}</div>}
-                                        </div>
-                                        <input type="submit" className="btn btn-primary" value="Add" style={{ marginTop: '10px' }} />
-                                       </form>
-                                             </Modal.Body>
-                                {this.popupContent}
-                            </Modal>
+                                                        {/* Email */}
+                                                        <div className="form-group">
+                                                            <label htmlFor="email">Email: <span style={{ color: 'red' }}>*</span></label>
+                                                            <input
+                                                                type="email"
+                                                                className={`form-control ${this.state.errorAdd.email ? 'is-invalid' : ''}`}
+                                                                id="email"
+                                                                value={this.state.taiKhoanAdd.email}
+                                                                onChange={this.thayDoiEmailAdd}
+                                                            />
+                                                            {this.state.errorAdd.email && <div className="invalid-feedback">{this.state.errorAdd.email}</div>}
+                                                        </div>
+                                                        <input type="submit" className="btn btn-primary" value="Add" style={{ marginTop: '10px' }} />
+                                                    </form>
+                                                </Modal.Body>
+                                                {this.popupContent}
+                                            </Modal>
                                             <input
                                                 type="text"
                                                 name="query"
