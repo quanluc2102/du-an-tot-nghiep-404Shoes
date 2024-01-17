@@ -809,7 +809,7 @@ class ChiTietComponent extends Component {
                                         borderRadius: 5,width:'90%'}} onChange={(e)=>this.updateQuality(spct.id, e.target.value)} min={1}/> </th>
                                     <th ><input type={"number"} value={spct.donGia} style={{padding: 10,
                                         border: '1px solid #ddd',
-                                        borderRadius: 5,width:'90%'}} onChange={(e) => this.updatePrice(spct.id, e.target.value)} min={0}/> </th>
+                                        borderRadius: 5,width:'90%'}} onChange={(e) => this.updatePrice(spct.id, e.target.value)} min={0} disabled={true}/> </th>
                                     <th ><button onClick={()=>this.delete(spct.id)} className='btn btn-danger bi bi-trash3' style={{marginRight:10}}></button>
                                         <button className="btn btn-primary bi bi-info" onClick={()=>this.handleShowModalSPCTDetail(index)} style={{marginRight:10}}></button>
                                     </th>
@@ -867,7 +867,7 @@ class ChiTietComponent extends Component {
                                         </div>
                                         <div style={{marginLeft:"30px",display:"inline-block"}} className="col-lg-5">
                                             <label>Giá : </label>
-                                            <input className={`form-control`} value={this.state.detailSPCT.donGia} type="number" onChange={this.thayDoiGiaOne}/>
+                                            <input className={`form-control`} value={this.state.detailSPCT.donGia} type="number" onChange={this.thayDoiGiaOne} disabled={true}/>
                                         </div>
                                         <div style={{marginLeft:"30px",display:"inline-block"}}>
                                             <label>QR : </label>
