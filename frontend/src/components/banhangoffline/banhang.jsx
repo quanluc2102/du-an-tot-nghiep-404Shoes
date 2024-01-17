@@ -7,6 +7,7 @@ import ReactPaginate from 'react-paginate';
 import _ from 'lodash';
 import taikhoanservice from "../../services/taikhoanservice/taikhoanservice";
 import _debounce from 'lodash/debounce';
+
 import {
     Col,
     Tabs,
@@ -120,7 +121,6 @@ class BanHangOffline extends Component {
      
         this.thayDoiCCCDAdd = this.thayDoiCCCDAdd.bind(this);
         this.thayDoiEmailAdd = this.thayDoiEmailAdd.bind(this);
-
 
         this.debouncedUpdateSoLuong = _debounce(this.updateSoLuong, 300).bind(this);
 
