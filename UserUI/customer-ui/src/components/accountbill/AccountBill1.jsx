@@ -459,12 +459,12 @@ class HoaDonChiTietComponents extends Component {
                                                     <table className="table">
                                                         <tbody>
                                                         <tr>
-                                                            <th scope="row">Tên người nhận: {this.state.hoaDon.taiKhoanKhachHang && this.state.hoaDon.taiKhoanKhachHang.thongTinNguoiDung ? this.state.hoaDon.taiKhoanKhachHang.thongTinNguoiDung.ten : "Khách lẻ"} </th>
+                                                            <th scope="row">Tên người nhận: {this.state.hoaDon.taiKhoanKhachHang && this.state.hoaDon.taiKhoanKhachHang.thongTinNguoiDung ? this.state.hoaDon.ten : "Khách lẻ"} </th>
                                                             <td>
                                                             </td>
                                                         </tr>
                                                         <tr>
-                                                            <th scope="row">Số điện thoại: {this.state.hoaDon.taiKhoanKhachHang && this.state.hoaDon.taiKhoanKhachHang.thongTinNguoiDung ? this.state.hoaDon.taiKhoanKhachHang.thongTinNguoiDung.sdt : "Khách lẻ"}</th>
+                                                            <th scope="row">Số điện thoại: {this.state.hoaDon.taiKhoanKhachHang && this.state.hoaDon.taiKhoanKhachHang.thongTinNguoiDung ? this.state.hoaDon.sdt : "Khách lẻ"}</th>
                                                             <td className="text-left col-4">
                                                             </td>
                                                         </tr>
@@ -510,7 +510,7 @@ class HoaDonChiTietComponents extends Component {
                                                                         style={{width: '50px', height: '50px'}}
                                                                     />
                                                                 </td>
-                                                                <td>{hoaDonChiTiet.sanPhamChiTiet.sanPham.ten}</td>
+                                                                <td>{hoaDonChiTiet.sanPhamChiTiet.sanPham.ten} -  {hoaDonChiTiet.sanPhamChiTiet.mauSac.ten} - {hoaDonChiTiet.sanPhamChiTiet.kichThuoc.giaTri}</td>
                                                                 <td>{hoaDonChiTiet.sanPhamChiTiet.donGia.toLocaleString()} VNĐ</td>
                                                                 <td>{(hoaDonChiTiet.sanPhamChiTiet.donGia * hoaDonChiTiet.soLuong).toLocaleString()} VNĐ</td>
                                                             </tr>
