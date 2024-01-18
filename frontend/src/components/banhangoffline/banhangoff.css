@@ -27,47 +27,60 @@ body {
 .header_sell_content_left {
     display: flex;
     align-items: center;
-    width: 50%; /* Adjust as needed */
+    width: 50%;
+    /* Adjust as needed */
 }
 
 .header_sell_content_right {
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    width: 50%; /* Adjust as needed */
+    width: 50%;
+    /* Adjust as needed */
 }
 
 /* Content styling */
 .content_sell {
     display: flex;
-    flex-wrap: wrap; /* Allow content to wrap to the next line */
+    flex-wrap: wrap;
+    /* Allow content to wrap to the next line */
     padding-top: 27px;
 }
 
 .content_sell_left {
-    flex: 1; /* Take up remaining space */
+    flex: 1;
+    /* Take up remaining space */
     border-right: 2px solid #e5e5e5;
-    padding-right: 10px; /* Add some spacing */
+    padding-right: 10px;
+    /* Add some spacing */
     max-width: 1200px;
 }
 
 .content_sell_right {
-    flex: 1; /* Take up remaining space */
-    padding: 0 10px 0 10px; /* Add some spacing */
+    /* flex: 1; */
+    /* Take up remaining space */
+    padding: 0 10px;
+    /* Add some spacing */
+    display: flex;
+    flex-direction: column;
+    /* align-items: stretch;
+    justify-content: space-around; */
 }
 
 /* Checkbox styling */
 .checkbox_sell {
     margin: 1px;
     padding: 5px;
-    border: 1px solid black;
+    /* border: 1px solid black; */
 }
 
 /* Payment styling */
 .payment_sell {
-    display: flex;
-    flex-direction: column;
+    display: flex; 
+    flex-direction: row;
     justify-content: space-between;
+    height: 180px;
+    /* width: '100%' */
 }
 
 /* Container styling */
@@ -82,7 +95,8 @@ body {
 
 .container_sell:hover {
     border-color: #2c7605;
-    background-color: #69ff18; /* Fix the typo in background color */
+    background-color: #69ff18;
+    /* Fix the typo in background color */
     border-radius: 10px;
     box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3);
 }
@@ -96,22 +110,29 @@ body {
 .container_sell:hover .anticon-delete {
     color: red;
 }
+
 .customButton {
-    width: '40%'; /* Set the width as needed */
-    height: '70px'; /* Set the height as needed */
+    /* width: calc(100% / 3); */
+    /* Set the width as needed */
+    height: 60px;
+    /* Set the height as needed */
     background-color: 'white';
     color: 'black';
-    font-weight: 'bolder';
+    font-weight: bold;
     border-color: 'black';
     font-size: '20px';
-    transition: background-color 0.3s, box-shadow 0.3s; /* Add transition for smooth effect */
-  }
-  
-  .customButton:hover {
-    background-color: 'gray'; /* Set the desired hover background color */
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); /* Add box shadow for hover effect */
-  }
-  .custom-modal-size {
+    transition: background-color 0.3s, box-shadow 0.3s;
+    /* Add transition for smooth effect */
+}
+
+.customButton:hover {
+    background-color: 'gray';
+    /* Set the desired hover background color */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    /* Add box shadow for hover effect */
+}
+
+.custom-modal-size {
     max-width: 1300px;
     max-height: 1000px;
-  }
+}
