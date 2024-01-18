@@ -10,6 +10,7 @@ import _debounce from 'lodash/debounce';
 
 import {
     Col,
+    Row,
     Tabs,
     Input,
     Select,
@@ -689,15 +690,15 @@ class BanHangOffline extends Component {
         const firstSelectedPromotion = selectedPromotions.length > 0 ? selectedPromotions[0] : null; // hàm này lấy giá trị đầu tiên của mảng lưu khuyến mãi
 
         const confirm = window.confirm('Bạn xác nhận muốn thanh toán hóa đơn này chứ?');
-        
-        if (!confirm) { 
+
+        if (!confirm) {
             return;
         } else {
-            if(!this.validateAddress()){
+            if (!this.validateAddress()) {
                 return;
             }
             try {
-                console.log("Tiền giảm"+(this.getTotalAmountWithoutPromotions(this.state.tabProducts) - this.getTotalAmount(this.state.tabProducts)))
+                console.log("Tiền giảm" + (this.getTotalAmountWithoutPromotions(this.state.tabProducts) - this.getTotalAmount(this.state.tabProducts)))
                 const thanhToanDTO = {
                     ten: this.state.ten || '',
                     sdt: this.state.sdt || '',
@@ -737,10 +738,10 @@ class BanHangOffline extends Component {
                         ghiChu: '',
                         kieuHoaDon: 2,
                         idKhachHang: '',
-                        checked : false,
+                        checked: false,
                     });
                     this.fetchHoaDonChoDauTien();
-                   
+
                     console.log('phi ship: ', this.state.phiShip);
                     toast.success('Thanh toán thành công!!!!');
                 } else {
@@ -836,7 +837,6 @@ class BanHangOffline extends Component {
                 }
             }
         }
-
     };
 
     // lấy thông tin user
@@ -1004,21 +1004,21 @@ class BanHangOffline extends Component {
     };
     // hàm validate địa chỉ
     validateAddress = () => {
-    const { checked, tinhThanhPho, quanHuyen, xaPhuongThiTran, diaChiCuThe } = this.state;
+        const { checked, tinhThanhPho, quanHuyen, xaPhuongThiTran, diaChiCuThe } = this.state;
 
-    if (checked) {
-        // Delivery option selected
-        if (tinhThanhPho === '' || quanHuyen === '' || xaPhuongThiTran === '' || diaChiCuThe === '') {
-            toast.error('Vui lòng nhập đầy đủ thông tin địa chỉ!', {
-                position: 'top-right',
-                autoClose: 2000,
-            });
-            return false;
+        if (checked) {
+            // Delivery option selected
+            if (tinhThanhPho === '' || quanHuyen === '' || xaPhuongThiTran === '' || diaChiCuThe === '') {
+                toast.error('Vui lòng nhập đầy đủ thông tin địa chỉ!', {
+                    position: 'top-right',
+                    autoClose: 2000,
+                });
+                return false;
+            }
         }
-    }
-    // No Delivery option or delivery information is complete
-    return true;
-};
+        // No Delivery option or delivery information is complete
+        return true;
+    };
     // hàm lấy dữ liệu hóa đơn chờ (hóa đơn hiển thị ở trên phần Tab)
     fetchHoaDonCho = async () => {
         try {
@@ -1313,7 +1313,7 @@ class BanHangOffline extends Component {
                     'token': '93254e5e-a301-11ee-b394-8ac29577e80e',
                 },
             });
-         
+
             this.setState({ phiShip: response.data.data.service_fee })
 
         } catch (error) {
@@ -1510,342 +1510,296 @@ class BanHangOffline extends Component {
                         </div>
                     </div>
                     <div className="content_sell_right">
-                        <div>
-                            <div className="checkbox_sell">
-                                <span><Switch checked={this.state.checked} onChange={this.onChangeSwitch} />Giao hàng</span>
-                            </div>
+                        <div className="checkbox_sell">
+                            <span><Switch checked={this.state.checked} onChange={this.onChangeSwitch} /> Giao hàng</span>
+                        </div>
 
-                            <Button variant="btn btn-outline-primary" onClick={this.handleShowModal2}>
-                                Chọn khách hàng
-                            </Button>
-                            <Modal show={this.state.showModal2} onHide={this.handleCloseModal2} backdrop="static" dialogClassName="custom-modal-size">
-                                <Modal.Header closeButton>
-                                    <Modal.Title>Chọn khách hàng</Modal.Title>
-                                </Modal.Header>
-                                <Modal.Body>
-                                    <div className="row">
-                                        <div className="col-2 container">
-                                            <Button variant="btn btn-primary " style={{ margin: 10 }} onClick={this.handleShowModal4}> Thêm khách hàng  </Button>
-                                            <Modal show={this.state.showModal4} onHide={this.handleCloseModal4} backdrop="static" dialogClassName="custom-modal-size">
-                                                <Modal.Header closeButton>
-                                                    <Modal.Title>Thông tin KH</Modal.Title>
-                                                </Modal.Header>
-                                                <Modal.Body>
-                                                    <form onSubmit={this.addKH}>
-                                                        {/* CCCD */}
-                                                        {/* <div className="form-group">
-                                                            <label htmlFor="cccd">CCCD:<span style={{ color: 'red' }}>*</span></label>
-                                                            <input
-                                                                type="text"
-                                                                className={`form-control ${this.state.errorAdd.cccd ? 'is-invalid' : ''}`}
-                                                                id="cccd"
-                                                                onChange={this.thayDoiCCCDAdd}
-                                                                value={this.state.nguoiDungAdd.cccd}
-                                                            />
-                                                            {this.state.errorAdd.cccd && <div className="invalid-feedback">{this.state.errorAdd.cccd}</div>}
-                                                        </div> */}
-                                                        {/* Họ và tên */}
-                                                        <div className="form-group">
-                                                            <label htmlFor="ten">Họ và tên: <span style={{ color: 'red' }}>*</span></label>
-                                                            <input
-                                                                type="text"
-                                                                className={`form-control ${this.state.errorAdd.ten ? 'is-invalid' : ''}`}
-                                                                id="ten"
-                                                                value={this.state.nguoiDungAdd.ten}
-                                                                onChange={this.thayDoiTenAdd}
-                                                            />
-                                                            {this.state.errorAdd.ten && <div className="invalid-feedback">{this.state.errorAdd.ten}</div>}
-                                                        </div>
-                                                        {/* SDT */}
-                                                        <div className="form-group">
-                                                            <label htmlFor="sdt">SDT: <span style={{ color: 'red' }}>*</span></label>
-                                                            <input
-                                                                type="text"
-                                                                className={`form-control ${this.state.errorAdd.sdt ? 'is-invalid' : ''}`}
-                                                                id="sdt"
-                                                                onChange={this.thayDoiSdtAdd}
-                                                                value={this.state.nguoiDungAdd.sdt}
-                                                            />
-                                                            {this.state.errorAdd.sdt && <div className="invalid-feedback">{this.state.errorAdd.sdt}</div>}
-                                                        </div>
+                        <Button style={{width: '100%', margin: '0px'}} variant="btn btn-outline-primary" onClick={this.handleShowModal2}>
+                            Chọn khách hàng
+                        </Button>
+                        <Modal show={this.state.showModal2} onHide={this.handleCloseModal2} backdrop="static" dialogClassName="custom-modal-size">
+                            <Modal.Header closeButton>
+                                <Modal.Title>Chọn khách hàng</Modal.Title>
+                            </Modal.Header>
+                            <Modal.Body>
+                                <div className="row">
+                                    <div className="col-2 container">
+                                        <Button variant="btn btn-primary " style={{ margin: 10 }} onClick={this.handleShowModal4}> Thêm khách hàng  </Button>
+                                        <Modal show={this.state.showModal4} onHide={this.handleCloseModal4} backdrop="static" dialogClassName="custom-modal-size">
+                                            <Modal.Header closeButton>
+                                                <Modal.Title>Thông tin KH</Modal.Title>
+                                            </Modal.Header>
+                                            <Modal.Body>
+                                                <form onSubmit={this.addKH}>
+                                                    <div className="form-group">
+                                                        <label htmlFor="ten">Họ và tên: <span style={{ color: 'red' }}>*</span></label>
+                                                        <input
+                                                            type="text"
+                                                            className={`form-control ${this.state.errorAdd.ten ? 'is-invalid' : ''}`}
+                                                            id="ten"
+                                                            value={this.state.nguoiDungAdd.ten}
+                                                            onChange={this.thayDoiTenAdd}
+                                                        />
+                                                        {this.state.errorAdd.ten && <div className="invalid-feedback">{this.state.errorAdd.ten}</div>}
+                                                    </div>
+                                                    {/* SDT */}
+                                                    <div className="form-group">
+                                                        <label htmlFor="sdt">SDT: <span style={{ color: 'red' }}>*</span></label>
+                                                        <input
+                                                            type="text"
+                                                            className={`form-control ${this.state.errorAdd.sdt ? 'is-invalid' : ''}`}
+                                                            id="sdt"
+                                                            onChange={this.thayDoiSdtAdd}
+                                                            value={this.state.nguoiDungAdd.sdt}
+                                                        />
+                                                        {this.state.errorAdd.sdt && <div className="invalid-feedback">{this.state.errorAdd.sdt}</div>}
+                                                    </div>
 
-                                                        {/* Email */}
-                                                        <div className="form-group">
-                                                            <label htmlFor="email">Email: <span style={{ color: 'red' }}>*</span></label>
-                                                            <input
-                                                                type="email"
-                                                                className={`form-control ${this.state.errorAdd.email ? 'is-invalid' : ''}`}
-                                                                id="email"
-                                                                value={this.state.taiKhoanAdd.email}
-                                                                onChange={this.thayDoiEmailAdd}
-                                                            />
-                                                            {this.state.errorAdd.email && <div className="invalid-feedback">{this.state.errorAdd.email}</div>}
-                                                        </div>
-                                                        <input type="submit" className="btn btn-primary" value="Add" style={{ marginTop: '10px' }} />
-                                                    </form>
-                                                </Modal.Body>
-                                                {this.popupContent}
-                                            </Modal>
-                                            <input
-                                                type="text"
-                                                name="query"
-                                                placeholder="Tìm kiếm"
-                                                title="Enter search keyword"
-                                                value={searchTermKH}
-                                                onChange={this.handleSearchKH}
-                                                onFocus={this.handleSearchFocusKH}
-                                            />
-                                        </div>
-                                    </div>
-                                    <table className="table table-borderless datatable">
-                                        <thead>
-                                            <tr>
-                                                <th>STT</th>
-                                                <th>Ảnh</th>
-                                                <th>Tên Khách Hàng</th>
-                                                <th>Số Điện Thoại</th>
-                                                <th>Action</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {currentKHList.map((taiKhoan, index) => (
-                                                <tr key={taiKhoan.id}>
-                                                    <td>{index + 1}</td>
-                                                    <td><img style={{ height: '60px', width: '60px', float: 'left' }} src={`/niceadmin/img/${taiKhoan.anh}`} alt="" /></td>
-                                                    <td>{taiKhoan.thongTinNguoiDung.ten}</td>
-                                                    <td>{taiKhoan.thongTinNguoiDung.sdt}</td>
-                                                    <td><button onClick={() => this.handleAddUser(taiKhoan.thongTinNguoiDung, this.state.activeTabKey)} className="btn btn-outline-info">chọn</button></td>
-                                                </tr>
-                                            ))}
-                                        </tbody>
-                                    </table>
-                                    <ReactPaginate
-                                        pageCount={Math.ceil(this.state.taiKhoan.length / this.state.perPageKH)}
-                                        pageRangeDisplayed={5}
-                                        marginPagesDisplayed={2}
-                                        onPageChange={this.handlePageClickKH}
-                                        containerClassName={'pagination'}
-                                        activeClassName={'active'}
-                                        previousLabel={"Previous"}
-                                        nextLabel={"Next"}
-                                    />
-                                </Modal.Body>
-                                {this.popupContent}
-                            </Modal>
-                            <br />
-                            <br />
-                            <label htmlFor="ten">Tên khách hàng:</label>
-                            <input type="text" id="ten" name="ten" value={this.state.ten} placeholder="Nhập tên của khách hàng" required onChange={this.handleTenChange} /><br />
-                            <br />
-                            <label htmlFor="sdt">Số điện thoại:</label>
-                            <input type="tel" id="sdt" name="sdt" value={this.state.sdt} placeholder="Nhập số điện thoại" pattern="[0-9]{10}" title="Số điện thoại phải có 10 chữ số" required onChange={this.handleSdtChange} /><br />
-                            <br />
-
-                            {/* màn hình hiển thị popup địa chỉ */}
-                            {this.state.checked === true ?
-                                <div>
-                                    <div>
-                                        <div>
-                                            <label htmlFor="tinhThanhPho">Tỉnh/Thành phố:</label>
-                                            <select
-                                                className="form-control"
-                                                name="tinhThanhPho"
-                                                onChange={(event) => this.chonTP(event)}
-                                                value={this.state.codeTP}
-                                            >
-                                                <option>Chọn tỉnh thành</option>
-                                                {this.state.listTP.map(tp => (
-                                                    <option value={tp.ProvinceID}>{tp.ProvinceName}</option>
-                                                ))}
-                                            </select>
-                                        </div>
-
-                                        <div className="form-group">
-                                            <label htmlFor="quanHuyen">Quận/Huyện:</label>
-                                            <select
-                                                className="form-control"
-                                                name="quanHuyen"
-                                                onChange={(event) => this.chonQH(event)}
-                                                value={this.state.codeQH}
-                                            >
-                                                <option >Chọn quận huyện</option>
-                                                {this.state.listQH.map(tp => (
-                                                    <option value={tp.DistrictID}>{tp.DistrictName}</option>
-                                                ))}
-                                            </select>
-                                        </div>
-
-                                        <div className="form-group">
-                                            <label htmlFor="xaPhuongThiTran">Xã/Phường/Thị trấn:</label>
-                                            <select
-                                                className="form-control"
-                                                name="xaPhuongThiTran"
-                                                onChange={(event) => this.chonXP(event)}
-                                                value={this.state.codeXP}
-                                            >
-                                                <option >Chọn xã/phường/thị trấn</option>
-                                                {this.state.listXP.map(tp => (
-                                                    <option value={tp.WardCode}>{tp.WardName}</option>
-                                                ))}
-                                            </select>
-                                        </div>
-
-                                        <label htmlFor="diaChiCuthe">Địa chỉ cụ thể : </label>
+                                                    {/* Email */}
+                                                    <div className="form-group">
+                                                        <label htmlFor="email">Email: <span style={{ color: 'red' }}>*</span></label>
+                                                        <input
+                                                            type="email"
+                                                            className={`form-control ${this.state.errorAdd.email ? 'is-invalid' : ''}`}
+                                                            id="email"
+                                                            value={this.state.taiKhoanAdd.email}
+                                                            onChange={this.thayDoiEmailAdd}
+                                                        />
+                                                        {this.state.errorAdd.email && <div className="invalid-feedback">{this.state.errorAdd.email}</div>}
+                                                    </div>
+                                                    <input type="submit" className="btn btn-primary" value="Add" style={{ marginTop: '10px' }} />
+                                                </form>
+                                            </Modal.Body>
+                                            {this.popupContent}
+                                        </Modal>
                                         <input
                                             type="text"
-                                            className="form-control"
-                                            value={this.state.diaChiCuThe}
-                                            onChange={(event) => this.setState({ diaChiCuThe: event.target.value })}
+                                            name="query"
+                                            placeholder="Tìm kiếm"
+                                            title="Enter search keyword"
+                                            value={searchTermKH}
+                                            onChange={this.handleSearchKH}
+                                            onFocus={this.handleSearchFocusKH}
                                         />
                                     </div>
-                                </div> : null}
-
-                            <div className="payment_sell">
-                                <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', width: '100%' }}>
-                                    <Col>
-                                        <Col style={{ fontSize: '16px', margin: '5px 0px 5px 0px' }}>Tổng tiền:({this.getTotalQuantity(this.state.tabProducts)} sản phẩm)</Col>
-                                        <Col style={{ fontSize: '16px' }}>Mã khuyến mãi:</Col>
-                                        <Col style={{ fontSize: '16px', marginTop: '5px ' }}>Giảm giá:</Col>
-                                        <Col style={{ fontSize: '16px' }}>Tiền khách đưa:</Col>
-                                        <br />
-                                        <Col style={{ fontSize: '16px' }}>Phí ship:</Col>
-                                    </Col>
-                                    <Col style={{ width: '55%', borderStyle: 'solid', borderTop: 'none', borderRight: 'none', borderLeft: 'none', borderWidth: '1px' }}>
-                                        <Col style={{ fontSize: '16px', textAlign: 'right', margin: '5px 0px 5px 0px' }}><span style={{ color: 'red' }}>{this.formatCurrency(this.getTotalAmountWithoutPromotions(this.state.tabProducts))}</span></Col>
-                                        <Col style={{ fontSize: '16px', textAlign: 'left' }}>
-                                            <Select
-                                                mode="tags"
-                                                style={{ width: '100%', maxWidth: '500px' }}
-                                                dropdownStyle={{ maxHeight: '300px', overflowY: 'auto', width: '350px' }}
-                                                optionLabelProp="option.ma"
-                                                onClick={() => this.reloadKM()}
-                                                filterOption
-                                                onChange={this.onChangeSearchInput}
-                                                placeholder="Thêm khuyến mãi"
-                                                options={this.state.khuyenMai.map((option, index) => ({
-                                                    label: (
-                                                        <div style={{ overflowX: 'auto', overflowY: 'auto' }}>
-                                                            <div style={{ color: 'red' }}>Cho hóa đơn tối thiểu :<b> {option.dieuKien} VND</b> </div>
-                                                            <div >Mã giảm giá: {option.ma} <br /> {'Số lượng còn: '}{option.soLuong}</div>
-                                                            <div > Giá trị: <b>{option.giamGia} {option.kieuKhuyenMai === 1 ? "%" : option.kieuKhuyenMai === 0 ? "VND" : ""}</b></div>
-                                                            <div className={option.trangThai === 0 ? 'badge bg-warning text-dark' : option.trangThai === 1 ? 'badge bg-success' : 'badge bg-danger'}>{option.trangThai === 0
-                                                                ? 'Chưa diễn ra'
-                                                                : option.trangThai === 1
-                                                                    ? 'Đang diễn ra'
-                                                                    : 'Đã kết thúc'}</div>
-                                                        </div>
-
-                                                    ),
-                                                    value: option.id,
-                                                }))}
-                                            />
-                                        </Col>
-                                        <Col style={{ fontSize: '16px', textAlign: 'right', marginTop: '5px' }}>{this.formatCurrency(this.getTotalAmountWithoutPromotions(this.state.tabProducts) - this.getTotalAmount(this.state.tabProducts))}</Col>
-                                        <Col style={{ fontSize: '16px', textAlign: 'right' }}><Input
-                                            type="text"
-                                            placeholder="Nhập tiền khách đưa..."
-                                            style={{ width: '194px', float: 'left' }}
-                                            onChange={this.onChangeEnteredAmount}
-                                        /></Col>
-                                        <br />
-                                        <Col style={{ fontSize: '16px', textAlign: 'right' }}><Input
-                                            type="text"
-                                            placeholder="Nhập phí ship..."
-                                            style={{ width: '194px', float: 'left' }}
-                                            value={this.state.phiShip}
-                                            onChange={this.onChangeShip}
-                                        /></Col>
-                                    </Col>
                                 </div>
-
-                            </div>
-                            <Col style={{ fontSize: '16px' }}>
-                                Mã khuyến mãi:
-                                {this.state.selectedPromotions.map((promoId) => {
-                                    const promotion = this.state.khuyenMai.find((promo) => promo.id === promoId);
-                                    return (
-                                        <span key={promoId} className="red">
-                                            {promotion ? ` ${promotion.ma}` : ''}
-                                        </span>
-                                    );
-                                })}
-                            </Col>
-                            <Flex style={{ marginTop: '10px', marginBottom: '10px', borderStyle: 'solid', borderWidth: '1px', borderTop: 'none', borderLeft: 'none', borderRight: 'none', paddingBottom: '10px' }} justify="space-between" wrap="wrap" gap={"small"} align="center">
-                                {this.state.priceDemo && this.state.priceDemo.map((item, index) => {
-                                    return (
-                                        <Button key={index} style={{ width: '120px', color: 'black', backgroundColor: 'rgba(0,0,0,0.02)' }} shape="round">{item}</Button>
-                                    )
-                                })}
-                            </Flex>
-                            <Flex flex={"row"} align="center" justify="space-between">
-                                <p style={{ fontSize: '16px', fontWeight: 'bold' }}>Tiền thừa trả khách</p>
-                                <p style={{ fontSize: '20px', fontWeight: 'bold' }}>
-                                    <span style={{ color: 'red' }}>
-                                        {isAmountEnough ? (
-                                            <>Dư {this.formatCurrency(amountDifference)}</>
-                                        ) : (
-                                            <>Thiếu {this.formatCurrency(-amountDifference)}</>
-                                        )}
-                                    </span>
-                                </p>
-                            </Flex>
-                            {this.state.showImage && (
-                                <img
-                                    style={{ maxWidth: 300, marginTop: 20 }}
-                                    src={`https://api.vietqr.io/image/970422-0362460679-vE5Br8f.jpg?accountName=BUI%20XUAN%20THIEU&amount=${this.getTotalAmount(this.state.tabProducts) + this.state.phiShip}&addInfo=TRA%20TIEN%20HOA%20DON`}
-                                    alt="QR Code"
+                                <table className="table table-borderless datatable">
+                                    <thead>
+                                        <tr>
+                                            <th>STT</th>
+                                            <th>Ảnh</th>
+                                            <th>Tên Khách Hàng</th>
+                                            <th>Số Điện Thoại</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {currentKHList.map((taiKhoan, index) => (
+                                            <tr key={taiKhoan.id}>
+                                                <td>{index + 1}</td>
+                                                <td><img style={{ height: '60px', width: '60px', float: 'left' }} src={`/niceadmin/img/${taiKhoan.anh}`} alt="" /></td>
+                                                <td>{taiKhoan.thongTinNguoiDung.ten}</td>
+                                                <td>{taiKhoan.thongTinNguoiDung.sdt}</td>
+                                                <td><button onClick={() => this.handleAddUser(taiKhoan.thongTinNguoiDung, this.state.activeTabKey)} className="btn btn-outline-info">chọn</button></td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                                <ReactPaginate
+                                    pageCount={Math.ceil(this.state.taiKhoan.length / this.state.perPageKH)}
+                                    pageRangeDisplayed={5}
+                                    marginPagesDisplayed={2}
+                                    onPageChange={this.handlePageClickKH}
+                                    containerClassName={'pagination'}
+                                    activeClassName={'active'}
+                                    previousLabel={"Previous"}
+                                    nextLabel={"Next"}
                                 />
-                            )}
-                        </div>
-                        {this.state.codeXP === "" ? (<h6 style={{ display: 'none', marginTop: 8, float: "right" }}>Phí ship : {this.formatCurrency(this.state.phiShip)}</h6>) : (<h6 style={{ display: 'none', marginTop: 8, float: "right" }}>Phí ship : {this.formatCurrency(this.tinhTienShip())}</h6>)}
-                        <button  class="btn btn-outline-danger" onClick={this.state.showImage === false ? this.displayImage : this.closedisplayImage}>{this.state.showImage === false ? 'Xuất' : 'Đóng'} QR</button>
-                        <div>
-                            <Input id="ghiChuDonHang" placeholder="Nhập ghi chú đơn hàng" />
-                            <br />
-                            <br />
-                            <Flex justify="space-between">
-                                <Button icon={<></>} className="customButton"
-                                    style={{
-                                        width: '40%',
-                                        height: '70px',
-                                        backgroundColor: 'white',
-                                        color: 'black',
-                                        fontWeight: 'bolder',
-                                        borderColor: 'black',
-                                        fontSize: '20px'
-                                    }}>
-                                    In tạm tính
-                                </Button>
+                            </Modal.Body>
+                            {this.popupContent}
+                        </Modal>
 
-                                <Button className="customButton"
-                                    style={{
-                                        width: '55%',
-                                        height: '70px',
-                                        backgroundColor: 'white',
-                                        color: 'black',
-                                        fontWeight: 'bolder',
-                                        borderColor: 'black',
-                                        fontSize: '20px'
-                                    }}
-                                    onClick={this.add}>Thanh toán</Button>
-                                <Button
-                                    id="deleteButton"
-                                    className="customButton"
-                                    style={{
-                                        width: '55%',
-                                        height: '70px',
-                                        backgroundColor: 'white',
-                                        color: 'black',
-                                        fontWeight: 'bolder',
-                                        borderColor: 'black',
-                                        fontSize: '20px',
-                                    }}
-                                    onClick={() => this.deleteHoaDonCho(this.state.activeTabKey)}
-                                >
-                                    Xóa Hóa Đơn
-                                </Button>
-                            </Flex>
+                        <div>
+                            <div style={{ width: '100%', margin: '10px 0' }}>
+                                <label style={{ width: '40%' }} htmlFor="ten">Tên khách hàng:</label>
+                                <input style={{ border: 'none', height: '35px' }} type="text" id="ten" name="ten" value={this.state.ten} placeholder="Nhập tên của khách hàng" required onChange={this.handleTenChange} />
+                            </div>
+                            <div>
+                                <label style={{ width: '40%' }} htmlFor="sdt">Số điện thoại:</label>
+                                <input style={{ border: 'none', height: '35px' }} type="tel" id="sdt" name="sdt" value={this.state.sdt} placeholder="Nhập số điện thoại" pattern="[0-9]{10}" title="Số điện thoại phải có 10 chữ số" required onChange={this.handleSdtChange} />
+                            </div>
                         </div>
+
+                        {/* màn hình hiển thị popup địa chỉ */}
+                        {this.state.checked === true ?
+                            <div>
+                                <div>
+                                    <div>
+                                        <label htmlFor="tinhThanhPho">Tỉnh/Thành phố:</label>
+                                        <select
+                                            className="form-control"
+                                            name="tinhThanhPho"
+                                            onChange={(event) => this.chonTP(event)}
+                                            value={this.state.codeTP}
+                                        >
+                                            <option>Chọn tỉnh thành</option>
+                                            {this.state.listTP.map(tp => (
+                                                <option value={tp.ProvinceID}>{tp.ProvinceName}</option>
+                                            ))}
+                                        </select>
+                                    </div>
+
+                                    <div className="form-group">
+                                        <label htmlFor="quanHuyen">Quận/Huyện:</label>
+                                        <select
+                                            className="form-control"
+                                            name="quanHuyen"
+                                            onChange={(event) => this.chonQH(event)}
+                                            value={this.state.codeQH}
+                                        >
+                                            <option >Chọn quận huyện</option>
+                                            {this.state.listQH.map(tp => (
+                                                <option value={tp.DistrictID}>{tp.DistrictName}</option>
+                                            ))}
+                                        </select>
+                                    </div>
+
+                                    <div className="form-group">
+                                        <label htmlFor="xaPhuongThiTran">Xã/Phường/Thị trấn:</label>
+                                        <select
+                                            className="form-control"
+                                            name="xaPhuongThiTran"
+                                            onChange={(event) => this.chonXP(event)}
+                                            value={this.state.codeXP}
+                                        >
+                                            <option >Chọn xã/phường/thị trấn</option>
+                                            {this.state.listXP.map(tp => (
+                                                <option value={tp.WardCode}>{tp.WardName}</option>
+                                            ))}
+                                        </select>
+                                    </div>
+
+                                    <label htmlFor="diaChiCuthe">Địa chỉ cụ thể : </label>
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        value={this.state.diaChiCuThe}
+                                        onChange={(event) => this.setState({ diaChiCuThe: event.target.value })}
+                                    />
+                                </div>
+                            </div> : null}
+
+                        <div className="payment_sell">
+                            <Col style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-around' }}>
+                                <Col style={{ fontSize: '16px' }}>Tổng tiền:({this.getTotalQuantity(this.state.tabProducts)} sản phẩm)</Col>
+                                <Col style={{ fontSize: '16px' }}>Mã khuyến mãi:</Col>
+                                <Col style={{ fontSize: '16px' }}>Giảm giá:</Col>
+                                <Col style={{ fontSize: '16px' }}>Tiền khách đưa:</Col>
+                                <Col style={{ fontSize: '16px' }}>Phí ship:</Col>
+                            </Col>
+                            <Col style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', justifyContent: 'space-around' }}>
+                                <Col style={{ fontSize: '16px', textAlign: 'right', }}><span style={{ color: 'red' }}>{this.formatCurrency(this.getTotalAmountWithoutPromotions(this.state.tabProducts))}</span></Col>
+                                <Col style={{ fontSize: '16px', textAlign: 'left' }}>
+                                    <Select
+                                        mode="tags"
+                                        style={{ width: '194px', maxWidth: '500px' }}
+                                        dropdownStyle={{ maxHeight: '300px', overflowY: 'auto', width: '350px' }}
+                                        optionLabelProp="option.ma"
+                                        onClick={() => this.reloadKM()}
+                                        filterOption
+                                        onChange={this.onChangeSearchInput}
+                                        placeholder="Thêm khuyến mãi"
+                                        options={this.state.khuyenMai.map((option, index) => ({
+                                            label: (
+                                                <div style={{ overflowX: 'auto', overflowY: 'auto' }}>
+                                                    <div style={{ color: 'red' }}>Cho hóa đơn tối thiểu :<b> {option.dieuKien} VND</b> </div>
+                                                    <div >Mã giảm giá: {option.ma} <br /> {'Số lượng còn: '}{option.soLuong}</div>
+                                                    <div > Giá trị: <b>{option.giamGia} {option.kieuKhuyenMai === 1 ? "%" : option.kieuKhuyenMai === 0 ? "VND" : ""}</b></div>
+                                                    <div className={option.trangThai === 0 ? 'badge bg-warning text-dark' : option.trangThai === 1 ? 'badge bg-success' : 'badge bg-danger'}>{option.trangThai === 0
+                                                        ? 'Chưa diễn ra'
+                                                        : option.trangThai === 1
+                                                            ? 'Đang diễn ra'
+                                                            : 'Đã kết thúc'}</div>
+                                                </div>
+                                            ),
+                                            value: option.id,
+                                        }))}
+                                    />
+                                </Col>
+                                <Col style={{ fontSize: '16px', textAlign: 'right', marginTop: '5px' }}>{this.formatCurrency(this.getTotalAmountWithoutPromotions(this.state.tabProducts) - this.getTotalAmount(this.state.tabProducts))}</Col>
+                                <Col style={{ fontSize: '16px', textAlign: 'right' }}>
+                                    <Input
+                                        type="text"
+                                        placeholder="Nhập tiền khách đưa..."
+                                        style={{ width: '194px' }}
+                                        onChange={this.onChangeEnteredAmount}
+                                    />
+                                </Col>
+                                <Col style={{ fontSize: '16px', textAlign: 'right' }}><Input
+                                    type="text"
+                                    placeholder="Nhập phí ship..."
+                                    style={{ width: '194px' }}
+                                    value={this.state.phiShip}
+                                    onChange={this.onChangeShip}
+                                /></Col>
+                            </Col>
+
+                        </div>
+                        <Col style={{ fontSize: '16px' }}>
+                            Mã khuyến mãi:
+                            {this.state.selectedPromotions.map((promoId) => {
+                                const promotion = this.state.khuyenMai.find((promo) => promo.id === promoId);
+                                return (
+                                    <span key={promoId} className="red">
+                                        {promotion ? ` ${promotion.ma}` : ''}
+                                    </span>
+                                );
+                            })}
+                        </Col>
+                        <Flex style={{ marginTop: '10px', marginBottom: '10px', borderStyle: 'solid', borderWidth: '1px', borderTop: 'none', borderLeft: 'none', borderRight: 'none', paddingBottom: '10px' }} justify="space-between" wrap="wrap" gap={"small"} align="center">
+                            {this.state.priceDemo && this.state.priceDemo.map((item, index) => {
+                                return (
+                                    <Button key={index} style={{ width: '120px', color: 'black', backgroundColor: 'rgba(0,0,0,0.02)' }} shape="round">{item}</Button>
+                                )
+                            })}
+                        </Flex>
+                        <Flex flex={"row"} align="center" justify="space-between">
+                            <p style={{ fontSize: '16px', fontWeight: 'bold' }}>Tiền thừa trả khách</p>
+                            <p style={{ fontSize: '20px', fontWeight: 'bold' }}>
+                                <span style={{ color: 'red' }}>
+                                    {isAmountEnough ? (
+                                        <>Dư {this.formatCurrency(amountDifference)}</>
+                                    ) : (
+                                        <>Thiếu {this.formatCurrency(-amountDifference)}</>
+                                    )}
+                                </span>
+                            </p>
+                        </Flex>
+                        {this.state.showImage && (
+                            <img
+                                style={{ maxWidth: 300, marginTop: 20 }}
+                                src={`https://api.vietqr.io/image/970422-0362460679-vE5Br8f.jpg?accountName=BUI%20XUAN%20THIEU&amount=${this.getTotalAmount(this.state.tabProducts) + this.state.phiShip}&addInfo=TRA%20TIEN%20HOA%20DON`}
+                                alt="QR Code"
+                            />
+                        )}
+                        {this.state.codeXP === "" ? (<h6 style={{ display: 'none', marginTop: 8, float: "right" }}>Phí ship : {this.formatCurrency(this.state.phiShip)}</h6>) : (<h6 style={{ display: 'none', marginTop: 8, float: "right" }}>Phí ship : {this.formatCurrency(this.tinhTienShip())}</h6>)}
+                        <button style={{ marginBottom: '10px', width: '100%' }} class="btn btn-outline-danger" onClick={this.state.showImage === false ? this.displayImage : this.closedisplayImage}>{this.state.showImage === false ? 'Xuất' : 'Đóng'} QR</button>
+                        <Input style={{ height: '40px' }} id="ghiChuDonHang" placeholder="Nhập ghi chú đơn hàng" />
+                        <Flex style={{ marginTop: '10px' }} align="center" justify="space-between">
+                            <Button className="customButton">
+                                In tạm tính
+                            </Button>
+                            <Button className="customButton" onClick={this.add}>
+                                Thanh toán
+                            </Button>
+                            <Button
+                                id="deleteButton"
+                                className="customButton"
+                                onClick={() => this.deleteHoaDonCho(this.state.activeTabKey)}
+                            >
+                                Xóa hóa đơn
+                            </Button>
+                        </Flex>
                     </div>
                 </div>
             </div>
