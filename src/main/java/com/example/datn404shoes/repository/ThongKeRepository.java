@@ -111,18 +111,19 @@ public interface ThongKeRepository extends JpaRepository<HoaDon, Long> {
 
 
     @Query("SELECT spct.id AS san_pham_chi_tiet_id, " +
-            "SUM(hdct.soLuong) AS so_luong_da_ban, " +
+            "spct.soLuong AS so_luong_da_ban, " +
             "CONCAT(sp.ten, ' - ', ms.ten, ' - ', kt.giaTri) AS ten_san_pham, " +
             "spct.donGia, " +
             "spct.anh " +
-            "FROM HoaDonChiTiet hdct " +
-            "JOIN SanPhamChiTiet spct ON hdct.sanPhamChiTiet.id = spct.id " +
+            "FROM  SanPhamChiTiet spct " +
             "JOIN SanPham sp ON spct.sanPham.id = sp.id " +
             "JOIN MauSac ms ON spct.mauSac.id = ms.id " +
             "JOIN KichThuoc kt ON spct.kichThuoc.id = kt.id " +
-            "GROUP BY spct.id, sp.ten, ms.ten,kt.giaTri, spct.donGia, spct.anh " +
-            "ORDER BY so_luong_da_ban asc ")
+            "GROUP BY spct.id, sp.ten, ms.ten, kt.giaTri, spct.donGia, spct.anh,spct.soLuong " +
+            "HAVING SUM(spct.soLuong) < 10 " +
+            "ORDER BY so_luong_da_ban ASC ")
     List<Object[]> sanPhamSapHetHang();
+
 
     @Query("SELECT hd.id, hd.maHoaDon, tk.thongTinNguoiDung.ten, hd.ngayTao, hd.trangThai " +
             "FROM HoaDon hd " +
