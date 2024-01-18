@@ -32,6 +32,7 @@ class TrangTongQuan extends Component {
         this.fetchHoaDonChuaXuLy();
         this.fetchListHoaDonChuaXuLy();
         this.fetchDataTopSanPham();
+        this.fetchDataTopSanPhamSapHet();
     }
 
     formatNumberOrZero(value) {
