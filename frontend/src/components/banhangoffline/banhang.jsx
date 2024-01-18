@@ -156,7 +156,11 @@ class BanHangOffline extends Component {
 
         this.fetchHDCT();
     }
-
+    FCInHD=(e) =>{
+        e.preventDefault();
+        const url = `http://localhost:8080/hoa_don/export/${this.state.activeTabKey}`;
+        window.open(url, "_blank");
+    };
 
     componentDidUpdate(prevProps, prevState) {
 
@@ -1786,7 +1790,7 @@ class BanHangOffline extends Component {
                         <button style={{ marginBottom: '10px', width: '100%' }} class="btn btn-outline-danger" onClick={this.state.showImage === false ? this.displayImage : this.closedisplayImage}>{this.state.showImage === false ? 'Xuất' : 'Đóng'} QR</button>
                         <Input style={{ height: '40px' }} id="ghiChuDonHang" placeholder="Nhập ghi chú đơn hàng" />
                         <Flex style={{ marginTop: '10px' }} align="center" justify="space-between">
-                            <Button className="customButton">
+                            <Button className="customButton" onClick={this.FCInHD}>
                                 In tạm tính
                             </Button>
                             <Button className="customButton" onClick={this.add}>
